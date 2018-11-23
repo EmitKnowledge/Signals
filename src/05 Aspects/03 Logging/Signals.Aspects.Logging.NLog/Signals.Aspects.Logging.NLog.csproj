@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="NLog" Version="4.5.11" />
-    <PackageReference Include="Signals.Aspects.Logging" Version="0.1.0" />
+    <PackageReference Include="Signals.Aspects.Logging" Version="0.2.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
   </ItemGroup>
 

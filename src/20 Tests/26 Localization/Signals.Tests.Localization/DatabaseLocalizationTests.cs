@@ -8,13 +8,13 @@ using Xunit;
 
 namespace Signals.Tests.Localization
 {
-    public class LocalizationTests
+    public class DatabaseLocalizationTests
     {
         private const string ConnectionString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;";
 
         private readonly ILocalizationProvider _provider;
 
-        public LocalizationTests()
+        public DatabaseLocalizationTests()
         {
             // Create instance
 

@@ -9,7 +9,7 @@ using Signals.Aspects.CommunicationChannels.ServiceBus.Configurations;
 using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI.SimpleInjector;
 using Signals.Aspects.ErrorHandling.Polly;
-using Signals.Aspects.Localization.InMemory.Configurations;
+using Signals.Aspects.Localization.File.Configurations;
 using Signals.Aspects.Logging.NLog.Configurations;
 using Signals.Aspects.Security.Database.Configurations;
 using Signals.Aspects.Storage.Database.Configurations;
