@@ -417,9 +417,6 @@
     <Reference Include="Signals.Aspects.Logging, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Logging.0.2.0\lib\netstandard2.0\Signals.Aspects.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Aspects.Logging.NLog, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Logging.NLog.0.2.0\lib\netstandard2.0\Signals.Aspects.Logging.NLog.dll</HintPath>
-    </Reference>
     <Reference Include="Signals.Aspects.Security, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Security.0.2.0\lib\netstandard2.0\Signals.Aspects.Security.dll</HintPath>
     </Reference>
