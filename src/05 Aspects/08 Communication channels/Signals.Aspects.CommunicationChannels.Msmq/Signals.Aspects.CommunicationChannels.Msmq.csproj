@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="0.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Messaging" />
+  </ItemGroup>
+
+</Project>

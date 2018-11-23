@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Signals.Aspects.DI" Version="0.1.0" />
+    <PackageReference Include="SimpleInjector" Version="4.4.0" />
+  </ItemGroup>
+
+</Project>
