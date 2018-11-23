@@ -69,7 +69,7 @@ namespace Signals.Aspects.Logging.NLog
                             FROM sys.tables t 
                             WHERE t.name = '{configuration.TableName}'
                         ) 
-                        CREATE TABLE dbo.[{configuration.TableName}]
+                        CREATE TABLE [{configuration.TableName}]
                         (
                             [Id] INT IDENTITY(1,1) NOT NULL, 
                             [Level] NVARCHAR(MAX) NULL,
