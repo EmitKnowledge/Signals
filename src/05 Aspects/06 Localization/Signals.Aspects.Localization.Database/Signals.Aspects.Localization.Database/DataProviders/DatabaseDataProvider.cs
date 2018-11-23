@@ -396,7 +396,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE AND t.name = '{databaseConfiguration.LocalizationCategoryTableName}'
+	                        WHERE t.name = '{databaseConfiguration.LocalizationCategoryTableName}'
                         ) 
                         CREATE TABLE [{databaseConfiguration.LocalizationCategoryTableName}]
                         (
@@ -408,7 +408,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE AND t.name = '{databaseConfiguration.LocalizationCollectionTableName}'
+	                        WHERE t.name = '{databaseConfiguration.LocalizationCollectionTableName}'
                         ) 
                         CREATE TABLE [{databaseConfiguration.LocalizationCollectionTableName}]
                         (
@@ -421,7 +421,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE AND t.name = '{databaseConfiguration.LocalizationEntryTableName}'
+	                        WHERE t.name = '{databaseConfiguration.LocalizationEntryTableName}'
                         ) 
                         CREATE TABLE [{databaseConfiguration.LocalizationEntryTableName}]
                         (
@@ -436,7 +436,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE AND t.name = '{databaseConfiguration.LocalizationKeyTableName}'
+	                        WHERE t.name = '{databaseConfiguration.LocalizationKeyTableName}'
                         ) 
                         CREATE TABLE [{databaseConfiguration.LocalizationKeyTableName}]
                         (
@@ -448,7 +448,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE AND t.name = '{databaseConfiguration.LocalizationLanguageTableName}'
+	                        WHERE t.name = '{databaseConfiguration.LocalizationLanguageTableName}'
                         ) 
                         CREATE TABLE [{databaseConfiguration.LocalizationLanguageTableName}]
                         (

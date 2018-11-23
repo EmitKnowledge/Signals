@@ -360,8 +360,8 @@
     <Reference Include="Signals.Aspects.Auditing, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Auditing.0.2.0\lib\netstandard2.0\Signals.Aspects.Auditing.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Aspects.Auditing.AuditNET, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Auditing.AuditNET.0.2.0\lib\netstandard2.0\Signals.Aspects.Auditing.AuditNET.dll</HintPath>
+    <Reference Include="Signals.Aspects.Auditing.AuditNET, Version=0.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Auditing.AuditNET.0.3.1\lib\netstandard2.0\Signals.Aspects.Auditing.AuditNET.dll</HintPath>
     </Reference>
     <Reference Include="Signals.Aspects.Auth, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Auth.0.2.0\lib\netstandard2.0\Signals.Aspects.Auth.dll</HintPath>
@@ -375,8 +375,8 @@
     <Reference Include="Signals.Aspects.BackgroundProcessing.FluentScheduler, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.BackgroundProcessing.FluentScheduler.0.2.0\lib\netstandard2.0\Signals.Aspects.BackgroundProcessing.FluentScheduler.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Aspects.Bootstrap, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Bootstrap.0.2.0\lib\netstandard2.0\Signals.Aspects.Bootstrap.dll</HintPath>
+    <Reference Include="Signals.Aspects.Bootstrap, Version=0.2.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Bootstrap.0.2.5\lib\netstandard2.0\Signals.Aspects.Bootstrap.dll</HintPath>
     </Reference>
     <Reference Include="Signals.Aspects.Caching, Version=0.2.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Caching.0.2.0.1\lib\netstandard2.0\Signals.Aspects.Caching.dll</HintPath>
@@ -420,8 +420,8 @@
     <Reference Include="Signals.Aspects.Security, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Security.0.2.0\lib\netstandard2.0\Signals.Aspects.Security.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Aspects.Security.Database, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Security.Database.0.2.0\lib\netstandard2.0\Signals.Aspects.Security.Database.dll</HintPath>
+    <Reference Include="Signals.Aspects.Security.Database, Version=0.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Security.Database.0.3.1\lib\netstandard2.0\Signals.Aspects.Security.Database.dll</HintPath>
     </Reference>
     <Reference Include="Signals.Aspects.Storage, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Storage.0.2.0\lib\netstandard2.0\Signals.Aspects.Storage.dll</HintPath>
@@ -429,12 +429,12 @@
     <Reference Include="Signals.Aspects.Storage.Database, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Storage.Database.0.2.0\lib\netstandard2.0\Signals.Aspects.Storage.Database.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Core, Version=0.2.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Core.0.2.0.1\lib\netstandard2.0\Signals.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Signals.Core.Web, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Core.Web.0.2.0\lib\net461\Signals.Core.Web.dll</HintPath>
+    <Reference Include="Signals.Core, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Core.0.2.1\lib\netstandard2.0\Signals.Core.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Signals.Core.Web, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Core.Web.0.2.1\lib\net461\Signals.Core.Web.dll</HintPath>
     </Reference>
     <Reference Include="SimpleInjector, Version=4.4.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\SimpleInjector.4.4.0\lib\net45\SimpleInjector.dll</HintPath>

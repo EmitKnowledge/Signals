@@ -170,7 +170,7 @@ namespace Signals.Tests.Auditing
                         (	
                             SELECT * 
 	                        FROM sys.tables t
-	                        WHERE AND t.name = '{databaseConfiguration.TableName}'
+	                        WHERE t.name = '{databaseConfiguration.TableName}'
                         ) 
                         DROP TABLE [{databaseConfiguration.TableName}]
                     ";

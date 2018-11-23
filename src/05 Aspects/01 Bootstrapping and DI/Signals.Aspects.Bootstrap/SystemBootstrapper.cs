@@ -46,33 +46,32 @@ namespace Signals.Aspects.Bootstrap
             return _serviceContainer.GetInstance(serviceType);
         }
 
-	    /// <summary>
-	    /// Initialize with container registrator that results in service container
-	    /// </summary>
-	    /// <param name="registrationService"></param>
-	    /// <param name="rootAssembly"></param>
-	    public static IServiceContainer Init(IRegistrationService registrationService, Assembly rootAssembly = null)
+        /// <summary>
+        /// Initialize with container registrator that results in service container
+        /// </summary>
+        /// <param name="registrationService"></param>
+        /// <param name="rootAssembly"></param>
+        public static IServiceContainer Init(IRegistrationService registrationService, params Assembly[] scanAssemblies)
         {
-            if (rootAssembly != null)
-                AutoRegister(registrationService, rootAssembly);
+            if (scanAssemblies != null && scanAssemblies.Length > 0)
+                AutoRegister(registrationService, scanAssemblies);
 
             _serviceContainer = registrationService.Build();
             return _serviceContainer;
         }
-        
+
         /// <summary>
         /// Auto register all exported types
         /// </summary>
         /// <param name="registrationService"></param>
         /// <param name="rootAssembly"></param>
-        private static void AutoRegister(IRegistrationService registrationService, Assembly rootAssembly)
+        private static void AutoRegister(IRegistrationService registrationService, params Assembly[] scanAssemblies)
         {
             // get all types from all assemblies
-            var types = rootAssembly.GetExportedTypes().ToList();
-            types.AddRange(rootAssembly.GetReferencedAssemblies()
+            var types = scanAssemblies.SelectMany(x => x.GetExportedTypes().Concat(
+                                x.GetReferencedAssemblies()
                                .Select(Assembly.Load)
-                               .SelectMany(assembly => assembly.GetExportedTypes())
-                               .OrderBy(x => x.FullName));
+                               .SelectMany(assembly => assembly.GetExportedTypes()))).ToList();
 
             // get all types with exported attribute
             var exportedTypePairs = types

@@ -21,11 +21,17 @@ namespace Signals.Core.Web.Configuration
         public List<ResponseHeaderAttribute> ResponseHeaders { get; set; }
 
         /// <summary>
+        /// Applization assemblies to be scanned for processes and type exports
+        /// </summary>
+        public List<Assembly> ScanAssemblies { get; set; }
+
+        /// <summary>
         /// CTOR
         /// </summary>
         public WebApplicationConfiguration()
         {
             ResponseHeaders = new List<ResponseHeaderAttribute>();
+            ScanAssemblies = new List<Assembly>();
         }
 
         /// <summary>
@@ -33,23 +39,23 @@ namespace Signals.Core.Web.Configuration
         /// </summary>
         /// <param name="entryAssembly"></param>
         /// <returns></returns>
-        internal IServiceContainer Bootstrap(Assembly entryAssembly)
+        internal IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
-            return Resolve(entryAssembly);
+            return Resolve(scanAssemblies);
         }
 
         /// <summary>
         /// Build instances from configurations by convention
         /// </summary>
         /// <returns></returns>
-        protected override IServiceContainer Resolve(Assembly entryAssembly)
+        protected override IServiceContainer Resolve(params Assembly[] scanAssemblies)
         {
             RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
             RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
             RegistrationService.Register<WebMediator>();
             RegistrationService.Register<List<ResponseHeaderAttribute>>(ResponseHeaders);
 
-            return base.Resolve(entryAssembly);
+            return base.Resolve(scanAssemblies);
         }
     }
 }

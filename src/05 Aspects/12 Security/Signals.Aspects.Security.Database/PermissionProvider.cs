@@ -213,7 +213,7 @@ namespace Signals.Aspects.Security.Database
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE AND t.name = '{databaseConfiguration.TableName}'
+	                        WHERE t.name = '{databaseConfiguration.TableName}'
                         ) 
                         CREATE TABLE [{databaseConfiguration.TableName}]
                         (

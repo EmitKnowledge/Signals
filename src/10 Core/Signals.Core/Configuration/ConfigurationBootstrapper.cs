@@ -95,7 +95,7 @@ namespace Signals.Core.Configuration
         /// Register all aspects into dependency resolver
         /// </summary>
         /// <returns></returns>
-        public IServiceContainer Bootstrap(Assembly entryAssembly)
+        public IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
             if (DependencyResolver.IsNull() || DependencyResolver().IsNull()) throw new Exception("Dependency resolver not configured");
 
@@ -145,11 +145,11 @@ namespace Signals.Core.Configuration
                 resolver.Register(instance);
             }
 
-            var processRepo = new ProcessRepository(entryAssembly);
+            var processRepo = new ProcessRepository(scanAssemblies);
             resolver.Register(processRepo);
             processRepo.All().ForEach(type => resolver.Register(type));
 
-            var services = SystemBootstrapper.Init(resolver, entryAssembly);
+            var services = SystemBootstrapper.Init(resolver, scanAssemblies);
 
             return services;
         }

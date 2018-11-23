@@ -15,9 +15,9 @@ namespace Signals.Core.Processing.Execution
         /// </summary>
         private readonly List<Type> ProcessTypes;
 
-        public ProcessRepository(Assembly entryAssembly)
+        public ProcessRepository(params Assembly[] scanAssemblies)
         {
-            ProcessTypes = (from x in entryAssembly.LoadAllTypesFromAssembly()
+            ProcessTypes = (from x in scanAssemblies.SelectMany(x => x.LoadAllTypesFromAssembly())
                             where ImplementsOpenGenericInterface(x, typeof(IBaseProcess<>))
                             select x)
                             .Where(x => !x.IsInterface && !x.IsAbstract)

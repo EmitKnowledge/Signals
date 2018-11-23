@@ -9,6 +9,7 @@ using Signals.Aspects.CommunicationChannels.Configurations;
 using Signals.Aspects.DI;
 using Signals.Aspects.ErrorHandling;
 using Signals.Aspects.Localization;
+using Signals.Aspects.Localization.Base;
 using Signals.Aspects.Logging;
 using Signals.Aspects.Logging.Configurations;
 using Signals.Aspects.Security;
@@ -21,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Signals.Aspects.Localization.Base;
 
 namespace Signals.Core.Configuration
 {
@@ -89,9 +89,9 @@ namespace Signals.Core.Configuration
         /// Build instances from configurations by convention
         /// </summary>
         /// <returns></returns>
-        protected virtual IServiceContainer Resolve(Assembly entryAssembly)
+        protected virtual IServiceContainer Resolve(params Assembly[] scanAssemblies)
         {
-            _allTypes = entryAssembly.LoadAllTypesFromAssembly().Where(x => x.FullName.StartsWith("Signals")).ToList();
+            _allTypes = scanAssemblies.SelectMany(assembly => assembly.LoadAllTypesFromAssembly().Where(type => type.FullName.StartsWith("Signals"))).ToList();
 
             var config = new ConfigurationBootstrapper();
 
@@ -121,7 +121,7 @@ namespace Signals.Core.Configuration
                 config.PermissionManager = () => typeof(Processing.Authorization.PermissionManager);
             }
 
-            return config.Bootstrap(entryAssembly);
+            return config.Bootstrap(scanAssemblies);
         }
 
         /// <summary>

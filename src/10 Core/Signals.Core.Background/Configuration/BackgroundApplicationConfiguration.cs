@@ -10,6 +10,7 @@ using Signals.Core.Configuration;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Signals.Core.Background.Configuration
@@ -29,20 +30,27 @@ namespace Signals.Core.Background.Configuration
         /// </summary>
         /// <param name="entryAssembly"></param>
         /// <returns></returns>
-        public IServiceContainer Bootstrap(Assembly entryAssembly)
+        public IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
-            return Resolve(entryAssembly);
+            if (scanAssemblies == null)
+            {
+                StackTrace stackTrace = new StackTrace();
+                var assembly = stackTrace.GetFrame(1).GetMethod().DeclaringType.Assembly;
+
+                scanAssemblies = new Assembly[] { assembly };
+            }
+            return Resolve(scanAssemblies);
         }
 
         /// <summary>
         /// Build instances from configurations by convention
         /// </summary>
         /// <returns></returns>
-        protected override IServiceContainer Resolve(Assembly entryAssembly)
+        protected override IServiceContainer Resolve(params Assembly[] scanAssemblies)
         {
             RegistrationService.Register(SyncLogProvider);
 
-            var result = base.Resolve(entryAssembly);
+            var result = base.Resolve(scanAssemblies);
             Start();
 
             return result;

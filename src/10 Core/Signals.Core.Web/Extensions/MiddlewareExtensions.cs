@@ -43,7 +43,8 @@ namespace Signals.Core.Web.Extensions
             // configure web applicaiton
             var configuration = new WebApplicationConfiguration();
             configurationCallback(configuration);
-            configuration.Bootstrap(assembly);
+            configuration.ScanAssemblies.Add(assembly);
+            configuration.Bootstrap(configuration.ScanAssemblies.ToArray());
             
             // register midleware for handling session
             app.Use(async (IOwinContext context, Func<Task> next) =>
@@ -81,7 +82,8 @@ namespace Signals.Core.Web.Extensions
 
             var configuration = new WebApplicationConfiguration();
             configurationCallback(configuration);
-            configuration.Bootstrap(assembly);
+            configuration.ScanAssemblies.Add(assembly);
+            configuration.Bootstrap(configuration.ScanAssemblies.ToArray());
 
             return services;
         }

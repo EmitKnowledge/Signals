@@ -23,7 +23,7 @@ namespace Signals.Tests.Configuration
                             (	
                                 SELECT * 
 	                            FROM sys.tables t
-	                            WHERE AND t.name = '{configuration.TableName}'
+	                            WHERE t.name = '{configuration.TableName}'
                             )
                         DROP TABLE [{configuration.TableName}]
                     ";
@@ -59,7 +59,7 @@ namespace Signals.Tests.Configuration
                         (	
                             SELECT * 
 	                        FROM sys.tables t
-	                        WHERE AND t.name = '{configuration.TableName}'
+	                        WHERE t.name = '{configuration.TableName}'
                         ) 
                         CREATE TABLE [{configuration.TableName}]
                         (
