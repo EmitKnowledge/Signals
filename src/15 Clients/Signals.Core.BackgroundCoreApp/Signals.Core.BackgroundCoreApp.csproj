@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Signals.Aspects.Logging.NLog" Version="0.2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.Bootstrap\Signals.Aspects.Bootstrap.csproj" />
     <ProjectReference Include="..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.DotNetCore\Signals.Aspects.DI.DotNetCore.csproj" />
     <ProjectReference Include="..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI\Signals.Aspects.DI.csproj" />

@@ -5,11 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Signals.Aspects.Localization" Version="0.2.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Signals.Aspects.Localization\Signals.Aspects.Localization.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,8 +9,8 @@ using Signals.Aspects.CommunicationChannels.ServiceBus.Configurations;
 using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI.SimpleInjector;
 using Signals.Aspects.ErrorHandling.Polly;
-using Signals.Aspects.Localization.InMemory.Configurations;
-using Signals.Aspects.Logging.NLog.Configurations;
+using Signals.Aspects.Localization.File.Configurations;
+using Signals.Aspects.Logging.Enums;
 using Signals.Aspects.Security.Database.Configurations;
 using Signals.Aspects.Storage.Database.Configurations;
 using Signals.Core.Configuration;
@@ -64,7 +64,7 @@ namespace Signals.Clients.Mvc5
             ApplicationInformation
                 .UseProvider(new FileConfigurationProvider
                 {
-                    Path = @"E:\repos\Emit.Knowledge.Signals\trunk\src\15 Clients\Signals.Clients.MvcWeb",
+                    Path = @"E:\repos\Emit.Knowledge.Signals\src\15 Clients\Signals.Clients.MvcWeb",
                     File = "appsettings.json",
                     ReloadOnAccess = false
                 });
@@ -72,7 +72,7 @@ namespace Signals.Clients.Mvc5
             WebInformation
                 .UseProvider(new FileConfigurationProvider
                 {
-                    Path = @"E:\repos\Emit.Knowledge.Signals\trunk\src\15 Clients\Signals.Clients.MvcWeb",
+                    Path = @"E:\repos\Emit.Knowledge.Signals\src\15 Clients\Signals.Clients.MvcWeb",
                     File = "websettings.json",
                     ReloadOnAccess = false
                 });
@@ -83,7 +83,7 @@ namespace Signals.Clients.Mvc5
                 config.RegistrationService = registrationService;
                 config.StrategyBuilder = new StrategyBuilder();
                 config.AuditingConfiguration = new FileAuditingConfiguration();
-                config.LoggerConfiguration = new DatabaseLoggingConfiguration();
+
                 config.CacheConfiguration = new InMemoryCacheConfiguration();
                 config.ChannelConfiguration = new ServiceBusChannelConfiguration
                 {

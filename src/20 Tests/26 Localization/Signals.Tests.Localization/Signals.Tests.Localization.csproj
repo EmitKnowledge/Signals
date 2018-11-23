@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\05 Aspects\06 Localization\Signals.Aspects.Localization.Database\Signals.Aspects.Localization.Database\Signals.Aspects.Localization.Database.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\06 Localization\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File.csproj" />
   </ItemGroup>
 
 </Project>

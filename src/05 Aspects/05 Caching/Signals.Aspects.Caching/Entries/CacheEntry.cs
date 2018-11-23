@@ -50,13 +50,13 @@ namespace Signals.Aspects.Caching.Entries
         /// Time when entry expires
         /// </summary>
         [DataMember]
-        public TimeSpan? ExpirationTime { get; internal set; }
+        public TimeSpan? ExpirationTime { get; set; }
 
         /// <summary>
         /// Expiration policy
         /// </summary>
         [DataMember]
-        public CacheExpirationPolicy? ExpirationPolicy { get; internal set; }
+        public CacheExpirationPolicy? ExpirationPolicy { get; set; }
 
         /// <summary>
         /// Cache collection

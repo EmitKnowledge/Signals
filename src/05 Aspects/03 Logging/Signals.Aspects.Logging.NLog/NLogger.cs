@@ -6,6 +6,7 @@ using Signals.Aspects.Logging.NLog.Configurations;
 using Signals.Aspects.Logging.NLog.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace Signals.Aspects.Logging.NLog
@@ -54,6 +55,43 @@ namespace Signals.Aspects.Logging.NLog
 	    /// <param name="levels"></param>
 	    public NLogger(DatabaseLoggingConfiguration configuration, params LogLevel[] levels)
         {
+            using (var connection = new SqlConnection(configuration.ConnectionString))
+            {
+                connection.Open();
+
+                using (var transaction = connection.BeginTransaction($"Create{configuration.TableName}"))
+                {
+                    var sql =
+                        $@"
+                        IF NOT EXISTS 
+                        (	
+                            SELECT * 
+                            FROM sys.tables t 
+                            WHERE t.name = '{configuration.TableName}'
+                        ) 
+                        CREATE TABLE [{configuration.TableName}]
+                        (
+                            [Id] INT IDENTITY(1,1) NOT NULL, 
+                            [Level] NVARCHAR(MAX) NULL,
+                            [ErrorGroup] NVARCHAR(MAX) NULL,
+                            [ErrorCode] NVARCHAR(MAX) NULL,
+                            [Origin] NVARCHAR(MAX) NULL,
+                            [Action] NVARCHAR(MAX) NULL,
+                            [ActionFilePath] NVARCHAR(MAX) NULL,
+                            [ActionSourceLineNumber] NVARCHAR(MAX) NULL,
+                            [Message] NVARCHAR(MAX) NULL,
+                            [ExceptionMessage] NVARCHAR(MAX) NULL,
+                            [UserIdentifier] NVARCHAR(MAX) NULL,
+                            [Payload] NVARCHAR(MAX) NULL
+                        )
+                    ";
+
+                    var command = new SqlCommand(sql, connection, transaction);
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+            }
+
             var dbTarget = new DatabaseTarget("database")
             {
                 DBHost = configuration.Host,
@@ -61,8 +99,8 @@ namespace Signals.Aspects.Logging.NLog
                 DBPassword = configuration.Password,
                 DBUserName = configuration.Username,
                 DBProvider = configuration.DataProvider.GetDescription(),
-                CommandText = @"
-                    insert into LogEntry (
+                CommandText = $@"
+                    insert into {configuration.TableName} (
                         Level,
                         ErrorGroup,
                         ErrorCode,

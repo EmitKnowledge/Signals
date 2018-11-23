@@ -14,6 +14,7 @@ namespace Signals.Aspects.Logging.NLog.Configurations
         public DatabaseLoggingConfiguration()
         {
             DataProvider = DataProvider.SqlClient;
+            TableName = "LogEntry";
         }
 
         /// <summary>
@@ -25,6 +26,11 @@ namespace Signals.Aspects.Logging.NLog.Configurations
         /// Database
         /// </summary>
         public string Database { get; set; }
+
+        /// <summary>
+        /// Table name
+        /// </summary>
+        public string TableName { get; set; }
 
         /// <summary>
         /// Database username
@@ -41,5 +47,10 @@ namespace Signals.Aspects.Logging.NLog.Configurations
         /// Default value: DataProvider.SqlClient
         /// </summary>
         public DataProvider DataProvider { get; set; }
+
+        /// <summary>
+        /// Connection stirng builder
+        /// </summary>
+        internal string ConnectionString => $"Server={Host};Database={Database};User Id={Username};Password={Password};";
     }
 }
