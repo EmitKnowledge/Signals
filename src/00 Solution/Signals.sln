@@ -161,8 +161,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Localizatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Localization.Database", "..\05 Aspects\06 Localization\Signals.Aspects.Localization.Database\Signals.Aspects.Localization.Database\Signals.Aspects.Localization.Database.csproj", "{2BB23E8D-1F0F-489E-99E4-771AB60891A6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "30 Nuget Manager", "30 Nuget Manager", "{5918C5EF-C256-46FC-A2AE-B8B9650506CA}"
-EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
