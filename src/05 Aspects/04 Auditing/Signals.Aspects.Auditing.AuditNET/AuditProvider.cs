@@ -89,11 +89,9 @@ namespace Signals.Aspects.Auditing.AuditNET
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        JOIN sys.schemas s 
-	                        ON (t.schema_id = s.schema_id) 
-	                        WHERE s.name = 'dbo' AND t.name = '{databaseConfiguration.TableName}'
+	                        WHERE AND t.name = '{databaseConfiguration.TableName}'
                         ) 
-                        CREATE TABLE dbo.[{databaseConfiguration.TableName}]
+                        CREATE TABLE [{databaseConfiguration.TableName}]
                         (
                             [Id] INT IDENTITY(1,1) NOT NULL, 
                             [Process] NVARCHAR(MAX) NOT NULL,

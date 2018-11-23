@@ -78,13 +78,11 @@ namespace Signals.Tests.Auditing
                         IF NOT EXISTS 
                         (	
                             SELECT * 
-	                        FROM sys.tables t 
-	                        JOIN sys.schemas s 
-	                        ON (t.schema_id = s.schema_id) 
-	                        WHERE s.name = 'dbo' AND t.name = '{databaseConfiguration.TableName}'
+	                        FROM sys.tables t
+	                        WHERE t.name = '{databaseConfiguration.TableName}'
                         ) 
                         BEGIN
-                            CREATE TABLE dbo.[{databaseConfiguration.TableName}]
+                            CREATE TABLE [{databaseConfiguration.TableName}]
                             (
                                 [Id] INT IDENTITY(1,1) NOT NULL, 
                                 [Process] NVARCHAR(MAX),
@@ -96,7 +94,7 @@ namespace Signals.Tests.Auditing
                                 [Data] NVARCHAR(MAX)
                             )
                         END
-                        DELETE FROM dbo.[{databaseConfiguration.TableName}]
+                        DELETE FROM [{databaseConfiguration.TableName}]
                     ";
 
                 var command = new SqlCommand(createTableSql, connection);
@@ -119,7 +117,7 @@ namespace Signals.Tests.Auditing
                 // Retrieve the audit from the database
                 var getAuditSql =
                     $@"
-                        SELECT * FROM dbo.[{databaseConfiguration.TableName}]
+                        SELECT * FROM [{databaseConfiguration.TableName}]
                     ";
 
                 command = new SqlCommand(getAuditSql, connection);
@@ -144,7 +142,7 @@ namespace Signals.Tests.Auditing
                 reader.Close();
 
                 // Cleanup
-                var cleanUpSql = $@"DELETE FROM dbo.{databaseConfiguration.TableName}";
+                var cleanUpSql = $@"DELETE FROM {databaseConfiguration.TableName}";
                 command = new SqlCommand(cleanUpSql, connection);
                 command.ExecuteNonQuery();
 
@@ -171,12 +169,10 @@ namespace Signals.Tests.Auditing
                         IF EXISTS 
                         (	
                             SELECT * 
-	                        FROM sys.tables t 
-	                        JOIN sys.schemas s 
-	                        ON (t.schema_id = s.schema_id) 
-	                        WHERE s.name = 'dbo' AND t.name = '{databaseConfiguration.TableName}'
+	                        FROM sys.tables t
+	                        WHERE AND t.name = '{databaseConfiguration.TableName}'
                         ) 
-                        DROP TABLE dbo.[{databaseConfiguration.TableName}]
+                        DROP TABLE [{databaseConfiguration.TableName}]
                     ";
 
                 var command = new SqlCommand(createTableSql, connection);
@@ -199,7 +195,7 @@ namespace Signals.Tests.Auditing
                 // Retrieve the audit from the database
                 var getAuditSql =
                     $@"
-                        SELECT * FROM dbo.[{databaseConfiguration.TableName}]
+                        SELECT * FROM [{databaseConfiguration.TableName}]
                     ";
 
                 command = new SqlCommand(getAuditSql, connection);
@@ -224,7 +220,7 @@ namespace Signals.Tests.Auditing
                 reader.Close();
 
                 // Cleanup
-                var cleanUpSql = $@"DELETE FROM dbo.{databaseConfiguration.TableName}";
+                var cleanUpSql = $@"DELETE FROM {databaseConfiguration.TableName}";
                 command = new SqlCommand(cleanUpSql, connection);
                 command.ExecuteNonQuery();
 

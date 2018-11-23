@@ -35,7 +35,7 @@ namespace Signals.Aspects.Auditing.AuditNET.DataProviders
 
                 var sql =
                     $@"
-                        INSERT INTO dbo.[{_databaseConfiguration.TableName}]
+                        INSERT INTO [{_databaseConfiguration.TableName}]
                         (Process, ProcessInstanceId, EventType, StartDate, EndDate, Originator, [Data])
                         VALUES
                         (

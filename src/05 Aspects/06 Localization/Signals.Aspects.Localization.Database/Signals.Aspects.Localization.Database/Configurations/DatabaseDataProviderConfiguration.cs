@@ -33,12 +33,24 @@
         public string LocalizationLanguageTableName { get; set; }
 
         /// <summary>
-        /// CTOR
+        /// CTOR With ConnectionString
         /// </summary>
         /// <param name="connectionString"></param>
         public DatabaseDataProviderConfiguration(string connectionString)
         {
             ConnectionString = connectionString;
+            LocalizationCategoryTableName = "LocalizationCategory";
+            LocalizationCollectionTableName = "LocalizationCollection";
+            LocalizationEntryTableName = "LocalizationEntry";
+            LocalizationKeyTableName = "LocalizationKey";
+            LocalizationLanguageTableName = "LocalizationLanguage";
+        }
+
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        public DatabaseDataProviderConfiguration()
+        {
             LocalizationCategoryTableName = "LocalizationCategory";
             LocalizationCollectionTableName = "LocalizationCollection";
             LocalizationEntryTableName = "LocalizationEntry";

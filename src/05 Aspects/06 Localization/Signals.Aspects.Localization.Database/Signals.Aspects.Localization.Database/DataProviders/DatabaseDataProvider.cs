@@ -19,6 +19,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
         public DatabaseDataProvider(DatabaseDataProviderConfiguration configuration)
         {
             Configuration = configuration;
+            CreateLocalizationsTablesIfNotExist(configuration);
         }
 
         /// <summary>
@@ -33,11 +34,11 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 var sql =
                     $@"
                         SELECT le.Value AS leValue, le.Id as leId, le.*, coll.Name AS collName, coll.*, cat.Name AS catName,  cat.*, k.Name AS kName, k.*, lang.Name AS langName, lang.Value AS langValue, lang.*
-                        FROM dbo.[{Configuration.LocalizationEntryTableName}] le
-                        JOIN dbo.[{Configuration.LocalizationCollectionTableName}] coll ON le.LocalizationCollectionId = coll.Id
-                        JOIN dbo.[{Configuration.LocalizationCategoryTableName}] cat ON coll.LocalizationCategoryId = cat.Id
-                        JOIN dbo.[{Configuration.LocalizationKeyTableName}] k ON le.LocalizationKeyId = k.Id
-                        JOIN dbo.[{Configuration.LocalizationLanguageTableName}] lang ON le.LocalizationLanguageId = lang.Id
+                        FROM [{Configuration.LocalizationEntryTableName}] le
+                        JOIN [{Configuration.LocalizationCollectionTableName}] coll ON le.LocalizationCollectionId = coll.Id
+                        JOIN [{Configuration.LocalizationCategoryTableName}] cat ON coll.LocalizationCategoryId = cat.Id
+                        JOIN [{Configuration.LocalizationKeyTableName}] k ON le.LocalizationKeyId = k.Id
+                        JOIN [{Configuration.LocalizationLanguageTableName}] lang ON le.LocalizationLanguageId = lang.Id
                     ";
                 var command = new SqlCommand(sql, connection);
 
@@ -84,8 +85,8 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 var sql =
                     $@"
                         SELECT coll.Name AS collName, coll.Id AS collId, coll.*, cat.Name AS catName, cat.Id AS catId
-                        FROM dbo.[{Configuration.LocalizationCollectionTableName}] coll
-                        JOIN dbo.[{Configuration.LocalizationCategoryTableName}] cat ON coll.LocalizationCategoryId = cat.Id
+                        FROM [{Configuration.LocalizationCollectionTableName}] coll
+                        JOIN [{Configuration.LocalizationCategoryTableName}] cat ON coll.LocalizationCategoryId = cat.Id
                     ";
                 var command = new SqlCommand(sql, connection);
 
@@ -118,7 +119,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
             using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 connection.Open();
-                var sql = $"SELECT * FROM dbo.[{Configuration.LocalizationCategoryTableName}]";
+                var sql = $"SELECT * FROM [{Configuration.LocalizationCategoryTableName}]";
                 var command = new SqlCommand(sql, connection);
 
                 var categories = new List<LocalizationCategory>();
@@ -144,7 +145,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
             using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 connection.Open();
-                var sql = $"SELECT * FROM dbo.[{Configuration.LocalizationKeyTableName}]";
+                var sql = $"SELECT * FROM [{Configuration.LocalizationKeyTableName}]";
                 var command = new SqlCommand(sql, connection);
 
                 var keys = new List<LocalizationKey>();
@@ -170,7 +171,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
             using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 connection.Open();
-                var sql = $"SELECT * FROM dbo.[{Configuration.LocalizationLanguageTableName}]";
+                var sql = $"SELECT * FROM [{Configuration.LocalizationLanguageTableName}]";
                 var command = new SqlCommand(sql, connection);
 
                 var languages = new List<LocalizationLanguage>();
@@ -196,7 +197,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
             using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 connection.Open();
-                var sql = $"INSERT INTO dbo.[{Configuration.LocalizationKeyTableName}]([Name]) VALUES(@KeyName)";
+                var sql = $"INSERT INTO [{Configuration.LocalizationKeyTableName}]([Name]) VALUES(@KeyName)";
                 var command = new SqlCommand(sql, connection);
                 command.Parameters.Add("KeyName", SqlDbType.NVarChar);
                 command.Parameters["KeyName"].Value = localizationKey.Name;
@@ -216,7 +217,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 connection.Open();
                 var sql =
                     $@"
-                        INSERT INTO dbo.[{Configuration.LocalizationLanguageTableName}]([Name], [Value]) 
+                        INSERT INTO [{Configuration.LocalizationLanguageTableName}]([Name], [Value]) 
                         VALUES(@LangName, @LangValue)
                     ";
                 var command = new SqlCommand(sql, connection);
@@ -243,15 +244,15 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         IF EXISTS
                         (
                             SELECT *
-                            FROM dbo.[{Configuration.LocalizationCollectionTableName}]
+                            FROM [{Configuration.LocalizationCollectionTableName}]
                             WHERE Id = {localizationCollection.Id}
                         )
-                        UPDATE dbo.[{Configuration.LocalizationCollectionTableName}]
+                        UPDATE [{Configuration.LocalizationCollectionTableName}]
                         SET
                             Name = @CollName,
                             LocalizationCategoryId = {localizationCollection.LocalizationCategoryId}
                         ELSE
-                        INSERT INTO dbo.[{Configuration.LocalizationCollectionTableName}]([Name], [LocalizationCategoryId]) 
+                        INSERT INTO [{Configuration.LocalizationCollectionTableName}]([Name], [LocalizationCategoryId]) 
                         VALUES(@CollName, {localizationCollection.LocalizationCategoryId})
                     ";
                 var command = new SqlCommand(sql, connection);
@@ -273,7 +274,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 connection.Open();
                 var sql =
                     $@"
-                        INSERT INTO dbo.[{Configuration.LocalizationEntryTableName}]
+                        INSERT INTO [{Configuration.LocalizationEntryTableName}]
                         ([Value], LocalizationCollectionId, LocalizationKeyId, LocalizationLanguageId) 
                         VALUES(@Entry, {entry.LocalizationCollectionId}, {entry.LocalizationKeyId}, {entry.LocalizationLanguageId})
                     ";
@@ -299,14 +300,14 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         IF EXISTS
                         (
                             SELECT *
-                            FROM dbo.[{Configuration.LocalizationCategoryTableName}]
+                            FROM [{Configuration.LocalizationCategoryTableName}]
                             WHERE Id = {localizationCategory.Id}
                         )
-                        UPDATE dbo.[{Configuration.LocalizationCategoryTableName}]
+                        UPDATE [{Configuration.LocalizationCategoryTableName}]
                         SET
                             Name = @CatName
                         ELSE
-                        INSERT INTO dbo.[{Configuration.LocalizationCategoryTableName}]([Name]) 
+                        INSERT INTO [{Configuration.LocalizationCategoryTableName}]([Name]) 
                         VALUES(@CatName)
                     ";
                 var command = new SqlCommand(sql, connection);
@@ -328,7 +329,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 connection.Open();
                 var sql =
                     $@"
-                        UPDATE dbo.[{Configuration.LocalizationEntryTableName}]
+                        UPDATE [{Configuration.LocalizationEntryTableName}]
                         SET
                             [Value] = @Entry,
                             [LocalizationLanguageId] = {entry.LocalizationLanguageId},
@@ -359,12 +360,12 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 {
                     var entrySql =
                         $@"
-                            IF EXISTS (SELECT * FROM dbo.[{Configuration.LocalizationEntryTableName}] le WHERE le.LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND le.LocalizationLanguageId = {localizationEntry.LocalizationLanguageId})
-                                UPDATE dbo.[{Configuration.LocalizationEntryTableName}]
+                            IF EXISTS (SELECT * FROM [{Configuration.LocalizationEntryTableName}] le WHERE le.LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND le.LocalizationLanguageId = {localizationEntry.LocalizationLanguageId})
+                                UPDATE [{Configuration.LocalizationEntryTableName}]
                                 SET LocalizationCollectionId = {localizationEntry.LocalizationCollectionId}, LocalizationKeyId = {localizationEntry.LocalizationKeyId}, LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}, Value = @Entry
                                 WHERE le.LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND le.LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}
                             ELSE
-                                INSERT INTO dbo.[{Configuration.LocalizationEntryTableName}](LocalizationKeyId, LocalizationCollectionId, LocalizationLanguageId, Value)
+                                INSERT INTO [{Configuration.LocalizationEntryTableName}](LocalizationKeyId, LocalizationCollectionId, LocalizationLanguageId, Value)
                                 VALUES ({localizationEntry.LocalizationKeyId}, {localizationEntry.LocalizationCollectionId}, {localizationEntry.LocalizationLanguageId}, @Entry)
                         ";
                     queryBuilder.Append(entrySql + Environment.NewLine);
@@ -376,6 +377,89 @@ namespace Signals.Aspects.Localization.Database.DataProviders
 
                     command.ExecuteNonQuery();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Ensures that tables for localization entries exist in the database
+        /// </summary>
+        /// <param name="databaseConfiguration"></param>
+        private void CreateLocalizationsTablesIfNotExist(DatabaseDataProviderConfiguration databaseConfiguration)
+        {
+            using (var connection = new SqlConnection(databaseConfiguration.ConnectionString))
+            {
+                connection.Open();
+
+                var sql =
+                    $@"
+                        IF NOT EXISTS 
+                        (	
+                            SELECT * 
+	                        FROM sys.tables t 
+	                        WHERE AND t.name = '{databaseConfiguration.LocalizationCategoryTableName}'
+                        ) 
+                        CREATE TABLE [{databaseConfiguration.LocalizationCategoryTableName}]
+                        (
+                            [Id] [int] IDENTITY(1,1) NOT NULL,
+	                        [Name] [nvarchar](max) NOT NULL
+                        )
+
+                        IF NOT EXISTS 
+                        (	
+                            SELECT * 
+	                        FROM sys.tables t 
+	                        WHERE AND t.name = '{databaseConfiguration.LocalizationCollectionTableName}'
+                        ) 
+                        CREATE TABLE [{databaseConfiguration.LocalizationCollectionTableName}]
+                        (
+                            [Id] [int] IDENTITY(1,1) NOT NULL,
+	                        [Name] [nvarchar](max) NOT NULL,
+	                        [LocalizationCategoryId] [int] NOT NULL
+                        )
+
+                        IF NOT EXISTS 
+                        (	
+                            SELECT * 
+	                        FROM sys.tables t 
+	                        WHERE AND t.name = '{databaseConfiguration.LocalizationEntryTableName}'
+                        ) 
+                        CREATE TABLE [{databaseConfiguration.LocalizationEntryTableName}]
+                        (
+                            [Id] [int] IDENTITY(1,1) NOT NULL,
+	                        [Value] [nvarchar](max) NOT NULL,
+	                        [LocalizationCollectionId] [int] NOT NULL,
+	                        [LocalizationLanguageId] [int] NOT NULL,
+	                        [LocalizationKeyId] [int] NOT NULL
+                        )
+
+                        IF NOT EXISTS 
+                        (	
+                            SELECT * 
+	                        FROM sys.tables t 
+	                        WHERE AND t.name = '{databaseConfiguration.LocalizationKeyTableName}'
+                        ) 
+                        CREATE TABLE [{databaseConfiguration.LocalizationKeyTableName}]
+                        (
+                            [Id] [int] IDENTITY(1,1) NOT NULL,
+	                        [Name] [nvarchar](max) NOT NULL
+                        )
+
+                        IF NOT EXISTS 
+                        (	
+                            SELECT * 
+	                        FROM sys.tables t 
+	                        WHERE AND t.name = '{databaseConfiguration.LocalizationLanguageTableName}'
+                        ) 
+                        CREATE TABLE [{databaseConfiguration.LocalizationLanguageTableName}]
+                        (
+                            [Id] [int] IDENTITY(1,1) NOT NULL,
+	                        [Name] [nvarchar](max) NOT NULL,
+	                        [Value] [nvarchar](max) NOT NULL
+                        )
+                    ";
+
+                var command = new SqlCommand(sql, connection);
+                command.ExecuteNonQuery();
             }
         }
 

@@ -128,7 +128,7 @@ namespace Signals.Tests.Security
         {
             using (var conn = new SqlConnection(_databaseConfiguration.ConnectionString))
             {
-                var sql = $"DELETE FROM dbo.[{_databaseConfiguration.TableName}]";
+                var sql = $"DELETE FROM [{_databaseConfiguration.TableName}]";
                 conn.Open();
                 new SqlCommand(sql, conn).ExecuteNonQuery();
             }

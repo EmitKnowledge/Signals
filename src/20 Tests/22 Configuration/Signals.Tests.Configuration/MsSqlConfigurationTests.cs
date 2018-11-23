@@ -12,7 +12,7 @@ namespace Signals.Tests.Configuration
         public void Load_Configuration_From_NonExisting_Db_Should_Return_Valid_Object()
         {
             var connString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;";
-            var configuration = new DefaultMsSqlConfigurationProvider(connString);
+            var configuration = new MsSqlConfigurationProvider(connString);
 
             // Delete the configuration table from the database if exists
             using (var connection = new SqlConnection(connString))
@@ -22,10 +22,8 @@ namespace Signals.Tests.Configuration
                         IF EXISTS 
                             (	
                                 SELECT * 
-	                            FROM sys.tables t 
-	                            JOIN sys.schemas s 
-	                            ON (t.schema_id = s.schema_id) 
-	                            WHERE s.name = 'dbo' AND t.name = '{configuration.TableName}'
+	                            FROM sys.tables t
+	                            WHERE AND t.name = '{configuration.TableName}'
                             )
                         DROP TABLE [{configuration.TableName}]
                     ";
@@ -37,7 +35,7 @@ namespace Signals.Tests.Configuration
             }
 
             // Sets up and loads controller configuration using the default MSSQL configuration provider
-            ControllersConfiguration.UseProvider(new DefaultMsSqlConfigurationProvider(connString));
+            ControllersConfiguration.UseProvider(new MsSqlConfigurationProvider(connString));
 
             Assert.NotNull(ControllersConfiguration.Instance);
         }
@@ -46,7 +44,7 @@ namespace Signals.Tests.Configuration
         public void Load_Configuration_From_Existing_Db_Should_Return_Valid_Object()
         {
             var connString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;";
-            var configuration = new DefaultMsSqlConfigurationProvider(connString);
+            var configuration = new MsSqlConfigurationProvider(connString);
             
             // Sets up and loads controller configuration using the default MSSQL configuration provider
             ControllersConfiguration.UseProvider(configuration);
@@ -60,12 +58,10 @@ namespace Signals.Tests.Configuration
                         IF NOT EXISTS 
                         (	
                             SELECT * 
-	                        FROM sys.tables t 
-	                        JOIN sys.schemas s 
-	                        ON (t.schema_id = s.schema_id) 
-	                        WHERE s.name = 'dbo' AND t.name = '{configuration.TableName}'
+	                        FROM sys.tables t
+	                        WHERE AND t.name = '{configuration.TableName}'
                         ) 
-                        CREATE TABLE dbo.[{configuration.TableName}]
+                        CREATE TABLE [{configuration.TableName}]
                         (
                             [Id] INT IDENTITY(1,1) NOT NULL, 
                             [{configuration.KeyColumnName}] VARCHAR(MAX) NOT NULL, 
@@ -109,10 +105,10 @@ namespace Signals.Tests.Configuration
                         IF NOT EXISTS 
                         (	
                             SELECT * 
-	                        FROM dbo.[{configuration.TableName}] tbl
+	                        FROM [{configuration.TableName}] tbl
 	                        WHERE tbl.[{configuration.KeyColumnName}] = '{ControllersConfiguration.Instance.Key}'
                         ) 
-                        INSERT INTO dbo.[{configuration.TableName}]
+                        INSERT INTO [{configuration.TableName}]
                         (
                             [{configuration.KeyColumnName}],
                             [{configuration.ValueColumnName}]

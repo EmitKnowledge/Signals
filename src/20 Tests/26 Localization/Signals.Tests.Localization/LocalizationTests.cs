@@ -139,15 +139,15 @@ namespace Signals.Tests.Localization
                 var sql =
                     $@"
                         delete
-                        from dbo.LocalizationEntry
+                        from LocalizationEntry
                         delete
-                        from dbo.LocalizationLanguage
+                        from LocalizationLanguage
                         delete
-                        from dbo.LocalizationCollection
+                        from LocalizationCollection
                         delete
-                        from dbo.LocalizationCategory
+                        from LocalizationCategory
                         delete
-                        from dbo.LocalizationKey
+                        from LocalizationKey
                     ";
 
                 var command = new SqlCommand(sql, connection);

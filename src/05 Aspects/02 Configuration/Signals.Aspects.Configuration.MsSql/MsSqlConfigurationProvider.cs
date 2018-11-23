@@ -11,6 +11,27 @@ namespace Signals.Aspects.Configuration.MsSql
     public class MsSqlConfigurationProvider : IConfigurationProvider
     {
         /// <summary>
+        /// Default CTOR
+        /// </summary>
+        public MsSqlConfigurationProvider()
+        {
+            TableName = "Configuration";
+            KeyColumnName = "Key";
+            ValueColumnName = "Value";
+        }
+
+        /// <summary>
+        /// Default CTOR with ConnectionString
+        /// </summary>
+        public MsSqlConfigurationProvider(string connectionString)
+        {
+            ConnectionString = connectionString;
+            TableName = "Configuration";
+            KeyColumnName = "Key";
+            ValueColumnName = "Value";
+        }
+
+        /// <summary>
         /// The connection string to the database where the configuration is loaded from
         /// </summary>
         public string ConnectionString { get; set; }
@@ -64,11 +85,11 @@ namespace Signals.Aspects.Configuration.MsSql
                     ";
 
                 var command = new SqlCommand(query, connection);
-	            // set the filter value
-	            command.Parameters.Add("key", SqlDbType.NVarChar);
-	            command.Parameters["key"].Value = key;
+                // set the filter value
+                command.Parameters.Add("key", SqlDbType.NVarChar);
+                command.Parameters["key"].Value = key;
 
-				var content = command.ExecuteScalar()?.ToString();
+                var content = command.ExecuteScalar()?.ToString();
 
                 if (content == null)
                 {
@@ -83,8 +104,8 @@ namespace Signals.Aspects.Configuration.MsSql
                 var valResults = new List<ValidationResult>();
 
                 if (Validator.TryValidateObject(instance, valContext, valResults, true)) return instance;
-	            throw new Exception(string.Join(Environment.NewLine, valResults.Select(x => x.ErrorMessage)));
-			}
+                throw new Exception(string.Join(Environment.NewLine, valResults.Select(x => x.ErrorMessage)));
+            }
         }
 
         /// <summary>
@@ -111,11 +132,9 @@ namespace Signals.Aspects.Configuration.MsSql
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        JOIN sys.schemas s 
-	                        ON (t.schema_id = s.schema_id) 
-	                        WHERE s.name = 'dbo' AND t.name = '{TableName}'
+	                        WHERE t.name = '{TableName}'
                         ) 
-                        CREATE TABLE dbo.[{TableName}]
+                        CREATE TABLE [{TableName}]
                         (
                             [Id] INT IDENTITY(1,1) NOT NULL, 
                             [{KeyColumnName}] NVARCHAR(MAX) NOT NULL, 
@@ -134,10 +153,10 @@ namespace Signals.Aspects.Configuration.MsSql
                         IF NOT EXISTS 
                         (	
                             SELECT * 
-	                        FROM dbo.[{TableName}] tbl
+	                        FROM [{TableName}] tbl
 	                        WHERE tbl.[{KeyColumnName}] = '{key}'
                         ) 
-                        INSERT INTO dbo.[{TableName}]
+                        INSERT INTO [{TableName}]
                         (
                             [{KeyColumnName}],
                             [{ValueColumnName}]
@@ -154,21 +173,6 @@ namespace Signals.Aspects.Configuration.MsSql
 
                 connection.Close();
             }
-        }
-    }
-
-    public class DefaultMsSqlConfigurationProvider : MsSqlConfigurationProvider
-    {
-        /// <summary>
-        /// Creates default MSSQL Configuration provider
-        /// </summary>
-        /// <param name="connectionString"></param>
-        public DefaultMsSqlConfigurationProvider(string connectionString)
-        {
-            ConnectionString = connectionString;
-            TableName = "Configuration";
-            KeyColumnName = "Key";
-            ValueColumnName = "Value";
         }
     }
 }

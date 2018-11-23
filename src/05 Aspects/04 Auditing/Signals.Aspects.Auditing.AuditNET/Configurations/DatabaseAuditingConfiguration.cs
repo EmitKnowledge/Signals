@@ -13,5 +13,13 @@ namespace Signals.Aspects.Auditing.AuditNET.Configurations
         /// The database table where the audit logs are stored
         /// </summary>
         public string TableName { get; set; }
+
+        /// <summary>
+        /// Default CTOR
+        /// </summary>
+        public DatabaseAuditingConfiguration()
+        {
+            TableName = "AuditEntry";
+        }
     }
 }

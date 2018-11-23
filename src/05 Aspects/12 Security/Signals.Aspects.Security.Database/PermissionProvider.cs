@@ -18,6 +18,7 @@ namespace Signals.Aspects.Security.Database
         public PermissionProvider(DatabaseSecurityConfiguration configuration)
         {
             Configuration = configuration;
+            CreatePermissionsTableIfNotExist(configuration);
         }
 
         /// <summary>
@@ -37,13 +38,13 @@ namespace Signals.Aspects.Security.Database
                         IF EXISTS 
                         (
                             SELECT * 
-                            FROM dbo.[{Configuration.TableName}] permission 
+                            FROM [{Configuration.TableName}] permission 
                             WHERE permission.Feature = @Feature AND
                                   permission.[User] = @User
                         )
-                        UPDATE dbo.[{Configuration.TableName}] SET HasAccess = {sqlHasAccess}
+                        UPDATE [{Configuration.TableName}] SET HasAccess = {sqlHasAccess}
                         ELSE
-                        INSERT INTO dbo.[{Configuration.TableName}]([User], Feature, HasAccess) 
+                        INSERT INTO [{Configuration.TableName}]([User], Feature, HasAccess) 
                         VALUES (@User, @Feature, {sqlHasAccess})
                     ";
                 var command = new SqlCommand(sql, connection);
@@ -70,13 +71,13 @@ namespace Signals.Aspects.Security.Database
                         IF EXISTS 
                         (
                             SELECT *
-                            FROM dbo.[{Configuration.TableName}] permission 
+                            FROM [{Configuration.TableName}] permission 
                             WHERE permission.Feature = @Feature AND
                                   permission.[Role] = @Role
                         )
-                        UPDATE dbo.[{Configuration.TableName}] SET HasAccess = {sqlHasAccess}
+                        UPDATE [{Configuration.TableName}] SET HasAccess = {sqlHasAccess}
                         ELSE
-                        INSERT INTO dbo.[{Configuration.TableName}]([Role], Feature, HasAccess) 
+                        INSERT INTO [{Configuration.TableName}]([Role], Feature, HasAccess) 
                         VALUES (@Role, @Feature, {sqlHasAccess})
                     ";
                 connection.Open();
@@ -99,7 +100,7 @@ namespace Signals.Aspects.Security.Database
             {
                 var sql =
                     $@"
-                        DELETE FROM dbo.[{Configuration.TableName}] WHERE [User] = @User AND Feature = @Feature
+                        DELETE FROM [{Configuration.TableName}] WHERE [User] = @User AND Feature = @Feature
                     ";
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
@@ -121,7 +122,7 @@ namespace Signals.Aspects.Security.Database
             {
                 var sql =
                     $@"
-                        DELETE FROM dbo.[{Configuration.TableName}] WHERE [Role] = @Role AND Feature = @Feature
+                        DELETE FROM [{Configuration.TableName}] WHERE [Role] = @Role AND Feature = @Feature
                     ";
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
@@ -148,13 +149,13 @@ namespace Signals.Aspects.Security.Database
                 var sql =
                     @"
                         IF TYPE_ID(N'UserRolesType') IS NULL
-                        CREATE TYPE [dbo].[UserRolesType] AS TABLE
+                        CREATE TYPE [UserRolesType] AS TABLE
                         (
                             Name NVARCHAR(MAX)
                         )
 
                         SELECT COUNT(*)
-                        FROM dbo.Permission p
+                        FROM Permission p
                         WHERE p.Feature = @Feature AND
                         (
 	                        (
@@ -162,7 +163,7 @@ namespace Signals.Aspects.Security.Database
 		                        p.HasAccess = 1 AND 
 		                        (
 			                        SELECT COUNT(*) 
-			                        FROM dbo.Permission p1 
+			                        FROM Permission p1 
 			                        WHERE p1.[User] = @User AND 
 			                        p1.Feature = @Feature AND 
 			                        p1.HasAccess = 0
@@ -186,13 +187,46 @@ namespace Signals.Aspects.Security.Database
                 {
                     Value = userRolesTable,
                     ParameterName = "UserRoles",
-                    TypeName = "[dbo].[UserRolesType]"
+                    TypeName = "[UserRolesType]"
                 };
                 command.Parameters.Add(param);
                 command.Parameters.AddWithValue("Feature", feature);
                 command.Parameters.AddWithValue("User", userName);
 
                 return (int)command.ExecuteScalar() > 0;
+            }
+        }
+
+        /// <summary>
+        /// Ensures that table for the permission entries exists in the database
+        /// </summary>
+        /// <param name="databaseConfiguration"></param>
+        private void CreatePermissionsTableIfNotExist(DatabaseSecurityConfiguration databaseConfiguration)
+        {
+            using (var connection = new SqlConnection(databaseConfiguration.ConnectionString))
+            {
+                connection.Open();
+
+                var sql =
+                    $@"
+                        IF NOT EXISTS 
+                        (	
+                            SELECT * 
+	                        FROM sys.tables t 
+	                        WHERE AND t.name = '{databaseConfiguration.TableName}'
+                        ) 
+                        CREATE TABLE [{databaseConfiguration.TableName}]
+                        (
+                            [Id] [int] IDENTITY(1,1) NOT NULL,
+	                        [User] [nvarchar](max) NULL,
+	                        [Role] [nvarchar](max) NULL,
+	                        [Feature] [nvarchar](max) NOT NULL,
+	                        [HasAccess] [bit] NOT NULL
+                        )
+                    ";
+
+                var command = new SqlCommand(sql, connection);
+                command.ExecuteNonQuery();
             }
         }
     }
