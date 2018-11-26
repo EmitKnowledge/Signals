@@ -3,45 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Signals.Core.Extensions.ImportExport.Configuration.Export;
 
-namespace Signals.Core.Extensions.ImportExport.Extensions
+namespace Signals.Core.Extensions.Import.Extensions
 {
     internal static class CsvExtensions
     {
-        public static MemoryStream Export<TData>(ExportConfiguration<TData> exportConfiguration, List<TData> data)
-        {
-            using (var pck = new ExcelPackage())
-            {
-                // Create the worksheet
-                var sheet = pck.Workbook.Worksheets.Add(exportConfiguration.FileName);
-
-                // Execute the func
-                var headers = exportConfiguration.DataMapper.Keys.ToList();
-
-                // Set columns headers
-                for (var i = 0; i < headers.Count; i++)
-                {
-                    sheet.Cells[1, i + 1].Value = headers[i];
-                }
-
-                // Fill the data
-                if (data.Any())
-                {
-                    var loadedData = data.Select(x => exportConfiguration.DataMapper.Values.Select(y => y(x)).ToArray()).ToList();
-                    sheet.Cells["A2"].LoadFromArrays(loadedData);
-                }
-
-                // Create the file stream
-                var stream = new MemoryStream(EpplusCsvConverter.ConvertToCsv(pck))
-                {
-                    Position = 0
-                };
-
-                return stream;
-            }
-        }
-
         private static class EpplusCsvConverter
         {
             private static string DuplicateTicksForSql(string s)

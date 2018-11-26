@@ -1,7 +1,7 @@
 ﻿using Signals.Core.Processes.Import;
 using System.IO;
 
-namespace Signals.Core.Extensions.ImportExport.Import.Excel
+namespace Signals.Core.Extensions.Import.Import.Excel
 {
     /// <summary>
     /// Represents process for importing data of type <see cref="TResponse"/> from excel stream

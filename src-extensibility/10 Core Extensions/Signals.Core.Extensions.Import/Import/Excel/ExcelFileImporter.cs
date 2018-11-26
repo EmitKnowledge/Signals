@@ -1,10 +1,10 @@
 ﻿using Signals.Core.Processes.Import;
-using Signals.Core.Extensions.ImportExport.Configuration.Import;
-using Signals.Core.Extensions.ImportExport.Extensions;
+using Signals.Core.Extensions.Import.Configuration;
 using Signals.Core.Processing.Results;
 using System.IO;
+using Signals.Core.Extensions.Import.Extensions;
 
-namespace Signals.Core.Extensions.ImportExport.Import.Excel
+namespace Signals.Core.Extensions.Import.Import.Excel
 {
     /// <summary>
     /// File importer implementation for excel files

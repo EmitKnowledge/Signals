@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Signals.Core.Extensions.ImportExport.Configuration.Import
+namespace Signals.Core.Extensions.Import.Configuration
 {
     /// <summary>
     /// Represents importing configuration model

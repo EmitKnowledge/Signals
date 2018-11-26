@@ -1,4 +1,4 @@
-﻿namespace Signals.Core.Extensions.ImportExport.Configuration.Import
+﻿namespace Signals.Core.Extensions.Import.Configuration
 {
     /// <summary>
     /// Represents excel importing configuration model

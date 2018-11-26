@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Management.ServiceBus.Fluent" Version="1.17.0" />
     <PackageReference Include="Microsoft.Azure.ServiceBus" Version="3.1.1" />
-    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="0.2.0" />
+    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="0.5.0" />
   </ItemGroup>
 
 </Project>

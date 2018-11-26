@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SelectPdf;
+using Signals.Core.Extensions.Export.Configuration;
 using PdfPageOrientation = SelectPdf.PdfPageOrientation;
 using PdfPageSize = SelectPdf.PdfPageSize;
-using Signals.Core.Extensions.ImportExport.Configuration.Export;
 
-namespace Signals.Core.Extensions.ImportExport.Extensions
+namespace Signals.Core.Extensions.Export.Extensions
 {
     internal static class PdfExtensions
     {

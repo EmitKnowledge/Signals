@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using SelectPdf;
 
-namespace Signals.Core.Extensions.ImportExport.Configuration.Export
+namespace Signals.Core.Extensions.Export.Configuration
 {
     /// <summary>
     /// Represents exporting configuration model for pdf exports

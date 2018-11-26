@@ -12,7 +12,7 @@
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Owin" Version="1.0.0" />
-    <PackageReference Include="Signals.Aspects.Auth" Version="0.2.0" />
+    <PackageReference Include="Signals.Aspects.Auth" Version="0.5.0" />
   </ItemGroup>
 
   <ItemGroup>

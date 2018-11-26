@@ -1,5 +1,4 @@
-﻿using Signals.Aspects.Bootstrap;
-using Signals.Aspects.DI;
+﻿using Signals.Aspects.DI;
 using Signals.Aspects.DI.Attributes;
 using Signals.Aspects.DI.SimpleInjector;
 using Signals.Tests.DI.Services;

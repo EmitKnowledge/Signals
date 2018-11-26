@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Signals.Core.Extensions.ImportExport.Configuration.Export
+namespace Signals.Core.Extensions.Export.Configuration
 {
     /// <summary>
     /// Represents exporing configuration model
