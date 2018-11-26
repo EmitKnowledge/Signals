@@ -58,7 +58,7 @@ namespace Signals.Clients.NetCoreWeb
                 opts.Cookie.HttpOnly = true;
             });
 
-            ApplicationInformation
+            ApplicationConfiguration
                 .UseProvider(new FileConfigurationProvider
                 {
                     Path = Environment.CurrentDirectory,
@@ -66,7 +66,7 @@ namespace Signals.Clients.NetCoreWeb
                     ReloadOnAccess = false
                 });
 
-            WebInformation
+            WebApplicationConfiguration
                 .UseProvider(new FileConfigurationProvider
                 {
                     Path = @"E:\repos\Emit.Knowledge.Signals\trunk\src\15 Clients\Signals.Clients.MvcWeb",

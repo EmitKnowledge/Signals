@@ -61,7 +61,7 @@ namespace Signals.Clients.Mvc5
             var registrationService = new Signals.Aspects.DI.SimpleInjector.RegistrationService();
             //var registrationService = new Signals.Aspects.DI.Autofac.RegistrationService();
 
-            ApplicationInformation
+            ApplicationConfiguration
                 .UseProvider(new FileConfigurationProvider
                 {
                     Path = @"E:\repos\Emit.Knowledge.Signals\src\15 Clients\Signals.Clients.MvcWeb",
@@ -69,7 +69,7 @@ namespace Signals.Clients.Mvc5
                     ReloadOnAccess = false
                 });
 
-            WebInformation
+            WebApplicationConfiguration
                 .UseProvider(new FileConfigurationProvider
                 {
                     Path = @"E:\repos\Emit.Knowledge.Signals\src\15 Clients\Signals.Clients.MvcWeb",

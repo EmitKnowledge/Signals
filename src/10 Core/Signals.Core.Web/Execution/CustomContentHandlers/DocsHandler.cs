@@ -38,12 +38,12 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
             {
                 Info = new OpenApiInfo
                 {
-                    Version = ApplicationInformation.Instance.ApplicationVersion,
-                    Title = ApplicationInformation.Instance.ApplicationName,
+                    Version = ApplicationConfiguration.Instance.ApplicationVersion,
+                    Title = ApplicationConfiguration.Instance.ApplicationName,
                 },
                 Servers = new List<OpenApiServer>
                 {
-                    new OpenApiServer { Url = WebInformation.Instance.WebUrl }
+                    new OpenApiServer { Url = WebApplicationConfiguration.Instance.WebUrl }
                 },
                 Paths = new OpenApiPaths()
             };

@@ -429,12 +429,11 @@
     <Reference Include="Signals.Aspects.Storage.Database, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Storage.Database.0.2.0\lib\netstandard2.0\Signals.Aspects.Storage.Database.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Core, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Core.0.2.1\lib\netstandard2.0\Signals.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Signals.Core, Version=0.2.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Core.0.2.4\lib\netstandard2.0\Signals.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Core.Web, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Core.Web.0.2.1\lib\net461\Signals.Core.Web.dll</HintPath>
+    <Reference Include="Signals.Core.Web, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Core.Web.0.2.3\lib\net461\Signals.Core.Web.dll</HintPath>
     </Reference>
     <Reference Include="SimpleInjector, Version=4.4.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\SimpleInjector.4.4.0\lib\net45\SimpleInjector.dll</HintPath>

@@ -7,18 +7,19 @@ using Signals.Core.Business.Distributed;
 using Signals.Core.Business.Recurring;
 using Signals.Core.Common.Instance;
 using Signals.Core.Configuration;
+using Signals.Core.Configuration.Bootstrapping;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Signals.Core.Background.Configuration
+namespace Signals.Core.Background.Configuration.Bootstrapping
 {
     /// <summary>
     /// Aspects configuration
     /// </summary>
-    public class BackgroundApplicationConfiguration : ApplicationConfiguration
+    public class BackgroundApplicationBootstrapConfiguration : ApplicationBootstrapConfiguration
     {
         /// <summary>
         /// Sync logs provider

@@ -41,7 +41,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             }
             catch (Exception ex)
             {
-                if (ApplicationInformation.Instance?.CriticalConfiguration != null)
+                if (ApplicationConfiguration.Instance?.CriticalConfiguration != null)
                 {
                     string InterpolateException(string originalString)
                     {
@@ -66,10 +66,10 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
 
                             if (!email.IsNull())
                             {
-                                var from = ApplicationInformation.Instance.ApplicationEmail;
+                                var from = ApplicationConfiguration.Instance.ApplicationEmail;
                                 var to = email;
-                                var subject = InterpolateException(ApplicationInformation.Instance.CriticalConfiguration.Subject);
-                                var body = InterpolateException(ApplicationInformation.Instance.CriticalConfiguration.Body);
+                                var subject = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Subject);
+                                var body = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Body);
 
                                 var stream = new MemoryStream();
                                 var writer = new StreamWriter(stream);

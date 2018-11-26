@@ -7,7 +7,7 @@ namespace Signals.Core.Business.Recurring
     public interface ISyncLogProvider
     {
         /// <summary>
-        /// Insert sync task result in database
+        /// Insert sync task result
         /// </summary>
         /// <param name="log"></param>
         void CreateLog(SyncTaskLog log);
