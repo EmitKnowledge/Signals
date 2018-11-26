@@ -25,16 +25,17 @@ namespace Signals.Core.Background.Configuration
         /// </summary>
         public Func<ISyncLogProvider> SyncLogProvider { get; set; }
 
-        /// <summary>
-        /// Bootstrapping entry
-        /// </summary>
-        /// <param name="entryAssembly"></param>
-        /// <returns></returns>
-        public IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
+		/// <summary>
+		/// Bootstrapping entry
+		/// </summary>
+		/// <param name="scanAssemblies"></param>
+		/// <returns></returns>
+		public IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
             if (scanAssemblies == null)
             {
                 StackTrace stackTrace = new StackTrace();
+				// TODO: workaround for tests
                 var assembly = stackTrace.GetFrame(1).GetMethod().DeclaringType.Assembly;
 
                 scanAssemblies = new Assembly[] { assembly };

@@ -162,10 +162,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Localization.Database", "..\05 Aspects\06 Localization\Signals.Aspects.Localization.Database\Signals.Aspects.Localization.Database\Signals.Aspects.Localization.Database.csproj", "{2BB23E8D-1F0F-489E-99E4-771AB60891A6}"
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

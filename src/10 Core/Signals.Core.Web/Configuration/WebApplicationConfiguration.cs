@@ -34,12 +34,12 @@ namespace Signals.Core.Web.Configuration
             ScanAssemblies = new List<Assembly>();
         }
 
-        /// <summary>
-        /// Config entry point
-        /// </summary>
-        /// <param name="entryAssembly"></param>
-        /// <returns></returns>
-        internal IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
+		/// <summary>
+		/// Config entry point
+		/// </summary>
+		/// <param name="scanAssemblies"></param>
+		/// <returns></returns>
+		internal IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
             return Resolve(scanAssemblies);
         }
@@ -53,7 +53,7 @@ namespace Signals.Core.Web.Configuration
             RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
             RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
             RegistrationService.Register<WebMediator>();
-            RegistrationService.Register<List<ResponseHeaderAttribute>>(ResponseHeaders);
+            RegistrationService.Register(ResponseHeaders);
 
             return base.Resolve(scanAssemblies);
         }

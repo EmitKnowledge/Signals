@@ -30,4 +30,8 @@
     <PackageReference Include="HtmlSanitizer" Version="4.0.197" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Processes\" />
+  </ItemGroup>
+
 </Project>

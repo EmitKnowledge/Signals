@@ -38,7 +38,8 @@ namespace Signals.Core.Web.Extensions
             var ass = AppDomain.CurrentDomain.GetAssemblies();
             // get entry assembly
             StackTrace stackTrace = new StackTrace();
-            var assembly = stackTrace.GetFrame(1).GetMethod().DeclaringType.Assembly;
+	        // TODO: workaround for tests
+			var assembly = stackTrace.GetFrame(1).GetMethod().DeclaringType.Assembly;
 
             // configure web applicaiton
             var configuration = new WebApplicationConfiguration();
