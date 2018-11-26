@@ -1,4 +1,4 @@
-﻿using Signals.Aspects.Bootstrap;
+﻿using Signals.Aspects.DI;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;

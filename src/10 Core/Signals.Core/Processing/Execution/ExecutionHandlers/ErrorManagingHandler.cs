@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Signals.Aspects.Bootstrap;
+using Signals.Aspects.DI;
 using Signals.Aspects.ErrorHandling;
 using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;

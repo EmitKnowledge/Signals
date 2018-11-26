@@ -1,4 +1,4 @@
-﻿using Signals.Aspects.Bootstrap;
+﻿using Signals.Aspects.DI;
 using Signals.Aspects.Logging;
 using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;

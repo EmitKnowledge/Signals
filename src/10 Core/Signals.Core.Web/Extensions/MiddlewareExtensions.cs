@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Signals.Aspects.Bootstrap;
+using Signals.Aspects.DI;
 using Signals.Core.Web.Configuration;
 using System;
 using System.Threading.Tasks;

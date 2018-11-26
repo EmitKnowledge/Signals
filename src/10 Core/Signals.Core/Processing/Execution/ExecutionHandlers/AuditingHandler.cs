@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Signals.Aspects.Auditing;
-using Signals.Aspects.Bootstrap;
+using Signals.Aspects.DI;
 using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;
 using Signals.Core.Configuration;

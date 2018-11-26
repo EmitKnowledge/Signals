@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
-using Signals.Aspects.Bootstrap;
+using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Input.Http;
 using System.Collections.Generic;

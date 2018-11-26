@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
-using Signals.Aspects.Bootstrap;
+using Signals.Aspects.DI;
 using Signals.Aspects.Caching;
 using Signals.Aspects.Caching.Entries;
 using Signals.Aspects.Caching.Enums;

@@ -1,5 +1,5 @@
 ﻿using Signals.Aspects.BackgroundProcessing;
-using Signals.Aspects.Bootstrap;
+using Signals.Aspects.DI;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;

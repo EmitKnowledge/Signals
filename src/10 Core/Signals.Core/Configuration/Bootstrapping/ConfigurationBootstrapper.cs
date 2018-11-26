@@ -1,10 +1,9 @@
 ﻿using Signals.Aspects.Auditing;
 using Signals.Aspects.Auth;
 using Signals.Aspects.BackgroundProcessing;
-using Signals.Aspects.Bootstrap;
+using Signals.Aspects.DI;
 using Signals.Aspects.Caching;
 using Signals.Aspects.CommunicationChannels;
-using Signals.Aspects.DI;
 using Signals.Aspects.ErrorHandling;
 using Signals.Aspects.Localization;
 using Signals.Aspects.Logging;

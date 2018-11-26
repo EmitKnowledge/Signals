@@ -1,12 +1,9 @@
 ﻿using Signals.Aspects.BackgroundProcessing;
-using Signals.Aspects.Bootstrap;
-using Signals.Aspects.CommunicationChannels;
 using Signals.Aspects.DI;
+using Signals.Aspects.CommunicationChannels;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Distributed;
 using Signals.Core.Processes.Recurring;
-using Signals.Core.Common.Instance;
-using Signals.Core.Configuration;
 using Signals.Core.Configuration.Bootstrapping;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;

@@ -1,4 +1,4 @@
-﻿using Signals.Aspects.Bootstrap;
+﻿using Signals.Aspects.DI;
 
 namespace Signals.Core.Processing.Specifications
 {

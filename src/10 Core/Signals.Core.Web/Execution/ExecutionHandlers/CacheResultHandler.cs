@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Signals.Aspects.Bootstrap;
+using Signals.Aspects.DI;
 using Signals.Aspects.Caching;
 using Signals.Aspects.Caching.Entries;
 using Signals.Aspects.Caching.Enums;

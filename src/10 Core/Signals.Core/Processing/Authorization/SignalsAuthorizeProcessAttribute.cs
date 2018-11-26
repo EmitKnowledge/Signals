@@ -1,5 +1,5 @@
 ﻿using Signals.Aspects.Auth;
-using Signals.Aspects.Bootstrap;
+using Signals.Aspects.DI;
 using System;
 using System.Linq;
 

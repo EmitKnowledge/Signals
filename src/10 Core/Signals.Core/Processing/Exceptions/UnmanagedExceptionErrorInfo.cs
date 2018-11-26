@@ -1,4 +1,4 @@
-﻿using Signals.Aspects.Bootstrap;
+﻿using Signals.Aspects.DI;
 using Signals.Aspects.Localization;
 using System;
 using System.Runtime.Serialization;
