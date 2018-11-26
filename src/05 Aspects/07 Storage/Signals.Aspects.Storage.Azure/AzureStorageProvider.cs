@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Signals.Aspects.Storage.Azure.Configurations;
 using Signals.Aspects.Storage.Helpers;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -33,6 +34,7 @@ namespace Signals.Aspects.Storage.Azure
         /// <param name="path"></param>
         /// <param name="name"></param>
         /// <returns></returns>
+        [SuppressMessage("Type or member is obsolete", "CS0612")]
         public Stream Get(string path, string name)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
@@ -74,6 +76,7 @@ namespace Signals.Aspects.Storage.Azure
         /// <param name="name"></param>
         /// <param name="inStream"></param>
         /// <returns></returns>
+        [SuppressMessage("Type or member is obsolete", "CS0612")]
         public async Task Store(string path, string name, Stream inStream)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));

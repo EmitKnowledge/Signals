@@ -85,7 +85,7 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// <summary>
         /// Synchronization logging provider
         /// </summary>
-        public ISyncLogProvider SyncLogProvider { get; set; }
+        protected ISyncLogProvider SyncLogProvider { get; set; }
 
         /// <summary>
         /// All loaded Signals types
@@ -175,7 +175,7 @@ namespace Signals.Core.Configuration.Bootstrapping
                     var instance = Activator.CreateInstance(type, args) as TDefinition;
                     return instance;
                 }
-                catch (Exception ex)
+                catch
                 {
                 }
             }

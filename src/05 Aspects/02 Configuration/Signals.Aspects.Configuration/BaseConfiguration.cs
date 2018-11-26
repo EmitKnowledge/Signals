@@ -14,10 +14,12 @@ namespace Signals.Aspects.Configuration
             get
             {
                 if (_instance == null) throw new Exception("Please set a provider before accessing the instnace");
-				if (_instance.Provider.ReloadOnAccess)
-				{
-					_instance = _instance.Provider.Reload<T>(_instance.Key) as T;
-				}
+                if (_instance.Provider.ReloadOnAccess)
+                {
+                    var provider = _instance.Provider;
+                    _instance = _instance.Provider.Reload<T>(_instance.Key) as T;
+                    _instance.Provider = provider;
+                }
 
                 return _instance;
             }

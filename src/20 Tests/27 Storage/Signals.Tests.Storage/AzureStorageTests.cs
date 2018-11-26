@@ -23,11 +23,11 @@ namespace Signals.Tests.Storage
             ConnectionString = "DefaultEndpointsProtocol=https;AccountName=appboilerplate;AccountKey=VkazttTCMXvjF7joJlHrACZsDV8uhjJ3pe7Aa9vK2VvCLVwP0a7VEMKGWQv/zs0AMpToHp8fbIHoYaYyqqf7yg==;EndpointSuffix=core.windows.net"
         };
 
-        private async Task Lock(Func<Task> action)
+        private Task Lock(Func<Task> action)
         {
             lock (_inputFileName)
             {
-                action();
+                return action();
             }
         }
 
@@ -41,7 +41,7 @@ namespace Signals.Tests.Storage
 
                 IStorageProvider storage = new AzureStorageProvider(Configuration);
 
-                using (var source = new FileStream(inputFile.Path, FileMode.Open))
+                using (var source = new FileStream(inputFile.Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     await storage.Store(outputFile.Dir, outputFile.Name, source);
                     var outFile = storage.Get(outputFile.Dir, outputFile.Name);
@@ -63,7 +63,7 @@ namespace Signals.Tests.Storage
 
                 byte[] fileData = null;
 
-                using (var file = new FileStream(inputFile.Path, FileMode.Open))
+                using (var file = new FileStream(inputFile.Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     fileData = new byte[file.Length];
                     file.Read(fileData, 0, (int)file.Length);
@@ -127,7 +127,7 @@ namespace Signals.Tests.Storage
                 var outputFile = new TestFile(_outputDirectoryPath, _outputFileName, 5);
 
                 IStorageProvider storage = new AzureStorageProvider(Configuration);
-                using (var source = File.OpenRead(inputFile.Path))
+                using (var source = new FileStream(inputFile.Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     await storage.Store(outputFile.Dir, outputFile.Name, source);
 

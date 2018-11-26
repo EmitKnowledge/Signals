@@ -22,11 +22,11 @@ namespace Signals.Tests.Storage
             ConnectionString = "Data Source=sql.emitknowledge.com;Initial Catalog=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e"
         };
 
-        private async Task Lock(Func<Task> action)
+        private Task Lock(Func<Task> action)
         {
             lock (_inputFileName)
             {
-                action();
+                return action();
             }
         }
 
@@ -40,7 +40,7 @@ namespace Signals.Tests.Storage
 
                 IStorageProvider storage = new DatabaseStorageProvider(Configuration);
 
-                using (var source = new FileStream(inputFile.Path, FileMode.Open))
+                using (var source = new FileStream(inputFile.Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     await storage.Store(outputFile.Dir, outputFile.Name, source);
                     var outFile = storage.Get(outputFile.Dir, outputFile.Name);
@@ -61,7 +61,7 @@ namespace Signals.Tests.Storage
 
                 byte[] fileData = null;
 
-                using (var file = new FileStream(inputFile.Path, FileMode.Open))
+                using (var file = new FileStream(inputFile.Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     fileData = new byte[file.Length];
                     file.Read(fileData, 0, (int)file.Length);
@@ -122,7 +122,7 @@ namespace Signals.Tests.Storage
                 var outputFile = new TestFile(_outputDirectoryPath, _outputFileName, 5);
 
                 IStorageProvider storage = new DatabaseStorageProvider(Configuration);
-                using (var source = File.OpenRead(inputFile.Path))
+                using (var source = new FileStream(inputFile.Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     await storage.Store(outputFile.Dir, outputFile.Name, source);
 

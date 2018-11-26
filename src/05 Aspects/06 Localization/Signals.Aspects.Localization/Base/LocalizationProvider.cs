@@ -25,7 +25,7 @@ namespace Signals.Aspects.Localization.Base
         public LocalizationProvider(ILocalizationDataProvider provider)
         {
             Provider = provider;
-            Load();
+            Reload();
         }
 
         /// <summary>

@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Business\**" />
+    <EmbeddedResource Remove="Business\**" />
+    <None Remove="Business\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.8.10" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.197" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.1" />
@@ -19,19 +25,15 @@
     <PackageReference Include="Signals.Aspects.Bootstrap" Version="0.2.5" />
     <PackageReference Include="Signals.Aspects.Caching" Version="0.2.0.1" />
     <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="0.2.0" />
-    <PackageReference Include="Signals.Aspects.Configuration" Version="0.2.0" />
+    <PackageReference Include="Signals.Aspects.Configuration" Version="0.2.2" />
     <PackageReference Include="Signals.Aspects.DI" Version="0.2.0" />
     <PackageReference Include="Signals.Aspects.ErrorHandling" Version="0.2.0" />
-    <PackageReference Include="Signals.Aspects.Localization" Version="0.2.0" />
+    <PackageReference Include="Signals.Aspects.Localization" Version="0.2.1" />
     <PackageReference Include="Signals.Aspects.Logging" Version="0.2.0" />
     <PackageReference Include="Signals.Aspects.Security" Version="0.2.0" />
     <PackageReference Include="Signals.Aspects.Storage" Version="0.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.197" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Business\" />
   </ItemGroup>
 
 </Project>

@@ -24,7 +24,7 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         /// <summary>
         /// Sync logs provider
         /// </summary>
-        public Func<ISyncLogProvider> SyncLogProvider { get; set; }
+        public new Func<ISyncLogProvider> SyncLogProvider { get; set; }
 
 		/// <summary>
 		/// Bootstrapping entry

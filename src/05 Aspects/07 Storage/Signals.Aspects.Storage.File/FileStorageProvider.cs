@@ -1,8 +1,9 @@
-﻿using Signals.Aspects.Storage.Helpers;
+﻿using Signals.Aspects.Storage.File.Configurations;
+using Signals.Aspects.Storage.Helpers;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
-using System;
-using Signals.Aspects.Storage.File.Configurations;
 
 namespace Signals.Aspects.Storage.File
 {
@@ -10,7 +11,7 @@ namespace Signals.Aspects.Storage.File
     /// File storage provider
     /// </summary>
     public class FileStorageProvider : IStorageProvider
-    {        
+    {
         /// <summary>
         /// File configuration
         /// </summary>
@@ -24,13 +25,14 @@ namespace Signals.Aspects.Storage.File
         {
             Configuration = configuration ?? new FileStorageConfiguration();
         }
-        
+
         /// <summary>
         /// Retrieve stored file
         /// </summary>
         /// <param name="path"></param>
         /// <param name="name"></param>
         /// <returns></returns>
+        [SuppressMessage("Type or member is obsolete", "CS0612")]
         public Stream Get(string path, string name)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
@@ -41,7 +43,7 @@ namespace Signals.Aspects.Storage.File
 
             if (file.Exists)
             {
-                using (var fileSteram = new FileStream(filePath, FileMode.Open))
+                using (var fileSteram = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     return Configuration.Decrypt(fileSteram);
                 }
@@ -49,38 +51,39 @@ namespace Signals.Aspects.Storage.File
             else return null;
         }
 
-		/// <summary>
-		/// Remove stored file
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public Task Remove(string path, string name)
-		{
-			if (path == null) throw new ArgumentNullException(nameof(path));
-			if (name == null) throw new ArgumentNullException(nameof(name));
+        /// <summary>
+        /// Remove stored file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public Task Remove(string path, string name)
+        {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (name == null) throw new ArgumentNullException(nameof(name));
 
-			var filePath = Path.Combine(Configuration.RootPath, path, name);
-			var file = new FileInfo(filePath);
+            var filePath = Path.Combine(Configuration.RootPath, path, name);
+            var file = new FileInfo(filePath);
 
-			file.Delete();
-			while (file.Exists)
-			{
-				System.Threading.Thread.Sleep(100);
-				file.Refresh();
-			}
+            file.Delete();
+            while (file.Exists)
+            {
+                System.Threading.Thread.Sleep(100);
+                file.Refresh();
+            }
 
-			return Task.CompletedTask;
-		}
+            return Task.CompletedTask;
+        }
 
-		/// <summary>
-		/// Store file from stream
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="name"></param>
-		/// <param name="inStream"></param>
-		/// <returns></returns>
-		public async Task Store(string path, string name, Stream inStream)
+        /// <summary>
+        /// Store file from stream
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="name"></param>
+        /// <param name="inStream"></param>
+        /// <returns></returns>
+        [SuppressMessage("Type or member is obsolete", "CS0612")]
+        public async Task Store(string path, string name, Stream inStream)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             if (name == null) throw new ArgumentNullException(nameof(name));
@@ -98,7 +101,7 @@ namespace Signals.Aspects.Storage.File
                 }
             }
         }
-        
+
         /// <summary>
         /// Store file as bytes
         /// </summary>
@@ -117,7 +120,7 @@ namespace Signals.Aspects.Storage.File
                 await Store(path, name, stream);
             }
         }
-        
+
         /// <summary>
         /// Store file from location path
         /// </summary>

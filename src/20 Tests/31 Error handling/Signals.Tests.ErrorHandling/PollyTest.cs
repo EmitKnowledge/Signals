@@ -13,7 +13,7 @@ namespace Signals.Tests.ErrorHandling
         [InlineData(true, 10, 3, 10)]
         [InlineData(false, 10, 3, 3)]
         [InlineData(false, 10, 10, 10)]
-        public async void CircutBreakerPolicy_WhenException_Break(bool isPositive, int executionTimes, int retriesConfiguration, int expectedExecutions)
+        public void CircutBreakerPolicy_WhenException_Break(bool isPositive, int executionTimes, int retriesConfiguration, int expectedExecutions)
         {
             var policyRegistry = new StrategyBuilder();
             var timesExecuted = 0;
@@ -61,7 +61,7 @@ namespace Signals.Tests.ErrorHandling
         [InlineData(true, false, 3, 1)]
         [InlineData(false, true, 3, 4)]
         [InlineData(false, true, 10, 11)]
-        public async void RetryPolicy_WhenException_Retry(bool isPositive, bool expectedException, int retriesConfiguration, int expectedExecutions)
+        public void RetryPolicy_WhenException_Retry(bool isPositive, bool expectedException, int retriesConfiguration, int expectedExecutions)
         {
             var policyRegistry = new StrategyBuilder();
             var timesExecuted = 0;

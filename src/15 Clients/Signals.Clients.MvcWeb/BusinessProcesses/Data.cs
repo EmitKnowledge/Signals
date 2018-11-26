@@ -20,7 +20,6 @@ namespace Signals.Clients.MvcWeb.BusinessProcesses
 
     public class DataResponse : IDtoData
     {
-        private static int i = 0;
 
         public int Number { get; set; }
 

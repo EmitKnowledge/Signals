@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Signals.Aspects.Storage.Database
 {
@@ -33,6 +34,7 @@ namespace Signals.Aspects.Storage.Database
         /// <param name="path"></param>
         /// <param name="name"></param>
         /// <returns></returns>
+        [SuppressMessage("Type or member is obsolete", "CS0612")]
         public Stream Get(string path, string name)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
@@ -92,6 +94,7 @@ namespace Signals.Aspects.Storage.Database
         /// <param name="name"></param>
         /// <param name="inStream"></param>
         /// <returns></returns>
+        [SuppressMessage("Type or member is obsolete", "CS0612")]
         public Task Store(string path, string name, Stream inStream)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));

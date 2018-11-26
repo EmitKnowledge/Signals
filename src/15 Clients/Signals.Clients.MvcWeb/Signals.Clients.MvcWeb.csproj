@@ -390,11 +390,12 @@
     <Reference Include="Signals.Aspects.CommunicationChannels.ServiceBus, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.CommunicationChannels.ServiceBus.0.1.0\lib\netstandard2.0\Signals.Aspects.CommunicationChannels.ServiceBus.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Aspects.Configuration, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Configuration.0.2.0\lib\netstandard2.0\Signals.Aspects.Configuration.dll</HintPath>
+    <Reference Include="Signals.Aspects.Configuration, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Configuration.0.2.2\lib\netstandard2.0\Signals.Aspects.Configuration.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Signals.Aspects.Configuration.File, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Configuration.File.0.2.0\lib\netstandard2.0\Signals.Aspects.Configuration.File.dll</HintPath>
+    <Reference Include="Signals.Aspects.Configuration.File, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Configuration.File.0.2.2\lib\netstandard2.0\Signals.Aspects.Configuration.File.dll</HintPath>
     </Reference>
     <Reference Include="Signals.Aspects.DI, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.DI.0.2.0\lib\netstandard2.0\Signals.Aspects.DI.dll</HintPath>
@@ -408,11 +409,12 @@
     <Reference Include="Signals.Aspects.ErrorHandling.Polly, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.ErrorHandling.Polly.0.2.0\lib\netstandard2.0\Signals.Aspects.ErrorHandling.Polly.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Aspects.Localization, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Localization.0.2.0\lib\netstandard2.0\Signals.Aspects.Localization.dll</HintPath>
+    <Reference Include="Signals.Aspects.Localization, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Localization.0.2.1\lib\netstandard2.0\Signals.Aspects.Localization.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Aspects.Localization.File, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Localization.File.0.2.0\lib\netstandard2.0\Signals.Aspects.Localization.File.dll</HintPath>
+    <Reference Include="Signals.Aspects.Localization.File, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Localization.File.0.2.1\lib\netstandard2.0\Signals.Aspects.Localization.File.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Signals.Aspects.Logging, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Logging.0.2.0\lib\netstandard2.0\Signals.Aspects.Logging.dll</HintPath>
@@ -429,11 +431,11 @@
     <Reference Include="Signals.Aspects.Storage.Database, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Storage.Database.0.2.0\lib\netstandard2.0\Signals.Aspects.Storage.Database.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Core, Version=0.2.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Core.0.2.4\lib\netstandard2.0\Signals.Core.dll</HintPath>
+    <Reference Include="Signals.Core, Version=0.2.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Core.0.2.7\lib\netstandard2.0\Signals.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Core.Web, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Core.Web.0.2.3\lib\net461\Signals.Core.Web.dll</HintPath>
+    <Reference Include="Signals.Core.Web, Version=0.2.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\00 Solution\packages\Signals.Core.Web.0.2.7\lib\net461\Signals.Core.Web.dll</HintPath>
     </Reference>
     <Reference Include="SimpleInjector, Version=4.4.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\SimpleInjector.4.4.0\lib\net45\SimpleInjector.dll</HintPath>

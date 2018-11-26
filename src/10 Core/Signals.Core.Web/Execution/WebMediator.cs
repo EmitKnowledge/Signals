@@ -78,7 +78,7 @@ namespace Signals.Core.Web.Execution
         /// Handle the request
         /// </summary>
         /// <returns></returns>
-        public async Task<MiddlewareResult> Dispatch()
+        public MiddlewareResult Dispatch()
         {
             var httpContext = SystemBootstrapper.GetInstance<IHttpContextWrapper>();
 

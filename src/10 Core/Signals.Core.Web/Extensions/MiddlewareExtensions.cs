@@ -64,7 +64,7 @@ namespace Signals.Core.Web.Extensions
             // mediator middleware
             return app.Use(async (IOwinContext context, Func<Task> next) =>
             {
-                if (await mediator.Dispatch() != MiddlewareResult.StopExecutionAndStopMiddlewarePipe)
+                if (mediator.Dispatch() != MiddlewareResult.StopExecutionAndStopMiddlewarePipe)
                     await next.Invoke();
             });
         }
@@ -102,7 +102,7 @@ namespace Signals.Core.Web.Extensions
             // mediator middleware
             return app.Use(async (httpContext, next) =>
             {
-                if (await mediator.Dispatch() != MiddlewareResult.StopExecutionAndStopMiddlewarePipe)
+                if (mediator.Dispatch() != MiddlewareResult.StopExecutionAndStopMiddlewarePipe)
                     await next();
             });
         }
