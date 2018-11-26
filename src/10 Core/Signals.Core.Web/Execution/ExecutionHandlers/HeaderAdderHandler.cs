@@ -1,5 +1,5 @@
 ﻿using Signals.Aspects.Bootstrap;
-using Signals.Core.Business.Base;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Behaviour;

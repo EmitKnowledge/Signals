@@ -1,4 +1,4 @@
-﻿using Signals.Core.Business.Export;
+﻿using Signals.Core.Processes.Export;
 using Signals.Core.Extensions.ImportExport.Configuration.Export;
 using Signals.Core.Extensions.ImportExport.Export.Excel;
 using Signals.Core.Processing.Results;

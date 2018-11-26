@@ -1,5 +1,5 @@
-﻿using Signals.Core.Business.Api;
-using Signals.Core.Business.Business;
+﻿using Signals.Core.Processes.Api;
+using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Authorization;
 using Signals.Core.Processing.Results;
 using Signals.Core.Processing.Specifications;

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Signals.Core.Business.Base;
-using Signals.Core.Business.Distributed;
+using Signals.Core.Processes.Base;
+using Signals.Core.Processes.Distributed;
 using Signals.Core.Processing.Results;
 
 namespace Signals.Core.Processing.Execution.ExecutionHandlers

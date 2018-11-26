@@ -1,4 +1,4 @@
-﻿using Signals.Core.Business.Import;
+﻿using Signals.Core.Processes.Import;
 using System;
 using System.Collections.Generic;
 

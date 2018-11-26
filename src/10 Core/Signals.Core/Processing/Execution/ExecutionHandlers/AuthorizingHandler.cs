@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Signals.Core.Business.Base;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Authorization;
 using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Results;

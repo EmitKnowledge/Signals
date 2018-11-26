@@ -1,4 +1,4 @@
-﻿using Signals.Core.Business.Base;
+﻿using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Reflection;
 using System;

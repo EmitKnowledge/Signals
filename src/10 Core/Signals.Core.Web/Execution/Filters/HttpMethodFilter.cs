@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Signals.Core.Business.Api;
+using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Web.Http;
 

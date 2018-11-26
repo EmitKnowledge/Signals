@@ -1,4 +1,4 @@
-﻿using Signals.Core.Business.Export;
+﻿using Signals.Core.Processes.Export;
 using Signals.Core.Processing.Input;
 
 namespace Signals.Core.Extensions.ImportExport.Export.Pdf

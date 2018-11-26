@@ -6,7 +6,7 @@ using Signals.Aspects.Auth.Attributes;
 using Signals.Aspects.Auth.NetCore.Attributes;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Signals.Core.Business;
+using Signals.Core.Processes;
 
 namespace Signals.Clients.NetCoreWeb.Controllers
 {

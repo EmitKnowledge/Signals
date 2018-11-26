@@ -1,5 +1,5 @@
 ﻿using Ganss.XSS;
-using Signals.Core.Business.Api;
+using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Behaviour;
 using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;

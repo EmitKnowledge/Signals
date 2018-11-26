@@ -1,5 +1,5 @@
 ﻿using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
-using Signals.Core.Business.Recurring;
+using Signals.Core.Processes.Recurring;
 using Signals.Core.Processing.Results;
 using System;
 using System.Collections.Generic;

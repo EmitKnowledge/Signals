@@ -1,5 +1,5 @@
 ﻿using Signals.Aspects.Bootstrap;
-using Signals.Core.Business.Base;
+using Signals.Core.Processes.Base;
 using System;
 using Signals.Core.Processing.Results;
 

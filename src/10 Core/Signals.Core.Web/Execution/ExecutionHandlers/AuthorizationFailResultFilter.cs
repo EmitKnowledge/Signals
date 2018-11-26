@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Signals.Core.Business.Base;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;

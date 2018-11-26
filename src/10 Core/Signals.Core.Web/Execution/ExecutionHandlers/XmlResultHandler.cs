@@ -7,9 +7,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Signals.Core.Common.Serialization;
-using Signals.Core.Business.Base;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
-using Signals.Core.Business.Api;
+using Signals.Core.Processes.Api;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers
 {

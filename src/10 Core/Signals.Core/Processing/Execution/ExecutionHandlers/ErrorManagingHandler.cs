@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Signals.Aspects.Bootstrap;
 using Signals.Aspects.ErrorHandling;
-using Signals.Core.Business.Base;
+using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Results;
 

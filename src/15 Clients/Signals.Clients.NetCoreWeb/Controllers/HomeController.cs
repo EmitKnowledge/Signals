@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Signals.Aspects.Bootstrap;
 using Signals.Clients.NetCoreWeb.BusinessProcesses;
-using Signals.Core.Business;
+using Signals.Core.Processes;
 using Signals.Core.Processing.Results;
 using System.IO;
 using Microsoft.AspNetCore.Http;

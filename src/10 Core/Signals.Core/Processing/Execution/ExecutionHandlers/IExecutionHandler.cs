@@ -1,4 +1,4 @@
-﻿using Signals.Core.Business.Base;
+﻿using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Results;
 using System;
 

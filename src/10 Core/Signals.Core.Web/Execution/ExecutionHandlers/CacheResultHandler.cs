@@ -7,7 +7,7 @@ using Signals.Aspects.Bootstrap;
 using Signals.Aspects.Caching;
 using Signals.Aspects.Caching.Entries;
 using Signals.Aspects.Caching.Enums;
-using Signals.Core.Business.Base;
+using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization;
 using Signals.Core.Processing.Input.Http;

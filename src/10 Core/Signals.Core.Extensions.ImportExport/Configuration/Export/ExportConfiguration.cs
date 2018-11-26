@@ -1,4 +1,4 @@
-﻿using Signals.Core.Business.Export;
+﻿using Signals.Core.Processes.Export;
 using System;
 using System.Collections.Generic;
 
