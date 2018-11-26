@@ -4,7 +4,6 @@ using Signals.Aspects.BackgroundProcessing;
 using Signals.Aspects.Bootstrap;
 using Signals.Aspects.Caching;
 using Signals.Aspects.CommunicationChannels;
-using Signals.Aspects.Configuration;
 using Signals.Aspects.DI;
 using Signals.Aspects.ErrorHandling;
 using Signals.Aspects.Localization;
@@ -12,6 +11,8 @@ using Signals.Aspects.Logging;
 using Signals.Aspects.Security;
 using Signals.Aspects.Storage;
 using Signals.Core.Business;
+using Signals.Core.Business.Recurring;
+using Signals.Core.Business.Recurring.Logging;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Execution;
 using System;
@@ -19,7 +20,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 
-namespace Signals.Core.Configuration
+namespace Signals.Core.Configuration.Bootstrapping
 {
     /// <summary>
     /// Application configuration
@@ -92,11 +93,19 @@ namespace Signals.Core.Configuration
         public Func<Type> PermissionManager { get; set; }
 
         /// <summary>
+        /// Synchronization logging provider
+        /// </summary>
+        public Func<ISyncLogProvider> SyncLogProvider { get; internal set; }
+
+        /// <summary>
         /// Register all aspects into dependency resolver
         /// </summary>
         /// <returns></returns>
         public IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
+            // Proc config validation
+            var config = ApplicationConfiguration.Instance;
+
             if (DependencyResolver.IsNull() || DependencyResolver().IsNull()) throw new Exception("Dependency resolver not configured");
 
             var resolver = DependencyResolver();
@@ -128,13 +137,27 @@ namespace Signals.Core.Configuration
             resolver.Register<IProcessExecutor, ProcessExecutor>();
             resolver.Register<ManualMediator>();
 
-            if(ApplicationInformation.Instance?.SmtpConfiguration?.IsNull() == false)
+            var processRepo = new ProcessRepository(scanAssemblies);
+            resolver.Register(processRepo);
+            processRepo.All().ForEach(type => resolver.Register(type));
+
+            RegisterSmtp(config, resolver);
+            RegisterSyncLogProvider(config, resolver);
+
+            var services = SystemBootstrapper.Init(resolver, scanAssemblies);
+
+            return services;
+        }
+
+        private void RegisterSmtp(ApplicationConfiguration config, IRegistrationService resolver)
+        {
+            if (config?.SmtpConfiguration?.IsNull() == false)
             {
-                var server = ApplicationInformation.Instance.SmtpConfiguration.Server;
-                var port = ApplicationInformation.Instance.SmtpConfiguration.Port;
-                var useSsl = ApplicationInformation.Instance.SmtpConfiguration.UseSsl;
-                var username = ApplicationInformation.Instance.SmtpConfiguration.Username;
-                var password = ApplicationInformation.Instance.SmtpConfiguration.Password;
+                var server = config.SmtpConfiguration.Server;
+                var port = config.SmtpConfiguration.Port;
+                var useSsl = config.SmtpConfiguration.UseSsl;
+                var username = config.SmtpConfiguration.Username;
+                var password = config.SmtpConfiguration.Password;
 
                 var instance = new SmtpClient(server, port)
                 {
@@ -144,14 +167,19 @@ namespace Signals.Core.Configuration
 
                 resolver.Register(instance);
             }
+        }
 
-            var processRepo = new ProcessRepository(scanAssemblies);
-            resolver.Register(processRepo);
-            processRepo.All().ForEach(type => resolver.Register(type));
+        private void RegisterSyncLogProvider(ApplicationConfiguration config, IRegistrationService resolver)
+        {
+            if (!TaskRegistry.IsNull() && !TaskRegistry().IsNull())
+            {
+                if(SyncLogProvider.IsNull() || SyncLogProvider().IsNull())
+                {
+                    SyncLogProvider = () => new SyncLogProvider();
+                }
 
-            var services = SystemBootstrapper.Init(resolver, scanAssemblies);
-
-            return services;
+                resolver.Register(SyncLogProvider);
+            }
         }
     }
 }

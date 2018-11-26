@@ -34,7 +34,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             if (auditProvider.IsNull()) return Next.Execute(process, processType, args);
 
             var entry = auditProvider.Entry();
-            entry.Originator = ApplicationInformation.Instance?.ApplicationName ?? Environment.MachineName;
+            entry.Originator = ApplicationConfiguration.Instance?.ApplicationName ?? Environment.MachineName;
             entry.Process = process.Name;
             entry.EventType = process.Description;
 

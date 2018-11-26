@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Signals.Core.Web.Execution;
+using Signals.Core.Web.Configuration.Bootstrapping;
 
 #if (NET461)
 
@@ -33,7 +34,7 @@ namespace Signals.Core.Web.Extensions
         /// <param name="app"></param>
         /// <param name="configurationCallback"></param>
         /// <returns></returns>
-        public static IAppBuilder MapSignals(this IAppBuilder app, Action<WebApplicationConfiguration> configurationCallback)
+        public static IAppBuilder MapSignals(this IAppBuilder app, Action<WebApplicationBootstrapConfiguration> configurationCallback)
         {
             var ass = AppDomain.CurrentDomain.GetAssemblies();
             // get entry assembly
@@ -41,7 +42,7 @@ namespace Signals.Core.Web.Extensions
             var assembly = stackTrace.GetFrame(1).GetMethod().DeclaringType.Assembly;
 
             // configure web applicaiton
-            var configuration = new WebApplicationConfiguration();
+            var configuration = new WebApplicationBootstrapConfiguration();
             configurationCallback(configuration);
             configuration.ScanAssemblies.Add(assembly);
             configuration.Bootstrap(configuration.ScanAssemblies.ToArray());
@@ -75,12 +76,12 @@ namespace Signals.Core.Web.Extensions
         /// <param name="services"></param>
         /// <param name="configurationCallback"></param>
         /// <returns></returns>
-        public static IServiceCollection AddSignals(this IServiceCollection services, Action<WebApplicationConfiguration> configurationCallback)
+        public static IServiceCollection AddSignals(this IServiceCollection services, Action<WebApplicationBootstrapConfiguration> configurationCallback)
         {
             StackTrace stackTrace = new StackTrace();
             var assembly = stackTrace.GetFrame(1).GetMethod().DeclaringType.Assembly;
 
-            var configuration = new WebApplicationConfiguration();
+            var configuration = new WebApplicationBootstrapConfiguration();
             configurationCallback(configuration);
             configuration.ScanAssemblies.Add(assembly);
             configuration.Bootstrap(configuration.ScanAssemblies.ToArray());

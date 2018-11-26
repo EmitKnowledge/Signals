@@ -8,6 +8,7 @@ using Signals.Aspects.Logging.NLog.Configurations;
 using Signals.Aspects.Security.Database.Configurations;
 using Signals.Aspects.Storage.Database.Configurations;
 using Signals.Core.Background.Configuration;
+using Signals.Core.Background.Configuration.Bootstrapping;
 using Signals.Core.Configuration;
 using System;
 using System.Reflection;
@@ -18,11 +19,11 @@ namespace Signals.Core.BackgroundCoreApp
     {
         public static void Main(string[] args)
         {
-            ApplicationInformation.UseProvider(new Signals.Aspects.Configuration.File.FileConfigurationProvider { File = @"appsettings.json" });
+            ApplicationConfiguration.UseProvider(new Signals.Aspects.Configuration.File.FileConfigurationProvider { File = @"appsettings.json" });
 
             var dependencyInjector = new RegistrationService();
 
-            var config = new BackgroundApplicationConfiguration
+            var config = new BackgroundApplicationBootstrapConfiguration
             {
                 RegistrationService = dependencyInjector,
                 StrategyBuilder = new StrategyBuilder(),

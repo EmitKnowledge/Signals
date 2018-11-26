@@ -11,16 +11,6 @@ namespace Signals.Aspects.Configuration.MsSql
     public class MsSqlConfigurationProvider : IConfigurationProvider
     {
         /// <summary>
-        /// Default CTOR
-        /// </summary>
-        public MsSqlConfigurationProvider()
-        {
-            TableName = "Configuration";
-            KeyColumnName = "Key";
-            ValueColumnName = "Value";
-        }
-
-        /// <summary>
         /// Default CTOR with ConnectionString
         /// </summary>
         public MsSqlConfigurationProvider(string connectionString)
@@ -29,6 +19,8 @@ namespace Signals.Aspects.Configuration.MsSql
             TableName = "Configuration";
             KeyColumnName = "Key";
             ValueColumnName = "Value";
+
+            EnsureDatabaseTable();
         }
 
         /// <summary>
@@ -75,7 +67,7 @@ namespace Signals.Aspects.Configuration.MsSql
                 connection.Open();
 
                 // If connection string is valid, then proceed with checking if the specified provider is supported in the database
-                EnsureDatabaseIsSet<T>(key);
+                EnsureDatabaseKey<T>(key);
 
                 var query =
                     $@"
@@ -122,7 +114,7 @@ namespace Signals.Aspects.Configuration.MsSql
         /// <summary>
         /// Check if the data table exists
         /// </summary>
-        private void EnsureDatabaseIsSet<T>(string key) where T : BaseConfiguration<T>, new()
+        private void EnsureDatabaseTable()
         {
             using (var connection = new SqlConnection(ConnectionString))
             {
@@ -143,11 +135,21 @@ namespace Signals.Aspects.Configuration.MsSql
                     ";
 
                 var command = new SqlCommand(query, connection);
+
                 connection.Open();
                 command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
 
+        /// <summary>
+        /// Check if the data row exists
+        /// </summary>
+        private void EnsureDatabaseKey<T>(string key) where T : BaseConfiguration<T>, new()
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
                 var serializedObject = JsonConvert.SerializeObject(new T());
-
                 var initialConfigurationQuery =
                     $@"
                         IF NOT EXISTS 
@@ -168,9 +170,10 @@ namespace Signals.Aspects.Configuration.MsSql
                         )
                     ";
 
-                command = new SqlCommand(initialConfigurationQuery, connection);
-                command.ExecuteNonQuery();
+                var command = new SqlCommand(initialConfigurationQuery, connection);
 
+                connection.Open();
+                command.ExecuteNonQuery();
                 connection.Close();
             }
         }

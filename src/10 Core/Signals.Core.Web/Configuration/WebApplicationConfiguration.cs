@@ -1,61 +1,22 @@
-﻿using Microsoft.AspNetCore.Http;
-using Signals.Aspects.DI;
-using Signals.Core.Configuration;
-using Signals.Core.Processing.Input.Http;
-using Signals.Core.Web.Behaviour;
-using Signals.Core.Web.Execution;
-using Signals.Core.Web.Http;
+﻿using Signals.Aspects.Configuration;
+using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Signals.Core.Web.Configuration
 {
     /// <summary>
-    /// Aspects configuration
+    /// Base application information
     /// </summary>
-    public class WebApplicationConfiguration : ApplicationConfiguration
+    public class WebApplicationConfiguration : BaseConfiguration<WebApplicationConfiguration>
     {
-        /// <summary>
-        /// Default response headers
-        /// </summary>
-        public List<ResponseHeaderAttribute> ResponseHeaders { get; set; }
+        public override string Key => nameof(WebApplicationConfiguration);
 
-        /// <summary>
-        /// Applization assemblies to be scanned for processes and type exports
-        /// </summary>
-        public List<Assembly> ScanAssemblies { get; set; }
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public WebApplicationConfiguration()
-        {
-            ResponseHeaders = new List<ResponseHeaderAttribute>();
-            ScanAssemblies = new List<Assembly>();
-        }
-
-        /// <summary>
-        /// Config entry point
-        /// </summary>
-        /// <param name="entryAssembly"></param>
-        /// <returns></returns>
-        internal IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
-        {
-            return Resolve(scanAssemblies);
-        }
-
-        /// <summary>
-        /// Build instances from configurations by convention
-        /// </summary>
-        /// <returns></returns>
-        protected override IServiceContainer Resolve(params Assembly[] scanAssemblies)
-        {
-            RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
-            RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
-            RegistrationService.Register<WebMediator>();
-            RegistrationService.Register<List<ResponseHeaderAttribute>>(ResponseHeaders);
-
-            return base.Resolve(scanAssemblies);
-        }
+        [Required]
+        [RegularExpression(@"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*(\.[a-z]{2,5})?(:[0-9]{1,5})?(\/.*)?$")]
+        public string WebUrl { get; set; }
     }
 }

@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" />
     <PackageReference Include="Signals.Aspects.Localization.Database" Version="0.3.1" />
-    <PackageReference Include="Signals.Core.Extensions.ImportExport" Version="0.2.1" />
+    <PackageReference Include="Signals.Core.Extensions.ImportExport" Version="0.2.3" />
     <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="4.4.1" />
     <PackageReference Include="Signals.Aspects.Auditing.AuditNET" version="0.3.1" />
     <PackageReference Include="Signals.Aspects.Auth.NetCore" version="0.2.0" />
@@ -30,7 +30,7 @@
     <PackageReference Include="Signals.Aspects.Logging.NLog" version="0.2.1.1" />
     <PackageReference Include="Signals.Aspects.Security.Database" version="0.3.1" />
     <PackageReference Include="Signals.Aspects.Storage.Database" version="0.2.0" />
-    <PackageReference Include="Signals.Core.Web" version="0.2.1" />
+    <PackageReference Include="Signals.Core.Web" version="0.2.3" />
   </ItemGroup>
 
   <ItemGroup>

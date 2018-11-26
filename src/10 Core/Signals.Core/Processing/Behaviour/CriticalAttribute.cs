@@ -12,13 +12,13 @@ namespace Signals.Core.Processing.Behaviour
     public class CriticalAttribute : Attribute
     {
         /// <summary>
-        /// Notified person, default is <see cref="ApplicationInformation.OwnerEmail"/>
+        /// Notified person, default is <see cref="ApplicationConfiguration.OwnerEmail"/>
         /// </summary>
         public string NotificaitonEmail { get; set; }
 
         public CriticalAttribute()
         {
-            NotificaitonEmail = ApplicationInformation.Instance?.CriticalConfiguration?.OwnerEmail;
+            NotificaitonEmail = ApplicationConfiguration.Instance?.CriticalConfiguration?.OwnerEmail;
         }
     }
 }
