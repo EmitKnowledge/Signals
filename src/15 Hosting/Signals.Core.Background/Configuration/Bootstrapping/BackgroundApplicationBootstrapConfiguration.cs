@@ -10,6 +10,7 @@ using Signals.Core.Processing.Results;
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using Signals.Core.Common.Instance;
 
 namespace Signals.Core.Background.Configuration.Bootstrapping
 {

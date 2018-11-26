@@ -19,19 +19,19 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="NodaTime" Version="2.4.2" />
     <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.0.0" />
-    <PackageReference Include="Signals.Aspects.Auditing" Version="0.2.0" />
-    <PackageReference Include="Signals.Aspects.Auth" Version="0.2.0" />
-    <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="0.1.0" />
+    <PackageReference Include="Signals.Aspects.Auditing" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.Auth" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="0.5.0" />
     <PackageReference Include="Signals.Aspects.Bootstrap" Version="0.2.5" />
-    <PackageReference Include="Signals.Aspects.Caching" Version="0.2.0.1" />
-    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="0.2.0" />
-    <PackageReference Include="Signals.Aspects.Configuration" Version="0.2.2" />
-    <PackageReference Include="Signals.Aspects.DI" Version="0.2.0" />
-    <PackageReference Include="Signals.Aspects.ErrorHandling" Version="0.2.0" />
-    <PackageReference Include="Signals.Aspects.Localization" Version="0.2.1" />
-    <PackageReference Include="Signals.Aspects.Logging" Version="0.2.0" />
-    <PackageReference Include="Signals.Aspects.Security" Version="0.2.0" />
-    <PackageReference Include="Signals.Aspects.Storage" Version="0.2.0" />
+    <PackageReference Include="Signals.Aspects.Caching" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.Configuration" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.DI" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.ErrorHandling" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.Localization" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.Logging" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.Security" Version="0.5.0" />
+    <PackageReference Include="Signals.Aspects.Storage" Version="0.5.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.197" />
   </ItemGroup>
