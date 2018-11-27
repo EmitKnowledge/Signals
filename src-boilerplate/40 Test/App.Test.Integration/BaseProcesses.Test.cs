@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Reflection;
-using App.Common.Configuration;
+using App.Service.Configuration;
 using App.Service.DomainEntities.Users;
 using Dapper;
 using Signals.Aspects.Configuration.File;

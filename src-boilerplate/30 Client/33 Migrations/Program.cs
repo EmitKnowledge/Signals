@@ -1,5 +1,5 @@
 ﻿using App.Client.Migrations.Base;
-using App.Common.Configuration;
+using App.Service.Configuration;
 using SimpleMigrations;
 using SimpleMigrations.Console;
 using System;
@@ -48,7 +48,7 @@ namespace App.Client.Migrations
 
         private static IDbConnection GetOpenConnection()
         {
-            var connectionString = OhdConfiguration.Instance?.DatabaseConfiguration?.ActiveConfiguration?.ConnectionString;
+            var connectionString = BusinessConfiguration.Instance?.DatabaseConfiguration?.ActiveConfiguration?.ConnectionString;
             return BuildConnectionStirng(connectionString);
         }
 

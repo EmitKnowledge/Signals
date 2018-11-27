@@ -34,12 +34,9 @@ namespace App.Client.Background
                 ReloadOnAccess = false
             });
             
-            var regService = new RegistrationService();
-            regService.Register<ISyncLogProvider>(new SyncLogProvider());
-
             var config = new BackgroundApplicationBootstrapConfiguration
             {
-                RegistrationService = regService,
+                RegistrationService = new RegistrationService(),
                 TaskRegistry = new FluentRegistry()
             };
 

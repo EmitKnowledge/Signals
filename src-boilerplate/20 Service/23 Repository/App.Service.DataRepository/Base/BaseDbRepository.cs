@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using App.Common.Configuration;
+using App.Service.Configuration;
 using App.Service.DataRepository._Db;
 using App.Service.DataRepositoryContracts;
 using App.Service.DomainEntities.Base;
