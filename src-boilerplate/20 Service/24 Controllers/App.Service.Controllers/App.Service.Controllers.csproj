@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NodaTime" Version="2.4.2" />
+    <PackageReference Include="Signals.Core" Version="0.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Processes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\21 Configuration\App.Service.Configuration\App.Service.Configuration.csproj" />
+    <ProjectReference Include="..\..\22 Entities\App.Service.DomainEntities\App.Service.DomainEntities.csproj" />
+    <ProjectReference Include="..\..\23 Repository\App.Service.DataRepositoryContracts\App.Service.DataRepositoryContracts.csproj" />
+  </ItemGroup>
+  
+</Project>

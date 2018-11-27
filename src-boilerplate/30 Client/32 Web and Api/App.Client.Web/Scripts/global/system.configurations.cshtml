@@ -1,0 +1,27 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+@using App.Client.Web.Configuration
+@using App.Client.Web.Controllers
+@using App.Common.Helpers.Cryptography
+@{
+    var _baseController = ViewContext.Controller as _ConfigController;
+}
+; namespace('suave.system', function () {
+        function System() {
+            var me = {};
+            
+            me.currentUserId = '@_baseController.CurrentUser.Id';
+            me.currentUserEmail = '@_baseController.CurrentUser.Email';
+            me.currentUserName = '@_baseController.CurrentUser.Name';
+            me.isGuest = @(_baseController.CurrentUser.IsAnonymous ? "true" : "false");
+            me.randomUserId = '@(HashHelper.GenerateSalt(20))';
+            me.staticResources = {
+                cdnUrl: '@AppWebConfiguration.Instance.StaticResourcesConfiguration.CdnUrl',
+                cdnContent: function (url) {
+                    return me.staticResources.cdnUrl + url;
+                }
+            };
+
+            return me;
+        }
+    return { config: System() };
+});

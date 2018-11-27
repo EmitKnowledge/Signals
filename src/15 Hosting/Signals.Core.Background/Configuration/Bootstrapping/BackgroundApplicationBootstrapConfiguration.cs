@@ -1,16 +1,17 @@
 ﻿using Signals.Aspects.BackgroundProcessing;
-using Signals.Aspects.DI;
 using Signals.Aspects.CommunicationChannels;
+using Signals.Aspects.DI;
+using Signals.Core.Common.Instance;
+using Signals.Core.Configuration.Bootstrapping;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Distributed;
 using Signals.Core.Processes.Recurring;
-using Signals.Core.Configuration.Bootstrapping;
+using Signals.Core.Processes.Recurring.Logging;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using System;
 using System.Diagnostics;
 using System.Reflection;
-using Signals.Core.Common.Instance;
 
 namespace Signals.Core.Background.Configuration.Bootstrapping
 {
@@ -24,17 +25,17 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         /// </summary>
         public new Func<ISyncLogProvider> SyncLogProvider { get; set; }
 
-		/// <summary>
-		/// Bootstrapping entry
-		/// </summary>
-		/// <param name="scanAssemblies"></param>
-		/// <returns></returns>
-		public IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
+        /// <summary>
+        /// Bootstrapping entry
+        /// </summary>
+        /// <param name="scanAssemblies"></param>
+        /// <returns></returns>
+        public IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
             if (scanAssemblies == null)
             {
                 StackTrace stackTrace = new StackTrace();
-				// TODO: workaround for tests
+                // TODO: workaround for tests
                 var assembly = stackTrace.GetFrame(1).GetMethod().DeclaringType.Assembly;
 
                 scanAssemblies = new Assembly[] { assembly };
@@ -48,8 +49,6 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         /// <returns></returns>
         protected override IServiceContainer Resolve(params Assembly[] scanAssemblies)
         {
-            RegistrationService.Register(SyncLogProvider);
-
             var result = base.Resolve(scanAssemblies);
             Start();
 
