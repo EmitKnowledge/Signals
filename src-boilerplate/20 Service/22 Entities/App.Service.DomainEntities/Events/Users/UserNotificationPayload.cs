@@ -1,6 +1,6 @@
-﻿using System;
+﻿using App.Service.DomainEntities.Users;
+using System;
 using System.Runtime.Serialization;
-using App.Service.DomainEntities.Users;
 
 namespace App.Service.DomainEntities.Events.Users
 {

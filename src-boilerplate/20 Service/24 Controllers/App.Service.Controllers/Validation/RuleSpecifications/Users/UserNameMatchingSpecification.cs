@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Text.RegularExpressions;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
-using App.Service.DomainEntities.Users;
+﻿using App.Service.DomainEntities.Users;
 using Signals.Aspects.Localization.Helpers;
 using Signals.Core.Common.Regexes;
 using Signals.Core.Processing.Specifications;
+using System.Text.RegularExpressions;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Users
 {
@@ -23,9 +20,9 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
 
         public override bool Validate(User input)
         {
-            return input.Username.IsMatch(@"^[a-zA-Z0-9]+$", RegexOptions.Singleline | RegexOptions.IgnoreCase); 
+            return input.Username.IsMatch(@"^[a-zA-Z0-9]+$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
-        #endregion
+        #endregion Implementation of IValidationRule<User>
     }
 }

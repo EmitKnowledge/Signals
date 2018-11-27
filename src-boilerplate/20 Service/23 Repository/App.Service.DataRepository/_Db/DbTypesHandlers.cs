@@ -1,7 +1,7 @@
-﻿using System;
-using System.Data;
-using Dapper;
+﻿using Dapper;
 using NodaTime;
+using System;
+using System.Data;
 
 namespace App.Service.DataRepository._Db
 {

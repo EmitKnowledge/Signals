@@ -1,8 +1,8 @@
-﻿using System;
+﻿using App.Service.DomainEntities.Base;
+using App.Service.DomainEntities.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using App.Service.DomainEntities.Base;
-using App.Service.DomainEntities.Common;
 
 namespace App.Service.DataRepositoryContracts
 {

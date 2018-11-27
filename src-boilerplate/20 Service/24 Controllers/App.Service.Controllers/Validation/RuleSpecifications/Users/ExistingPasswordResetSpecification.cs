@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq.Expressions;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
-using App.Service.Configuration;
-using Signals.Core.Processing.Specifications;
+﻿using App.Service.Configuration;
 using App.Service.DomainEntities.Events.Users;
-using Signals.Core.Common.Instance;
 using NodaTime;
+using Signals.Core.Common.Instance;
+using Signals.Core.Processing.Specifications;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Users
 {
@@ -29,6 +26,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
                     && input.Token.Length == BusinessConfiguration.Instance.SecurityConfiguration.TokenLenght;
         }
 
-        #endregion
+        #endregion Implementation of IValidationRule<User>
     }
 }

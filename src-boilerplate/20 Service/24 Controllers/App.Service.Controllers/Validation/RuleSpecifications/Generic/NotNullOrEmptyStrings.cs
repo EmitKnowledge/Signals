@@ -1,10 +1,7 @@
-﻿using System;
+﻿using Signals.Core.Common.Instance;
+using Signals.Core.Processing.Specifications;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
-using Signals.Core.Common.Instance;
-using Signals.Core.Processing.Specifications;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Generic
 {
@@ -24,6 +21,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Generic
             return input.Count(y => y.IsNullOrEmpty()) == 0;
         }
 
-        #endregion
+        #endregion Overrides of BaseSpecification<string>
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.Reflection;
-using App.Service.Configuration;
+﻿using App.Service.Configuration;
 using App.Service.DomainEntities.Users;
 using Dapper;
 using Signals.Aspects.Configuration.File;
@@ -9,6 +6,9 @@ using Signals.Aspects.DI;
 using Signals.Aspects.DI.Autofac;
 using Signals.Core.Configuration;
 using Signals.Core.Configuration.Bootstrapping;
+using System;
+using System.Data.SqlClient;
+using System.Reflection;
 
 namespace App.Test.Integration
 {
@@ -63,15 +63,15 @@ namespace App.Test.Integration
         /// Return the logged in user in the system
         /// </summary>
         public static User CurrentUser => new User
-	    {
-		    Id = 1,
-		    Name = "Marjan Nikolovski",
-		    Email = @"m4rjann",
-		    Username = @"marjan@emitknowledge.com",
-		    Password = @"123456"
-	    };
+        {
+            Id = 1,
+            Name = "Marjan Nikolovski",
+            Email = @"m4rjann",
+            Username = @"marjan@emitknowledge.com",
+            Password = @"123456"
+        };
 
-	    private static void CleanupDatabase()
+        private static void CleanupDatabase()
         {
             var scsb = new SqlConnectionStringBuilder(BusinessConfiguration.Instance.DatabaseConfiguration.ActiveConfiguration.ConnectionString);
             scsb.MultipleActiveResultSets = true;
@@ -96,7 +96,7 @@ namespace App.Test.Integration
                 connection.Execute("delete from [User]; DBCC CHECKIDENT ('[User]', RESEED, 0);");
 
                 connection.Close();
-            }                
+            }
         }
 
         private static void RegisterDefaultUser()
@@ -106,7 +106,7 @@ namespace App.Test.Integration
             user.Email = @"marjan@emitknowledge.com";
             user.Username = @"m4rjann";
             user.Password = @"123456";
-            //DomainServices.User.Register(user, new RegistrationOptions { ShouldSendRegistrationEmail = false, MarkUserAsVerified = true });            
+            //DomainServices.User.Register(user, new RegistrationOptions { ShouldSendRegistrationEmail = false, MarkUserAsVerified = true });
         }
     }
 }

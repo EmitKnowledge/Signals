@@ -1,4 +1,5 @@
 ﻿using App.Service.Configuration;
+using App.Service.Controllers.Validation.RuleSpecifications.Base;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Signals.Aspects.Configuration.File;
@@ -7,7 +8,9 @@ using Signals.Core.Configuration;
 using Signals.Core.Web.Configuration;
 using Signals.Core.Web.Extensions;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace App.Client.Web
 {
@@ -31,6 +34,7 @@ namespace App.Client.Web
                 .AddConfiguration()
                 .AddSignals(config =>
                 {
+                    config.ScanAssemblies = new List<Assembly> { Assembly.GetExecutingAssembly(), typeof(BaseDomainEntitySpecification<>).Assembly };
                     config.RegistrationService = registrationService;
                 });
 

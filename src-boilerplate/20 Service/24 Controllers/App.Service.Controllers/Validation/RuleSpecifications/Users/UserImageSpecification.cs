@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using App.Service.DomainEntities.Users;
+﻿using App.Service.DomainEntities.Users;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Specifications;
 
@@ -26,6 +24,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
                     !input.ImageSizeVarationC.IsNullOrHasZeroElements();
         }
 
-        #endregion
+        #endregion Implementation of IValidationRule<User>
     }
 }

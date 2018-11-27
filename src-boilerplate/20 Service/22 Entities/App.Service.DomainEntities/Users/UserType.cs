@@ -15,16 +15,19 @@ namespace App.Service.DomainEntities.Users
         /// </summary>
         [EnumMember]
         Anonymous,
+
         /// <summary>
         /// Individual (customer or customer's associate) user of the app
         /// </summary>
         [EnumMember]
         User,
+
         /// <summary>
         /// Manual worker user for video clip tagging
         /// </summary>
         [EnumMember]
         MechanicalTurk,
+
         /// <summary>
         /// Administrator of the system
         /// </summary>

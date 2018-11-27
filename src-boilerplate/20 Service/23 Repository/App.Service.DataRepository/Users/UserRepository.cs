@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using App.Service.DataRepository.Base;
+﻿using App.Service.DataRepository.Base;
 using App.Service.DataRepositoryContracts;
 using App.Service.DomainEntities.Common;
 using App.Service.DomainEntities.Users;
 using Dapper;
 using Signals.Aspects.DI.Attributes;
+using System.Collections.Generic;
 
 namespace App.Service.DataRepository.Users
 {
@@ -105,7 +103,7 @@ namespace App.Service.DataRepository.Users
         /// <returns></returns>
         public List<User> Search(string content, QueryOptions queryOptions = null)
         {
-            var users = base.GetAll(user => user.Email.Contains(content) || 
+            var users = base.GetAll(user => user.Email.Contains(content) ||
                                             user.Username.Contains(content) ||
                                             user.Name.Contains(content));
 

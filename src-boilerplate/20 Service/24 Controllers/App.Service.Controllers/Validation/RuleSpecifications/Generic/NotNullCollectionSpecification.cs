@@ -1,8 +1,5 @@
-﻿using System;
+﻿using Signals.Core.Processing.Specifications;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
-using Signals.Core.Processing.Specifications;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Generic
 {

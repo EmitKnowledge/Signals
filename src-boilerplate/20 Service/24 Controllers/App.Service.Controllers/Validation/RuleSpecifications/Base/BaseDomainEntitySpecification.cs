@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using App.Service.DomainEntities.Base;
+﻿using App.Service.DomainEntities.Base;
 using Signals.Core.Processing.Specifications;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Base
@@ -21,6 +19,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Base
             return input != null;
         }
 
-        #endregion
+        #endregion Implementation of IValidationRule<User>
     }
 }

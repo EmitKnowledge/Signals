@@ -12,10 +12,13 @@ namespace App.Service.DomainEntities.Users
     {
         [EnumMember]
         ImageOriginal,
+
         [EnumMember]
         ImageSizeVarationA,
+
         [EnumMember]
         ImageSizeVarationB,
+
         [EnumMember]
         ImageSizeVarationC
     }

@@ -10,13 +10,11 @@ namespace App.Test.Integration
 
         public UserProcessesTest()
         {
-
         }
 
         [Fact]
         public void Do()
         {
-
         }
 
         //        [Fact]

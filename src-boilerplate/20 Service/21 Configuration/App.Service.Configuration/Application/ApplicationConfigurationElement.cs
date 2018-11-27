@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Configuration;
 
 namespace App.Service.Configuration.Application
 {
-    public sealed class ApplicationConfigurationElement 
+    public sealed class ApplicationConfigurationElement
     {
         /// <summary>
         /// Name of the project to whom this configuration relates to

@@ -4,6 +4,5 @@ namespace App.Service.Controllers.Validation.Containers.Users
 {
     public class ExistingUserValidationContainer : RequestingUserValidationContainer
     {
-
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Configuration;
 
 namespace App.Service.Configuration.Web
 {
@@ -11,10 +10,10 @@ namespace App.Service.Configuration.Web
         [Required]
         public string Url { get; set; }
 
-	    /// <summary>
-	    /// Maximum page size that can be returned by the API
-	    /// </summary>
+        /// <summary>
+        /// Maximum page size that can be returned by the API
+        /// </summary>
         [Required]
-	    public int MaxPageSize { get; set; }
-	}
+        public int MaxPageSize { get; set; }
+    }
 }

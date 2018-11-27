@@ -2,8 +2,6 @@
 using Signals.Aspects.Localization.Helpers;
 using Signals.Core.Common.Regexes;
 using Signals.Core.Processing.Specifications;
-using System;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Users
@@ -21,13 +19,13 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
         /// <returns></returns>
         public override bool Validate(User input)
         {
-            return input.Email.IsMatch(@"^([0-9a-zA-Z]([+-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,})$", 
-                    RegexOptions.Singleline | 
-                    RegexOptions.IgnoreCase | 
-                    RegexOptions.ExplicitCapture | 
+            return input.Email.IsMatch(@"^([0-9a-zA-Z]([+-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,})$",
+                    RegexOptions.Singleline |
+                    RegexOptions.IgnoreCase |
+                    RegexOptions.ExplicitCapture |
                     RegexOptions.CultureInvariant);
         }
 
-        #endregion
+        #endregion Implementation of IValidationRule<User>
     }
 }

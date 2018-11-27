@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using App.Service.DataRepository.Base;
+﻿using App.Service.DataRepository.Base;
 using App.Service.DataRepositoryContracts;
 using App.Service.DomainEntities.Users;
 using Dapper;
 using DapperExtensions;
 using Signals.Aspects.DI.Attributes;
+using System.Collections.Generic;
 
 namespace App.Service.DataRepository.Users
 {

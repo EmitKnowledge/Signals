@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using App.Service.Configuration;
+﻿using App.Service.Configuration;
 using App.Service.DataRepository._Db;
 using App.Service.DataRepositoryContracts;
 using App.Service.DomainEntities.Base;
@@ -15,6 +8,13 @@ using DapperExtensions;
 using NodaTime;
 using SQLinq;
 using SQLinq.Dapper;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace App.Service.DataRepository.Base
 {
@@ -46,7 +46,7 @@ namespace App.Service.DataRepository.Base
         {
             ConnectionString = BusinessConfiguration.Instance.DatabaseConfiguration.ActiveConfiguration.ConnectionString;
         }
- 
+
         /// <summary>
         /// Insert entity in db
         /// </summary>
@@ -98,7 +98,7 @@ namespace App.Service.DataRepository.Base
         {
             Using(connection =>
                 {
-                    var query = string.Concat(@"DELETE FROM [" + typeof (T).Name + "] WHERE ", @where);
+                    var query = string.Concat(@"DELETE FROM [" + typeof(T).Name + "] WHERE ", @where);
                     connection.Execute(query, paramValues);
                 });
         }

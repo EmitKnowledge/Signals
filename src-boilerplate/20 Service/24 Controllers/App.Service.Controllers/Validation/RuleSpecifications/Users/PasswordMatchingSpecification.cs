@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using App.Service.Configuration;
+﻿using App.Service.Configuration;
 using App.Service.DomainEntities.Users;
 using Signals.Aspects.Localization.Helpers;
 using Signals.Core.Processing.Specifications;
@@ -29,6 +27,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
             return true;
         }
 
-        #endregion
+        #endregion Implementation of IValidationRule<User>
     }
 }

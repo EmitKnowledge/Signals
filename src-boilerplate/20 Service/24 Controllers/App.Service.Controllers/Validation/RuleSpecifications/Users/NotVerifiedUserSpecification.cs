@@ -1,8 +1,6 @@
 ﻿using App.Service.DomainEntities.Users;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Specifications;
-using System;
-using System.Linq.Expressions;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Users
 {
@@ -22,6 +20,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
             return input.IsNull();
         }
 
-        #endregion
+        #endregion Overrides of BaseSpecification<User>
     }
 }

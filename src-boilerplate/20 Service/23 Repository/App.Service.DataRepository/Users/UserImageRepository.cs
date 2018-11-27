@@ -33,6 +33,7 @@ namespace App.Service.DataRepository.Users
                             ImageOriginal = image.ImageOriginal
                         }, x => x.UserId == userId);
                         break;
+
                     case UserImageDimensionsEnum.ImageSizeVarationA:
                         userImage = base.FirstOrDefault(image => new UserImage
                         {
@@ -42,6 +43,7 @@ namespace App.Service.DataRepository.Users
                             ImageSizeVarationA = image.ImageSizeVarationA
                         }, x => x.UserId == userId);
                         break;
+
                     case UserImageDimensionsEnum.ImageSizeVarationB:
                         userImage = base.FirstOrDefault(image => new UserImage
                         {
@@ -51,6 +53,7 @@ namespace App.Service.DataRepository.Users
                             ImageSizeVarationB = image.ImageSizeVarationB
                         }, x => x.UserId == userId);
                         break;
+
                     case UserImageDimensionsEnum.ImageSizeVarationC:
                         userImage = base.FirstOrDefault(image => new UserImage
                         {
@@ -84,10 +87,10 @@ namespace App.Service.DataRepository.Users
         {
             Using(connection =>
             {
-                connection.Execute(@"UPDATE [USERIMAGE] 
-                                     SET 
+                connection.Execute(@"UPDATE [USERIMAGE]
+                                     SET
                                      ImageOriginal = @ImageOriginal,
-                                     ImageSizeVarationA = @ImageSizeVarationA, 
+                                     ImageSizeVarationA = @ImageSizeVarationA,
                                      ImageSizeVarationB = @ImageSizeVarationB,
                                      ImageSizeVarationC = @ImageSizeVarationC
                                      WHERE UserId = @UserId", new

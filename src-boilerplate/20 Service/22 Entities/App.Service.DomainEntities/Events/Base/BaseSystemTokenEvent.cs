@@ -1,7 +1,6 @@
-﻿using System;
+﻿using NodaTime;
+using System;
 using System.Runtime.Serialization;
-using App.Service.DomainEntities.Base;
-using NodaTime;
 
 namespace App.Service.DomainEntities.Events.Base
 {

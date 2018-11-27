@@ -1,7 +1,5 @@
 ﻿using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Specifications;
-using System;
-using System.Linq.Expressions;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Generic
 {
@@ -18,10 +16,9 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Generic
         /// <returns></returns>
         public override bool Validate(string input)
         {
-
             return !input.IsNullOrEmpty();
         }
 
-        #endregion
+        #endregion Overrides of BaseSpecification<string>
     }
 }

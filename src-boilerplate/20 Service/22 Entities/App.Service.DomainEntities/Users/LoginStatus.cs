@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace App.Service.DomainEntities.Users
 {
     /// <summary>
-    /// Represents login status success 
+    /// Represents login status success
     /// </summary>
     [DataContract]
     [Serializable]
@@ -15,16 +15,19 @@ namespace App.Service.DomainEntities.Users
         /// </summary>
         [EnumMember]
         Fail,
+
         /// <summary>
         /// The provided username/password combination is not valid
         /// </summary>
         [EnumMember]
         UsernameOrPasswordNotValid,
+
         /// <summary>
         /// Account has been locked by the system administrator
         /// </summary>
         [EnumMember]
         UserAccountIsLocked,
+
         /// <summary>
         /// The provided username/password combination is valid
         /// </summary>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
-using Signals.Core.Processing.Specifications;
+﻿using Signals.Core.Processing.Specifications;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Generic
 {

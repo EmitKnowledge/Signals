@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Configuration;
-using System.Linq;
 
 namespace App.Service.Configuration.ExternalApis
 {
@@ -21,7 +19,7 @@ namespace App.Service.Configuration.ExternalApis
     /// <summary>
     /// Represent external api configuration element
     /// </summary>
-    public sealed class ExternalApiConfigurationElement 
+    public sealed class ExternalApiConfigurationElement
     {
         /// <summary>
         /// Default exnternal api name

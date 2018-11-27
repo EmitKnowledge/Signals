@@ -1,6 +1,6 @@
-﻿using System;
+﻿using App.Service.DomainEntities.Base;
+using System;
 using System.Runtime.Serialization;
-using App.Service.DomainEntities.Base;
 
 namespace App.Service.DomainEntities.Users
 {

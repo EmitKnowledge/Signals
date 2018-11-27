@@ -1,7 +1,7 @@
 ﻿using App.Service.DomainEntities.Users;
 using Signals.Core.Processing.Specifications;
 using System;
-using System.Linq.Expressions;
+
 namespace App.Service.Controllers.Validation.RuleSpecifications.Users
 {
     /// <summary>
@@ -27,6 +27,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
             return PasswordValidityCheckDelegate();
         }
 
-        #endregion
+        #endregion Overrides of BaseSpecification<User>
     }
 }

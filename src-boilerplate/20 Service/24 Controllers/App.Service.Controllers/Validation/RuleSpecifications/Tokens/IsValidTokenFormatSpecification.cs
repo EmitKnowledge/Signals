@@ -20,6 +20,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Tokens
             return input.IsNullOrEmpty() && input.Length == BusinessConfiguration.Instance.SecurityConfiguration.TokenLenght;
         }
 
-        #endregion
+        #endregion Overrides of BaseSpecification<ObjectId>
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
+﻿using App.Service.Controllers.Validation.RuleSpecifications.Base;
 using App.Service.Controllers.Validation.RuleSpecifications.Users;
 using App.Service.DomainEntities.Users;
 using Signals.Core.Processing.Specifications;
+using System;
 
 namespace App.Service.Controllers.Validation.Containers.Users
 {

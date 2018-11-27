@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
-using Signals.Core.Common.Instance;
+﻿using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Specifications;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Generic
@@ -10,7 +7,7 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Generic
     /// Validate if entity is != null
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class NotNullEntity<T> : BaseSpecification<T> where T : class 
+    public class NotNullEntity<T> : BaseSpecification<T> where T : class
     {
         #region Overrides of BaseSpecification<T>
 
@@ -23,6 +20,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Generic
             return input.IsNull();
         }
 
-        #endregion
+        #endregion Overrides of BaseSpecification<T>
     }
 }

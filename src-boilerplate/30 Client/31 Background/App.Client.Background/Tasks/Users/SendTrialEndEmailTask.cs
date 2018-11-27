@@ -1,6 +1,4 @@
-﻿using Signals.Aspects.BackgroundProcessing;
-using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
-using Signals.Aspects.DI;
+﻿using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
 using Signals.Aspects.DI.Attributes;
 using Signals.Core.Processes.Recurring;
 using Signals.Core.Processing.Results;
@@ -13,7 +11,7 @@ namespace App.Client.Background.Tasks.Users
         [Import] private ISyncLogProvider _provider { get; set; }
 
         public override RecurrencePatternConfiguration Profile => new TimePartRecurrencePatternConfiguration(TimeSpan.FromSeconds(10));
-        
+
         /// <summary>
         /// Sync data
         /// </summary>

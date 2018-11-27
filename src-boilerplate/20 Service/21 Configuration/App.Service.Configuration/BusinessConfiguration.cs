@@ -1,11 +1,10 @@
-﻿using System.Configuration;
-using App.Service.Configuration.Application;
+﻿using App.Service.Configuration.Application;
+using App.Service.Configuration.Database;
 using App.Service.Configuration.ExternalApis;
 using App.Service.Configuration.Notifications;
 using App.Service.Configuration.Security;
 using App.Service.Configuration.Storage;
 using App.Service.Configuration.Web;
-using App.Service.Configuration.Database;
 using Signals.Aspects.Configuration;
 
 namespace App.Service.Configuration
@@ -17,7 +16,7 @@ namespace App.Service.Configuration
         /// </summary>
         public override string Key => nameof(BusinessConfiguration);
 
-	    /// <summary>
+        /// <summary>
         /// Configuration for the application itself
         /// </summary>
         public ApplicationConfigurationElement ApplicationConfiguration { get; set; }

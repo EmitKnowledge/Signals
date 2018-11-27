@@ -1,7 +1,6 @@
 ﻿using App.Service.DomainEntities.Users;
 using Signals.Core.Processing.Specifications;
 using System;
-using System.Linq.Expressions;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Users
 {
@@ -28,6 +27,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
             return !ExistingUserDelegate();
         }
 
-        #endregion
+        #endregion Overrides of BaseSpecification<User>
     }
 }

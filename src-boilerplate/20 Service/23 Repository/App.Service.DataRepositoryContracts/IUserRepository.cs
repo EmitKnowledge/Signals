@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using App.Service.DomainEntities.Common;
+﻿using App.Service.DomainEntities.Common;
 using App.Service.DomainEntities.Users;
+using System.Collections.Generic;
 
 namespace App.Service.DataRepositoryContracts
 {

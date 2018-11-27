@@ -5,15 +5,12 @@ using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI.Autofac;
 using Signals.Core.Background.Configuration.Bootstrapping;
 using Signals.Core.Configuration;
-using Signals.Core.Processes.Recurring;
-using Signals.Core.Processes.Recurring.Logging;
 using System;
-using System.IO;
 using System.Reflection;
 
 namespace App.Client.Background
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
@@ -33,7 +30,7 @@ namespace App.Client.Background
                 Path = Environment.CurrentDirectory,
                 ReloadOnAccess = false
             });
-            
+
             var config = new BackgroundApplicationBootstrapConfiguration
             {
                 RegistrationService = new RegistrationService(),

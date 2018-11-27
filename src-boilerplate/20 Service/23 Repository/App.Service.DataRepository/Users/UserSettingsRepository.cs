@@ -25,7 +25,7 @@ namespace App.Service.DataRepository.Users
         /// <param name="requestingUser"></param>
         public void UpdateUserSettings(User requestingUser)
         {
-            if(requestingUser.Settings == null) return;
+            if (requestingUser.Settings == null) return;
 
             Using(connection =>
             {

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq.Expressions;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
-using Signals.Core.Processing.Specifications;
+﻿using Signals.Core.Processing.Specifications;
+using System;
 
 namespace App.Service.Controllers.Validation.RuleSpecifications.Tokens
 {
@@ -28,6 +26,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Tokens
             return IsExistingTokenDelegate();
         }
 
-        #endregion
+        #endregion Overrides of BaseSpecification<ObjectId>
     }
 }

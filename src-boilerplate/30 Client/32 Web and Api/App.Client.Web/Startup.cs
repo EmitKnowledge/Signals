@@ -1,12 +1,9 @@
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Signals.Aspects.DI.Autofac;
-using Signals.Core.Web.Configuration;
 using Signals.Core.Web.Extensions;
 using System;
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
-using App.Service.DomainEntities.Users;
+﻿using App.Service.DomainEntities.Users;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Specifications;
 
@@ -12,9 +9,9 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
     /// </summary>
     public class UserSameAsRequestingUserSpecification : BaseSpecification<User>
     {
-        User RequestingUser { get; set; }
+        private User RequestingUser { get; set; }
 
-        User User { get; set; }
+        private User User { get; set; }
 
         #region Implementation of IValidationRule<User>
 
@@ -36,6 +33,6 @@ namespace App.Service.Controllers.Validation.RuleSpecifications.Users
                     RequestingUser.Id == User.Id;
         }
 
-        #endregion
+        #endregion Implementation of IValidationRule<User>
     }
 }
