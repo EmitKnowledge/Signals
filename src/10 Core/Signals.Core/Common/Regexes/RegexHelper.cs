@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace Signals.Core.Common.Regexes
 {
+    /// <summary>
+    /// Helper for regex
+    /// </summary>
     public static class RegexHelper
     {
         /// <summary>

@@ -22,12 +22,12 @@ namespace Signals.Aspects.BackgroundProcessing.TaskConfiguration
 			Day = DayOfWeek.Monday;
 		}
 
-		/// <summary>
-		/// On whicn days to occur
-		/// </summary>
-		/// <param name="days"></param>
-		/// <returns></returns>
-		public WeeklyRecurrencePatternConfiguration On(DayOfWeek day)
+        /// <summary>
+        /// On whicn days to occur
+        /// </summary>
+        /// <param name="day"></param>
+        /// <returns></returns>
+        public WeeklyRecurrencePatternConfiguration On(DayOfWeek day)
 		{
 			Day = day;
 			return this;

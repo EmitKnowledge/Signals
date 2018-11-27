@@ -13,13 +13,26 @@ namespace Signals.Core.Common.Serialization.Json
             ContractResolver = new LowercaseContractResolver()
         };
 
+        /// <summary>
+        /// Serialize object into json
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public static string SerializeObject(object o)
         {
             return JsonConvert.SerializeObject(o, Formatting.Indented, Settings);
         }
 
+        /// <summary>
+        /// Lowercase resolver
+        /// </summary>
         public class LowercaseContractResolver : DefaultContractResolver
         {
+            /// <summary>
+            /// Rrle
+            /// </summary>
+            /// <param name="propertyName"></param>
+            /// <returns></returns>
             protected override string ResolvePropertyName(string propertyName)
             {
                 return propertyName.ToLower();

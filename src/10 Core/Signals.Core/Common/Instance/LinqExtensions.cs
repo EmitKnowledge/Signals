@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Signals.Core.Common.Instance
 {
+    /// <summary>
+    /// Extensions for LINQ
+    /// </summary>
     public static class LinqExtensions
     {
         /// <summary>

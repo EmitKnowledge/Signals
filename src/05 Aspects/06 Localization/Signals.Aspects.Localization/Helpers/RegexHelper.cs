@@ -2,6 +2,9 @@
 
 namespace Signals.Aspects.Localization.Helpers
 {
+    /// <summary>
+    /// Helper for regex
+    /// </summary>
     public static class RegexHelper
     {
         /// <summary>

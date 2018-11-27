@@ -1,5 +1,8 @@
 ﻿namespace Signals.Aspects.Localization.Entries
 {
+    /// <summary>
+    /// Colieciton of localization entries
+    /// </summary>
     public class LocalizationCollection
     {
         /// <summary>

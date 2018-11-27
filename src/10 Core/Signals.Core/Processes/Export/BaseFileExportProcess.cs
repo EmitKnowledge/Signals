@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Signals.Core.Processes.Base;
+using Signals.Core.Processes.Import;
 using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;
 

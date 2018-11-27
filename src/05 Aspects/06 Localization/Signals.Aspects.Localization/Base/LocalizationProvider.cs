@@ -6,16 +6,44 @@ using Signals.Aspects.Localization.Entries;
 
 namespace Signals.Aspects.Localization.Base
 {
+    /// <summary>
+    /// Localization provider
+    /// </summary>
     public class LocalizationProvider : ILocalizationProvider
     {
+        /// <summary>
+        /// Localizaiton data provider
+        /// </summary>
         public ILocalizationDataProvider Provider { get; }
 
+        /// <summary>
+        /// Localization entries
+        /// </summary>
         private static List<LocalizationEntry> LocalizationEntries { get; set; }
+
+        /// <summary>
+        /// Localization collections
+        /// </summary>
         private static List<LocalizationCollection> LocalizationCollections { get; set; }
+
+        /// <summary>
+        /// Localization categories
+        /// </summary>
         private static List<LocalizationCategory> LocalizationCategories { get; set; }
+
+        /// <summary>
+        /// Localization keys
+        /// </summary>
         private static List<LocalizationKey> LocalizationKeys { get; set; }
+
+        /// <summary>
+        /// Localization languages
+        /// </summary>
         private static List<LocalizationLanguage> LocalizationLanguages { get; set; }
 
+        /// <summary>
+        /// Thread lock
+        /// </summary>
         private static readonly object Lock = new object();
 
         /// <summary>

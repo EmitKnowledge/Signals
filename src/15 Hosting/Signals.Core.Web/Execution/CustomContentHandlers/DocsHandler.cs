@@ -26,8 +26,15 @@ using EnumExtensions = Signals.Core.Common.Instance.EnumExtensions;
 
 namespace Signals.Core.Web.Execution.CustomContentHandlers
 {
+    /// <summary>
+    /// Docs api point handler
+    /// </summary>
     public class DocsHandler : ICustomUrlHandler
     {
+        /// <summary>
+        /// Get api document generated from all api processes
+        /// </summary>
+        /// <returns></returns>
         private OpenApiDocument GenerateDocs()
         {
             var headers = SystemBootstrapper.GetInstance<List<ResponseHeaderAttribute>>();
@@ -208,6 +215,11 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
             }
         }
 
+        /// <summary>
+        /// Append docs to http response
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public MiddlewareResult RenderContent(IHttpContextWrapper context)
         {
             if (!context.RawUrl.ToLowerInvariant().Contains("api/docs"))

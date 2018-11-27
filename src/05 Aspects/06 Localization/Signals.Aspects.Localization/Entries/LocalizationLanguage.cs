@@ -1,5 +1,8 @@
 ﻿namespace Signals.Aspects.Localization.Entries
 {
+    /// <summary>
+    /// Localizaiton language
+    /// </summary>
     public class LocalizationLanguage
     {
         /// <summary>

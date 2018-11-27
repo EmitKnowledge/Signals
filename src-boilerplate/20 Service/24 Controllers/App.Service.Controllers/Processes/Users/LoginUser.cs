@@ -1,5 +1,7 @@
-﻿using Signals.Core.Processes.Api;
+﻿using Signals.Core.Common.Instance;
+using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Results;
+using Signals.Core.Processing.Specifications;
 using System;
 
 namespace App.Service.Controllers.Processes.Users
@@ -8,22 +10,24 @@ namespace App.Service.Controllers.Processes.Users
     {
         public override VoidResult Authenticate()
         {
-            throw new NotImplementedException();
+            return Context.CurrentUserPrincipal.IsNull() ? 
+                Fail() : 
+                Ok();
         }
 
         public override VoidResult Authorize()
         {
-            throw new NotImplementedException();
-        }
-
-        public override VoidResult Handle()
-        {
-            throw new NotImplementedException();
+            return Ok();
         }
 
         public override VoidResult Validate()
         {
-            throw new NotImplementedException();
+            return Ok();
+        }
+
+        public override VoidResult Handle()
+        {
+            return Ok();
         }
     }
 }

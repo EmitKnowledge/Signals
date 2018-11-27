@@ -10,11 +10,21 @@ namespace Signals.Core.Common.Serialization.Json
     {
         private readonly IDictionary<string, string> _fieldMapping;
 
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="fieldMapping"></param>
         public CapitalizingPropertyResolver(IDictionary<string, string> fieldMapping = null)
         {
             this._fieldMapping = fieldMapping;
         }
 
+        /// <summary>
+        /// Property creation
+        /// </summary>
+        /// <param name="member"></param>
+        /// <param name="memberSerialization"></param>
+        /// <returns></returns>
         protected override JsonProperty CreateProperty(System.Reflection.MemberInfo member, Newtonsoft.Json.MemberSerialization memberSerialization)
         {
             JsonProperty result = base.CreateProperty(member, memberSerialization);

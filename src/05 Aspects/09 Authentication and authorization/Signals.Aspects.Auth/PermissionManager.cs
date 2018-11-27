@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace Signals.Aspects.Auth
 {
+    /// <summary>
+    /// Principal permission manager
+    /// </summary>
     public class PermissionManager : IPermissionManager
     {
         /// <summary>

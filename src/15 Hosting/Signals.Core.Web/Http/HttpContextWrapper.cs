@@ -59,7 +59,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Reads body as string
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="inputStream"></param>
         /// <returns></returns>
         private string ExtractBody(Stream inputStream)
         {
@@ -94,7 +94,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Write response
         /// </summary>
-        /// <param name="respose"></param>
+        /// <param name="httpResponse"></param>
         /// <returns></returns>
         public void PutResponse(HttpResponseMessage httpResponse)
         {
@@ -148,7 +148,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Write response
         /// </summary>
-        /// <param name="respose"></param>
+        /// <param name="httpResponse"></param>
         /// <returns></returns>
         public void PutResponse(HttpResponseMessage httpResponse)
         {

@@ -2,6 +2,10 @@
 
 namespace Signals.Aspects.Logging
 {
+    /// <summary>
+    /// Logger contract
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface ILoggerBase<in T> where T : new()
     {
         /// <summary>

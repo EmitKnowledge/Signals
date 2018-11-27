@@ -10,6 +10,9 @@ using System.Text;
 
 namespace Signals.Core.Common.Reflection
 {
+    /// <summary>
+    /// Helper for reflection
+    /// </summary>
     public static class ReflectionsHelper
     {
         /// <summary>

@@ -1,5 +1,4 @@
-﻿using Signals.Aspects.Auth.Properties;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace Signals.Aspects.Auth
 {

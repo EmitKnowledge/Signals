@@ -48,18 +48,45 @@ namespace Signals.Aspects.BackgroundProcessing.TaskConfiguration
         [Serializable, DataContract]
         public enum PatternType
         {
+            /// <summary>
+            /// Second
+            /// </summary>
             [EnumMember]
             Second,
+
+            /// <summary>
+            /// Minute
+            /// </summary>
             [EnumMember]
             Minute,
+
+            /// <summary>
+            /// Hour
+            /// </summary>
             [EnumMember]
             Hour,
+
+            /// <summary>
+            /// Day
+            /// </summary>
             [EnumMember]
             Day,
+            
+            /// <summary>
+            /// Week
+            /// </summary>
             [EnumMember]
             Week,
+
+            /// <summary>
+            /// Month
+            /// </summary>
             [EnumMember]
             Month,
+
+            /// <summary>
+            /// Year
+            /// </summary>
             [EnumMember]
             Year
         }

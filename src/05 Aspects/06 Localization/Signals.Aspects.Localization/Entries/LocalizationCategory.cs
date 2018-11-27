@@ -1,5 +1,8 @@
 ﻿namespace Signals.Aspects.Localization.Entries
 {
+    /// <summary>
+    /// Category for localization entries
+    /// </summary>
     public class LocalizationCategory
     {
         /// <summary>

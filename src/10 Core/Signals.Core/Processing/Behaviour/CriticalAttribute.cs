@@ -1,7 +1,6 @@
 ﻿using Signals.Core.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Signals.Core.Configuration.ConfigurationSegments;
 
 namespace Signals.Core.Processing.Behaviour
 {
@@ -12,10 +11,13 @@ namespace Signals.Core.Processing.Behaviour
     public class CriticalAttribute : Attribute
     {
         /// <summary>
-        /// Notified person, default is <see cref="ApplicationConfiguration.OwnerEmail"/>
+        /// Notified person, default is <see cref="CriticalConfiguration.OwnerEmail"/>
         /// </summary>
         public string NotificaitonEmail { get; set; }
 
+        /// <summary>
+        /// CTOR
+        /// </summary>
         public CriticalAttribute()
         {
             NotificaitonEmail = ApplicationConfiguration.Instance?.CriticalConfiguration?.OwnerEmail;

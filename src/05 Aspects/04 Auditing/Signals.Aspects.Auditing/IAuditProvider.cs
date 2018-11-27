@@ -2,6 +2,9 @@
 
 namespace Signals.Aspects.Auditing
 {
+    /// <summary>
+    /// Audit data provider
+    /// </summary>
     public interface IAuditProvider
     {
         /// <summary>

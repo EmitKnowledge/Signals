@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace Signals.Core.Common.InputOutput
 {
+    /// <summary>
+    /// Helper for input/output operations
+    /// </summary>
     public static class IoHelper
     {
         /// <summary>

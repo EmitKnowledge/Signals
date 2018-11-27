@@ -1,5 +1,8 @@
 ﻿namespace Signals.Aspects.Localization.Entries
 {
+    /// <summary>
+    /// Key for localizaiton entry
+    /// </summary>
     public class LocalizationKey
     {
         /// <summary>

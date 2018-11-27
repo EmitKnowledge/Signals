@@ -39,7 +39,7 @@ namespace App.Client.Migrations
                         console.Run(args);
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     throw;
                 }
@@ -55,8 +55,10 @@ namespace App.Client.Migrations
         private static IDbConnection BuildConnectionStirng(string connectionString)
         {
             if (connectionString == null) return null;
-            var scsb = new SqlConnectionStringBuilder(connectionString);
-            scsb.MultipleActiveResultSets = true;
+            var scsb = new SqlConnectionStringBuilder(connectionString)
+            {
+                MultipleActiveResultSets = true
+            };
             var cs = scsb.ConnectionString;
             var connection = new SqlConnection(cs);
             return connection;

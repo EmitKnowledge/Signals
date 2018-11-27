@@ -2,6 +2,10 @@
 
 namespace Signals.Aspects.Configuration
 {
+    /// <summary>
+    /// Base configuration element
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class BaseConfiguration<T> where T : BaseConfiguration<T>, new()
     {
         private static T _instance;

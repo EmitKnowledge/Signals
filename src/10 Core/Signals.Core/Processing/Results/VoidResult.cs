@@ -7,6 +7,9 @@ using System.Runtime.Serialization;
 
 namespace Signals.Core.Processing.Results
 {
+    /// <summary>
+    /// Process result wrapper
+    /// </summary>
     [Serializable]
     [DataContract]
     public partial class VoidResult
@@ -56,6 +59,20 @@ namespace Signals.Core.Processing.Results
         {
             var message = string.Join(@" | ", ErrorMessages.Select(x => x.UserVisibleMessage));
             return message;
+        }
+
+        /// <summary>
+        /// Create default faulted results
+        /// </summary>
+        /// <returns></returns>
+        public static VoidResult FaultedResult()
+        {
+            var faultedResult = new VoidResult
+            {
+                IsFaulted = true
+            };
+
+            return faultedResult;
         }
 
         /// <summary>

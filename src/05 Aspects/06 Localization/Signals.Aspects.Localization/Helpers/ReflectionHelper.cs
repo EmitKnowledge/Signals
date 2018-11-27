@@ -3,6 +3,9 @@ using System.Reflection;
 
 namespace Signals.Aspects.Localization.Helpers
 {
+    /// <summary>
+    /// Helper for reflection
+    /// </summary>
     public static class ReflectionHelper
     {
         /// <summary>

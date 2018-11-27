@@ -4,6 +4,7 @@ using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;
 using System;
 using System.Collections.Generic;
+using Signals.Core.Processes.Recurring.Logging;
 
 namespace Signals.Core.Processes.Recurring
 {

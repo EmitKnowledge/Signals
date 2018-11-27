@@ -2,8 +2,14 @@
 
 namespace Signals.Aspects.Auditing
 {
+    /// <summary>
+    /// Audit entry data
+    /// </summary>
     public class AuditEntryData
     {
+        /// <summary>
+        /// CTOR
+        /// </summary>
         public AuditEntryData()
         {
             Source = new Dictionary<string, object>();

@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Signals.Core.Common.Text
 {
+    /// <summary>
+    /// Extensions for strings
+    /// </summary>
     public static class StringExtensions
     {
         /// <summary>

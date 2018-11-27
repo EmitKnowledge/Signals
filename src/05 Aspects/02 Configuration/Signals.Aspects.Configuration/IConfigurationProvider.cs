@@ -1,5 +1,8 @@
 ﻿namespace Signals.Aspects.Configuration
 {
+    /// <summary>
+    /// Configuration data provider
+    /// </summary>
     public interface IConfigurationProvider
     {
         /// <summary>

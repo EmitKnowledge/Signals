@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Signals.Aspects.Configuration.Validations
 {
+    /// <summary>
+    /// Configuration validation result group
+    /// </summary>
     public class CompositeValidationResult : ValidationResult
     {
 		/// <summary>

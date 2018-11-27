@@ -2,6 +2,9 @@
 
 namespace Signals.Aspects.Security
 {
+    /// <summary>
+    /// User permission provider
+    /// </summary>
     public interface IPermissionProvider
     {
         /// <summary>

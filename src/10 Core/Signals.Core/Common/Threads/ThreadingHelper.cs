@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace Signals.Core.Common.Threads
 {
+    /// <summary>
+    /// Threads helper
+    /// </summary>
     public static class ThreadingHelper
     {
         /// <summary>
@@ -30,8 +33,17 @@ namespace Signals.Core.Common.Threads
         }
     }
 
+    /// <summary>
+    /// Extensions for canselation token
+    /// </summary>
     public static class CancellationTokenExtensions
     {
+        /// <summary>
+        /// Extension for waiting for a period for cancelation token
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public static bool WaitCancellationRequested(this CancellationToken token, TimeSpan timeout)
         {
             return token.WaitHandle.WaitOne(timeout);

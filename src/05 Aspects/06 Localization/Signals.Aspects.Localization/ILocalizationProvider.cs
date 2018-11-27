@@ -4,6 +4,9 @@ using System.Globalization;
 
 namespace Signals.Aspects.Localization
 {
+    /// <summary>
+    /// Localization provider
+    /// </summary>
     public interface ILocalizationProvider
     {
         /// <summary>

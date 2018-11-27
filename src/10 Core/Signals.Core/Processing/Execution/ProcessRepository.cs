@@ -41,7 +41,7 @@ namespace Signals.Core.Processing.Execution
         /// Get process type by name
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="name"></param>
+        /// <param name="names"></param>
         /// <returns></returns>
         public Type ResolveProcess(Func<Type, bool> filter = null, params string[] names)
         {
@@ -54,7 +54,7 @@ namespace Signals.Core.Processing.Execution
         /// </summary>
         /// <typeparam name="TInterface"></typeparam>
         /// <param name="filter"></param>
-        /// <param name="name"></param>
+        /// <param name="names"></param>
         /// <returns></returns>
         public Type ResolveProcess<TInterface>(Func<Type, bool> filter = null, params string[] names)
         {
@@ -65,8 +65,7 @@ namespace Signals.Core.Processing.Execution
         /// <summary>
         /// Get process type by interface
         /// </summary>
-        /// <typeparam name="TInterface"></typeparam>
-        /// <param name="name"></param>
+        /// <param name="type"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
         public List<Type> OfType(Type type, Func<Type, bool> filter = null)
@@ -91,7 +90,6 @@ namespace Signals.Core.Processing.Execution
         /// <summary>
         /// Get process type by name and interface
         /// </summary>
-        /// <typeparam name="TInterface"></typeparam>
         /// <param name="filter"></param>
         /// <returns></returns>
         public List<Type> All(Func<Type, bool> filter = null)

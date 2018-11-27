@@ -5,11 +5,18 @@ using System.Linq;
 
 namespace Signals.Core.Processing.Authorization
 {
+    /// <summary>
+    /// Process authorizaiton attribute
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class SignalsAuthorizeProcessAttribute : Attribute
     {
         private object[] Roles { get; }
         
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="roles"></param>
         public SignalsAuthorizeProcessAttribute(params object[] roles)
         {
             if (roles.Any(x => !(x is Enum)))
@@ -18,7 +25,12 @@ namespace Signals.Core.Processing.Authorization
             Roles = roles;
         }
 
-        public bool Authorize(string feature)
+        /// <summary>
+        /// Authorization callback
+        /// </summary>
+        /// <param name="feature"></param>
+        /// <returns></returns>
+        internal bool Authorize(string feature)
         {
             var permissionManager = SystemBootstrapper.GetInstance<IPermissionManager>();
             return permissionManager.HasPermission(feature, Roles as Enum[]);

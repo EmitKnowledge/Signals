@@ -51,14 +51,12 @@ namespace Signals.Core.Processes.Recurring
         /// <summary>
         /// Background execution layer
         /// </summary>
-        /// <param name="startTime"></param>
         /// <returns></returns>
         public abstract TResponse Sync();
 
         /// <summary>
         /// Execution using base strategy
         /// </summary>
-        /// <param name="startTime"></param>
         /// <returns></returns>
         internal TResponse Execute()
         {

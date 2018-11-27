@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Signals.Aspects.Configuration.Validations
 {
+    /// <summary>
+    /// Configuration object validation attribute
+    /// </summary>
     public class ValidateObjectAttribute : ValidationAttribute
     {
 	    /// <summary>Validates the specified value with respect to the current validation attribute.</summary>

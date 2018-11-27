@@ -20,7 +20,7 @@ namespace Signals.Core.Processes.Recurring
         /// <summary>
         /// CTOR
         /// </summary>
-        /// <param name="process"></param>
+        /// <param name="processType"></param>
         public SyncTaskWrapper(Type processType)
         {
             InnerProcessType = processType;

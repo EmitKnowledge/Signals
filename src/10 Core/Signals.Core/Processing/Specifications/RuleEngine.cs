@@ -69,6 +69,7 @@ namespace Signals.Core.Processing.Specifications
         /// Specification execution with input
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="condition"></param>
         /// <param name="specificaiton"></param>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -102,6 +103,7 @@ namespace Signals.Core.Processing.Specifications
         /// Specification execution with input
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="condition"></param>
         /// <param name="specificaiton"></param>
         /// <param name="input"></param>
         /// <returns></returns>

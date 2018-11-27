@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace Signals.Core.Common.Urls
 {
+    /// <summary>
+    /// Url helper
+    /// </summary>
     public static class UrlHelper
     {
         private static string UrlRegexPattern = @"(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})";

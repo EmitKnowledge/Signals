@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Signals.Core.Processes.Export
 {
+    /// <summary>
+    /// Data export configuration
+    /// </summary>
+    /// <typeparam name="TData"></typeparam>
     public interface IExportConfiguration<TData>
     {
         /// <summary>
@@ -11,7 +15,7 @@ namespace Signals.Core.Processes.Export
         string FileName { get; set; }
 
         /// <summary>
-        /// Represents dictionary of column name and data mapper func for exporing data of type <see cref="TData"/>
+        /// Represents dictionary of column name and data mapper func for exporing data
         /// </summary>
         Dictionary<string, Func<TData, object>> DataMapper { get; set; }
     }

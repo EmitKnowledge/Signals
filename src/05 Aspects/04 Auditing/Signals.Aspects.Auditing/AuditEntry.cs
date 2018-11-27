@@ -2,8 +2,15 @@
 
 namespace Signals.Aspects.Auditing
 {
+    /// <summary>
+    /// Audit entry
+    /// </summary>
     public class AuditEntry
     {
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="processInstanceId"></param>
         public AuditEntry(string processInstanceId)
         {
             ProcessInstanceId = processInstanceId;

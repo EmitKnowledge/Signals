@@ -1,5 +1,8 @@
 ﻿namespace Signals.Core.Processing.Exceptions
 {
+    /// <summary>
+    /// Application error information
+    /// </summary>
     public interface IErrorInfo
     {
         /// <summary>

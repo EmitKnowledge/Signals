@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Signals.Core.Common.Instance
 {
+    /// <summary>
+    /// Extensions for instancing
+    /// </summary>
     public static class InstanceExtensions
     {
         /// <summary>

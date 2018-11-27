@@ -7,6 +7,9 @@ using System.Reflection;
 
 namespace Signals.Aspects.DI
 {
+    /// <summary>
+    /// Applicaiton bootstrapper
+    /// </summary>
     public static class SystemBootstrapper
     {
         /// <summary>

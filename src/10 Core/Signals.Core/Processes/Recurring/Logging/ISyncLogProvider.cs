@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Signals.Core.Processes.Recurring
+namespace Signals.Core.Processes.Recurring.Logging
 {
+    /// <summary>
+    /// Synchronizaiton log provider
+    /// </summary>
     public interface ISyncLogProvider
     {
         /// <summary>

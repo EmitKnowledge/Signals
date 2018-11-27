@@ -5,6 +5,9 @@ using System.Runtime.Serialization;
 
 namespace Signals.Core.Processing.Exceptions
 {
+    /// <summary>
+    /// Application error information
+    /// </summary>
     [Serializable]
     [DataContract]
     public class UnmanagedExceptionErrorInfo : IErrorInfo

@@ -7,6 +7,9 @@ using System.Runtime.Serialization;
 
 namespace Signals.Core.Common.Instance
 {
+    /// <summary>
+    /// Extensions for enums
+    /// </summary>
     public static class EnumExtensions
     {
         /// <summary>
@@ -47,7 +50,6 @@ namespace Signals.Core.Common.Instance
         /// <summary>
         /// Return enum value as int
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="enumValue"></param>
         /// <returns></returns>
         public static int ToInt(this Enum enumValue)

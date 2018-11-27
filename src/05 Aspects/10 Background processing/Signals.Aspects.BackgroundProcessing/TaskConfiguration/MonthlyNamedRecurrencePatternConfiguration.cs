@@ -84,10 +84,29 @@ namespace Signals.Aspects.BackgroundProcessing.TaskConfiguration
 		/// </summary>
 		public enum DayInMonth
 		{
+            /// <summary>
+            /// First
+            /// </summary>
 			First,
+
+            /// <summary>
+            /// Second
+            /// </summary>
 			Second,
+
+            /// <summary>
+            /// Third
+            /// </summary>
 			Third,
+
+            /// <summary>
+            /// Fourth
+            /// </summary>
 			Fourth,
+
+            /// <summary>
+            /// Last
+            /// </summary>
 			Last
 		}
 	}

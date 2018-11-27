@@ -11,8 +11,20 @@ using System.Linq;
 namespace Signals.Core.Web.Execution.ExecutionHandlers
 {
 
+    /// <summary>
+    /// Result handler that adds http response headers based on attribiutes and filters
+    /// </summary>
     public class HeaderAdderHandler : IResultHandler
     {
+        /// <summary>
+        /// Handle process result
+        /// </summary>
+        /// <typeparam name="TProcess"></typeparam>
+        /// <param name="process"></param>
+        /// <param name="type"></param>
+        /// <param name="response"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
             var headers = SystemBootstrapper.GetInstance<List<ResponseHeaderAttribute>>();

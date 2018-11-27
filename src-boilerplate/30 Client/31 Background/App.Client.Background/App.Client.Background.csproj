@@ -8,8 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Signals.Aspects.BackgroundProcessing.FluentScheduler" Version="0.5.0" />
     <PackageReference Include="Signals.Aspects.Configuration.File" Version="0.5.0" />
-    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="0.5.0" />
-    <PackageReference Include="Signals.Core.Background" Version="0.5.1" />
+    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="0.5.1" />
+    <PackageReference Include="Signals.Core.Background" Version="0.5.6" />
   </ItemGroup>
 
   <ItemGroup>

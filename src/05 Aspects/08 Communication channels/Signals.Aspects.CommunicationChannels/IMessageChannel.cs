@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace Signals.Aspects.CommunicationChannels
 {
+    /// <summary>
+    /// Message channel contract
+    /// </summary>
     public interface IMessageChannel
     {
         /// <summary>

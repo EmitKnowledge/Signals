@@ -11,12 +11,21 @@ namespace Signals.Core.Common.Serialization
     /// </summary>
     public enum SerializationFormat
     {
+        /// <summary>
+        /// Detect based on content
+        /// </summary>
         [Description("text/text")]
         Detect,
 
+        /// <summary>
+        /// JSON
+        /// </summary>
         [Description("application/json")]
         Json,
 
+        /// <summary>
+        /// XML
+        /// </summary>
         [Description("application/xml")]
         Xml
     }

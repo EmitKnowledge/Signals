@@ -4,6 +4,10 @@ using System.Runtime.Serialization;
 
 namespace Signals.Core.Processing.Results
 {
+    /// <summary>
+    /// Single object result wrapper
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     [Serializable]
     [DataContract]
     public class MethodResult<T> : VoidResult

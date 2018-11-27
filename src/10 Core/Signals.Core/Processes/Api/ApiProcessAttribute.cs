@@ -12,12 +12,39 @@ namespace Signals.Core.Processes.Api
     /// </summary>
     public enum ApiProcessMethod
     {
+        /// <summary>
+        /// Http method ANY
+        /// </summary>
         ANY,
+
+        /// <summary>
+        /// Http method GET
+        /// </summary>
         GET,
+
+        /// <summary>
+        /// Http method POST
+        /// </summary>
         POST,
+
+        /// <summary>
+        /// Http method PUT
+        /// </summary>
         PUT,
+
+        /// <summary>
+        /// Http method PATCH
+        /// </summary>
         PATCH,
+
+        /// <summary>
+        /// Http method DELETE
+        /// </summary>
         DELETE,
+
+        /// <summary>
+        /// Http method OPTIONS
+        /// </summary>
         OPTIONS
     }
 
@@ -27,6 +54,9 @@ namespace Signals.Core.Processes.Api
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class ApiProcessAttribute : Attribute
     {
+        /// <summary>
+        /// CTOR
+        /// </summary>
         public ApiProcessAttribute()
         {
             HttpMethod = ApiProcessMethod.ANY;

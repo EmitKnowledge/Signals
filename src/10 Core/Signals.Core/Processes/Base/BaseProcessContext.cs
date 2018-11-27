@@ -11,6 +11,9 @@ using Signals.Core.Processing.Results;
 
 namespace Signals.Core.Processes.Base
 {
+    /// <summary>
+    /// Process context for all types of processes
+    /// </summary>
     public class BaseProcessContext
     {
         /// <summary>

@@ -7,9 +7,24 @@ namespace Signals.Core.Web.Behaviour
     /// </summary>
     public enum CacheLocation
     {
+        /// <summary>
+        /// Disable cache
+        /// </summary>
         None,
+
+        /// <summary>
+        /// Store cache data on client side
+        /// </summary>
         Client,
+
+        /// <summary>
+        /// Store cache data on server side
+        /// </summary>
         Server,
+
+        /// <summary>
+        /// Store cache data on both client and server side
+        /// </summary>
         ClientAndServer
     }
 

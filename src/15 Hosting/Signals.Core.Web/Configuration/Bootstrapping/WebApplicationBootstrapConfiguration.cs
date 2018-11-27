@@ -38,7 +38,7 @@ namespace Signals.Core.Web.Configuration.Bootstrapping
         /// <summary>
         /// Config entry point
         /// </summary>
-        /// <param name="entryAssembly"></param>
+        /// <param name="scanAssemblies"></param>
         /// <returns></returns>
         internal IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {

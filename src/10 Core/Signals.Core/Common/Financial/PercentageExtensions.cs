@@ -2,6 +2,9 @@
 
 namespace Signals.Core.Common.Financial
 {
+    /// <summary>
+    /// Extensions for percentages
+    /// </summary>
     public static class PercentageExtensions
     {
         /// <summary>

@@ -2,6 +2,9 @@
 
 namespace Signals.Aspects.Auth
 {
+    /// <summary>
+    /// User permission manager
+    /// </summary>
     public interface IPermissionManager
     {
         /// <summary>

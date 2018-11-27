@@ -37,7 +37,7 @@ namespace Signals.Core.Processing.Results
         /// </summary>
         /// <param name="file"></param>
         /// <param name="fileName"></param>
-        /// <param name="mime"></param>
+        /// <param name="mimeType"></param>
         public FileResult(Stream file, string fileName, string mimeType)
         {
             Result = file;

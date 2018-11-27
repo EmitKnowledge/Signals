@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Signals.Core.Processing.Exceptions
 {
+    /// <summary>
+    /// Error info generated from failed authorization
+    /// </summary>
     [Serializable]
     [DataContract]
     public class AuthorizationErrorInfo : IErrorInfo
@@ -25,7 +28,6 @@ namespace Signals.Core.Processing.Exceptions
         /// <summary>
         /// CTOR
         /// </summary>
-        /// <param name="ex"></param>
         public AuthorizationErrorInfo()
         {
             FaultMessage = "Authorization failed";

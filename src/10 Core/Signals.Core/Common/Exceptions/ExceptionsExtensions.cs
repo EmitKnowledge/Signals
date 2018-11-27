@@ -60,8 +60,19 @@ namespace Signals.Core.Common.Exceptions
         /// </summary>
         public enum ExceptionDetails
         {
+            /// <summary>
+            /// Exception type
+            /// </summary>
             Type,
+
+            /// <summary>
+            /// Exception message
+            /// </summary>
             Message,
+
+            /// <summary>
+            /// Exception stack trace
+            /// </summary>
             Stacktrace
         }
     }

@@ -3,6 +3,9 @@ using System.IO;
 
 namespace Signals.Core.Common.Encode
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class EncodingExtensions
     {
         /// <summary>

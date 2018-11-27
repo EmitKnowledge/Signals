@@ -6,6 +6,9 @@ using System.Reflection;
 
 namespace Signals.Aspects.DI.Helpers
 {
+    /// <summary>
+    /// Helper for injecting properties with <see cref="ImportAttribute"/>
+    /// </summary>
     public static class PropertyInjector
     {
         private static HashSet<Type> _set;

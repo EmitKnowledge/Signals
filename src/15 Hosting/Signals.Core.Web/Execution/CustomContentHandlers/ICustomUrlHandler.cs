@@ -8,8 +8,16 @@ using System.Threading.Tasks;
 
 namespace Signals.Core.Web.Execution.CustomContentHandlers
 {
+    /// <summary>
+    /// Handler for custom urls that differ from convention
+    /// </summary>
     public interface ICustomUrlHandler
     {
+        /// <summary>
+        /// Put content into http response
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         MiddlewareResult RenderContent(IHttpContextWrapper context);
     }
 }

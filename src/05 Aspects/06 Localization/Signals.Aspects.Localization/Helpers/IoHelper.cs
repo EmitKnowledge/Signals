@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Signals.Aspects.Localization.Helpers
 {
+    /// <summary>
+    /// Helper for input/output operations
+    /// </summary>
     public static class IoHelper
     {
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using Signals.Core.Processing.Execution;
+﻿using Signals.Core.Processing.Exceptions;
+using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using System;
 
@@ -82,7 +83,45 @@ namespace Signals.Core.Processes.Base
 		TResponse IBaseProcess<TResponse>.ExecuteProcess(params object[] args)
 	    {
 			return ExecuteProcess(args);
-		}
+        }
+
+        /// <summary>
+        /// Return empty result
+        /// </summary>
+        /// <returns></returns>
+        protected TResponse Ok()
+        {
+            return new TResponse();
+        }
+
+        /// <summary>
+        /// Return faulted result
+        /// </summary>
+        /// <param name="failCause"></param>
+        /// <returns></returns>
+        protected TResponse Fail(Exception failCause)
+        {
+            return VoidResult.FaultedResult<TResponse>(failCause);
+        }
+
+        /// <summary>
+        /// Return faulted result
+        /// </summary>
+        /// <param name="failCauses"></param>
+        /// <returns></returns>
+        protected TResponse Fail(params IErrorInfo[] failCauses)
+        {
+            return VoidResult.FaultedResult<TResponse>(failCauses);
+        }
+
+        /// <summary>
+        /// Return faulted result
+        /// </summary>
+        /// <returns></returns>
+        protected TResponse Fail()
+        {
+            return VoidResult.FaultedResult<TResponse>();
+        }
 
         /// <summary>
         /// Execute chained business process

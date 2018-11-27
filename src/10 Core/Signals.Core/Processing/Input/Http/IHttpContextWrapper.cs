@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Signals.Core.Processing.Input.Http
 {
+    /// <summary>
+    /// Wrapper for MVC http context
+    /// </summary>
     public interface IHttpContextWrapper
     {
         /// <summary>
@@ -53,7 +56,7 @@ namespace Signals.Core.Processing.Input.Http
         /// <summary>
         /// Write response
         /// </summary>
-        /// <param name="respose"></param>
+        /// <param name="httpResponse"></param>
         /// <returns></returns>
         void PutResponse(HttpResponseMessage httpResponse);
     }

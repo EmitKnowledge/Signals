@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Signals.Aspects.Localization
 {
+    /// <summary>
+    /// Localization data provider
+    /// </summary>
     public interface ILocalizationDataProvider
     {
         /// <summary>

@@ -10,7 +10,7 @@ namespace Signals.Core.Processes.Import
     public interface IImportConfiguration<TResponse>
     {
         /// <summary>
-        /// Represents dictionary of column name(s) and data handler action that stores the extracted data to the <see cref="TResponse"/> object
+        /// Represents dictionary of column name(s) and data handler action that stores the extracted data to the response object
         /// </summary>
         Dictionary<string[], Action<string[], TResponse>> DataHandlers { get; set; }
     }

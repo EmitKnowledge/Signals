@@ -4,6 +4,9 @@ using System;
 
 namespace Signals.Aspects.Caching
 {
+    /// <summary>
+    /// Cache
+    /// </summary>
     public interface ICache
     {
         /// <summary>

@@ -5,6 +5,10 @@ using System.Runtime.Serialization;
 
 namespace Signals.Core.Processing.Results
 {
+    /// <summary>
+    /// List result wrapper
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     [Serializable]
     [DataContract]
     public class ListResult<T> : VoidResult
@@ -23,6 +27,9 @@ namespace Signals.Core.Processing.Results
         [DataMember]
         public int Count => Result.Count;
 
+        /// <summary>
+        /// Real result
+        /// </summary>
         [DataMember]
         public List<T> Result { get; private set; }
 
