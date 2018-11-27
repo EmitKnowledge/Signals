@@ -29,7 +29,7 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <param name="log"></param>
         public void CreateLog(SyncTaskLog log)
         {
-            _syncTaskLogs.Insert(0, log);
+            SyncTaskLogs.Insert(0, log);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <returns></returns>
         public List<SyncTaskLog> Last(int take)
         {
-            return _syncTaskLogs.Take(take).ToList();
+            return SyncTaskLogs.Take(take).ToList();
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <returns></returns>
         public SyncTaskLog Last()
         {
-            return _syncTaskLogs.FirstOrDefault();
+            return SyncTaskLogs.FirstOrDefault();
         }
     }
 }

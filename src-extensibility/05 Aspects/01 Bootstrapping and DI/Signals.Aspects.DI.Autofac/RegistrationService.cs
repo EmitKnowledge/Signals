@@ -138,8 +138,7 @@ namespace Signals.Aspects.DI.Autofac
 		public void Register<TDefinition>(Func<TDefinition> callback) where TDefinition : class
         {
             Builder
-                .RegisterType<TDefinition>()
-                .Keyed<TDefinition>(callback)
+                .Register<TDefinition>(ctx => callback())
                 .PropertiesAutowired(new PropertySelector(), true);
         }
     }

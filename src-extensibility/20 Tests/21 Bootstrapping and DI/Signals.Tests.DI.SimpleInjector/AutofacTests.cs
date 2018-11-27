@@ -11,7 +11,7 @@ namespace Signals.Tests.DI
     public class AutofacTests
     {
         [Import] public IMyService1 MyService1 { get; set; }
-        
+
         [Fact]
         public void MyService_WhenInjected_ReturnsValue()
         {
