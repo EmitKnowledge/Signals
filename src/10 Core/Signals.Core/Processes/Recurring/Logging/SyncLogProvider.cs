@@ -4,8 +4,16 @@ using System.Linq;
 
 namespace Signals.Core.Processes.Recurring.Logging
 {
+    /// <summary>
+    /// Sync task logger in-memory implementation
+    /// </summary>
     public class SyncLogProvider : ISyncLogProvider
     {
+        /// <summary>
+        /// Maximum number of logs
+        /// </summary>
+        private const int MaxLogs = 100;
+
         /// <summary>
         /// Logs repository
         /// </summary>
@@ -30,6 +38,7 @@ namespace Signals.Core.Processes.Recurring.Logging
         public void CreateLog(SyncTaskLog log)
         {
             SyncTaskLogs.Insert(0, log);
+            _syncTaskLogs = SyncTaskLogs.Take(MaxLogs).ToList();
         }
 
         /// <summary>

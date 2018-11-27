@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 
-namespace App.Common.Configuration.Notifications
+namespace App.Service.Configuration.Notifications
 {
     /// <summary>
     /// Windows azure service bus configuration

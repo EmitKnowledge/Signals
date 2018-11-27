@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace App.Common.Configuration.Database
+namespace App.Service.Configuration.Database
 {
     /// <summary>
     /// Configuration for database

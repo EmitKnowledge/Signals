@@ -12,5 +12,17 @@
   <ItemGroup>
     <ProjectReference Include="..\..\20 Service\21 Configuration\App.Service.Configuration\App.Service.Configuration.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="configs\application.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="configs\business.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="configs\web.application.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using App.Service.Controllers.Validation.RuleSpecifications.Base;
-using App.Common.Configuration;
+using App.Service.Configuration;
 using Signals.Core.Processing.Specifications;
 using App.Service.DomainEntities.Events.Users;
 using Signals.Core.Common.Instance;

@@ -6,7 +6,7 @@ using Signals.Core.Processes.Recurring;
 using Signals.Core.Processing.Results;
 using System;
 
-namespace App.Client.BackgroundServiceWorker.Tasks.Sync.Users
+namespace App.Client.Background.Tasks.Users
 {
     internal class SendTrialEndEmailTask : RecurringProcess<VoidResult>
     {

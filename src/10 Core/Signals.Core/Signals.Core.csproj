@@ -33,7 +33,7 @@
     <PackageReference Include="Signals.Aspects.Security" Version="0.5.0" />
     <PackageReference Include="Signals.Aspects.Storage" Version="0.5.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-    <PackageReference Include="HtmlSanitizer" Version="4.0.197" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.199" />
   </ItemGroup>
 
 </Project>

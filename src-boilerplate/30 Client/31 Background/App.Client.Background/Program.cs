@@ -1,4 +1,4 @@
-﻿using App.Common.Configuration;
+﻿using App.Service.Configuration;
 using App.Service.Controllers.Validation.RuleSpecifications.Base;
 using Signals.Aspects.BackgroundProcessing.FluentScheduler;
 using Signals.Aspects.Configuration.File;
@@ -11,7 +11,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace App.Client.BackgroundServiceWorker
+namespace App.Client.Background
 {
     static class Program
     {

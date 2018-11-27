@@ -1,14 +1,14 @@
 ﻿using System.Configuration;
-using App.Common.Configuration.Application;
-using App.Common.Configuration.ExternalApis;
-using App.Common.Configuration.Notifications;
-using App.Common.Configuration.Security;
-using App.Common.Configuration.Storage;
-using App.Common.Configuration.Web;
-using App.Common.Configuration.Database;
+using App.Service.Configuration.Application;
+using App.Service.Configuration.ExternalApis;
+using App.Service.Configuration.Notifications;
+using App.Service.Configuration.Security;
+using App.Service.Configuration.Storage;
+using App.Service.Configuration.Web;
+using App.Service.Configuration.Database;
 using Signals.Aspects.Configuration;
 
-namespace App.Common.Configuration
+namespace App.Service.Configuration
 {
     public class BusinessConfiguration : BaseConfiguration<BusinessConfiguration>
     {

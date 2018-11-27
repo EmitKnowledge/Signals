@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 
-namespace App.Common.Configuration.Security
+namespace App.Service.Configuration.Security
 {
     public sealed class SecurityConfigurationElement
     {

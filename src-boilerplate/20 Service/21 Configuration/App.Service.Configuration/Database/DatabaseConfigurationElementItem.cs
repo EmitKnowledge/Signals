@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 
-namespace App.Common.Configuration.Database
+namespace App.Service.Configuration.Database
 {
     /// <summary>
     /// Defines database configuration element

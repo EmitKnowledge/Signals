@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 
-namespace App.Common.Configuration.Storage
+namespace App.Service.Configuration.Storage
 {
     /// <summary>
     /// Defines storage configuration element

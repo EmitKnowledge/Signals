@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 
-namespace App.Common.Configuration.Application
+namespace App.Service.Configuration.Application
 {
     public sealed class ApplicationConfigurationElement 
     {

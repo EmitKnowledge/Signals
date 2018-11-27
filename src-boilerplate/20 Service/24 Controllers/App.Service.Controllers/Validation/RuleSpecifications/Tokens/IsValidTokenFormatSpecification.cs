@@ -1,4 +1,4 @@
-﻿using App.Common.Configuration;
+﻿using App.Service.Configuration;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Specifications;
 

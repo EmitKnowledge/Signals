@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using App.Common.Configuration;
+using App.Service.Configuration;
 using App.Service.DomainEntities.Users;
 using Signals.Aspects.Localization.Helpers;
 using Signals.Core.Processing.Specifications;

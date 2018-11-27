@@ -3,18 +3,18 @@ using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Linq;
 
-namespace App.Common.Configuration.ExternalApis
+namespace App.Service.Configuration.ExternalApis
 {
     /// <summary>
     /// Configuration for used external apis
     /// </summary>
     public sealed class ExternalApisConfigurationElement
     {
-        public ExternalApiConfigurationElement ExternalApisCollection { get; set; }
+        public List<ExternalApiConfigurationElement> ExternalApisCollection { get; set; }
 
         public ExternalApisConfigurationElement()
         {
-            ExternalApisCollection = new ExternalApiConfigurationElement();
+            ExternalApisCollection = new List<ExternalApiConfigurationElement>();
         }
     }
 
