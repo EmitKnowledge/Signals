@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Signals.Aspects.Localization.Helpers
+namespace Signals.Aspects.Localization.File.Helpers
 {
     /// <summary>
     /// Helper for input/output operations
@@ -98,6 +98,6 @@ namespace Signals.Aspects.Localization.Helpers
         /// <param name="fullPath"></param>
         /// <returns></returns>
         public static string ReadTextFile(string fullPath)
-            => File.ReadAllText(fullPath);
+            => System.IO.File.ReadAllText(fullPath);
     }
 }

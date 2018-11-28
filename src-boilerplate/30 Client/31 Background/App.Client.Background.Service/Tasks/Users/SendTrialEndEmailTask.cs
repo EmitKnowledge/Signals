@@ -1,6 +1,7 @@
 ﻿using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
 using Signals.Aspects.DI.Attributes;
 using Signals.Core.Processes.Recurring;
+using Signals.Core.Processes.Recurring.Logging;
 using Signals.Core.Processing.Results;
 using System;
 

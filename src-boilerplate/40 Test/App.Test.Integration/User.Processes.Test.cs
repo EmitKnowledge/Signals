@@ -6,7 +6,7 @@ namespace App.Test.Integration
 {
     public class UserProcessesTest : BaseProcessesTest
     {
-        [Import] private ManualMediator _mediator { get; set; }
+        [Import] private Mediator _mediator { get; set; }
 
         public UserProcessesTest()
         {
