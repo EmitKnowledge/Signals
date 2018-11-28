@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Signals.Aspects.Localization.Helpers
+namespace Signals.Aspects.Localization.File.Helpers
 {
     /// <summary>
     /// Helper for reflection

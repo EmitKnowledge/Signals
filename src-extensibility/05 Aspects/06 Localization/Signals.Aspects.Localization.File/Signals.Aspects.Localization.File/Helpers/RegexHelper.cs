@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Signals.Aspects.Localization.Helpers
+namespace Signals.Aspects.Localization.File.Helpers
 {
     /// <summary>
     /// Helper for regex

@@ -5,7 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Signals.Aspects.Localization.Entries;
 using Signals.Aspects.Localization.File.Configurations;
-using Signals.Aspects.Localization.Helpers;
+using Signals.Aspects.Localization.File.Helpers;
 
 namespace Signals.Aspects.Localization.File.DataProviders
 {
