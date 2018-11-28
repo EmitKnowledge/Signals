@@ -134,7 +134,7 @@ namespace Signals.Core.Configuration.Bootstrapping
 
             resolver.Register<IProcessFactory, ProcessFactory>();
             resolver.Register<IProcessExecutor, ProcessExecutor>();
-            resolver.Register<ManualMediator>();
+            resolver.Register<Mediator>();
 
             var processRepo = new ProcessRepository(scanAssemblies);
             resolver.Register(processRepo);

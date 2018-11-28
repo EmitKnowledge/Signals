@@ -9,7 +9,7 @@ namespace Signals.Core.Processes
     /// <summary>
     /// Manual request mediator
     /// </summary>
-    public class ManualMediator
+    public class Mediator
     {
         /// <summary>
         /// Process factory
