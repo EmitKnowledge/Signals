@@ -1,5 +1,5 @@
-﻿using App.Service.Configuration;
-using App.Service.DomainEntities.Users;
+﻿using App.Domain.Configuration;
+using App.Domain.Entities.Users;
 using Dapper;
 using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI;
@@ -32,7 +32,7 @@ namespace App.Test.Integration
         /// </summary>
         public BaseProcessesTest()
         {
-            BusinessConfiguration.UseProvider(new FileConfigurationProvider
+            DomainConfiguration.UseProvider(new FileConfigurationProvider
             {
                 File = @"configs\business.config.json",
                 Path = Environment.CurrentDirectory,
@@ -73,7 +73,7 @@ namespace App.Test.Integration
 
         private static void CleanupDatabase()
         {
-            var scsb = new SqlConnectionStringBuilder(BusinessConfiguration.Instance.DatabaseConfiguration.ActiveConfiguration.ConnectionString);
+            var scsb = new SqlConnectionStringBuilder(DomainConfiguration.Instance.DatabaseConfiguration.ActiveConfiguration.ConnectionString);
             scsb.MultipleActiveResultSets = true;
             var cs = scsb.ConnectionString;
             using (var connection = new SqlConnection(cs))

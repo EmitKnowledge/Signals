@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\20 Service\21 Configuration\App.Service.Configuration\App.Service.Configuration.csproj" />
+    <ProjectReference Include="..\..\20 Domain\21 Configuration\App.Domain.Configuration\App.Domain.Configuration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,4 @@
-﻿using App.Service.Configuration;
-using App.Service.Controllers.Validation.RuleSpecifications.Base;
+﻿using App.Domain.Configuration;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Signals.Aspects.Configuration.File;
@@ -34,7 +33,7 @@ namespace App.Client.Web
                 .AddConfiguration()
                 .AddSignals(config =>
                 {
-                    config.ScanAssemblies = new List<Assembly> { Assembly.GetExecutingAssembly(), typeof(BaseDomainEntitySpecification<>).Assembly };
+                    //config.ScanAssemblies = new List<Assembly> { Assembly.GetExecutingAssembly(), typeof(BaseDomainEntitySpecification<>).Assembly };
                     config.RegistrationService = registrationService;
                 });
 
@@ -56,7 +55,7 @@ namespace App.Client.Web
                 ReloadOnAccess = false
             };
 
-            BusinessConfiguration.UseProvider(ProviderForFile("business.config.json"));
+            DomainConfiguration.UseProvider(ProviderForFile("business.config.json"));
             ApplicationConfiguration.UseProvider(ProviderForFile("application.config.json"));
             WebApplicationConfiguration.UseProvider(ProviderForFile("web.application.config.json"));
 
