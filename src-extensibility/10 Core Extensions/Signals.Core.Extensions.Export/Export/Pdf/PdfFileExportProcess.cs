@@ -4,7 +4,7 @@ using Signals.Core.Processing.Input;
 namespace Signals.Core.Extensions.Export.Export.Pdf
 {
     /// <summary>
-    /// Represents process for exporting data of type <see cref="TData"/> in pdf format
+    /// Represents process for exporting data in pdf format
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     public abstract class PdfFileExportProcess<TData> : BaseFileExportProcess<TData>
@@ -20,7 +20,7 @@ namespace Signals.Core.Extensions.Export.Export.Pdf
     }
 
     /// <summary>
-    /// Represents process for exporting data of type <see cref="TData"/> in pdf format
+    /// Represents process for exporting data in pdf format
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="T1"></typeparam>
@@ -38,7 +38,7 @@ namespace Signals.Core.Extensions.Export.Export.Pdf
     }
 
     /// <summary>
-    /// Represents process for exporting data of type <see cref="TData"/> in pdf format
+    /// Represents process for exporting data in pdf format
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="T1"></typeparam>
@@ -58,7 +58,7 @@ namespace Signals.Core.Extensions.Export.Export.Pdf
     }
 
     /// <summary>
-    /// Represents process for exporting data of type <see cref="TData"/> in pdf format
+    /// Represents process for exporting data in pdf format
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="T1"></typeparam>

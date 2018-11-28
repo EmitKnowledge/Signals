@@ -16,7 +16,7 @@ namespace Signals.Core.Extensions.Export.Configuration
         public string FileName { get; set; }
 
         /// <summary>
-        /// Represents dictionary of column name and data mapper func for exporing data of type <see cref="TData"/>
+        /// Represents dictionary of column name and data mapper func for exporing data
         /// </summary>
         public Dictionary<string, Func<TData, object>> DataMapper { get; set; }
     }

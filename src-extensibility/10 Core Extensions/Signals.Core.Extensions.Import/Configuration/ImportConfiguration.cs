@@ -19,7 +19,7 @@ namespace Signals.Core.Extensions.Import.Configuration
         }
 
         /// <summary>
-        /// Represents dictionary of column name(s) and data handler action that stores the extracted data to the <see cref="TResponse"/> object
+        /// Represents dictionary of column name(s) and data handler action that stores the extracted data object
         /// </summary>
         public Dictionary<string[], Action<string[], TResponse>> DataHandlers { get; set; }
     }

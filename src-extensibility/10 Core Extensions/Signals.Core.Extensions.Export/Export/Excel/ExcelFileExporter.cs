@@ -12,6 +12,9 @@ namespace Signals.Core.Extensions.Export.Export.Excel
     /// <typeparam name="TData"></typeparam>
     public class ExcelFileExporter<TData> : IFileExporter<TData>
     {
+        /// <summary>
+        /// Mime type for excel
+        /// </summary>
         public string MimeType => "application/vnd.ms-excel";
 
         /// <summary>

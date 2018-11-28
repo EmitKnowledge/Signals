@@ -4,7 +4,7 @@ using Signals.Core.Processing.Input;
 namespace Signals.Core.Extensions.Export.Export.Excel
 {
     /// <summary>
-    /// Represents process for exporting data of type <see cref="TData"/> in excel format
+    /// Represents process for exporting data in excel format
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     public abstract class ExcelFileExportProcess<TData> : BaseFileExportProcess<TData>
@@ -20,7 +20,7 @@ namespace Signals.Core.Extensions.Export.Export.Excel
     }
 
     /// <summary>
-    /// Represents process for exporting data of type <see cref="TData"/> in excel format
+    /// Represents process for exporting data in excel format
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="T1"></typeparam>
@@ -38,7 +38,7 @@ namespace Signals.Core.Extensions.Export.Export.Excel
     }
 
     /// <summary>
-    /// Represents process for exporting data of type <see cref="TData"/> in excel format
+    /// Represents process for exporting data in excel format
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="T1"></typeparam>
@@ -58,7 +58,7 @@ namespace Signals.Core.Extensions.Export.Export.Excel
     }
 
     /// <summary>
-    /// Represents process for exporting data of type <see cref="TData"/> in excel format
+    /// Represents process for exporting data in excel format
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="T1"></typeparam>

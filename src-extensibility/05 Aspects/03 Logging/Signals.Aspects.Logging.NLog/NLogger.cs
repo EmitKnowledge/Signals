@@ -11,6 +11,9 @@ using System.Linq;
 
 namespace Signals.Aspects.Logging.NLog
 {
+    /// <summary>
+    /// MLog logger implementation
+    /// </summary>
     public class NLogger : ILogger
     {
 	    /// <summary>

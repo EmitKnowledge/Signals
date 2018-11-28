@@ -1,6 +1,4 @@
-﻿using Signals.Aspects.Auth.Properties;
-
-namespace Signals.Aspects.Auth.Mvc5.Extensions
+﻿namespace Signals.Aspects.Auth.Mvc5.Extensions
 {
     /// <summary>
     /// Extension class for casting <see cref="AuthenticationProperties"/>

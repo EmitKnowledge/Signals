@@ -12,6 +12,9 @@ namespace Signals.Core.Extensions.Export.Export.Csv
     /// <typeparam name="TData"></typeparam>
     public class CsvFileExporter<TData> : IFileExporter<TData>
     {
+        /// <summary>
+        /// Mime type for csv
+        /// </summary>
         public string MimeType => "text/csv";
 
         /// <summary>

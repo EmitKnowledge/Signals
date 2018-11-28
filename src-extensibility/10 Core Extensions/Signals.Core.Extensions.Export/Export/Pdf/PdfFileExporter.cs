@@ -12,6 +12,9 @@ namespace Signals.Core.Extensions.Export.Export.Pdf
     /// <typeparam name="TData"></typeparam>
     public class PdfFileExporter<TData> : IFileExporter<TData>
     {
+        /// <summary>
+        /// Mime type for pdf
+        /// </summary>
         public string MimeType => "application/pdf";
 
         /// <summary>

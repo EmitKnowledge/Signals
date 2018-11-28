@@ -4,6 +4,9 @@ using System.Data.SqlClient;
 
 namespace Signals.Aspects.Security.Database
 {
+    /// <summary>
+    /// Database permission provider
+    /// </summary>
     public class PermissionProvider : IPermissionProvider
     {
         /// <summary>

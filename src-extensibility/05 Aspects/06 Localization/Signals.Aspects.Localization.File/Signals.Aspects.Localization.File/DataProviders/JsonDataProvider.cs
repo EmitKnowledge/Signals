@@ -9,6 +9,9 @@ using Signals.Aspects.Localization.Helpers;
 
 namespace Signals.Aspects.Localization.File.DataProviders
 {
+    /// <summary>
+    /// Localizaiton provider from json files
+    /// </summary>
     public class JsonDataProvider : ILocalizationDataProvider
     {
         private const string LocalizationSearchRegex = @"\S+\.\S+.";

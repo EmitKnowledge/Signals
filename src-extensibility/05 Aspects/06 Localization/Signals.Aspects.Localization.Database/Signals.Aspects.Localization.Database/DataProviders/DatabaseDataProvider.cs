@@ -8,6 +8,9 @@ using Signals.Aspects.Localization.Entries;
 
 namespace Signals.Aspects.Localization.Database.DataProviders
 {
+    /// <summary>
+    /// Data provider for database
+    /// </summary>
     public class DatabaseDataProvider : ILocalizationDataProvider
     {
         private DatabaseDataProviderConfiguration Configuration { get; }

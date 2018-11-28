@@ -10,7 +10,7 @@ namespace Signals.Aspects.Auth.Mvc5.CustomScheme
         /// <summary>
         /// Default authentication properties
         /// </summary>
-        public AuthenticationProperties DefaultProperties { get; set; }
+        public Microsoft.Owin.Security.AuthenticationProperties DefaultProperties { get; set; }
 
         /// <summary>
         /// CTOR

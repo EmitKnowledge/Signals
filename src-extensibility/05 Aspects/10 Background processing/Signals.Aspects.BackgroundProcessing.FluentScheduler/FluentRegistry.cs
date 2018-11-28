@@ -5,6 +5,9 @@ using System;
 
 namespace Signals.Aspects.BackgroundProcessing.FluentScheduler
 {
+    /// <summary>
+    /// Task registry using fluent scheduler
+    /// </summary>
     public class FluentRegistry : ITaskRegistry
     {
         /// <summary>

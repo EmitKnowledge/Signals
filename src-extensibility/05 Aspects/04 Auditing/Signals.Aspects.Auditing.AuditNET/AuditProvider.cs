@@ -7,6 +7,9 @@ using System.Data.SqlClient;
 
 namespace Signals.Aspects.Auditing.AuditNET
 {
+    /// <summary>
+    /// Auditing provider
+    /// </summary>
     public class AuditProvider : IAuditProvider
     {
         /// <summary>

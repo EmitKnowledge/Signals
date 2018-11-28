@@ -2,6 +2,9 @@
 
 namespace Signals.Aspects.Auditing.AuditNET.Configurations
 {
+    /// <summary>
+    /// Database configuration for auditing
+    /// </summary>
     public class DatabaseAuditingConfiguration : IAuditingConfiguration
     {
         /// <summary>

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Signals.Aspects.ErrorHandling.Polly.Strategies
 {
+    /// <summary>
+    /// Polly error strategy handler
+    /// </summary>
     public abstract class StrategyHandler : IStrategyHandler
     {
         /// <summary>

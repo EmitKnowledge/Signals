@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace Signals.Aspects.CommunicationChannels.ServiceBus
 {
+    /// <summary>
+    /// Service bus message channel
+    /// </summary>
     public class ServiceBusMessageChannel : IMessageChannel
     {
         private readonly ServiceBusChannelConfiguration _configuration;

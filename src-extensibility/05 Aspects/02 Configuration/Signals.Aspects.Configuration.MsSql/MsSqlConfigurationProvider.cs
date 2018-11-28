@@ -8,6 +8,9 @@ using System.Linq;
 
 namespace Signals.Aspects.Configuration.MsSql
 {
+    /// <summary>
+    /// Configuration provider for MSSql
+    /// </summary>
     public class MsSqlConfigurationProvider : IConfigurationProvider
     {
         /// <summary>

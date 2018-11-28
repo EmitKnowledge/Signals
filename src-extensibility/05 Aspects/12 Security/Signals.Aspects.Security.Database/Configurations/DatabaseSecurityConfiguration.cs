@@ -2,6 +2,9 @@
 
 namespace Signals.Aspects.Security.Database.Configurations
 {
+    /// <summary>
+    /// Condifuration for database
+    /// </summary>
     public class DatabaseSecurityConfiguration : ISecurityConfiguration
     {
         /// <summary>

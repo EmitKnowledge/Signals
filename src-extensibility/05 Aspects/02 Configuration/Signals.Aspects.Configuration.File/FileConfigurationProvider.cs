@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Signals.Aspects.Configuration.File
 {
+    /// <summary>
+    /// File configuraiton provider
+    /// </summary>
     public class FileConfigurationProvider : IConfigurationProvider
     {
         /// <summary>

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Signals.Aspects.CommunicationChannels.Msmq
 {
+    /// <summary>
+    /// MSMQ communication channel implementation
+    /// </summary>
     public class MsmqMessageChannel : IMessageChannel
     {
         private readonly MsmqChannelConfiguration _configuration;

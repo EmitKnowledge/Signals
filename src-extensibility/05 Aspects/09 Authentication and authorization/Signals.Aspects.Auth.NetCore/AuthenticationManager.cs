@@ -6,7 +6,6 @@ using Signals.Aspects.Auth.NetCore.Extensions;
 using System;
 using System.Security.Claims;
 using System.Threading;
-using AuthenticationProperties = Signals.Aspects.Auth.Properties.AuthenticationProperties;
 
 namespace Signals.Aspects.Auth.NetCore
 {

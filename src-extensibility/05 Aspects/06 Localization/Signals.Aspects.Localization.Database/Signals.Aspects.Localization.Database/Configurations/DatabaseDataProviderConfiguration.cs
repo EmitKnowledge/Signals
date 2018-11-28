@@ -1,5 +1,8 @@
 ﻿namespace Signals.Aspects.Localization.Database.Configurations
 {
+    /// <summary>
+    /// Configuration for data provider for database
+    /// </summary>
     public class DatabaseDataProviderConfiguration : ILocalizationConfiguration
     {
         /// <summary>

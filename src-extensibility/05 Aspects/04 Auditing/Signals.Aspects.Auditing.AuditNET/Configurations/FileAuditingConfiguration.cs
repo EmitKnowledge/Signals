@@ -3,6 +3,9 @@ using Signals.Aspects.Auditing.Configurations;
 
 namespace Signals.Aspects.Auditing.AuditNET.Configurations
 {
+    /// <summary>
+    /// Configuration for file
+    /// </summary>
     public class FileAuditingConfiguration : IAuditingConfiguration
     {
 		/// <summary>

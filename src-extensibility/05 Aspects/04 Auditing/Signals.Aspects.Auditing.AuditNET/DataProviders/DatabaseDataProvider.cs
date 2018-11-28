@@ -7,6 +7,9 @@ using Signals.Aspects.Auditing.AuditNET.Configurations;
 
 namespace Signals.Aspects.Auditing.AuditNET.DataProviders
 {
+    /// <summary>
+    /// Data provider for database
+    /// </summary>
     public class DatabaseDataProvider : AuditDataProvider
     {
         private readonly DatabaseAuditingConfiguration _databaseConfiguration;

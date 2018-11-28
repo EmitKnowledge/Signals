@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Signals.Aspects.Localization.File.Configurations
 {
+    /// <summary>
+    /// Configuration for json file provider
+    /// </summary>
     public class JsonDataProviderConfiguration : ILocalizationConfiguration
     {
         /// <summary>
@@ -31,6 +34,9 @@ namespace Signals.Aspects.Localization.File.Configurations
         }
     }
 
+    /// <summary>
+    /// Localizaiton source
+    /// </summary>
     public class LocalizationSource
     {
         /// <summary>

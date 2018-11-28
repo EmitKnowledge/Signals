@@ -4,7 +4,7 @@ using System;
 using System.Security.Claims;
 using System.Threading;
 using System.Web;
-using AuthenticationProperties = Signals.Aspects.Auth.Properties.AuthenticationProperties;
+using AuthenticationProperties = Signals.Aspects.Auth.AuthenticationProperties;
 
 namespace Signals.Aspects.Auth.Mvc5
 {

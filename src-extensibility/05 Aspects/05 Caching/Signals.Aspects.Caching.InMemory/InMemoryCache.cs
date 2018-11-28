@@ -6,6 +6,9 @@ using System.Collections.Concurrent;
 
 namespace Signals.Aspects.Caching.InMemory
 {
+    /// <summary>
+    /// In memory cache implementation
+    /// </summary>
     public class InMemoryCache : Cache, ICache
     {
         /// <summary>
