@@ -1,3 +1,12 @@
 ﻿{
-  "WebUrl": "http://localhost/"
+	"WebUrl": "http://localhost/",
+	"Analytics": {
+		"enableAnalytics": false
+	},
+	"staticResources": {
+		"cdnUrl": "https://local.app.com"
+	},
+	"sslConfiguration": {
+		"port": 443
+	}
 }

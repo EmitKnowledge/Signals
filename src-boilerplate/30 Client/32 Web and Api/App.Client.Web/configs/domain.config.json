@@ -1,61 +1,61 @@
 ﻿{
-  "ApplicationConfiguration": {
-    "ProjectName": null,
-    "ApplicationName": null,
-    "Enviroment": null
-  },
-  "SecurityConfiguration": {
-    "SaltLenght": 0,
-    "AutoPasswordLenght": 0,
-    "MinPasswordLenght": 0,
-    "TokenLenght": 0,
-    "TokenValidityInDays": 0,
-    "Fish": null
-  },
-  "NotificationConfiguration": {
-    "Namespace": null,
-    "Issuer": null,
-    "IssuerKey": null,
-    "IsEnabled": true
-  },
-  "StorageConfiguration": {
-    "Name": null,
-    "ConnectionString": null
-  },
-  "ExternalApisConfiguration": {
-    "ExternalApisCollection": [
-      {
-        "Name": null,
-        "Sid": null,
-        "AppId": null,
-        "AppSecret": null,
-        "ClientId": null,
-        "ClientSecret": null,
-        "SecretKey": null,
-        "SecretWord": null,
-        "PublishableKey": null,
-        "ConsumerKey": null,
-        "ConsumerSecret": null,
-        "AccessToken": null,
-        "ApiKey": null,
-        "ApiSecret": null,
-        "PrivateKey": null,
-        "Username": null,
-        "Password": null,
-        "ListId": null,
-        "PhoneNumber": null,
-        "IsSandbox": false,
-        "PartnerId": null
-      }
-    ]
-  },
-  "WebConfiguration": {
-    "Url": null,
-    "MaxPageSize": 0
-  },
-  "DatabaseConfiguration": {
-    "DatabaseConnections": null,
-    "ActiveEnvironment": null,
-    "ActiveConfiguration": null
-  }
+	"ApplicationConfiguration": {
+		"ProjectName": "App",
+		"ApplicationName": "App.Client.Web",
+		"Enviroment": "Dev"
+	},
+	"SecurityConfiguration": {
+		"SaltLenght": 32,
+		"AutoPasswordLenght": 12,
+		"MinPasswordLenght": 12,
+		"TokenLenght": 128,
+		"TokenValidityInDays": 1,
+		"Fish": "KTVRaRB4AcSkL9ryvYPAEXmU"
+	},
+	"NotificationConfiguration": {
+		"Namespace": null,
+		"Issuer": null,
+		"IssuerKey": null,
+		"IsEnabled": true
+	},
+	"StorageConfiguration": {
+		"Name": null,
+		"ConnectionString": null
+	},
+	"ExternalApisConfiguration": {
+		"ExternalApisCollection": [
+			{
+				"Name": null,
+				"Sid": null,
+				"AppId": null,
+				"AppSecret": null,
+				"ClientId": null,
+				"ClientSecret": null,
+				"SecretKey": null,
+				"SecretWord": null,
+				"PublishableKey": null,
+				"ConsumerKey": null,
+				"ConsumerSecret": null,
+				"AccessToken": null,
+				"ApiKey": null,
+				"ApiSecret": null,
+				"PrivateKey": null,
+				"Username": null,
+				"Password": null,
+				"ListId": null,
+				"PhoneNumber": null,
+				"IsSandbox": false,
+				"PartnerId": null
+			}
+		]
+	},
+	"WebConfiguration": {
+		"Url": null,
+		"MaxPageSize": 0
+	},
+	"DatabaseConfiguration": {
+		"DatabaseConnections": null,
+		"ActiveEnvironment": null,
+		"ActiveConfiguration": null
+	}
 }
