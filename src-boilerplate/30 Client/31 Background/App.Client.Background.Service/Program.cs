@@ -17,7 +17,7 @@ namespace App.Client.Background.Service
         {
             DomainConfiguration.UseProvider(new FileConfigurationProvider
             {
-                File = @"configs\business.config.json",
+                File = @"configs\domain.config.json",
                 Path = Environment.CurrentDirectory,
                 ReloadOnAccess = false
             });

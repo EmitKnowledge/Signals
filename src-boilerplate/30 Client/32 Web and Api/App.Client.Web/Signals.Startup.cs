@@ -55,7 +55,7 @@ namespace App.Client.Web
                 ReloadOnAccess = false
             };
 
-            DomainConfiguration.UseProvider(ProviderForFile("business.config.json"));
+            DomainConfiguration.UseProvider(ProviderForFile("domain.config.json"));
             ApplicationConfiguration.UseProvider(ProviderForFile("application.config.json"));
             WebApplicationConfiguration.UseProvider(ProviderForFile("web.application.config.json"));
 
