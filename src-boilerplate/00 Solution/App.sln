@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.106
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "20 Service", "20 Service", "{058AFDC2-0EE8-4EF3-AB0B-43A4E63D6C3F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "20 Domain", "20 Domain", "{058AFDC2-0EE8-4EF3-AB0B-43A4E63D6C3F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "30 Client", "30 Client", "{4FA46B82-D96F-4182-811C-6CF278445E09}"
 EndProject
@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "40 Test", "40 Test", "{8E70
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "22 Entities", "22 Entities", "{D681BDC4-D231-4DD0-BAC4-5BAE9A52FC5A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "24 Controllers", "24 Controllers", "{64AA7758-3439-4902-B4DD-38697FDA5494}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "24 Processes", "24 Processes", "{64AA7758-3439-4902-B4DD-38697FDA5494}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "23 Repository", "23 Repository", "{7DCE7332-4F43-44FF-8F92-C24B914A989B}"
 EndProject
@@ -19,21 +19,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "31 Background", "31 Backgro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "32 Web and Api", "32 Web and Api", "{D63A5AF8-685A-44F5-AE02-71E51A02F412}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Service.DomainEntities", "..\20 Service\22 Entities\App.Service.DomainEntities\App.Service.DomainEntities.csproj", "{C648F8A8-53DC-457E-87D8-C4B9770CDCA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Domain.Entities", "..\20 Domain\22 Entities\App.Domain.Entities\App.Domain.Entities.csproj", "{C648F8A8-53DC-457E-87D8-C4B9770CDCA2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Service.Controllers", "..\20 Service\24 Controllers\App.Service.Controllers\App.Service.Controllers.csproj", "{BE11431D-414B-4F72-9605-A9B345BB30D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Domain.Processes", "..\20 Domain\24 Processes\App.Domain.Processes\App.Domain.Processes.csproj", "{BE11431D-414B-4F72-9605-A9B345BB30D5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Service.DataRepository", "..\20 Service\23 Repository\App.Service.DataRepository\App.Service.DataRepository.csproj", "{5EF5D8D3-B135-4641-B63A-0DBF035B009F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Domain.DataRepository", "..\20 Domain\23 Repository\App.Domain.DataRepository\App.Domain.DataRepository.csproj", "{5EF5D8D3-B135-4641-B63A-0DBF035B009F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Service.DataRepositoryContracts", "..\20 Service\23 Repository\App.Service.DataRepositoryContracts\App.Service.DataRepositoryContracts.csproj", "{7149EAF2-B0B3-41DE-A419-E1B07C090020}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Domain.DataRepositoryContracts", "..\20 Domain\23 Repository\App.Domain.DataRepositoryContracts\App.Domain.DataRepositoryContracts.csproj", "{7149EAF2-B0B3-41DE-A419-E1B07C090020}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Client.Background", "..\30 Client\31 Background\App.Client.Background\App.Client.Background.csproj", "{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Client.Background.Service", "..\30 Client\31 Background\App.Client.Background.Service\App.Client.Background.Service.csproj", "{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Service.Resources", "..\20 Service\24 Controllers\App.Service.Resources\App.Service.Resources.csproj", "{78C008CD-2FF8-4367-9029-6AAE35FE59F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Domain.Resources", "..\20 Domain\24 Processes\App.Domain.Resources\App.Domain.Resources.csproj", "{78C008CD-2FF8-4367-9029-6AAE35FE59F9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Test.Integration", "..\40 Test\App.Test.Integration\App.Test.Integration.csproj", "{9FC620F1-E9F3-4C97-AF6A-87F5583AD445}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Service.Configuration", "..\20 Service\21 Configuration\App.Service.Configuration\App.Service.Configuration.csproj", "{82AEF908-4E1A-4071-BBBA-02399404F830}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Domain.Configuration", "..\20 Domain\21 Configuration\App.Domain.Configuration\App.Domain.Configuration.csproj", "{82AEF908-4E1A-4071-BBBA-02399404F830}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "33 Migrations", "33 Migrations", "{D17A949E-0E01-424D-8C58-E8AA89D07CE4}"
 EndProject
@@ -41,9 +41,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Client.Migrations", "..
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "21 Configuration", "21 Configuration", "{047908C1-BFE3-4685-BCEC-A869211F72E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Client.Web", "..\30 Client\32 Web and Api\App.Client.Web\App.Client.Web.csproj", "{2C5938FF-B231-433D-978D-848056B20909}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Client.Web", "..\30 Client\32 Web and Api\App.Client.Web\App.Client.Web.csproj", "{2C5938FF-B231-433D-978D-848056B20909}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Client.Background.Processes", "..\30 Client\31 Background\App.Client.Background.Processes\App.Client.Background.Processes.csproj", "{FBCD9725-D992-4E52-88D1-1243AAA3CC36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Client.Web.Processes", "..\30 Client\32 Web and Api\App.Client.Web.Processes\App.Client.Web.Processes.csproj", "{6C6DFEEC-022F-468A-98D5-9E36BD296350}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -131,6 +139,22 @@ Global
 		{2C5938FF-B231-433D-978D-848056B20909}.Staging|Any CPU.Build.0 = Debug|Any CPU
 		{2C5938FF-B231-433D-978D-848056B20909}.Test|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C5938FF-B231-433D-978D-848056B20909}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Staging|Any CPU.Build.0 = Debug|Any CPU
+		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Staging|Any CPU.Build.0 = Debug|Any CPU
+		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,12 +177,10 @@ Global
 		{185F9910-AB09-498A-B03C-A06543AFD3D7} = {D17A949E-0E01-424D-8C58-E8AA89D07CE4}
 		{047908C1-BFE3-4685-BCEC-A869211F72E8} = {058AFDC2-0EE8-4EF3-AB0B-43A4E63D6C3F}
 		{2C5938FF-B231-433D-978D-848056B20909} = {D63A5AF8-685A-44F5-AE02-71E51A02F412}
+		{FBCD9725-D992-4E52-88D1-1243AAA3CC36} = {DB197D13-C823-43CD-92CF-C9039DEDAE98}
+		{6C6DFEEC-022F-468A-98D5-9E36BD296350} = {D63A5AF8-685A-44F5-AE02-71E51A02F412}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {658C404F-56B1-4508-B7F4-03069BAEB77D}
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
