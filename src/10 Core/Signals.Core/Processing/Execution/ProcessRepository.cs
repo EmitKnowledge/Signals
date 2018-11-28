@@ -1,6 +1,6 @@
-﻿using Signals.Core.Processes.Base;
-using Signals.Core.Common.Instance;
+﻿using Signals.Core.Common.Instance;
 using Signals.Core.Common.Reflection;
+using Signals.Core.Processes.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +21,7 @@ namespace Signals.Core.Processing.Execution
                             where ImplementsOpenGenericInterface(x, typeof(IBaseProcess<>))
                             select x)
                             .Where(x => !x.IsInterface && !x.IsAbstract)
+                            .Distinct()
                             .ToList();
         }
 

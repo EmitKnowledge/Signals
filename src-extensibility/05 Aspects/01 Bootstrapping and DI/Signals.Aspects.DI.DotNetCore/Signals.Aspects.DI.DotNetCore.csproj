@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
-    <PackageReference Include="Signals.Aspects.DI" Version="0.6.2" />
+    <PackageReference Include="Signals.Aspects.DI" Version="0.6.3" />
   </ItemGroup>
 
 </Project>

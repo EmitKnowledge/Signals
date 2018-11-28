@@ -73,7 +73,9 @@ namespace Signals.Aspects.DI
             var types = scanAssemblies.SelectMany(x => x.GetTypes().Concat(
                                 x.GetReferencedAssemblies()
                                .Select(Assembly.Load)
-                               .SelectMany(assembly => assembly.GetTypes()))).ToList();
+                               .SelectMany(assembly => assembly.GetTypes())))
+                               .Distinct()
+                               .ToList();
 
             // get all types with exported attribute
             var typePairs = types
