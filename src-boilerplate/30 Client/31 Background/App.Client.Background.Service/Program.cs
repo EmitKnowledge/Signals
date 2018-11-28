@@ -4,6 +4,7 @@ using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI.Autofac;
 using Signals.Core.Background.Configuration.Bootstrapping;
 using Signals.Core.Configuration;
+using System;
 
 namespace App.Client.Background.Service
 {

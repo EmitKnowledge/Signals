@@ -36,6 +36,7 @@
     <ProjectReference Include="..\..\..\20 Domain\22 Entities\App.Domain.Entities\App.Domain.Entities.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\24 Processes\App.Domain.Processes\App.Domain.Processes.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\24 Processes\App.Domain.Resources\App.Domain.Resources.csproj" />
+    <ProjectReference Include="..\App.Client.Web.Processes\App.Client.Web.Processes.csproj" />
   </ItemGroup>
 
 </Project>
