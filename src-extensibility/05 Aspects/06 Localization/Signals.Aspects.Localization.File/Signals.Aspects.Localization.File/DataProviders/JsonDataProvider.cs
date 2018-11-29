@@ -47,6 +47,8 @@ namespace Signals.Aspects.Localization.File.DataProviders
                 {
                     var fileName = IoHelper.GetFileNameFromPath(file);
 
+                    var parentDirectory = Directory.GetParent(file).Name;
+
                     // Get the match from the filename
                     var match = fileName.GetMatch(LocalizationMatchingRegex + Configuration.FileExtension);
 
@@ -63,7 +65,7 @@ namespace Signals.Aspects.Localization.File.DataProviders
                     }
 
                     // Get the localization collection
-                    var localizationCollection = GetLocalizationCollectionByName(match.Groups["FILENAME"].Value);
+                    var localizationCollection = GetLocalizationCollectionByName(match.Groups["FILENAME"].Value, parentDirectory);
 
                     // Get the localization code
                     var localizationCode = FormatLocalizationCode(match.Groups["LOCALIZATION"].Value);
@@ -259,13 +261,16 @@ namespace Signals.Aspects.Localization.File.DataProviders
         /// Gets the localization collection by its name
         /// </summary>
         /// <param name="localizationCollectionName"></param>
+        /// <param name="localizationCategoryName"></param>
         /// <returns></returns>
-        private LocalizationCollection GetLocalizationCollectionByName(string localizationCollectionName)
+        private LocalizationCollection GetLocalizationCollectionByName(string localizationCollectionName, string localizationCategoryName = null)
         {
             if (Collections == null)
                 Collections = LoadLocalizationCollections();
 
-            return Collections.FirstOrDefault(x => x.Name == localizationCollectionName);
+            return Collections
+                .FirstOrDefault(x => x.Name == localizationCollectionName &&
+                                     (localizationCategoryName == null || x.LocalizationCategory.Name == localizationCategoryName));
         }
 
         /// <summary>

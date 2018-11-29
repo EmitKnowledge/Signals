@@ -4,6 +4,7 @@ using Signals.Aspects.Localization.File.Configurations;
 using Signals.Aspects.Localization.File.DataProviders;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Xunit;
 
 namespace Signals.Tests.Localization
@@ -25,8 +26,12 @@ namespace Signals.Tests.Localization
                     new LocalizationSource
                     {
                         Name = "sample",
-                        UseBaseDirectory = true,
                         SourcePath = "FileSources"
+                    },
+                    new LocalizationSource
+                    {
+                        Name = "another-source",
+                        SourcePath = "AnotherSource"
                     }
                 }
             };
@@ -38,8 +43,28 @@ namespace Signals.Tests.Localization
         [Fact]
         public void Localization_FromFile_Exists()
         {
-            var message = _provider.Get("SOME_KEY");
+            var message = _provider.Get("SOME_KEY", null, null, new CultureInfo("en"));
             Assert.Equal("Some message", message.Value);
+        }
+
+        [Fact]
+        public void Localization_From_Specific_Collection_Exists()
+        {
+            var messageFirst = _provider.Get("SOME_KEY", "localization-strings", null, new CultureInfo("en"));
+            var messageSecond = _provider.Get("SOME_KEY", "localization-strings-from-collection", null, new CultureInfo("en"));
+
+            Assert.Equal("Some message", messageFirst.Value);
+            Assert.Equal("Another translation", messageSecond.Value);
+        }
+
+        [Fact]
+        public void Localization_From_Specific_Category_Exists()
+        {
+            var messageFirst = _provider.Get("SOME_KEY", null, "Category01", new CultureInfo("en"));
+            var messageSecond = _provider.Get("SOME_KEY", null, "Category02", new CultureInfo("en"));
+
+            Assert.Equal("Message from category 01", messageFirst.Value);
+            Assert.Equal("Message from category 02", messageSecond.Value);
         }
     }
 }

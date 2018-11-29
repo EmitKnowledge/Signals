@@ -10,12 +10,14 @@ namespace Signals.Aspects.Localization
     public interface ILocalizationProvider
     {
         /// <summary>
-        /// Gets translation for the given key and language (or current culture language if not provided)
+        /// Gets translation for the given key, nullable collection and category, and language (or current culture language if not provided)
         /// </summary>
         /// <param name="key"></param>
         /// <param name="culture"></param>
+        /// <param name="collection"></param>
+        /// <param name="category"></param>
         /// <returns></returns>
-        LocalizationEntry Get(string key, CultureInfo culture = null);
+        LocalizationEntry Get(string key, string collection = null, string category = null, CultureInfo culture = null);
 
         /// <summary>
         /// Returns json representnation of a bundle of localization entries

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json;
@@ -84,11 +85,15 @@ namespace Signals.Aspects.Localization.Base
         /// Gets translation for the given key and language (or current culture language if not provided)
         /// </summary>
         /// <param name="key"></param>
+        /// <param name="collection"></param>
+        /// <param name="category"></param>
         /// <param name="culture"></param>
         /// <returns></returns>
-        public LocalizationEntry Get(string key, CultureInfo culture = null)
+        public LocalizationEntry Get(string key, string collection = null, string category = null, CultureInfo culture = null)
             => LocalizationEntries.FirstOrDefault(x => x.LocalizationKey?.Name == key &&
-                                                       x.LocalizationLanguage?.Value == GetLanguageCodeFromCulture(culture));
+                                                       x.LocalizationLanguage?.Value == GetLanguageCodeFromCulture(culture) &&
+                                                       (collection == null ||  string.Equals(x.LocalizationCollection.Name, collection, StringComparison.CurrentCultureIgnoreCase)) &&
+                                                       (category == null ||  string.Equals(x.LocalizationCollection.LocalizationCategory.Name, category, StringComparison.CurrentCultureIgnoreCase)));
 
 
         /// <summary>

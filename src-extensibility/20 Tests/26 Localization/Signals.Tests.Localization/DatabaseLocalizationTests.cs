@@ -39,7 +39,7 @@ namespace Signals.Tests.Localization
 
                 _provider.Set(key, translation, collection, category, culture);
 
-                var insertedEntry = _provider.Get(key, culture);
+                var insertedEntry = _provider.Get(key, null, null, culture);
 
                 Assert.NotNull(insertedEntry);
                 Assert.Equal(translation, insertedEntry.Value);
@@ -131,7 +131,7 @@ namespace Signals.Tests.Localization
                 // This should update, not create
                 _provider.Set(key, newTranslation, newCollection, newCategory, culture);
 
-                var updatedEntry = _provider.Get(key, culture);
+                var updatedEntry = _provider.Get(key, null, null, culture);
 
                 Assert.NotNull(updatedEntry);
                 Assert.Equal(newTranslation, updatedEntry.Value);

@@ -22,6 +22,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="FileSources\Category01\localization-strings.en-US.app">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="FileSources\Category02\localization-strings.en-US.app">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AnotherSource\localization-strings-from-collection.en-US.app">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="FileSources\localization-strings.en-US.app">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
