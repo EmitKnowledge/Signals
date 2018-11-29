@@ -29,7 +29,7 @@
     <PackageReference Include="Signals.Aspects.Configuration" Version="0.6.1" />
     <PackageReference Include="Signals.Aspects.DI" Version="0.6.3" />
     <PackageReference Include="Signals.Aspects.ErrorHandling" Version="0.6.1" />
-    <PackageReference Include="Signals.Aspects.Localization" Version="0.6.2" />
+    <PackageReference Include="Signals.Aspects.Localization" Version="0.6.3" />
     <PackageReference Include="Signals.Aspects.Logging" Version="0.6.1" />
     <PackageReference Include="Signals.Aspects.Security" Version="0.6.1" />
     <PackageReference Include="Signals.Aspects.Storage" Version="0.6.1" />
