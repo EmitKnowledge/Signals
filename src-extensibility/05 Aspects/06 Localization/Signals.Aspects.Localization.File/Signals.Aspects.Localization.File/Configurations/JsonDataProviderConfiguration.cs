@@ -48,10 +48,5 @@ namespace Signals.Aspects.Localization.File.Configurations
         /// Represents the source path
         /// </summary>
         public string SourcePath { get; set; }
-
-        /// <summary>
-        /// Indicates whether the base directory should be used
-        /// </summary>
-        public bool UseBaseDirectory { get; set; }
     }
 }

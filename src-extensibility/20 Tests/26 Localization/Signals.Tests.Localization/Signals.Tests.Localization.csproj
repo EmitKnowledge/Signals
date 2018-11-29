@@ -21,4 +21,10 @@
     <ProjectReference Include="..\..\..\05 Aspects\06 Localization\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="FileSources\localization-strings.en-US.app">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

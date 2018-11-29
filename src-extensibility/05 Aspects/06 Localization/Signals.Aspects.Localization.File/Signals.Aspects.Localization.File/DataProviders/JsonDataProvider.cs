@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Signals.Aspects.Localization.Entries;
 using Signals.Aspects.Localization.File.Configurations;
 using Signals.Aspects.Localization.File.Helpers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Signals.Aspects.Localization.File.DataProviders
 {
@@ -22,7 +22,7 @@ namespace Signals.Aspects.Localization.File.DataProviders
         private List<LocalizationCategory> Categories { get; set; }
         private List<LocalizationCollection> Collections { get; set; }
         private List<LocalizationEntry> Entries { get; set; }
-        
+
         /// <summary>
         /// CTOR
         /// </summary>
@@ -234,9 +234,9 @@ namespace Signals.Aspects.Localization.File.DataProviders
             var result = new Dictionary<string, string>();
             foreach (var source in Configuration.LocalizationSources)
             {
-                result[source.Name] = source.UseBaseDirectory
+                result[source.Name] = string.IsNullOrEmpty(Configuration.DirectoryPath)
                     ? IoHelper.CombinePaths(ReflectionHelper.GetCurrentAssemblyRunPath(), source.SourcePath ?? string.Empty)
-                    : source.SourcePath;
+                    : IoHelper.CombinePaths(Configuration.DirectoryPath, source.SourcePath);
             }
 
             return result;
