@@ -70,10 +70,14 @@ namespace Signals.Aspects.DI
         private static void AutoRegister(IRegistrationService registrationService, params Assembly[] scanAssemblies)
         {
             // get all types from all assemblies
-            var types = scanAssemblies.SelectMany(x => x.GetTypes().Concat(
-                                x.GetReferencedAssemblies()
-                               .Select(Assembly.Load)
-                               .SelectMany(assembly => assembly.GetTypes())))
+            var types = scanAssemblies
+                                .SelectMany(x => x
+                                    .GetTypes()
+                                    .Concat(
+                                        x.GetReferencedAssemblies()
+                                       .Select(assemblyName => { try { return Assembly.Load(assemblyName); } catch { return null; } })
+                                       .Where(assembly => assembly != null)
+                                       .SelectMany(assembly => { try { return assembly.GetTypes(); } catch { return new Type[0]; } })))
                                .Distinct()
                                .ToList();
 

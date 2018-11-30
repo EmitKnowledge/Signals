@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Signals.Aspects.DI" Version="0.6.3" />
+    <PackageReference Include="Signals.Aspects.DI" Version="0.6.5" />
     <PackageReference Include="SimpleInjector" Version="4.4.0" />
   </ItemGroup>
 

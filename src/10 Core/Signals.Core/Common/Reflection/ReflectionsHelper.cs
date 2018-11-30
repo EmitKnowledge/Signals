@@ -47,8 +47,9 @@ namespace Signals.Core.Common.Reflection
         {
             var types = ass.GetTypes().ToList();
             types.AddRange(ass.GetReferencedAssemblies()
-                               .Select(Assembly.Load)
-                               .SelectMany(assembly => assembly.GetTypes()));
+                               .Select(assemblyName => { try { return Assembly.Load(assemblyName); } catch { return null; } })
+                               .Where(assembly => !assembly.IsNull())
+                               .SelectMany(assembly => { try { return assembly.GetTypes(); } catch { return new Type[0]; } }));
 
             return types;
         }
