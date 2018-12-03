@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Signals.Core" Version="0.6.10" />
+    <PackageReference Include="Signals.Core" Version="0.6.11" />
   </ItemGroup>
 
 </Project>

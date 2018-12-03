@@ -72,8 +72,9 @@ namespace Signals.Core.Processes.Recurring
                 result = Sync();
                 return result;
             }
-            catch
+            catch(Exception ex)
             {
+                result = VoidResult.FaultedResult<TResponse>(ex);
                 throw;
             }
             finally
@@ -153,8 +154,9 @@ namespace Signals.Core.Processes.Recurring
                     result = Sync();
                     return result;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    result = VoidResult.FaultedResult<TResponse>(ex);
                     throw;
                 }
                 finally
