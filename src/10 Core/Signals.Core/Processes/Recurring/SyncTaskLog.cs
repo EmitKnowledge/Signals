@@ -11,6 +11,16 @@ namespace Signals.Core.Processes.Recurring
     public class SyncTaskLog
     {
         /// <summary>
+        /// Entity id
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Executing process type
+        /// </summary>
+        public Type ProcessType { get; set; }
+
+        /// <summary>
         /// Execution start time
         /// </summary>
         public DateTime StartTime { get; set; }
@@ -18,7 +28,7 @@ namespace Signals.Core.Processes.Recurring
         /// <summary>
         /// Execution end time
         /// </summary>
-        public DateTime EndTime { get; set; }
+        public DateTime? EndTime { get; set; }
 
         /// <summary>
         /// Execution payload

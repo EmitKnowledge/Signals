@@ -16,16 +16,31 @@ namespace Signals.Core.Processes.Recurring.Logging
         void CreateLog(SyncTaskLog log);
 
         /// <summary>
+        /// Get current sync execution result if it is not finished
+        /// </summary>
+        /// <param name="processType"></param>
+        /// <returns></returns>
+        SyncTaskLog Current(Type processType);
+
+        /// <summary>
         /// Get last sync execution results
         /// </summary>
+        /// <param name="processType"></param>
         /// <param name="take"></param>
         /// <returns></returns>
-        List<SyncTaskLog> Last(int take);
+        List<SyncTaskLog> Last(Type processType, int take);
 
         /// <summary>
         /// Get last sync execution result
         /// </summary>
+        /// <param name="processType"></param>
         /// <returns></returns>
-        SyncTaskLog Last();
+        SyncTaskLog Last(Type processType);
+
+        /// <summary>
+        /// Update sync task result
+        /// </summary>
+        /// <param name="log"></param>
+        void UpdateLog(SyncTaskLog log);
     }
 }
