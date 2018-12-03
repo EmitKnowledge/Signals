@@ -1,6 +1,5 @@
 ﻿using Signals.Core.Common.Instance;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,18 +18,23 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <summary>
         /// Logs repository
         /// </summary>
-        private static ConcurrentDictionary<Type, ConcurrentBag<SyncTaskLog>> _syncTaskLogs;
+        private static Dictionary<Type, List<SyncTaskLog>> _syncTaskLogs;
 
         /// <summary>
         /// Logs repository provider
         /// </summary>
-        private static ConcurrentDictionary<Type, ConcurrentBag<SyncTaskLog>> SyncTaskLogs
+        private static Dictionary<Type, List<SyncTaskLog>> SyncTaskLogs
         {
             get
             {
-                if (_syncTaskLogs.IsNull()) _syncTaskLogs = new ConcurrentDictionary<Type, ConcurrentBag<SyncTaskLog>>();
+                if (_syncTaskLogs.IsNull()) _syncTaskLogs = new Dictionary<Type, List<SyncTaskLog>>();
                 return _syncTaskLogs;
             }
+        }
+
+        static SyncLogProvider()
+        {
+            _syncTaskLogs = new Dictionary<Type, List<SyncTaskLog>>();
         }
 
         /// <summary>
@@ -39,20 +43,21 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <param name="log"></param>
         public void CreateLog(SyncTaskLog log)
         {
-            var resultList = new ConcurrentBag<SyncTaskLog>();
-            var hasValue = SyncTaskLogs.TryGetValue(log.ProcessType, out resultList);
-            if (!hasValue || resultList.IsNull())
-            {
-                resultList = new ConcurrentBag<SyncTaskLog>();
-                SyncTaskLogs.TryAdd(log.ProcessType, resultList);
-            }
-
             lock (_syncTaskLogs)
             {
-                log.Id = (resultList?.Count ?? 0) + 1;
-            }
+                if (!SyncTaskLogs.ContainsKey(log.ProcessType))
+                {
+                    SyncTaskLogs.Add(log.ProcessType, new List<SyncTaskLog>());
+                }
+                var list = SyncTaskLogs[log.ProcessType];
+                log.Id = list.Count + 1;
 
-            resultList.Add(log);
+                list.Add(log);
+                SyncTaskLogs[log.ProcessType] = SyncTaskLogs[log.ProcessType]
+                                                    .OrderByDescending(x => x.StartTime)
+                                                    .Take(MaxLogs)
+                                                    .ToList();
+            }
         }
 
         /// <summary>
@@ -62,14 +67,15 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <returns></returns>
         public SyncTaskLog Current(Type processType)
         {
-            var hasValue = SyncTaskLogs.TryGetValue(processType, out ConcurrentBag<SyncTaskLog> list);
-
-            if (!hasValue || list.IsNull())
+            lock (_syncTaskLogs)
             {
-                return null;
-            }
+                if (!SyncTaskLogs.ContainsKey(processType))
+                {
+                    SyncTaskLogs.Add(processType, new List<SyncTaskLog>());
+                }
 
-            return list.SingleOrDefault(x => !x.EndTime.HasValue);
+                return SyncTaskLogs[processType].SingleOrDefault(x => !x.EndTime.HasValue);
+            }
         }
 
         /// <summary>
@@ -80,19 +86,18 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <returns></returns>
         public List<SyncTaskLog> Last(Type processType, int take)
         {
-            var hasValue = SyncTaskLogs.TryGetValue(processType, out ConcurrentBag<SyncTaskLog> list);
-
-            if (!hasValue || list.IsNull())
+            lock (_syncTaskLogs)
             {
-                return null;
+                if (!SyncTaskLogs.ContainsKey(processType))
+                {
+                    SyncTaskLogs.Add(processType, new List<SyncTaskLog>());
+                }
+
+                return SyncTaskLogs[processType]
+                        .OrderByDescending(x => x.StartTime)
+                        .Take(take)
+                        .ToList();
             }
-
-            var last = list
-                .OrderByDescending(x => x.EndTime)
-                .Take(take)
-                .ToList();
-
-            return last;
         }
 
         /// <summary>
@@ -102,7 +107,15 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <returns></returns>
         public SyncTaskLog Last(Type processType)
         {
-            return Last(processType, 1).SingleOrDefault();
+            lock (_syncTaskLogs)
+            {
+                if (!SyncTaskLogs.ContainsKey(processType))
+                {
+                    SyncTaskLogs.Add(processType, new List<SyncTaskLog>());
+                }
+
+                return SyncTaskLogs[processType].OrderByDescending(x => x.StartTime).FirstOrDefault();
+            }
         }
 
         /// <summary>
@@ -111,20 +124,20 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <param name="log"></param>
         public void UpdateLog(SyncTaskLog log)
         {
-            var resultList = new ConcurrentBag<SyncTaskLog>();
-            var hasValue = SyncTaskLogs.TryGetValue(log.ProcessType, out resultList);
-            if (!hasValue || resultList.IsNull())
+            lock (_syncTaskLogs)
             {
-                resultList = new ConcurrentBag<SyncTaskLog>();
-                SyncTaskLogs.TryAdd(log.ProcessType, resultList);
-            }
+                if (!SyncTaskLogs.ContainsKey(log.ProcessType))
+                {
+                    SyncTaskLogs.Add(log.ProcessType, new List<SyncTaskLog>());
+                }
 
-            var existing = resultList.SingleOrDefault(x => x.Id == log.Id);
-            if (!existing.IsNull())
-            {
-                existing.Result = log.Result;
-                existing.EndTime = log.EndTime;
-                existing.IsFaulted = log.IsFaulted;
+                var existing = SyncTaskLogs[log.ProcessType].SingleOrDefault(x => x.Id == log.Id);
+                if (!existing.IsNull())
+                {
+                    existing.Result = log.Result;
+                    existing.EndTime = log.EndTime;
+                    existing.IsFaulted = log.IsFaulted;
+                }
             }
         }
     }
