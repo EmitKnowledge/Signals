@@ -7,20 +7,20 @@ namespace Signals.Core.Processes.Recurring.Logging
     /// <summary>
     /// Synchronizaiton log provider
     /// </summary>
-    public interface ISyncLogProvider
+    public interface IRecurringTaskLogProvider
     {
         /// <summary>
         /// Insert sync task result
         /// </summary>
         /// <param name="log"></param>
-        void CreateLog(SyncTaskLog log);
+        void CreateLog(RecurringTaskLog log);
 
         /// <summary>
         /// Get current sync execution result if it is not finished
         /// </summary>
         /// <param name="processType"></param>
         /// <returns></returns>
-        SyncTaskLog Current(Type processType);
+        RecurringTaskLog Current(Type processType);
 
         /// <summary>
         /// Get last sync execution results
@@ -28,19 +28,19 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <param name="processType"></param>
         /// <param name="take"></param>
         /// <returns></returns>
-        List<SyncTaskLog> Last(Type processType, int take);
+        List<RecurringTaskLog> Last(Type processType, int take);
 
         /// <summary>
         /// Get last sync execution result
         /// </summary>
         /// <param name="processType"></param>
         /// <returns></returns>
-        SyncTaskLog Last(Type processType);
+        RecurringTaskLog Last(Type processType);
 
         /// <summary>
         /// Update sync task result
         /// </summary>
         /// <param name="log"></param>
-        void UpdateLog(SyncTaskLog log);
+        void UpdateLog(RecurringTaskLog log);
     }
 }

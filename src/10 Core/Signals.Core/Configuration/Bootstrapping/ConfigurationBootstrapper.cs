@@ -94,7 +94,7 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// <summary>
         /// Synchronization logging provider
         /// </summary>
-        public Func<ISyncLogProvider> SyncLogProvider { get; internal set; }
+        public Func<IRecurringTaskLogProvider> SyncLogProvider { get; internal set; }
 
         /// <summary>
         /// Register all aspects into dependency resolver
@@ -174,7 +174,7 @@ namespace Signals.Core.Configuration.Bootstrapping
             {
                 if(SyncLogProvider.IsNull() || SyncLogProvider().IsNull())
                 {
-                    SyncLogProvider = () => new SyncLogProvider();
+                    SyncLogProvider = () => new RecurringTaskLogProvider();
                 }
 
                 resolver.Register(SyncLogProvider);

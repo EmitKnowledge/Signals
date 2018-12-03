@@ -10,7 +10,7 @@ namespace Signals.Core.Processes.Recurring
     /// <summary>
     /// Wrapper for recurring processes to adapt to <see cref="ISyncTask"/>
     /// </summary>
-    public class SyncTaskWrapper : ISyncTask
+    public class RecurringTaskWrapper : ISyncTask
     {
         /// <summary>
         /// Wrapper process
@@ -21,7 +21,7 @@ namespace Signals.Core.Processes.Recurring
         /// CTOR
         /// </summary>
         /// <param name="processType"></param>
-        public SyncTaskWrapper(Type processType)
+        public RecurringTaskWrapper(Type processType)
         {
             InnerProcessType = processType;
         }

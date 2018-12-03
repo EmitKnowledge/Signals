@@ -23,7 +23,7 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         /// <summary>
         /// Sync logs provider
         /// </summary>
-        public new Func<ISyncLogProvider> SyncLogProvider { get; set; }
+        public new Func<IRecurringTaskLogProvider> RecurringTaskLogProvider { get; set; }
 
         /// <summary>
         /// Bootstrapping entry
@@ -102,7 +102,7 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
                     var instance = SystemBootstrapper.GetInstance(type) as IRecurringProcess;
                     SystemBootstrapper.Bootstrap(instance);
 
-                    var task = new SyncTaskWrapper(type);
+                    var task = new RecurringTaskWrapper(type);
                     bgRegistry.ScheduleTask(task, instance.Profile);
                 });
 

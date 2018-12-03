@@ -85,7 +85,7 @@ namespace Signals.Core.Configuration.Bootstrapping
 		/// <summary>
 		/// Synchronization logging provider
 		/// </summary>
-		protected ISyncLogProvider SyncLogProvider { get; set; }
+		protected IRecurringTaskLogProvider SyncLogProvider { get; set; }
 
 		/// <summary>
 		/// All loaded Signals types

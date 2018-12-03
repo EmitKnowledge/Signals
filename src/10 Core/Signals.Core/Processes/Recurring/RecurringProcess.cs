@@ -61,7 +61,7 @@ namespace Signals.Core.Processes.Recurring
         /// <returns></returns>
         internal TResponse Execute()
         {
-            SyncTaskLog log = new SyncTaskLog();
+            RecurringTaskLog log = new RecurringTaskLog();
             log.StartTime = DateTime.UtcNow;
             log.ProcessType = this.GetType();
             Context.CreateLog(log);
@@ -141,34 +141,32 @@ namespace Signals.Core.Processes.Recurring
         {
             var thisType = this.GetType();
             var currentExecuting = Context.Current(thisType);
-            if (currentExecuting.IsNull())
+
+            if (!currentExecuting.IsNull()) return null;
+
+            RecurringTaskLog log = new RecurringTaskLog();
+            log.StartTime = DateTime.UtcNow;
+            log.ProcessType = thisType;
+            Context.CreateLog(log);
+
+            TResponse result = null;
+            try
             {
-                SyncTaskLog log = new SyncTaskLog();
-                log.StartTime = DateTime.UtcNow;
-                log.ProcessType = thisType;
-                Context.CreateLog(log);
-
-                TResponse result = null;
-                try
-                {
-                    result = Sync();
-                    return result;
-                }
-                catch (Exception ex)
-                {
-                    result = VoidResult.FaultedResult<TResponse>(ex);
-                    throw;
-                }
-                finally
-                {
-                    log.EndTime = DateTime.UtcNow;
-                    log.Result = result;
-                    log.IsFaulted = result.IsFaulted || result.IsSystemFault;
-                    Context.UpdateLog(log);
-                }
+                result = Sync();
+                return result;
             }
-
-            return null;
+            catch (Exception ex)
+            {
+                result = VoidResult.FaultedResult<TResponse>(ex);
+                throw;
+            }
+            finally
+            {
+                log.EndTime = DateTime.UtcNow;
+                log.Result = result;
+                log.IsFaulted = result.IsFaulted || result.IsSystemFault;
+                Context.UpdateLog(log);
+            }
         }
 
         /// <summary>

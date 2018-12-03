@@ -13,15 +13,15 @@ namespace Signals.Core.Processes.Recurring
     /// </summary>
     public class RecurringProcessContext : BaseProcessContext
     {
-        [Import] internal ISyncLogProvider SyncLogProvider { get; set; }
+        [Import] internal IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
 
         /// <summary>
         /// Insert sync task result
         /// </summary>
         /// <param name="log"></param>
-        public void CreateLog(SyncTaskLog log)
+        public void CreateLog(RecurringTaskLog log)
         {
-            SyncLogProvider?.CreateLog(log);
+            RecurringTaskLogProvider?.CreateLog(log);
         }
 
         /// <summary>
@@ -29,9 +29,9 @@ namespace Signals.Core.Processes.Recurring
         /// </summary>
         /// <param name="processType"></param>
         /// <returns></returns>
-        public SyncTaskLog Current(Type processType)
+        public RecurringTaskLog Current(Type processType)
         {
-            return SyncLogProvider?.Current(processType);
+            return RecurringTaskLogProvider?.Current(processType);
         }
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace Signals.Core.Processes.Recurring
         /// <param name="processType"></param>
         /// <param name="take"></param>
         /// <returns></returns>
-        public List<SyncTaskLog> Last(Type processType, int take)
+        public List<RecurringTaskLog> Last(Type processType, int take)
         {
-            return SyncLogProvider?.Last(processType, take);
+            return RecurringTaskLogProvider?.Last(processType, take);
         }
 
         /// <summary>
@@ -50,18 +50,18 @@ namespace Signals.Core.Processes.Recurring
         /// </summary>
         /// <param name="processType"></param>
         /// <returns></returns>
-        public SyncTaskLog Last(Type processType)
+        public RecurringTaskLog Last(Type processType)
         {
-            return SyncLogProvider?.Last(processType);
+            return RecurringTaskLogProvider?.Last(processType);
         }
 
         /// <summary>
         /// Update sync task result
         /// </summary>
         /// <param name="log"></param>
-        public void UpdateLog(SyncTaskLog log)
+        public void UpdateLog(RecurringTaskLog log)
         {
-            SyncLogProvider?.UpdateLog(log);
+            RecurringTaskLogProvider?.UpdateLog(log);
         }
     }
 }

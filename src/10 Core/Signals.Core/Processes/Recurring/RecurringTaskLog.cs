@@ -8,7 +8,7 @@ namespace Signals.Core.Processes.Recurring
     /// <summary>
     /// Sync task execution result
     /// </summary>
-    public class SyncTaskLog
+    public class RecurringTaskLog
     {
         /// <summary>
         /// Entity id
