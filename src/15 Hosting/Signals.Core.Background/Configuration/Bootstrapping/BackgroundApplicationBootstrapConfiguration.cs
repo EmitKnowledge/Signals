@@ -100,9 +100,8 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
                 processRepo.OfType<IRecurringProcess>().ForEach(type =>
                 {
                     var instance = SystemBootstrapper.GetInstance(type) as IRecurringProcess;
-                    SystemBootstrapper.Bootstrap(instance);
-
                     var task = new RecurringTaskWrapper(type);
+
                     bgRegistry.ScheduleTask(task, instance.Profile);
                 });
 

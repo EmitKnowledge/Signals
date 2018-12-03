@@ -9,32 +9,31 @@ namespace Signals.Aspects.DI.Helpers
     /// <summary>
     /// Helper for injecting properties with <see cref="ImportAttribute"/>
     /// </summary>
-    public static class PropertyInjector
+    public class PropertyInjector
     {
-        private static HashSet<Type> _set;
+        private HashSet<Type> _set;
 
         /// <summary>
         /// Inject all properties and fields annotated with <see cref="ImportAttribute"/> 
         /// </summary>
         /// <param name="serviceContainer"></param>
         /// <param name="obj"></param>
-        public static void Inject(IServiceContainer serviceContainer, object obj)
+        public void Inject(object obj)
         {
             _set = new HashSet<Type>();
-	        InjectInternal(serviceContainer, obj);
+            InjectInternal(obj);
             _set = null;
         }
 
         /// <summary>
         /// Inject all properties and fields annotated with <see cref="ImportAttribute"/> 
         /// </summary>
-        /// <param name="serviceContainer"></param>
         /// <param name="obj"></param>
-        private static void InjectInternal(IServiceContainer serviceContainer, object obj)
+        private void InjectInternal(object obj)
         {
             try
             {
-                if (obj == null) throw new NullReferenceException();
+                if (obj == null) return;
                 if (_set.Contains(obj.GetType())) return;
                 if (obj.GetType().Assembly.FullName.StartsWith("System")) return;
                 if (obj.GetType().Assembly.FullName.StartsWith("Microsoft")) return;
@@ -51,7 +50,7 @@ namespace Signals.Aspects.DI.Helpers
 
                 foreach (var injectable in injectables)
                 {
-                    var instance = serviceContainer.GetInstance(injectable.PropertyType);
+                    var instance = SystemBootstrapper.GetInstance(injectable.PropertyType);
 
                     injectable.SetValue(obj, instance);
                 }
@@ -59,19 +58,19 @@ namespace Signals.Aspects.DI.Helpers
                 // Recursively inject instances of child properties to all properties
                 foreach (var property in properties.Where(x => !x.PropertyType.IsSealed))
                 {
-	                InjectInternal(serviceContainer, property.GetValue(obj));
+                    InjectInternal(property.GetValue(obj));
                 }
 
                 // Recursively inject instances of child properties to all fields
                 foreach (var field in fields.Where(x => !x.FieldType.IsSealed))
                 {
-	                InjectInternal(serviceContainer, field.GetValue(obj));
+                    InjectInternal(field.GetValue(obj));
                 }
             }
-	        catch
-	        {
-				//TODO: this exception should not go silent
-	        }
+            catch
+            {
+                //TODO: this exception should not go silent
+            }
         }
     }
 }

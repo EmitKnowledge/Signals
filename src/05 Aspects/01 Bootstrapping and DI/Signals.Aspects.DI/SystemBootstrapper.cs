@@ -25,7 +25,7 @@ namespace Signals.Aspects.DI
         {
             if (obj == null) throw new NullReferenceException();
 
-            PropertyInjector.Inject(_serviceContainer, obj);
+            new PropertyInjector().Inject(obj);
         }
 
         /// <summary>

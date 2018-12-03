@@ -85,7 +85,7 @@ namespace Signals.Core.Configuration.Bootstrapping
 		/// <summary>
 		/// Synchronization logging provider
 		/// </summary>
-		protected IRecurringTaskLogProvider SyncLogProvider { get; set; }
+		protected IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
 
 		/// <summary>
 		/// All loaded Signals types
@@ -103,7 +103,7 @@ namespace Signals.Core.Configuration.Bootstrapping
 
 			var config = new ConfigurationBootstrapper();
 
-			config.SyncLogProvider = () => SyncLogProvider;
+			config.RecurringTaskLogProvider = () => RecurringTaskLogProvider;
 			config.DependencyResolver = () => RegistrationService;
 			config.Logging = () => GetInstance<ILogger>(LoggerConfiguration);
 			config.Auditing = () => GetInstance<IAuditProvider>(AuditingConfiguration);
@@ -121,9 +121,12 @@ namespace Signals.Core.Configuration.Bootstrapping
 
 			if (SecurityConfiguration.IsNull())
 			{
-				config.PermissionManager = () =>
-					GetImplementationTypes<IPermissionManager>()
-						.SingleOrDefault(x => !x.IsAssignableFrom(typeof(Processing.Authorization.PermissionManager)));
+                if (config.AuthenticationManager()?.IsNull() == false)
+                {
+                    config.PermissionManager = () =>
+                        GetImplementationTypes<IPermissionManager>()
+                            .SingleOrDefault(x => !x.IsAssignableFrom(typeof(Processing.Authorization.PermissionManager)));
+                }
 			}
 			else
 			{

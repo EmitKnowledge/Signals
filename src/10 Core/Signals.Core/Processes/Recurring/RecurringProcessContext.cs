@@ -13,7 +13,10 @@ namespace Signals.Core.Processes.Recurring
     /// </summary>
     public class RecurringProcessContext : BaseProcessContext
     {
-        [Import] internal IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
+        /// <summary>
+        /// Recurring task log provider
+        /// </summary>
+        [Import] public IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
 
         /// <summary>
         /// Insert sync task result

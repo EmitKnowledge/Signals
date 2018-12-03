@@ -10,6 +10,9 @@ namespace Signals.Core.Processes.Recurring.Logging
     /// </summary>
     internal class RecurringTaskLogProvider : IRecurringTaskLogProvider
     {
+        /// <summary>
+        /// Synchronization lock
+        /// </summary>
         private static readonly object syncLock = new object();
 
         /// <summary>
@@ -18,25 +21,16 @@ namespace Signals.Core.Processes.Recurring.Logging
         private const int MaxLogs = 100;
 
         /// <summary>
-        /// Logs repository
-        /// </summary>
-        private static Dictionary<Type, List<RecurringTaskLog>> _recurringTaskLogs;
-
-        /// <summary>
         /// Logs repository provider
         /// </summary>
-        private static Dictionary<Type, List<RecurringTaskLog>> RecurringTaskLogs
-        {
-            get
-            {
-                if (_recurringTaskLogs.IsNull()) _recurringTaskLogs = new Dictionary<Type, List<RecurringTaskLog>>();
-                return _recurringTaskLogs;
-            }
-        }
+        private static readonly Dictionary<Type, List<RecurringTaskLog>> RecurringTaskLogs;
 
+        /// <summary>
+        /// CTOR
+        /// </summary>
         static RecurringTaskLogProvider()
         {
-            _recurringTaskLogs = new Dictionary<Type, List<RecurringTaskLog>>();
+            RecurringTaskLogs = new Dictionary<Type, List<RecurringTaskLog>>();
         }
 
         /// <summary>
@@ -51,14 +45,14 @@ namespace Signals.Core.Processes.Recurring.Logging
                 {
                     RecurringTaskLogs.Add(log.ProcessType, new List<RecurringTaskLog>());
                 }
-                var list = RecurringTaskLogs[log.ProcessType];
-                log.Id = list.Count + 1;
 
-                list.Add(log);
+                log.Id = RecurringTaskLogs[log.ProcessType].Count + 1;
+
+                RecurringTaskLogs[log.ProcessType].Add(log);
                 RecurringTaskLogs[log.ProcessType] = RecurringTaskLogs[log.ProcessType]
-                                                    .OrderByDescending(x => x.StartTime)
-                                                    .Take(MaxLogs)
-                                                    .ToList();
+                                                        .OrderByDescending(x => x.StartTime)
+                                                        .Take(MaxLogs)
+                                                        .ToList();
             }
         }
 
@@ -116,7 +110,9 @@ namespace Signals.Core.Processes.Recurring.Logging
                     RecurringTaskLogs.Add(processType, new List<RecurringTaskLog>());
                 }
 
-                return RecurringTaskLogs[processType].OrderByDescending(x => x.StartTime).FirstOrDefault();
+                return RecurringTaskLogs[processType]
+                    .OrderByDescending(x => x.StartTime)
+                    .FirstOrDefault();
             }
         }
 

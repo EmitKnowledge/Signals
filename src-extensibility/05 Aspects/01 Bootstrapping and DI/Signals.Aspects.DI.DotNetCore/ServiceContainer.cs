@@ -30,7 +30,7 @@ namespace Signals.Aspects.DI.DotNetCore
         public TService GetInstance<TService>() where TService : class
         {
             var instance = Container.GetService(typeof(TService)) as TService;
-            PropertyInjector.Inject(this, instance);
+            new PropertyInjector().Inject(instance);
             return instance;
         }
 
@@ -42,7 +42,7 @@ namespace Signals.Aspects.DI.DotNetCore
         public object GetInstance(Type serviceType)
         {
             var instance = Container.GetService(serviceType);
-            PropertyInjector.Inject(this, instance);
+            new PropertyInjector().Inject(instance);
             return instance;
         }
     }
