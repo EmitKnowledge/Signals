@@ -130,7 +130,7 @@ namespace Signals.Core.Processes.Base
         /// <typeparam name="TInnerResponse"></typeparam>
         /// <returns></returns>
         protected TInnerResponse ContinueWith<TProcess, TInnerResponse>()
-            where TProcess : BaseProcess<VoidResult>
+            where TProcess : IBaseProcess<TInnerResponse>
             where TInnerResponse : VoidResult, new()
         {
             return Dispatch<TInnerResponse>(typeof(TProcess), null);
@@ -145,7 +145,7 @@ namespace Signals.Core.Processes.Base
         /// <param name="obj1"></param>
         /// <returns></returns>
         protected TInnerResponse ContinueWith<TProcess, T1, TInnerResponse>(T1 obj1)
-            where TProcess : BaseProcess<VoidResult>
+            where TProcess : IBaseProcess<TInnerResponse>
             where TInnerResponse : VoidResult, new()
         {
             return Dispatch<TInnerResponse>(typeof(TProcess), obj1);
@@ -162,7 +162,7 @@ namespace Signals.Core.Processes.Base
         /// <param name="obj2"></param>
         /// <returns></returns>
         protected TInnerResponse ContinueWith<TProcess, T1, T2, TInnerResponse>(T1 obj1, T2 obj2)
-            where TProcess : BaseProcess<VoidResult>
+            where TProcess : IBaseProcess<TInnerResponse>
             where TInnerResponse : VoidResult, new()
         {
             return Dispatch<TInnerResponse>(typeof(TProcess), obj1, obj2);
@@ -181,7 +181,7 @@ namespace Signals.Core.Processes.Base
         /// <param name="obj3"></param>
         /// <returns></returns>
         protected TInnerResponse ContinueWith<TProcess, T1, T2, T3, TInnerResponse>(T1 obj1, T2 obj2, T3 obj3)
-            where TProcess : BaseProcess<VoidResult>
+            where TProcess : IBaseProcess<TInnerResponse>
             where TInnerResponse : VoidResult, new()
         {
             return Dispatch<TInnerResponse>(typeof(TProcess), obj1, obj2, obj3);
