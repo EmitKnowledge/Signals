@@ -9,7 +9,7 @@ using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Http;
 
-namespace Signals.Core.Web.Execution.ExecutionHandlers
+namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
 {
     /// <summary>
     /// Authorization fail result handler

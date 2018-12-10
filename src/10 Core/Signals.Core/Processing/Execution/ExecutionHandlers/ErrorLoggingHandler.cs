@@ -43,10 +43,10 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                     var exception = errorInfo.Exception;
                     var entry = LogEntry.Exception(exception, message: innerResult.GetFaultMessage());
 
-                    entry.Action = exception.TargetSite.Name;
+                    entry.Action = exception.TargetSite?.Name;
                     entry.Origin = ApplicationConfiguration.Instance?.ApplicationName ?? Environment.MachineName;
-                    entry.Payload = args.SerializeJson();
-                    entry.UserIdentifier = process.BaseContext.CurrentUserPrincipal?.Identity?.Name;
+                    entry.Payload = args?.SerializeJson();
+                    entry.UserIdentifier = process.BaseContext?.CurrentUserPrincipal?.Identity?.Name;
 
                     logger.Fatal(entry);
                 }
@@ -55,8 +55,8 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                     var entry = LogEntry.Trace(message: innerResult.GetFaultMessage(), payload: args);
                     entry.Action = process.Name;
                     entry.Origin = ApplicationConfiguration.Instance?.ApplicationName ?? Environment.MachineName;
-                    entry.Payload = args.SerializeJson();
-                    entry.UserIdentifier = process.BaseContext.CurrentUserPrincipal?.Identity?.Name;
+                    entry.Payload = args?.SerializeJson();
+                    entry.UserIdentifier = process.BaseContext?.CurrentUserPrincipal?.Identity?.Name;
 
                     logger.Info(entry);
                 }

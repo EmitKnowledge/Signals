@@ -5,6 +5,7 @@ using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Execution.CustomContentHandlers;
 using Signals.Core.Web.Execution.ExecutionHandlers;
+using Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution;
 using Signals.Core.Web.Execution.FactoryFilters;
 using Signals.Core.Web.Execution.Filters;
 using Signals.Core.Web.Extensions;
@@ -67,6 +68,8 @@ namespace Signals.Core.Web.Execution
             ResultHandlers = new List<IResultHandler> {
                 new HeaderAdderHandler(),
                 new AuthorizationFailResultFilter(),
+                new UnmanagedFailResultFilter(),
+                new SpecificationFailResultFilter(),
                 new CacheResultHandler(),
                 new FileResultHandler(),
                 new XmlResultHandler(),

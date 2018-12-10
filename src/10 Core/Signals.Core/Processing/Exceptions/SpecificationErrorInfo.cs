@@ -11,7 +11,7 @@ namespace Signals.Core.Processing.Exceptions
 {
     [Serializable]
     [DataContract]
-    internal class SpecificationErrorInfo : IErrorInfo
+    public class SpecificationErrorInfo : IErrorInfo
     {
         /// <summary>
         /// System fault message
