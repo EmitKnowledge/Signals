@@ -28,16 +28,17 @@ namespace Signals.Core.Processing.Exceptions
         /// <summary>
         /// CTOR
         /// </summary>
-        public SpecificationErrorInfo(SpecificationResult result)
+        /// <param name="specificaitonResult"></param>
+        public SpecificationErrorInfo(SpecificationResult specificaitonResult)
         {
-            if (!result.IsValid)
+            if (!specificaitonResult.IsValid)
             {
-                FaultMessage = result.Input.IsNull() ?
-                    $"Specificaiton {result.SpecificationType.Name} failed" :
-                    $"Specificaiton {result.SpecificationType.Name} failed for input {result.Input?.GetType().Name} with payload {result.Input.SerializeJson()}";
+                FaultMessage = specificaitonResult.Input.IsNull() ?
+                    $"Specificaiton {specificaitonResult.SpecificationType.Name} failed" :
+                    $"Specificaiton {specificaitonResult.SpecificationType.Name} failed for input {specificaitonResult.Input?.GetType().Name} with payload {specificaitonResult.Input.SerializeJson()}";
 
                 var localizer = SystemBootstrapper.GetInstance<ILocalizationProvider>();
-                var specificaitonName = result.SpecificationType.Name;
+                var specificaitonName = specificaitonResult.SpecificationType.Name;
                 var parametarlessName = specificaitonName.Split('`')[0];
                 UserVisibleMessage = localizer?.Get(parametarlessName)?.Value;
             }
