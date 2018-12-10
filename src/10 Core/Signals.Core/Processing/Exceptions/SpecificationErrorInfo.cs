@@ -37,7 +37,9 @@ namespace Signals.Core.Processing.Exceptions
                     $"Specificaiton {result.SpecificationType.Name} failed for input {result.Input?.GetType().Name} with payload {result.Input.SerializeJson()}";
 
                 var localizer = SystemBootstrapper.GetInstance<ILocalizationProvider>();
-                UserVisibleMessage = localizer?.Get(result.SpecificationType.Name)?.Value;
+                var specificaitonName = result.SpecificationType.Name;
+                var parametarlessName = specificaitonName.Split('`')[0];
+                UserVisibleMessage = localizer?.Get(parametarlessName)?.Value;
             }
         }
     }
