@@ -16,12 +16,7 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// Synchronization lock
         /// </summary>
         private static readonly object syncLock = new object();
-
-        /// <summary>
-        /// Id seed
-        /// </summary>
-        private static int Id = 0;
-
+        
         /// <summary>
         /// Maximum number of logs
         /// </summary>
@@ -53,9 +48,6 @@ namespace Signals.Core.Processes.Recurring.Logging
                     RecurringTaskLogs.TryAdd(log.ProcessType, new List<RecurringTaskLog>());
                 }
 
-                
-                log.Id = Interlocked.Add(ref Id, 1);
-
                 RecurringTaskLogs[log.ProcessType].Add(log);
                 RecurringTaskLogs[log.ProcessType] = RecurringTaskLogs[log.ProcessType]
                                                         .OrderByDescending(x => x.StartTime)
@@ -78,7 +70,7 @@ namespace Signals.Core.Processes.Recurring.Logging
                     RecurringTaskLogs.TryAdd(processType, new List<RecurringTaskLog>());
                 }
 
-                return RecurringTaskLogs[processType].SingleOrDefault(x => !x.EndTime.HasValue);
+                return RecurringTaskLogs[processType].FirstOrDefault(x => !x.EndTime.HasValue);
             }
         }
 
@@ -130,21 +122,6 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <param name="log"></param>
         public void UpdateLog(RecurringTaskLog log)
         {
-            lock (syncLock)
-            {
-                if (!RecurringTaskLogs.ContainsKey(log.ProcessType))
-                {
-                    RecurringTaskLogs.TryAdd(log.ProcessType, new List<RecurringTaskLog>());
-                }
-
-                var existing = RecurringTaskLogs[log.ProcessType].SingleOrDefault(x => x.Id == log.Id);
-                if (!existing.IsNull())
-                {
-                    existing.Result = log.Result;
-                    existing.EndTime = log.EndTime;
-                    existing.IsFaulted = log.IsFaulted;
-                }
-            }
         }
     }
 }
