@@ -9,6 +9,9 @@ using System.Runtime.Serialization;
 
 namespace Signals.Core.Processing.Exceptions
 {
+    /// <summary>
+    /// Error info when specification fails
+    /// </summary>
     [Serializable]
     [DataContract]
     public class SpecificationErrorInfo : IErrorInfo

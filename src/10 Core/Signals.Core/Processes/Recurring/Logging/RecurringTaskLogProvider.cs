@@ -1,7 +1,9 @@
 ﻿using Signals.Core.Common.Instance;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Signals.Core.Processes.Recurring.Logging
 {
@@ -16,6 +18,11 @@ namespace Signals.Core.Processes.Recurring.Logging
         private static readonly object syncLock = new object();
 
         /// <summary>
+        /// Id seed
+        /// </summary>
+        private static int Id = 0;
+
+        /// <summary>
         /// Maximum number of logs
         /// </summary>
         private const int MaxLogs = 100;
@@ -23,14 +30,14 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <summary>
         /// Logs repository provider
         /// </summary>
-        private static readonly Dictionary<Type, List<RecurringTaskLog>> RecurringTaskLogs;
+        private static readonly ConcurrentDictionary<Type, List<RecurringTaskLog>> RecurringTaskLogs;
 
         /// <summary>
         /// CTOR
         /// </summary>
         static RecurringTaskLogProvider()
         {
-            RecurringTaskLogs = new Dictionary<Type, List<RecurringTaskLog>>();
+            RecurringTaskLogs = new ConcurrentDictionary<Type, List<RecurringTaskLog>>();
         }
 
         /// <summary>
@@ -43,10 +50,11 @@ namespace Signals.Core.Processes.Recurring.Logging
             {
                 if (!RecurringTaskLogs.ContainsKey(log.ProcessType))
                 {
-                    RecurringTaskLogs.Add(log.ProcessType, new List<RecurringTaskLog>());
+                    RecurringTaskLogs.TryAdd(log.ProcessType, new List<RecurringTaskLog>());
                 }
 
-                log.Id = RecurringTaskLogs[log.ProcessType].Count + 1;
+                
+                log.Id = Interlocked.Add(ref Id, 1);
 
                 RecurringTaskLogs[log.ProcessType].Add(log);
                 RecurringTaskLogs[log.ProcessType] = RecurringTaskLogs[log.ProcessType]
@@ -67,7 +75,7 @@ namespace Signals.Core.Processes.Recurring.Logging
             {
                 if (!RecurringTaskLogs.ContainsKey(processType))
                 {
-                    RecurringTaskLogs.Add(processType, new List<RecurringTaskLog>());
+                    RecurringTaskLogs.TryAdd(processType, new List<RecurringTaskLog>());
                 }
 
                 return RecurringTaskLogs[processType].SingleOrDefault(x => !x.EndTime.HasValue);
@@ -86,7 +94,7 @@ namespace Signals.Core.Processes.Recurring.Logging
             {
                 if (!RecurringTaskLogs.ContainsKey(processType))
                 {
-                    RecurringTaskLogs.Add(processType, new List<RecurringTaskLog>());
+                    RecurringTaskLogs.TryAdd(processType, new List<RecurringTaskLog>());
                 }
 
                 return RecurringTaskLogs[processType]
@@ -107,7 +115,7 @@ namespace Signals.Core.Processes.Recurring.Logging
             {
                 if (!RecurringTaskLogs.ContainsKey(processType))
                 {
-                    RecurringTaskLogs.Add(processType, new List<RecurringTaskLog>());
+                    RecurringTaskLogs.TryAdd(processType, new List<RecurringTaskLog>());
                 }
 
                 return RecurringTaskLogs[processType]
@@ -126,7 +134,7 @@ namespace Signals.Core.Processes.Recurring.Logging
             {
                 if (!RecurringTaskLogs.ContainsKey(log.ProcessType))
                 {
-                    RecurringTaskLogs.Add(log.ProcessType, new List<RecurringTaskLog>());
+                    RecurringTaskLogs.TryAdd(log.ProcessType, new List<RecurringTaskLog>());
                 }
 
                 var existing = RecurringTaskLogs[log.ProcessType].SingleOrDefault(x => x.Id == log.Id);
