@@ -32,11 +32,11 @@ namespace Signals.Core.Processing.Exceptions
         /// <summary>
         /// CTOR
         /// </summary>
-        /// <param name="ex"></param>
-        public UnmanagedExceptionErrorInfo(Exception ex)
+        /// <param name="exception"></param>
+        public UnmanagedExceptionErrorInfo(Exception exception)
         {
-            Exception = ex;
-            FaultMessage = ex.Message;
+            Exception = exception;
+            FaultMessage = exception.Message;
 
             var localizer = SystemBootstrapper.GetInstance<ILocalizationProvider>();
             UserVisibleMessage = localizer?.Get("SystemError")?.Value ?? "Something happened!";

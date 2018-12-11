@@ -70,6 +70,7 @@ namespace Signals.Core.Web.Execution
                 new AuthorizationFailResultFilter(),
                 new UnmanagedFailResultFilter(),
                 new SpecificationFailResultFilter(),
+                new GeneralFailResultFilter(),
                 new CacheResultHandler(),
                 new FileResultHandler(),
                 new XmlResultHandler(),

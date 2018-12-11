@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Security.Principal;
-using System.Text;
 
 namespace Signals.Core.Processing.Exceptions
 {
-    /// <summary>
-    /// Error info generated from failed authorization
-    /// </summary>
     [Serializable]
     [DataContract]
-    public class AuthorizationErrorInfo : IErrorInfo
+    public class GeneralErrorInfo : IErrorInfo
     {
         /// <summary>
         /// System fault message
@@ -28,9 +22,12 @@ namespace Signals.Core.Processing.Exceptions
         /// <summary>
         /// CTOR
         /// </summary>
-        public AuthorizationErrorInfo()
+        /// <param name="faultMessage"></param>
+        /// <param name="userVisibleMessage"></param>
+        public GeneralErrorInfo(string faultMessage, string userVisibleMessage)
         {
-            UserVisibleMessage = FaultMessage = "Authorization failed";
+            FaultMessage = faultMessage;
+            UserVisibleMessage = userVisibleMessage;
         }
     }
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
 {
     /// <summary>
-    /// Authorization fail result handler
+    /// Specification fail result handler
     /// </summary>
     public class SpecificationFailResultFilter : IResultHandler
     {

@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
 {
     /// <summary>
-    /// System fail result handler
+    /// General fail result handler
     /// </summary>
-    public class UnmanagedFailResultFilter : IResultHandler
+    public class GeneralFailResultFilter : IResultHandler
     {
         /// <summary>
         /// Handle process result
@@ -26,9 +26,9 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            if (response.IsFaulted && response.ErrorMessages.OfType<UnmanagedExceptionErrorInfo>().Any())
+            if (response.IsFaulted && response.ErrorMessages.OfType<GeneralErrorInfo>().Any())
             {
-                context.PutResponse(new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError));
+                context.PutResponse(new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.BadRequest));
                 return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
             }
 
