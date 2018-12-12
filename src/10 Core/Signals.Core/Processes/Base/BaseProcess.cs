@@ -2,6 +2,7 @@
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using System;
+using System.Collections.Concurrent;
 
 namespace Signals.Core.Processes.Base
 {
@@ -37,9 +38,19 @@ namespace Signals.Core.Processes.Base
     /// <summary>
     /// Represents a base process
     /// </summary>
-    public abstract class BaseProcess<TResponse> : IBaseProcess<TResponse> 
-	    where TResponse : VoidResult, new()
+    public abstract class BaseProcess<TResponse> : IBaseProcess<TResponse>
+        where TResponse : VoidResult, new()
     {
+        /// <summary>
+        /// Locks container
+        /// </summary>
+        private readonly static ConcurrentDictionary<string, object> _locksDictionary = new ConcurrentDictionary<string, object>();
+
+        /// <summary>
+        /// Statically locks all instances of current process
+        /// </summary>
+        public object SpinLock => _locksDictionary.GetOrAdd(Name, _ => new object());
+
         /// <summary>
         /// Process name
         /// </summary>

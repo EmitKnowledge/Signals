@@ -13,9 +13,8 @@ namespace Signals.Core.Configuration.ConfigurationSegments
         /// <summary>
         /// Person to contact in case of emergency
         /// </summary>
-        [EmailAddress]
         [Required]
-        public string OwnerEmail { get; set; }
+        public List<string> Emails { get; set; }
 
         /// <summary>
         /// Email subject

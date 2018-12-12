@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Audit.NET" Version="14.0.1" />
     <PackageReference Include="Signals.Aspects.Auditing" Version="0.6.1" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 
 </Project>
