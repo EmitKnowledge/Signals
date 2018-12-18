@@ -1,6 +1,7 @@
 ﻿using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
+using Signals.Core.Processing.Specifications;
 using System;
 using System.Collections.Concurrent;
 
@@ -97,6 +98,15 @@ namespace Signals.Core.Processes.Base
         }
 
         /// <summary>
+        /// Return rule engine for validation
+        /// </summary>
+        /// <returns></returns>
+        protected RuleEngine<TResponse> BeginValidation()
+        {
+            return new RuleEngine<TResponse>();
+        }
+
+        /// <summary>
         /// Return empty result
         /// </summary>
         /// <returns></returns>
@@ -132,6 +142,16 @@ namespace Signals.Core.Processes.Base
         protected TResponse Fail()
         {
             return VoidResult.FaultedResult<TResponse>();
+        }
+
+        /// <summary>
+        /// Return faulted result
+        /// </summary>
+        /// <param name="voidResult"></param>
+        /// <returns></returns>
+        protected TResponse Fail<TInnerResponse>(TInnerResponse voidResult) where TInnerResponse : VoidResult
+        {
+            return VoidResult.FaultedResult<TResponse>(voidResult?.ErrorMessages?.ToArray());
         }
 
         /// <summary>

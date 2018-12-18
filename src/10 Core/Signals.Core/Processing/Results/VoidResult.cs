@@ -102,7 +102,8 @@ namespace Signals.Core.Processing.Results
                 IsFaulted = true
             };
 
-            faultedResult.ErrorMessages.AddRange(errors);
+            if (errors?.Any() == true)
+                faultedResult.ErrorMessages.AddRange(errors);
 
             return faultedResult;
         }
