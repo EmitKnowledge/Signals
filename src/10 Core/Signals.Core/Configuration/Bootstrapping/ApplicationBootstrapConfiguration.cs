@@ -146,6 +146,7 @@ namespace Signals.Core.Configuration.Bootstrapping
 			var requiringType = typeof(TDefinition);
 			var implementationTypes = _allTypes
 				.Where(x => (x.GetInterfaces().Contains(requiringType) || x.IsSubclassOf(requiringType)) && !x.IsInterface && !x.IsAbstract)
+                .Distinct()
 				.ToList();
 			return implementationTypes;
 		}
