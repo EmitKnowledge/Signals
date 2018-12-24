@@ -33,7 +33,7 @@ namespace Signals.Clients.NetCoreWeb
         public Microsoft.Extensions.Configuration.IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -69,14 +69,14 @@ namespace Signals.Clients.NetCoreWeb
             WebApplicationConfiguration
                 .UseProvider(new FileConfigurationProvider
                 {
-                    Path = @"E:\repos\Emit.Knowledge.Signals\trunk\src\15 Clients\Signals.Clients.MvcWeb",
+                    Path = @"E:\repos\Emit.Knowledge.Signals\src-sample-clients\15 Clients\Signals.Clients.NetCoreWeb",
                     File = "websettings.json",
                     ReloadOnAccess = false
                 });
 
-            //var registrationService = new Aspects.DI.Autofac.RegistrationService();
-            //registrationService.Builder.Populate(services);
-            var registrationService = new Aspects.DI.SimpleInjector.RegistrationService();
+            var registrationService = new Aspects.DI.Autofac.RegistrationService();
+            registrationService.Builder.Populate(services);
+            //var registrationService = new Aspects.DI.SimpleInjector.RegistrationService();
             services.AddSignals(config =>
             {
                 config.ResponseHeaders = new List<ResponseHeaderAttribute> { new ContentSecurityPolicyAttribute() };
@@ -91,14 +91,13 @@ namespace Signals.Clients.NetCoreWeb
                 };
                 config.LocalizationConfiguration = new DatabaseDataProviderConfiguration("");
                 config.StorageConfiguration = new DatabaseStorageConfiguration();
-                config.SecurityConfiguration = new DatabaseSecurityConfiguration();
             });
 
-            foreach (var service in registrationService.Builder.GetCurrentRegistrations())
-                services.Add(new ServiceDescriptor(service.ServiceType, (provider) => registrationService.Builder.GetInstance(service.ServiceType), ServiceLifetime.Transient));
+            //foreach (var service in registrationService.Builder.GetCurrentRegistrations())
+            //    services.Add(new ServiceDescriptor(service.ServiceType, (provider) => registrationService.Builder.GetInstance(service.ServiceType), ServiceLifetime.Transient));
 
 
-            //return new AutofacServiceProvider((registrationService.Build() as Aspects.DI.Autofac.ServiceContainer).Container);
+            return new AutofacServiceProvider((registrationService.Build() as Aspects.DI.Autofac.ServiceContainer).Container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -117,9 +116,9 @@ namespace Signals.Clients.NetCoreWeb
             app.UseSession();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
             app.UseSignalsAuth();
             app.UseSignals();
-
             app.UseMvcWithDefaultRoute();
         }
     }

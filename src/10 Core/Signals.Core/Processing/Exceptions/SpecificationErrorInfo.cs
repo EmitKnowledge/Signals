@@ -38,12 +38,16 @@ namespace Signals.Core.Processing.Exceptions
             {
                 FaultMessage = specificaitonResult.Input.IsNull() ?
                     $"Specificaiton {specificaitonResult.SpecificationType.Name} failed" :
-                    $"Specificaiton {specificaitonResult.SpecificationType.Name} failed for input {specificaitonResult.Input?.GetType().Name} with payload {specificaitonResult.Input.SerializeJson()}";
+                    $"Specificaiton {specificaitonResult.SpecificationType.Name} failed for input {specificaitonResult.Input.GetType().Name} with payload {specificaitonResult.Input.SerializeJson()}";
 
                 var localizer = SystemBootstrapper.GetInstance<ILocalizationProvider>();
-                var specificaitonName = specificaitonResult.SpecificationType.Name;
-                var parametarlessName = specificaitonName.Split('`')[0];
-                UserVisibleMessage = localizer?.Get(parametarlessName)?.Value;
+
+                if (!localizer.IsNull())
+                {
+                    var specificaitonName = specificaitonResult.SpecificationType.Name;
+                    var parametarlessName = specificaitonName.Split('`')[0];
+                    UserVisibleMessage = localizer?.Get(parametarlessName)?.Value;
+                }
             }
         }
     }

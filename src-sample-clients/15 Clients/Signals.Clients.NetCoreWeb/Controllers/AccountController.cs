@@ -38,7 +38,7 @@ namespace Signals.Clients.NetCoreWeb.Controllers
 
             var redirectUrl = Url.Action(nameof(AccountController.LoginCallback), "Account", new { provider = provider });
 
-            return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl }, provider);
+            return Challenge(new Microsoft.AspNetCore.Authentication.AuthenticationProperties { RedirectUri = redirectUrl }, provider);
         }
 
         [HttpGet]

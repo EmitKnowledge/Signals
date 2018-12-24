@@ -13,6 +13,13 @@
         /// <param name="input"></param>
         /// <returns></returns>
         public abstract SpecificationResult Execute<T>(BaseSpecification<T> specification, T input);
+
+        /// <summary>
+        /// Specificaiton execution using this strategy
+        /// </summary>
+        /// <param name="specification"></param>
+        /// <returns></returns>
+        public abstract SpecificationResult Execute(BaseSpecification specification);
     }
 
     /// <summary>
@@ -54,6 +61,26 @@
 
             return null;
         }
+
+        /// <summary>
+        /// Specificaiton execution using this strategy
+        /// </summary>
+        /// <param name="specification"></param>
+        /// <returns></returns>
+        public override SpecificationResult Execute(BaseSpecification specification)
+        {
+            if (ExecuteNext)
+            {
+                var result = specification.Execute();
+                if (!result.IsValid)
+                {
+                    ExecuteNext = false;
+                }
+                return result;
+            }
+
+            return null;
+        }
     }
 
     /// <summary>
@@ -71,6 +98,16 @@
         public override SpecificationResult Execute<T>(BaseSpecification<T> specification, T input)
         {
             return specification.Execute(input);
+        }
+
+        /// <summary>
+        /// Specificaiton execution using this strategy
+        /// </summary>
+        /// <param name="specification"></param>
+        /// <returns></returns>
+        public override SpecificationResult Execute(BaseSpecification specification)
+        {
+            return specification.Execute();
         }
     }
 }

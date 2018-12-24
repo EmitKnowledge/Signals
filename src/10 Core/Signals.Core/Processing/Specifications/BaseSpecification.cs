@@ -36,4 +36,36 @@ namespace Signals.Core.Processing.Specifications
         /// <returns></returns>
         public abstract bool Validate(T input);
     }
+
+    /// <summary>
+    /// Specification definition
+    /// </summary>
+    public abstract class BaseSpecification
+    {
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        public BaseSpecification()
+        {
+            SystemBootstrapper.Bootstrap(this);
+        }
+
+        /// <summary>
+        /// Execution handle that is called from the <see cref="RuleEngine{TResult}"/>
+        /// </summary>
+        /// <returns></returns>
+        internal SpecificationResult Execute()
+        {
+            var result = Validate();
+            var specResult = new SpecificationResult(GetType(), result);
+
+            return specResult;
+        }
+
+        /// <summary>
+        /// Validation handle
+        /// </summary>
+        /// <returns></returns>
+        public abstract bool Validate();
+    }
 }
