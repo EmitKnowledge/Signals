@@ -75,6 +75,7 @@ namespace Signals.Aspects.Logging.NLog
                         CREATE TABLE [{configuration.TableName}]
                         (
                             [Id] INT IDENTITY(1,1) NOT NULL, 
+                            [CreatedOn] DATETIME2(7) NOT NULL, 
                             [Level] NVARCHAR(MAX) NULL,
                             [ErrorGroup] NVARCHAR(MAX) NULL,
                             [ErrorCode] NVARCHAR(MAX) NULL,
@@ -87,6 +88,8 @@ namespace Signals.Aspects.Logging.NLog
                             [UserIdentifier] NVARCHAR(MAX) NULL,
                             [Payload] NVARCHAR(MAX) NULL
                         )
+                        
+                        ALTER TABLE [{configuration.TableName}] ADD CONSTRAINT [DF_{configuration.TableName}_CreateOn]  DEFAULT (getutcdate()) FOR [CreatedOn];
                     ";
 
                     var command = new SqlCommand(sql, connection, transaction);
