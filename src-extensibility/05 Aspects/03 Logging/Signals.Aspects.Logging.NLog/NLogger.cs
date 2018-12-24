@@ -71,25 +71,27 @@ namespace Signals.Aspects.Logging.NLog
                             SELECT * 
                             FROM sys.tables t 
                             WHERE t.name = '{configuration.TableName}'
-                        ) 
-                        CREATE TABLE [{configuration.TableName}]
-                        (
-                            [Id] INT IDENTITY(1,1) NOT NULL, 
-                            [CreatedOn] DATETIME2(7) NOT NULL, 
-                            [Level] NVARCHAR(MAX) NULL,
-                            [ErrorGroup] NVARCHAR(MAX) NULL,
-                            [ErrorCode] NVARCHAR(MAX) NULL,
-                            [Origin] NVARCHAR(MAX) NULL,
-                            [Action] NVARCHAR(MAX) NULL,
-                            [ActionFilePath] NVARCHAR(MAX) NULL,
-                            [ActionSourceLineNumber] NVARCHAR(MAX) NULL,
-                            [Message] NVARCHAR(MAX) NULL,
-                            [ExceptionMessage] NVARCHAR(MAX) NULL,
-                            [UserIdentifier] NVARCHAR(MAX) NULL,
-                            [Payload] NVARCHAR(MAX) NULL
                         )
+                        BEGIN
+                            CREATE TABLE [{configuration.TableName}]
+                            (
+                                [Id] INT IDENTITY(1,1) NOT NULL, 
+                                [CreatedOn] DATETIME2(7) NOT NULL, 
+                                [Level] NVARCHAR(MAX) NULL,
+                                [ErrorGroup] NVARCHAR(MAX) NULL,
+                                [ErrorCode] NVARCHAR(MAX) NULL,
+                                [Origin] NVARCHAR(MAX) NULL,
+                                [Action] NVARCHAR(MAX) NULL,
+                                [ActionFilePath] NVARCHAR(MAX) NULL,
+                                [ActionSourceLineNumber] NVARCHAR(MAX) NULL,
+                                [Message] NVARCHAR(MAX) NULL,
+                                [ExceptionMessage] NVARCHAR(MAX) NULL,
+                                [UserIdentifier] NVARCHAR(MAX) NULL,
+                                [Payload] NVARCHAR(MAX) NULL
+                            )
                         
-                        ALTER TABLE [{configuration.TableName}] ADD CONSTRAINT [DF_{configuration.TableName}_CreateOn]  DEFAULT (getutcdate()) FOR [CreatedOn];
+                            ALTER TABLE [{configuration.TableName}] ADD CONSTRAINT [DF_{configuration.TableName}_CreateOn]  DEFAULT (getutcdate()) FOR [CreatedOn]; 
+                        END
                     ";
 
                     var command = new SqlCommand(sql, connection, transaction);
