@@ -149,7 +149,7 @@ namespace Signals.Core.Processes.Base
         /// </summary>
         /// <param name="voidResult"></param>
         /// <returns></returns>
-        protected TResponse Fail<TInnerResponse>(TInnerResponse voidResult) where TInnerResponse : VoidResult
+        protected TResponse Fail(VoidResult voidResult)
         {
             return VoidResult.FaultedResult<TResponse>(voidResult?.ErrorMessages?.ToArray());
         }
