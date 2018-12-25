@@ -33,7 +33,7 @@ namespace Signals.Core.Processing.Authorization
         internal bool Authorize(string feature)
         {
             var permissionManager = SystemBootstrapper.GetInstance<IPermissionManager>();
-            return permissionManager.HasPermission(feature, Roles as Enum[]);
+            return permissionManager.HasPermission(feature, Roles.Cast<Enum>().ToArray());
         }
     }
 }

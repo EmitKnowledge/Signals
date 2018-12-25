@@ -1,4 +1,5 @@
 ﻿using Signals.Aspects.Security.Database.Configurations;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -151,18 +152,12 @@ namespace Signals.Aspects.Security.Database
                 // OR if there is 'grant access' permission entry for the user (without role checking)
                 var sql =
                     @"
-                        IF TYPE_ID(N'UserRolesType') IS NULL
-                        CREATE TYPE [UserRolesType] AS TABLE
-                        (
-                            Name NVARCHAR(MAX)
-                        )
-
                         SELECT COUNT(*)
                         FROM Permission p
                         WHERE p.Feature = @Feature AND
                         (
 	                        (
-		                        p.Role IN (SELECT Name FROM @UserRoles) AND 
+		                        p.Role IN (@UserRoles) AND 
 		                        p.HasAccess = 1 AND 
 		                        (
 			                        SELECT COUNT(*) 
@@ -178,26 +173,39 @@ namespace Signals.Aspects.Security.Database
 
                 connection.Open();
                 var command = new SqlCommand(sql, connection);
-
-                // Create data table and insert the user roles
-                var userRolesTable = new DataTable("UserRoles");
-                userRolesTable.Columns.Add("Name", typeof(string));
-                foreach (var userRole in userRoles)
-                    userRolesTable.Rows.Add(userRole);
-
-                // Add userRolesTable as sql parameter
-                var param = new SqlParameter
-                {
-                    Value = userRolesTable,
-                    ParameterName = "UserRoles",
-                    TypeName = "[UserRolesType]"
-                };
-                command.Parameters.Add(param);
+                AddArrayParameters(command, "UserRoles", userRoles);
                 command.Parameters.AddWithValue("Feature", feature);
                 command.Parameters.AddWithValue("User", userName);
 
                 return (int)command.ExecuteScalar() > 0;
             }
+        }
+
+        private SqlParameter[] AddArrayParameters<T>(SqlCommand cmd, string paramNameRoot, IEnumerable<T> values, SqlDbType? dbType = null, int? size = null)
+        {
+            /* An array cannot be simply added as a parameter to a SqlCommand so we need to loop through things and add it manually. 
+             * Each item in the array will end up being it's own SqlParameter so the return value for this must be used as part of the
+             * IN statement in the CommandText.
+             */
+            var parameters = new List<SqlParameter>();
+            var parameterNames = new List<string>();
+            var paramNbr = 1;
+            foreach (var value in values)
+            {
+                var paramName = string.Format("@{0}{1}", paramNameRoot, paramNbr++);
+                parameterNames.Add(paramName);
+                SqlParameter p = new SqlParameter(paramName, value);
+                if (dbType.HasValue)
+                    p.SqlDbType = dbType.Value;
+                if (size.HasValue)
+                    p.Size = size.Value;
+                cmd.Parameters.Add(p);
+                parameters.Add(p);
+            }
+
+            cmd.CommandText = cmd.CommandText.Replace("@" + paramNameRoot, string.Join(",", parameterNames));
+
+            return parameters.ToArray();
         }
 
         /// <summary>
