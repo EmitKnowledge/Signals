@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Signals.Core.Processes.Api;
+using Signals.Core.Processes.Distributed;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Web.Http;
 
@@ -22,7 +23,7 @@ namespace Signals.Core.Web.Execution.Filters
         /// <returns></returns>
         public bool IsCorrectProcessType(Type type, IHttpContextWrapper context)
         {
-            return type.GetInterfaces().Contains(typeof(IApiProcess));
+            return type.GetInterfaces().Contains(typeof(IApiProcess)) || type.GetInterfaces().Contains(typeof(IDistributedProcess));
         }
     }
 }
