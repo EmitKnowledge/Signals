@@ -10,6 +10,7 @@ using Signals.Core.Common.Serialization;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Http;
+using Signals.Core.Web.Helpers;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers
 {
@@ -31,7 +32,7 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         {
             context.PutResponse(new HttpResponseMessage
             {
-                Content = new StringContent(response.SerializeJson(), System.Text.Encoding.UTF8, "application/json")
+                Content = type.ToHttpContent(response)
             });
 
             // result is always handled, this is result fallback

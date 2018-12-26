@@ -2,6 +2,7 @@
 using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
+using Signals.Core.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,10 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
         {
             if (response.IsFaulted && response.ErrorMessages.OfType<SpecificationErrorInfo>().Any())
             {
-                context.PutResponse(new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.BadRequest));
+                context.PutResponse(new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
+                {
+                    Content = type.ToHttpContent(response)
+                });
                 return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
             }
 

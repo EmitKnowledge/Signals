@@ -10,6 +10,7 @@ using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processes.Api;
+using Signals.Core.Web.Helpers;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers
 {
@@ -42,7 +43,7 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
             {
                 context.PutResponse(new HttpResponseMessage
                 {
-                    Content = new StringContent(response.SerializeXml(), System.Text.Encoding.UTF8, "application/xml")
+                    Content = type.ToHttpContent(response)
                 });
 
                 return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
-using Signals.Core.Web.Http;
+using Signals.Core.Web.Helpers;
+using System;
+using System.Linq;
+using System.Net.Http;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
 {
@@ -27,9 +26,12 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            if(response.IsFaulted && response.ErrorMessages.OfType<AuthorizationErrorInfo>().Any())
+            if (response.IsFaulted && response.ErrorMessages.OfType<AuthorizationErrorInfo>().Any())
             {
-                context.PutResponse(new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized));
+                context.PutResponse(new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized)
+                {
+                    Content = type.ToHttpContent(response)
+                });
                 return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
             }
 
