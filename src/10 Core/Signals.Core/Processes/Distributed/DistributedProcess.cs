@@ -163,17 +163,6 @@ namespace Signals.Core.Processes.Distributed
         /// <returns></returns>
         internal override TResponse ExecuteProcess(params object[] args)
         {
-            if (args.Length > 1 && args[0] is string inputStr)
-            {
-                if (inputStr == "BG")
-                {
-                    var input = JsonConvert.DeserializeObject<TTransientData>(args[1] as string);
-                    Work(input);
-
-                    return new TResponse();
-                }
-            }
-
             if (args[0] is TRequest obj)
                 return Execute(obj);
 

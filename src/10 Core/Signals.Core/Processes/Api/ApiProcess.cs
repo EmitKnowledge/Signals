@@ -6,6 +6,7 @@ using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;
 using System.IO;
 using Ganss.XSS;
+using System;
 
 namespace Signals.Core.Processes.Api
 {
@@ -73,9 +74,19 @@ namespace Signals.Core.Processes.Api
         /// <returns></returns>
         internal override TResponse ExecuteProcess(params object[] args)
         {
-            var obj = (args[0] as string).Deserialize<TRequest>();
-            obj?.Sanitize(new HtmlSanitizer());
-            return Execute(obj);
+            if (args[0] is string request)
+            {
+                var obj = request.Deserialize<TRequest>();
+                obj?.Sanitize(new HtmlSanitizer());
+                return Execute(obj);
+            }
+            else if(args[0] is TRequest obj)
+            {
+                obj?.Sanitize(new HtmlSanitizer());
+                return Execute(obj);
+            }
+
+            throw new ArgumentException("Input is empty");
         }
     }
 }

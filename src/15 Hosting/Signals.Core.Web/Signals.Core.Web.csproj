@@ -9,8 +9,8 @@
     <PackageReference Include="HtmlSanitizer" Version="4.0.199" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Microsoft.OpenApi" Version="1.1.1" />
-    <PackageReference Include="Signals.Core" Version="0.6.33" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.1.2" />
+    <PackageReference Include="Signals.Core" Version="0.6.40" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)'=='net461'">
