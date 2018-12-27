@@ -100,7 +100,7 @@ namespace Signals.Core.Processes.Distributed
         /// <returns></returns>
         internal Task PublishNotificaiton(string name, object obj)
         {
-            return Context.Channel.Publish(name, obj);
+            return Context.Channel?.Publish(name, obj);
         }
     }
 
@@ -205,7 +205,7 @@ namespace Signals.Core.Processes.Distributed
         /// <returns></returns>
         internal Task PublishNotificaiton(string name, object obj)
         {
-            return Context.Channel.Publish(name, obj);
+            return Context.Channel?.Publish(name, obj);
         }
     }
 }

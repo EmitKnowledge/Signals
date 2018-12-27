@@ -101,7 +101,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         /// <param name="action"></param>
         public async Task Subscribe<T>(string channelName, Action<T> action) where T : class
         {
-            var queue = await GetQueue(channelName, true);
+            var queue = await GetQueue(channelName);
             Subscriptions.Add(channelName, queue);
 
             var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
@@ -143,11 +143,10 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
 	    /// Get service bus queue
 	    /// </summary>
 	    /// <param name="queueName"></param>
-	    /// <param name="createIfNotExists"></param>
 	    /// <returns></returns>
-	    private Task<IQueueClient> GetQueue(string queueName, bool createIfNotExists = false)
+	    private Task<IQueueClient> GetQueue(string queueName)
         {
-            if (createIfNotExists && !CreatedChannels.Contains(queueName))
+            if (!CreatedChannels.Contains(queueName))
             {
                 lock (CreatedChannels)
                 {
