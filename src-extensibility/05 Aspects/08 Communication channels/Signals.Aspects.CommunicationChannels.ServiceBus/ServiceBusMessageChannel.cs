@@ -21,10 +21,10 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         private Dictionary<string, IQueueClient> Subscriptions { get; set; }
         private static readonly HashSet<string> CreatedChannels = new HashSet<string>();
 
-		/// <summary>
-		/// CTOR
-		/// </summary>
-		/// <param name="configuration"></param>
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="configuration"></param>
         public ServiceBusMessageChannel(ServiceBusChannelConfiguration configuration)
         {
             _configuration = configuration;
@@ -41,7 +41,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
 
             Subscriptions.Clear();
 
-			return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -55,12 +55,12 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
             await Publish(queueName, message);
         }
 
-	    /// <summary>
-	    /// Publish a message on a predefined channel
-	    /// </summary>
-	    /// <param name="channelName"></param>
-	    /// <param name="message"></param>
-	    public async Task Publish<T>(string channelName, T message) where T : class
+        /// <summary>
+        /// Publish a message on a predefined channel
+        /// </summary>
+        /// <param name="channelName"></param>
+        /// <param name="message"></param>
+        public async Task Publish<T>(string channelName, T message) where T : class
         {
             var queue = await GetQueue(channelName);
             if (queue == null) throw new ChannelDoesntExistException(channelName);
@@ -124,7 +124,11 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
                     var obj = JsonConvert.DeserializeObject<T>(messageBody);
                     action(obj);
                 }
-                await queue.CompleteAsync(message.SystemProperties.LockToken);
+
+                if (queue.ReceiveMode == ReceiveMode.PeekLock)
+                {
+                    await queue.CompleteAsync(message.SystemProperties.LockToken);
+                }
             }, messageHandlerOptions);
         }
 
@@ -136,15 +140,15 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
             Console.WriteLine($"- Endpoint: {context.Endpoint}");
             Console.WriteLine($"- Entity Path: {context.EntityPath}");
             Console.WriteLine($"- Executing Action: {context.Action}");
-			return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-	    /// <summary>
-	    /// Get service bus queue
-	    /// </summary>
-	    /// <param name="queueName"></param>
-	    /// <returns></returns>
-	    private Task<IQueueClient> GetQueue(string queueName)
+        /// <summary>
+        /// Get service bus queue
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <returns></returns>
+        private Task<IQueueClient> GetQueue(string queueName)
         {
             if (!CreatedChannels.Contains(queueName))
             {
@@ -164,8 +168,8 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
                 }
             }
 
-            var client = new QueueClient(_configuration.ConnectionString, queueName, ReceiveMode.ReceiveAndDelete, RetryPolicy.Default);
-			return Task.FromResult((IQueueClient)client);
-		}
+            var client = new QueueClient(_configuration.ConnectionString, queueName, ReceiveMode.PeekLock, RetryPolicy.Default);
+            return Task.FromResult((IQueueClient)client);
+        }
     }
 }
