@@ -4,6 +4,7 @@ using Microsoft.Extensions.Primitives;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Input.Http;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Request body
         /// </summary>
-        public string Body { get; set; }
+        public Lazy<string> Body { get; set; }
         
         /// <summary>
         /// Headers collection manager
@@ -84,7 +85,7 @@ namespace Signals.Core.Web.Http
                 Session = new SessionProvider(context);
 
                 Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString());
-                Body = ExtractBody(context.Request.InputStream);
+                Body = new Lazy<string>(() => ExtractBody(context.Request.InputStream));
                 HttpMethod = context.Request.HttpMethod.ToUpperInvariant();
                 Files = context.Request.Files.AllKeys.Select(x => context.Request.Files[x].InputStream);
                 RawUrl = context.Request.Url.AbsolutePath;
@@ -134,7 +135,7 @@ namespace Signals.Core.Web.Http
                 Session = new SessionProvider(context);
 
                 Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.Value);
-                Body = ExtractBody(context.Request.Body);
+                Body = new Lazy<string>(() => ExtractBody(context.Request.Body));
                 HttpMethod = context.Request.Method.ToUpperInvariant();
 
                 // Form throws exception

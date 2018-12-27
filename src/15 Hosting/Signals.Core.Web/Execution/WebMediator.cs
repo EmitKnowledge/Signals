@@ -127,7 +127,7 @@ namespace Signals.Core.Web.Execution
             }
 
             // execute process
-            var bodyString = httpContext.Body;
+            var bodyString = httpContext.Body.Value;
             var response = executor.Execute(process, bodyString);
 
             // post execution events

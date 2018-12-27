@@ -35,7 +35,7 @@ namespace Signals.Core.Processing.Input.Http
         /// <summary>
         /// Request body
         /// </summary>
-        string Body { get; set; }
+        Lazy<string> Body { get; set; }
 
         /// <summary>
         /// Headers collection manager
