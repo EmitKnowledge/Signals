@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace Signals.Core.Processing.Exceptions
 {
+    /// <summary>
+    /// User specified error info
+    /// </summary>
     [Serializable]
     [DataContract]
     public class GeneralErrorInfo : IErrorInfo

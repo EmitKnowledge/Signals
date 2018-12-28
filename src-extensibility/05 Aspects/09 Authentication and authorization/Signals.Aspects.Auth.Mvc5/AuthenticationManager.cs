@@ -82,5 +82,20 @@ namespace Signals.Aspects.Auth.Mvc5
             HttpContext.Current.GetOwinContext().Authentication.SignOut(HttpContext.Current?.User?.Identity?.AuthenticationType);
             Thread.CurrentPrincipal = null;
         }
+
+        /// <summary>
+        /// Set currently logged user data
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="user"></param>
+        public void SetCurrentUser<T>(T user) where T : class
+        {
+            var principal = GetCurrentPrincipal();
+            if (principal == null) return;
+
+            var claimProperties = principal.GetClaim<AuthenticationProperties>(PrincipalExtensions.AuthenticationPropertiesClaimName);
+            Logout();
+            Login(principal, user, claimProperties);
+        }
     }
 }

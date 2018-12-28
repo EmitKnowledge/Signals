@@ -20,6 +20,12 @@ namespace Signals.Aspects.Auth
         T GetCurrentUser<T>() where T : class;
 
         /// <summary>
+        /// Set currently logged in user
+        /// </summary>
+        /// <returns></returns>
+        void SetCurrentUser<T>(T user) where T : class;
+
+        /// <summary>
         /// Login user with addiitonal data
         /// </summary>
         /// <param name="principal"></param>

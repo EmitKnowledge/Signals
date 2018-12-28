@@ -1,4 +1,5 @@
-﻿using Signals.Core.Processing.Exceptions;
+﻿using Signals.Aspects.DI;
+using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using Signals.Core.Processing.Specifications;
@@ -217,6 +218,15 @@ namespace Signals.Core.Processes.Base
         {
             return Dispatch<TInnerResponse>(typeof(TProcess), obj1, obj2, obj3);
         }
+
+        /// <summary>
+        /// Execute chained business process
+        /// </summary>
+        /// <typeparam name="TProcess"></typeparam>
+        /// <returns></returns>
+        protected TProcess Continue<TProcess>()
+            where TProcess : class, IBaseProcess<VoidResult>, new()
+            => SystemBootstrapper.GetInstance<Mediator>().For<TProcess>();
 
         /// <summary>
         /// Handler for chain-executing business processes
