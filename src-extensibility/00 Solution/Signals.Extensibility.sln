@@ -115,9 +115,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "32 Security", "32 Security"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Tests.Security", "..\20 Tests\32 Security\Signals.Tests.Security\Signals.Tests.Security.csproj", "{636220D9-BF7C-4450-BE01-56B702B2FD24}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Localization.File", "..\05 Aspects\06 Localization\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File.csproj", "{51C4EDC2-C56E-42B7-85AE-547D1D85B60F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Localization.File", "..\05 Aspects\06 Localization\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File.csproj", "{51C4EDC2-C56E-42B7-85AE-547D1D85B60F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Localization.Database", "..\05 Aspects\06 Localization\Signals.Aspects.Localization.Database\Signals.Aspects.Localization.Database\Signals.Aspects.Localization.Database.csproj", "{2BB23E8D-1F0F-489E-99E4-771AB60891A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Localization.Database", "..\05 Aspects\06 Localization\Signals.Aspects.Localization.Database\Signals.Aspects.Localization.Database.csproj", "{2BB23E8D-1F0F-489E-99E4-771AB60891A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Core.Extensions.Export", "..\10 Core Extensions\Signals.Core.Extensions.Export\Signals.Core.Extensions.Export.csproj", "{0571895D-EB4C-42C1-BD5D-5BAE246C3755}"
 EndProject

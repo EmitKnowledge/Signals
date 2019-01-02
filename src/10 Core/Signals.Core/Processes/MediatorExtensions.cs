@@ -9,6 +9,9 @@ using System.Text;
 
 namespace Signals.Core.Processes
 {
+    /// <summary>
+    /// Execution extensions for mediator
+    /// </summary>
     public static class MediatorExtensions
     {
         /// <summary>

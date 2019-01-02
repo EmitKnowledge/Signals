@@ -16,7 +16,6 @@ namespace Signals.Aspects.DI.Helpers
         /// <summary>
         /// Inject all properties and fields annotated with <see cref="ImportAttribute"/> 
         /// </summary>
-        /// <param name="serviceContainer"></param>
         /// <param name="obj"></param>
         public void Inject(object obj)
         {
