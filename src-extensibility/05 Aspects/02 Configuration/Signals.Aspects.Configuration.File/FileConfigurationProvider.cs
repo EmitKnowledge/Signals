@@ -82,7 +82,7 @@ namespace Signals.Aspects.Configuration.File
         /// <param name="configuration"></param>
         public void Update<T>(T configuration) where T : BaseConfiguration<T>, new()
         {
-            throw new NotImplementedException();
+            throw new MissingMethodException("Cannot update configuration files");
         }
     }
 }
