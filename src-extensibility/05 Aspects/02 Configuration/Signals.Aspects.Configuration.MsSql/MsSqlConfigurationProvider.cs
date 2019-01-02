@@ -13,11 +13,14 @@ namespace Signals.Aspects.Configuration.MsSql
     /// </summary>
     public class MsSqlConfigurationProvider : IConfigurationProvider
     {
+        private bool isDirty;
+
         /// <summary>
         /// Default CTOR with ConnectionString
         /// </summary>
         public MsSqlConfigurationProvider(string connectionString)
         {
+            isDirty = true;
             ConnectionString = connectionString;
             TableName = "Configuration";
             KeyColumnName = "Key";
@@ -56,7 +59,6 @@ namespace Signals.Aspects.Configuration.MsSql
         /// </summary>
         public BaseConfiguration<T> Load<T>(string key) where T : BaseConfiguration<T>, new()
         {
-
             // Check if the key has been set
             if (string.IsNullOrEmpty(key))
             {
@@ -98,7 +100,11 @@ namespace Signals.Aspects.Configuration.MsSql
                 var valContext = new ValidationContext(instance);
                 var valResults = new List<ValidationResult>();
 
-                if (Validator.TryValidateObject(instance, valContext, valResults, true)) return instance;
+                if (Validator.TryValidateObject(instance, valContext, valResults, true))
+                {
+                    isDirty = false;
+                    return instance;
+                }
                 throw new Exception(string.Join(Environment.NewLine, valResults.Select(x => x.ErrorMessage)));
             }
         }
@@ -108,7 +114,7 @@ namespace Signals.Aspects.Configuration.MsSql
         /// </summary>
         public BaseConfiguration<T> Reload<T>(string key) where T : BaseConfiguration<T>, new()
         {
-            if (ReloadOnAccess)
+            if (ReloadOnAccess || isDirty)
                 return Load<T>(key);
 
             return null;
@@ -178,6 +184,56 @@ namespace Signals.Aspects.Configuration.MsSql
                 connection.Open();
                 command.ExecuteNonQuery();
                 connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// Update the configuration
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="configuration"></param>
+        public void Update<T>(T configuration) where T : BaseConfiguration<T>, new()
+        {
+            // Check if the key has been set
+            if (string.IsNullOrEmpty(configuration.Key))
+            {
+                throw new ArgumentException("The configuration key must not be null or empty.");
+            }
+
+            // Load the configuration from mssql database
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                // Open the connection
+                connection.Open();
+
+                // If connection string is valid, then proceed with checking if the specified provider is supported in the database
+                EnsureDatabaseKey<T>(configuration.Key);
+
+                // Deserialize the json config
+                var content = JsonConvert.SerializeObject(configuration);
+
+                var query =
+                    $@"
+                        UPDATE [{TableName}] 
+                        SET [{ValueColumnName}] =  @content
+                        WHERE [{KeyColumnName}] = @key
+                    ";
+
+                var command = new SqlCommand(query, connection);
+                // set the query values
+                command.Parameters.Add("key", SqlDbType.NVarChar);
+                command.Parameters.Add("content", SqlDbType.NVarChar);
+                command.Parameters["key"].Value = configuration.Key;
+                command.Parameters["content"].Value = content;
+
+                var rowsAffected = command.ExecuteNonQuery();
+
+                if (rowsAffected == 0)
+                {
+                    throw new Exception("No configuration is set in the database for the configuration key.");
+                }
+
+                isDirty = true;
             }
         }
     }

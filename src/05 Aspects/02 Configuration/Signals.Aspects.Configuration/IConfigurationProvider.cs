@@ -19,5 +19,10 @@
         /// Reloads the configuration
         /// </summary>
         BaseConfiguration<T> Reload<T>(string key) where T : BaseConfiguration<T>, new();
+
+        /// <summary>
+        /// Update the configuration
+        /// </summary>
+        void Update<T>(T configuration) where T : BaseConfiguration<T>, new();
     }
 }

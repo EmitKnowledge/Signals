@@ -48,5 +48,18 @@ namespace Signals.Aspects.Configuration
             _instance = (T)provider.Load<T>(new T().Key);
             _instance.Provider = provider;
         }
+
+        /// <summary>
+        /// Updates configuration
+        /// </summary>
+        public static void Update(T newInstanceValue)
+        {
+            if (newInstanceValue == null) throw new ArgumentNullException(nameof(newInstanceValue));
+
+            newInstanceValue.Provider = _instance.Provider;
+            _instance = newInstanceValue;
+
+            _instance.Provider.Update(_instance);
+        }
     }
 }

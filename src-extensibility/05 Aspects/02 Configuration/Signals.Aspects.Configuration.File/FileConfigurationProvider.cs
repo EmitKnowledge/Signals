@@ -74,5 +74,15 @@ namespace Signals.Aspects.Configuration.File
         {
 	        return ReloadOnAccess ? Load<T>(key) : null;
         }
+
+        /// <summary>
+        /// Update the configuration
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="configuration"></param>
+        public void Update<T>(T configuration) where T : BaseConfiguration<T>, new()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
