@@ -10,9 +10,9 @@ using System.Net.Http;
 namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
 {
     /// <summary>
-    /// Authorization fail result handler
+    /// Authentication fail result handler
     /// </summary>
-    public class AuthorizationFailResultFilter : IResultHandler
+    public class AuthenticationFailResultFilter : IResultHandler
     {
         /// <summary>
         /// Handle process result
@@ -25,9 +25,9 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            if (response.IsFaulted && response.ErrorMessages.OfType<AuthorizationErrorInfo>().Any())
+            if (response.IsFaulted && response.ErrorMessages.OfType<AuthenticationErrorInfo>().Any())
             {
-                context.PutResponse(new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
+                context.PutResponse(new HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized)
                 {
                     Content = type.ToHttpContent(response)
                 });
