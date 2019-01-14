@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Signals.Core.Common.Instance;
-using Signals.Core.Common.Serialization;
-
-namespace Signals.Core.Processing.Input.Http
+﻿namespace Signals.Core.Processing.Input.Http
 {
     /// <summary>
     /// Wrapper around real session

@@ -1,5 +1,4 @@
-﻿using NodaTime;
-using Signals.Core.Common.Instance;
+﻿using Signals.Core.Common.Instance;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -111,9 +110,9 @@ namespace Signals.Core.Common.Dates
         /// <param name="dateTime"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public static string ToFormat(this Instant dateTime, string format)
+        public static string ToFormat(this DateTime dateTime, string format)
         {
-            return ToFormat((Instant?)dateTime, format);
+            return ToFormat(dateTime, format);
         }
 
         /// <summary>
@@ -122,7 +121,7 @@ namespace Signals.Core.Common.Dates
         /// <param name="dateTime"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public static string ToFormat(this Instant? dateTime, string format)
+        public static string ToFormat(this DateTime? dateTime, string format)
         {
             // if no format is provided return the default one
             var existingFormat = AvailableFormats().FirstOrDefault(x => string.Compare(x, format, StringComparison.InvariantCultureIgnoreCase) == 0);

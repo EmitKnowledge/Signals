@@ -1,5 +1,4 @@
-﻿using NodaTime;
-using System;
+﻿using System;
 
 namespace Signals.Core.Common.Dates
 {
@@ -13,11 +12,10 @@ namespace Signals.Core.Common.Dates
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
-        public static Instant DatePart(this Instant dateTime)
+        public static DateTime DatePart(this DateTime dateTime)
         {
-            var utc = dateTime.InUtc();
-            var date = new DateTime(utc.Year, utc.Month, utc.Day, 00, 00, 00);
-            return Instant.FromDateTimeUtc(date);
+            var date = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 00, 00, 00);
+            return date;
         }
 
         /// <summary>
@@ -27,7 +25,7 @@ namespace Signals.Core.Common.Dates
         /// <returns></returns>
         public static long Ticks(this DateTime dateTime)
         {
-            return Instant.FromDateTimeUtc(dateTime).ToUnixTimeTicks();
+            return dateTime.Ticks - new DateTime(1970, 1, 1).Ticks;
         }
     }
 }

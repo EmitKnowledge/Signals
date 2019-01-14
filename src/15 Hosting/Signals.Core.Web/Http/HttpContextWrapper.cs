@@ -35,13 +35,13 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Request query
         /// </summary>
-        public IDictionary<string, StringValues> Query { get; set; }
+        public IDictionary<string, IEnumerable<string>> Query { get; set; }
 
         /// <summary>
         /// Request body
         /// </summary>
         public Lazy<string> Body { get; set; }
-        
+
         /// <summary>
         /// Headers collection manager
         /// </summary>
@@ -77,14 +77,17 @@ namespace Signals.Core.Web.Http
         public HttpContextWrapper()
         {
             var context = System.Web.HttpContext.Current;
-        
+
             if (context != null)
             {
                 Headers = new HeaderCollection(context);
                 Cookies = new CookieCollection(context);
                 Session = new SessionProvider(context);
 
-                Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString());
+                var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())
+                    .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
+                Query = query.ToDictionary(x => x.Key, x => x.Value);
+
                 Body = new Lazy<string>(() => ExtractBody(context.Request.InputStream));
                 HttpMethod = context.Request.HttpMethod.ToUpperInvariant();
                 Files = context.Request.Files.AllKeys.Select(x => context.Request.Files[x].InputStream);
@@ -134,7 +137,10 @@ namespace Signals.Core.Web.Http
                 Cookies = new CookieCollection(context);
                 Session = new SessionProvider(context);
 
-                Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.Value);
+                var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())
+                    .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
+                Query = query.ToDictionary(x => x.Key, x => x.Value);
+
                 Body = new Lazy<string>(() => ExtractBody(context.Request.Body));
                 HttpMethod = context.Request.Method.ToUpperInvariant();
 

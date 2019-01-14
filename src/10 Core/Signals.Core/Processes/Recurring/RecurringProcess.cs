@@ -1,6 +1,4 @@
-﻿using NodaTime;
-using NodaTime.Text;
-using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
+﻿using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Results;

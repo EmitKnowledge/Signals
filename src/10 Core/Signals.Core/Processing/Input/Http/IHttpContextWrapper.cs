@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Primitives;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Text;
 
 namespace Signals.Core.Processing.Input.Http
 {
@@ -30,7 +28,7 @@ namespace Signals.Core.Processing.Input.Http
         /// <summary>
         /// Request query
         /// </summary>
-        IDictionary<string, StringValues> Query { get; set; }
+        IDictionary<string, IEnumerable<string>> Query { get; set; }
 
         /// <summary>
         /// Request body
