@@ -84,9 +84,9 @@ namespace Signals.Core.Web.Http
                 Cookies = new CookieCollection(context);
                 Session = new SessionProvider(context);
 
-                var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())
+                var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
                     .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
-                Query = query.ToDictionary(x => x.Key, x => x.Value);
+                Query = query?.ToDictionary(x => x.Key, x => x.Value);
 
                 Body = new Lazy<string>(() => ExtractBody(context.Request.InputStream));
                 HttpMethod = context.Request.HttpMethod.ToUpperInvariant();
@@ -137,9 +137,9 @@ namespace Signals.Core.Web.Http
                 Cookies = new CookieCollection(context);
                 Session = new SessionProvider(context);
 
-                var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())
+                var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
                     .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
-                Query = query.ToDictionary(x => x.Key, x => x.Value);
+                Query = query?.ToDictionary(x => x.Key, x => x.Value);
 
                 Body = new Lazy<string>(() => ExtractBody(context.Request.Body));
                 HttpMethod = context.Request.Method.ToUpperInvariant();
