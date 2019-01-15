@@ -18,6 +18,7 @@ using System;
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -94,7 +95,12 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// <summary>
         /// Synchronization logging provider
         /// </summary>
-        public Func<IRecurringTaskLogProvider> RecurringTaskLogProvider { get; internal set; }
+        public Func<IRecurringTaskLogProvider> RecurringTaskLogProvider { get; set; }
+
+        /// <summary>
+        /// Json serialization settings provider
+        /// </summary>
+        public Func<JsonSerializerSettings> JsonSerializerSettings { get; set; }
 
         /// <summary>
         /// Register all aspects into dependency resolver
@@ -109,6 +115,7 @@ namespace Signals.Core.Configuration.Bootstrapping
 
             var resolver = DependencyResolver();
 
+            if (!JsonSerializerSettings.IsNull() && !JsonSerializerSettings().IsNull()) resolver.Register(typeof(JsonSerializerSettings), JsonSerializerSettings());
             if (!Logging.IsNull() && !Logging().IsNull()) resolver.Register(typeof(ILogger), Logging());
             if (!Auditing.IsNull() && !Auditing().IsNull()) resolver.Register(typeof(IAuditProvider), Auditing());
             if (!Cache.IsNull() && !Cache().IsNull()) resolver.Register(typeof(ICache), Cache());

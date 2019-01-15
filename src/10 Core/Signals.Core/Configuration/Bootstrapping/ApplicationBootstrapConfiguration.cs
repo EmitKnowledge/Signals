@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -32,10 +33,15 @@ namespace Signals.Core.Configuration.Bootstrapping
 	/// </summary>
 	public abstract class ApplicationBootstrapConfiguration
 	{
-		/// <summary>
-		/// DI registration service
-		/// </summary>
-		public IRegistrationService RegistrationService { get; set; }
+        /// <summary>
+        /// Serialization settings
+        /// </summary>
+        public JsonSerializerSettings JsonSerializerSettings { get; set; }
+
+        /// <summary>
+        /// DI registration service
+        /// </summary>
+        public IRegistrationService RegistrationService { get; set; }
 
 		/// <summary>
 		/// Logger configuration
@@ -103,8 +109,9 @@ namespace Signals.Core.Configuration.Bootstrapping
 
 			var config = new ConfigurationBootstrapper();
 
+			config.JsonSerializerSettings = () => JsonSerializerSettings;
 			config.RecurringTaskLogProvider = () => RecurringTaskLogProvider;
-			config.DependencyResolver = () => RegistrationService;
+            config.DependencyResolver = () => RegistrationService;
 			config.Logging = () => GetInstance<ILogger>(LoggerConfiguration);
 			config.Auditing = () => GetInstance<IAuditProvider>(AuditingConfiguration);
 			config.Cache = () => GetInstance<ICache>(CacheConfiguration);
