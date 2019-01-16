@@ -121,7 +121,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Localizatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Core.Extensions.Export", "..\10 Core Extensions\Signals.Core.Extensions.Export\Signals.Core.Extensions.Export.csproj", "{0571895D-EB4C-42C1-BD5D-5BAE246C3755}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signals.Core.Extensions.Import", "..\10 Core Extensions\Signals.Core.Extensions.Import\Signals.Core.Extensions.Import.csproj", "{7C95F754-42E1-453A-926B-9D6A6EAFE8EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Core.Extensions.Import", "..\10 Core Extensions\Signals.Core.Extensions.Import\Signals.Core.Extensions.Import.csproj", "{7C95F754-42E1-453A-926B-9D6A6EAFE8EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signals.Aspects.CommunicationChannels.MsSql", "..\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.MsSql\Signals.Aspects.CommunicationChannels.MsSql.csproj", "{06709B5B-62C4-405D-9A82-ADDB958CE96B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -265,6 +267,10 @@ Global
 		{7C95F754-42E1-453A-926B-9D6A6EAFE8EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C95F754-42E1-453A-926B-9D6A6EAFE8EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C95F754-42E1-453A-926B-9D6A6EAFE8EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06709B5B-62C4-405D-9A82-ADDB958CE96B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06709B5B-62C4-405D-9A82-ADDB958CE96B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06709B5B-62C4-405D-9A82-ADDB958CE96B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06709B5B-62C4-405D-9A82-ADDB958CE96B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -327,6 +333,7 @@ Global
 		{2BB23E8D-1F0F-489E-99E4-771AB60891A6} = {23D97208-FC4F-43DF-A23E-4E6152D268E7}
 		{0571895D-EB4C-42C1-BD5D-5BAE246C3755} = {A01FC58F-F6EE-45BA-B783-A3D2E7F2F108}
 		{7C95F754-42E1-453A-926B-9D6A6EAFE8EC} = {A01FC58F-F6EE-45BA-B783-A3D2E7F2F108}
+		{06709B5B-62C4-405D-9A82-ADDB958CE96B} = {042925DB-A412-4CA2-AD80-5ABFD6BA0F6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54E67EA7-D94E-47A1-9CD6-B48453B04539}
