@@ -32,5 +32,11 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
         /// </summary>
         [DataMember]
         public string MessagePayload { get; set; }
+
+        /// <summary>
+        /// Represents the status of the message
+        /// </summary>
+        [DataMember]
+        public SystemMessageStatus MessageStatus { get; set; }
     }
 }

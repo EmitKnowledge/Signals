@@ -16,7 +16,9 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
         /// <summary>
         /// Represents dictionary of subscriptions with queue name and Action for processing the message queue
         /// </summary>
-        private Dictionary<string, Action<dynamic>> Subscriptions { get; } = new Dictionary<string, Action<dynamic>>();
+        private Dictionary<string, Action<string>> Subscriptions { get; } = new Dictionary<string, Action<string>>();
+
+        private SqlTableDependency<SystemMessage> SqlDependency { get; set; }
 
         /// <summary>
         /// Ctor
@@ -26,29 +28,11 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
         {
             _configuration = configuration;
             CreateDbTableIfDoesntExist();
-
-            if (_configuration.MessageListeningStrategy == MessageListeningStrategy.Broker)
-            {
-                var dep = new SqlTableDependency<SystemMessage>(_configuration.ConnectionString,
-                    executeUserPermissionCheck: false);
-
-                dep.OnChanged += (o, e) =>
-                {
-                    if (e.Entity != null)
-                    {
-                        var queue = e.Entity?.MessageQueue;
-                        if (Subscriptions.ContainsKey(queue))
-                        {
-                            Subscriptions[queue](e.Entity.MessagePayload);
-                        }
-                    }
-                };
-                dep.Start();
-            }
         }
 
         public Task Close()
         {
+            SqlDependency.Stop();
             Subscriptions.Clear();
             return Task.CompletedTask;
         }
@@ -68,11 +52,12 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
                 var serializedMessage = JsonConvert.SerializeObject(message);
                 var query =
                     $@"
-                        INSERT INTO [{_configuration.DbTableName}](CreatedOn, MessageQueue, MessagePayload)
-                        VALUES(@CreatedOn, @MessageQueue, @MessagePayload)
+                        INSERT INTO [{_configuration.DbTableName}](CreatedOn, MessageQueue, MessagePayload, MessageStatus)
+                        VALUES(@CreatedOn, @MessageQueue, @MessagePayload, @MessageStatus)
                     ";
                 connection.Open();
                 var command = new SqlCommand(query, connection);
+
                 command.Parameters.Add("CreatedOn", SqlDbType.DateTime2);
                 command.Parameters["CreatedOn"].Value = DateTime.UtcNow;
 
@@ -81,6 +66,9 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
 
                 command.Parameters.Add("MessagePayload", SqlDbType.NVarChar);
                 command.Parameters["MessagePayload"].Value = serializedMessage;
+
+                command.Parameters.Add("MessageStatus", SqlDbType.Int);
+                command.Parameters["MessageStatus"].Value = (int)SystemMessageStatus.Pending;
 
                 command.ExecuteNonQuery();
             }
@@ -100,12 +88,127 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
 
         public Task Subscribe<T>(string channelName, Action<T> action) where T : class
         {
+            InitSqlDependency();
+
             if (!Subscriptions.ContainsKey(channelName))
             {
-                Subscriptions.Add(channelName, action as Action<dynamic>);
+                void WrappedAction(string messageBody)
+                {
+                    if (messageBody is T)
+                    {
+                        action(messageBody as T);
+                    }
+                    else
+                    {
+                        var obj = JsonConvert.DeserializeObject<T>(messageBody);
+                        action(obj);
+                    }
+                    
+                }
+
+                Subscriptions.Add(channelName, WrappedAction);
             }
 
             return Task.CompletedTask;
+        }
+
+        private void InitSqlDependency()
+        {
+            // Init only if it hasn't been set before
+            if (SqlDependency == null && _configuration.MessageListeningStrategy == MessageListeningStrategy.Broker)
+            {
+                SqlDependency = new SqlTableDependency<SystemMessage>(_configuration.ConnectionString,
+                    executeUserPermissionCheck: false);
+
+                SqlDependency.OnChanged += (o, e) =>
+                {
+                    if (e.Entity != null)
+                    {
+                        var message = GetAndLockSystemMessageById(e.Entity.Id);
+                        if (message != null)
+                        {
+                            var queue = message.MessageQueue;
+                            if (Subscriptions.ContainsKey(queue))
+                            {
+                                Subscriptions[queue](message.MessagePayload);
+                                MarkSystemMessageAsProcessed(message.Id);
+                            }
+                        }
+                    }
+                };
+                SqlDependency.Start();
+            }
+        }
+
+        private void MarkSystemMessageAsProcessed(int messageId)
+        {
+            using (var connection = new SqlConnection(_configuration.ConnectionString))
+            {
+                connection.Open();
+
+                var sql =
+                    $@"
+                        UPDATE [{_configuration.DbTableName}] SET MessageStatus = @ProcessedStatus
+                        WHERE Id = @Id
+                    ";
+
+                var command = new SqlCommand(sql, connection);
+
+                command.Parameters.Add("Id", SqlDbType.Int);
+                command.Parameters["Id"].Value = messageId;
+
+                command.Parameters.Add("ProcessedStatus", SqlDbType.Int);
+                command.Parameters["ProcessedStatus"].Value = (int)SystemMessageStatus.Processed;
+
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private SystemMessage GetAndLockSystemMessageById(int messageId)
+        {
+            using (var connection = new SqlConnection(_configuration.ConnectionString))
+            {
+                connection.Open();
+
+                var sql =
+                    $@"
+                        BEGIN TRANSACTION MSMQMESSAGECHANNEL{messageId}
+                            SELECT * FROM [{_configuration.DbTableName}]
+                            WHERE Id = @Id AND MessageStatus = @PendingStatus;
+                            UPDATE [{_configuration.DbTableName}] SET MessageStatus = @ProcessingStatus
+                            WHERE Id = @Id AND MessageStatus = @PendingStatus;
+                        COMMIT TRANSACTION MSMQMESSAGECHANNEL{messageId}
+                    ";
+
+                var command = new SqlCommand(sql, connection);
+
+                command.Parameters.Add("Id", SqlDbType.Int);
+                command.Parameters["Id"].Value = messageId;
+
+                command.Parameters.Add("PendingStatus", SqlDbType.Int);
+                command.Parameters["PendingStatus"].Value = (int)SystemMessageStatus.Pending;
+
+                command.Parameters.Add("ProcessingStatus", SqlDbType.Int);
+                command.Parameters["ProcessingStatus"].Value = (int)SystemMessageStatus.Processing;
+
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return new SystemMessage
+                        {
+                            Id = reader.GetInt32(0),
+                            CreatedOn = reader.GetDateTime(1),
+                            MessageQueue = reader.GetString(2),
+                            MessagePayload = reader.GetString(3),
+                            MessageStatus = (SystemMessageStatus)reader.GetInt32(4)
+                        };
+                    }
+                }
+
+                return null;
+            }
         }
 
         private void CreateDbTableIfDoesntExist()
@@ -127,7 +230,8 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [CreatedOn] [datetime2](7) NOT NULL,
 	                        [MessageQueue] [nvarchar](max) NOT NULL,
-	                        [MessagePayload] [nvarchar](max) NOT NULL
+	                        [MessagePayload] [nvarchar](max) NOT NULL,
+	                        [MessageStatus] [int] NOT NULL
                         )
                     ";
 
