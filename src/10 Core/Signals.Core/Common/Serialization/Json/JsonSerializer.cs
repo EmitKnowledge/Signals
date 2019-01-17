@@ -51,7 +51,6 @@ namespace Signals.Core.Common.Serialization.Json
 
             serializer.Converters.Add(new IsoDateTimeConverter());
             serializer.Converters.Add(new StreamConverter());
-            serializer.NullValueHandling = NullValueHandling.Ignore;
             serializer.StringEscapeHandling = StringEscapeHandling.Default;
 
 
