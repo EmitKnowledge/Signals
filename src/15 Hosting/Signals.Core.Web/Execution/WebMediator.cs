@@ -8,10 +8,8 @@ using Signals.Core.Web.Execution.ExecutionHandlers;
 using Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution;
 using Signals.Core.Web.Execution.FactoryFilters;
 using Signals.Core.Web.Execution.Filters;
-using Signals.Core.Web.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Signals.Core.Web.Execution
 {
@@ -67,6 +65,7 @@ namespace Signals.Core.Web.Execution
             // Order is important, JsonResult is default fallback
             ResultHandlers = new List<IResultHandler> {
                 new HeaderAdderHandler(),
+                new AuthenticationFailResultFilter(),
                 new AuthorizationFailResultFilter(),
                 new UnmanagedFailResultFilter(),
                 new SpecificationFailResultFilter(),
