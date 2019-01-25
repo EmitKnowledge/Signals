@@ -29,13 +29,19 @@ namespace Signals.Aspects.Localization
         string GetLocalizationBundle(CultureInfo culture = null, string collection = null, string category = null);
 
         /// <summary>
-        /// Returns list of all localization entries
+        /// Returns list of all localization entries in the given language (or current culture language if not provided)
         /// </summary>
         /// <param name="culture"></param>
         /// <param name="collection"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        List<LocalizationEntry> GetAll(CultureInfo culture = null, string collection = null, string category = null);
+        List<LocalizationEntry> GetAllForCulture(CultureInfo culture = null, string collection = null, string category = null);
+
+        /// <summary>
+        /// Returns list of all localization entries
+        /// </summary>
+        /// <returns></returns>
+        List<LocalizationEntry> GetAll();
 
         /// <summary>
         /// Sets new translation for the provided key and language (or current culture language if not provided)
@@ -52,6 +58,12 @@ namespace Signals.Aspects.Localization
         /// </summary>
         /// <param name="entries"></param>
         void SetAll(List<LocalizationEntry> entries);
+
+        /// <summary>
+        /// Updates all localization entries
+        /// </summary>
+        /// <param name="entries"></param>
+        void UpdateAll(List<LocalizationEntry> entries);
 
         /// <summary>
         /// Returns localization collection
@@ -100,6 +112,12 @@ namespace Signals.Aspects.Localization
         /// </summary>
         /// <param name="categoryName"></param>
         void SetCategory(string categoryName);
+
+        /// <summary>
+        /// Creates new language
+        /// </summary>
+        /// <param name="culturaInfoName"></param>
+        void InsertLanguage(string culturaInfoName);
 
         /// <summary>
         /// Returns list of all available keys

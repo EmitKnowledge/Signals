@@ -79,5 +79,11 @@ namespace Signals.Aspects.Localization
         /// </summary>
         /// <param name="entries"></param>
         void InsertOrUpdateLocalizationEnties(List<LocalizationEntry> entries);
+
+        /// <summary>
+        /// Updates all localization entries
+        /// </summary>
+        /// <param name="entries"></param>
+        void UpdateAll(List<LocalizationEntry> entries);
     }
 }

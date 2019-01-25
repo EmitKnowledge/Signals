@@ -104,7 +104,7 @@ namespace Signals.Aspects.Localization.Base
         /// <param name="category"></param>
         /// <returns></returns>
         public string GetLocalizationBundle(CultureInfo culture = null, string collection = null, string category = null)
-            => SerializeLocalizationBundle(GetAll(culture, collection, category));
+            => SerializeLocalizationBundle(GetAllForCulture(culture, collection, category));
 
         /// <summary>
         /// Returns list of all localization entries
@@ -113,13 +113,22 @@ namespace Signals.Aspects.Localization.Base
         /// <param name="collection"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        public List<LocalizationEntry> GetAll(CultureInfo culture = null, string collection = null, string category = null)
+        public List<LocalizationEntry> GetAllForCulture(CultureInfo culture = null, string collection = null, string category = null)
         {
             return LocalizationEntries
                 .FindAll(x =>
                     x.LocalizationLanguage?.Value == GetLanguageCodeFromCulture(culture) &&
                     (string.IsNullOrEmpty(collection) || x.LocalizationCollection?.Name == collection) &&
                     (string.IsNullOrEmpty(category) || x.LocalizationCollection?.LocalizationCategory?.Name == category));
+        }
+
+        /// <summary>
+        /// Returns list of all localization entries
+        /// </summary>
+        /// <returns></returns>
+        public List<LocalizationEntry> GetAll()
+        {
+            return LocalizationEntries.ToList();
         }
 
         /// <summary>
@@ -240,6 +249,19 @@ namespace Signals.Aspects.Localization.Base
         }
 
         /// <summary>
+        /// Updates all localization entries
+        /// </summary>
+        /// <param name="entries"></param>
+        public void UpdateAll(List<LocalizationEntry> entries)
+        {
+            lock (Lock)
+            {
+                Provider.UpdateAll(entries);
+                LocalizationEntries = Provider.LoadLocalizationEntries();
+            }
+        }
+
+        /// <summary>
         /// Returns localization collection
         /// </summary>
         /// <param name="collection"></param>
@@ -347,6 +369,58 @@ namespace Signals.Aspects.Localization.Base
 
                 Provider.InsertOrUpdateLocalizationCategory(localizationCategory);
                 LocalizationCategories = Provider.LoadLocalizationCategories();
+            }
+        }
+
+        /// <summary>
+        /// Creates new language
+        /// </summary>
+        /// <param name="culturaInfoName"></param>
+        public void InsertLanguage(string culturaInfoName)
+        {
+            lock (Lock)
+            {
+                culturaInfoName = culturaInfoName.ToLower();
+
+                if (LocalizationLanguages.Any(x => x.Name == culturaInfoName))
+                    return;
+
+                if (CultureInfo.GetCultures(CultureTypes.NeutralCultures).All(x => x.Name.ToLower() != culturaInfoName))
+                    return;
+
+                // Insert the new language
+                var cultureInfo = new CultureInfo(culturaInfoName);
+                Provider.InsertLocalizationLanguage(new LocalizationLanguage
+                {
+                    Name = culturaInfoName,
+                    Value = cultureInfo.EnglishName
+                });
+
+                LocalizationLanguages = Provider.LoadLocalizationLanguages();
+                var newLang = LocalizationLanguages.FirstOrDefault(x => x.Name == culturaInfoName);
+
+                if (newLang == null)
+                    return;
+
+                // Create localization entry for the new language for each existing key
+                var uniqueLocalizationEntries = (from entry in LocalizationEntries
+                                                 group entry by entry.LocalizationLanguageId into gr
+                                                 select new
+                                                 {
+                                                     gr.First().LocalizationCollectionId,
+                                                     gr.First().LocalizationKeyId
+                                                 }).ToList();
+
+                var newLocalizationEntries = uniqueLocalizationEntries
+                    .Select(x => new LocalizationEntry
+                    {
+                        LocalizationCollectionId = x.LocalizationCollectionId,
+                        LocalizationLanguageId = newLang.Id,
+                        LocalizationKeyId = x.LocalizationKeyId,
+                        Value = string.Empty
+                    })
+                    .ToList();
+                SetAll(newLocalizationEntries);
             }
         }
 

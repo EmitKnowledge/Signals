@@ -366,7 +366,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                             IF EXISTS (SELECT * FROM [{Configuration.LocalizationEntryTableName}] le WHERE le.LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND le.LocalizationLanguageId = {localizationEntry.LocalizationLanguageId})
                                 UPDATE [{Configuration.LocalizationEntryTableName}]
                                 SET LocalizationCollectionId = {localizationEntry.LocalizationCollectionId}, LocalizationKeyId = {localizationEntry.LocalizationKeyId}, LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}, Value = @Entry
-                                WHERE le.LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND le.LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}
+                                WHERE LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}
                             ELSE
                                 INSERT INTO [{Configuration.LocalizationEntryTableName}](LocalizationKeyId, LocalizationCollectionId, LocalizationLanguageId, Value)
                                 VALUES ({localizationEntry.LocalizationKeyId}, {localizationEntry.LocalizationCollectionId}, {localizationEntry.LocalizationLanguageId}, @Entry)
@@ -380,6 +380,43 @@ namespace Signals.Aspects.Localization.Database.DataProviders
 
                     command.ExecuteNonQuery();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Updates all localization entries
+        /// </summary>
+        /// <param name="entries"></param>
+        public void UpdateAll(List<LocalizationEntry> entries)
+        {
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand
+                {
+                    Connection = connection
+                };
+
+                var queryBuilder = new StringBuilder();
+                var count = 0;
+                foreach (var localizationEntry in entries)
+                {
+                    var entrySql =
+                        $@"
+                            UPDATE [{Configuration.LocalizationEntryTableName}]
+                            SET Value = @Entry{count}
+                            WHERE Id = {localizationEntry.Id};
+                        ";
+                    queryBuilder.Append(entrySql + Environment.NewLine);
+
+                    command.Parameters.Add($"Entry{count}", SqlDbType.NVarChar);
+                    command.Parameters[$"Entry{count}"].Value = localizationEntry.Value;
+
+                    count++;
+                }
+                
+                command.CommandText = queryBuilder.ToString();
+                command.ExecuteNonQuery();
             }
         }
 

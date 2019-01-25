@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Signals.Aspects.Localization" Version="0.6.3" />
+    <PackageReference Include="Signals.Aspects.Localization" Version="0.6.6" />
   </ItemGroup>
 
 </Project>

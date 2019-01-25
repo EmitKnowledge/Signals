@@ -228,6 +228,15 @@ namespace Signals.Aspects.Localization.File.DataProviders
         }
 
         /// <summary>
+        /// Updates all localization entries
+        /// </summary>
+        /// <param name="entries"></param>
+        public void UpdateAll(List<LocalizationEntry> entries)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
         /// Gets localization sources paths from configuration
         /// </summary>
         /// <returns></returns>
