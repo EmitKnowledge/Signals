@@ -410,7 +410,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                     queryBuilder.Append(entrySql + Environment.NewLine);
 
                     command.Parameters.Add($"Entry{count}", SqlDbType.NVarChar);
-                    command.Parameters[$"Entry{count}"].Value = localizationEntry.Value;
+                    command.Parameters[$"Entry{count}"].Value = localizationEntry.Value ?? "";
 
                     count++;
                 }

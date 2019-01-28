@@ -120,6 +120,14 @@ namespace Signals.Aspects.Localization
         void InsertLanguage(string culturaInfoName);
 
         /// <summary>
+        /// Creates new localization key
+        /// </summary>
+        /// <param name="category"></param>
+        /// <param name="collection"></param>
+        /// <param name="key"></param>
+        void InsertKey(string category, string collection, string key);
+
+        /// <summary>
         /// Returns list of all available keys
         /// </summary>
         /// <returns></returns>

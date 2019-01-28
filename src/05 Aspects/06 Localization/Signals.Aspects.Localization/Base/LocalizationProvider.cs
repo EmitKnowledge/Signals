@@ -91,7 +91,7 @@ namespace Signals.Aspects.Localization.Base
         /// <returns></returns>
         public LocalizationEntry Get(string key, string collection = null, string category = null, CultureInfo culture = null)
             => LocalizationEntries.FirstOrDefault(x => x.LocalizationKey?.Name == key &&
-                                                       x.LocalizationLanguage?.Value == GetLanguageCodeFromCulture(culture) &&
+                                                       x.LocalizationLanguage?.Value == GetLanguageEnglishNameFromCulture(culture) &&
                                                        (collection == null || string.Equals(x.LocalizationCollection.Name, collection, StringComparison.CurrentCultureIgnoreCase)) &&
                                                        (category == null || string.Equals(x.LocalizationCollection.LocalizationCategory.Name, category, StringComparison.CurrentCultureIgnoreCase)));
 
@@ -117,7 +117,7 @@ namespace Signals.Aspects.Localization.Base
         {
             return LocalizationEntries
                 .FindAll(x =>
-                    x.LocalizationLanguage?.Value == GetLanguageCodeFromCulture(culture) &&
+                    x.LocalizationLanguage?.Value == GetLanguageEnglishNameFromCulture(culture) &&
                     (string.IsNullOrEmpty(collection) || x.LocalizationCollection?.Name == collection) &&
                     (string.IsNullOrEmpty(category) || x.LocalizationCollection?.LocalizationCategory?.Name == category));
         }
@@ -155,19 +155,19 @@ namespace Signals.Aspects.Localization.Base
                 if (localizationKey == null) return;
 
                 // Get the localization language. If it does not exist, create it first
-                var langCode = GetLanguageCodeFromCulture(culture);
+                var langDisplayName = GetLanguageEnglishNameFromCulture(culture);
                 var langName = GetLanguageNameFromCulture(culture);
-                var localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Value == GetLanguageCodeFromCulture(culture));
+                var localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Value == GetLanguageEnglishNameFromCulture(culture));
                 if (localizationLanguage == null)
                 {
                     localizationLanguage = new LocalizationLanguage
                     {
                         Name = langName,
-                        Value = langCode
+                        Value = langDisplayName
                     };
                     Provider.InsertLocalizationLanguage(localizationLanguage);
                     LocalizationLanguages = Provider.LoadLocalizationLanguages();
-                    localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Value == GetLanguageCodeFromCulture(culture));
+                    localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Value == GetLanguageEnglishNameFromCulture(culture));
                 }
                 if (localizationLanguage == null) return;
 
@@ -211,15 +211,7 @@ namespace Signals.Aspects.Localization.Base
                 var entry = LocalizationEntries.FirstOrDefault(x => x.LocalizationKeyId == localizationKey.Id &&
                                                                 x.LocalizationLanguageId == localizationLanguage.Id);
 
-                if (entry != null)
-                {
-                    // Update
-                    entry.Value = value;
-                    entry.LocalizationCollectionId = localizationCollection.Id;
-                    entry.LocalizationCollection = localizationCollection;
-                    Provider.UpdateLocalizationEntry(entry);
-                }
-                else
+                if (entry == null)
                 {
                     // Create
                     entry = new LocalizationEntry
@@ -380,12 +372,10 @@ namespace Signals.Aspects.Localization.Base
         {
             lock (Lock)
             {
-                culturaInfoName = culturaInfoName.ToLower();
-
                 if (LocalizationLanguages.Any(x => x.Name == culturaInfoName))
                     return;
 
-                if (CultureInfo.GetCultures(CultureTypes.NeutralCultures).All(x => x.Name.ToLower() != culturaInfoName))
+                if (CultureInfo.GetCultures(CultureTypes.AllCultures).All(x => x.Name != culturaInfoName))
                     return;
 
                 // Insert the new language
@@ -404,11 +394,11 @@ namespace Signals.Aspects.Localization.Base
 
                 // Create localization entry for the new language for each existing key
                 var uniqueLocalizationEntries = (from entry in LocalizationEntries
-                                                 group entry by entry.LocalizationLanguageId into gr
+                                                 group entry by entry.LocalizationKeyId into gr
                                                  select new
                                                  {
-                                                     gr.First().LocalizationCollectionId,
-                                                     gr.First().LocalizationKeyId
+                                                     gr.Key,
+                                                     gr.First().LocalizationCollectionId
                                                  }).ToList();
 
                 var newLocalizationEntries = uniqueLocalizationEntries
@@ -416,11 +406,28 @@ namespace Signals.Aspects.Localization.Base
                     {
                         LocalizationCollectionId = x.LocalizationCollectionId,
                         LocalizationLanguageId = newLang.Id,
-                        LocalizationKeyId = x.LocalizationKeyId,
+                        LocalizationKeyId = x.Key,
                         Value = string.Empty
                     })
                     .ToList();
                 SetAll(newLocalizationEntries);
+            }
+        }
+
+        /// <summary>
+        /// Creates new localization key
+        /// </summary>
+        /// <param name="category"></param>
+        /// <param name="collection"></param>
+        /// <param name="key"></param>
+        public void InsertKey(string category, string collection, string key)
+        {
+            lock (Lock)
+            {
+                foreach (var language in GetAllLanguages())
+                {
+                    Set(key.Replace(" ", "_").ToUpper(), string.Empty, collection, category, new CultureInfo(language.Name)); 
+                }
             }
         }
 
@@ -454,7 +461,7 @@ namespace Signals.Aspects.Localization.Base
                                   {
                                       Id = gr.Key,
                                       gr.First().LocalizationKey?.Name,
-                                      Translations = gr.Select(x => new GridTranslation
+                                      Translations = gr.OrderBy(x => x.LocalizationLanguageId).Select(x => new GridTranslation
                                       {
                                           Id = x.Id,
                                           Name = x.LocalizationLanguage.Value,
@@ -495,15 +502,15 @@ namespace Signals.Aspects.Localization.Base
             return new TranslationsGrid
             {
                 Translations = translations,
-                Languages = GetAllLanguages()
+                Languages = GetAllLanguages().OrderBy(x => x.Id).ToList()
             };
         }
 
-        private string GetLanguageCodeFromCulture(CultureInfo culture)
-            => culture?.TwoLetterISOLanguageName ?? CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+        private string GetLanguageEnglishNameFromCulture(CultureInfo culture)
+            => culture?.EnglishName ?? CultureInfo.CurrentCulture.EnglishName;
 
         private string GetLanguageNameFromCulture(CultureInfo culture)
-            => culture?.DisplayName ?? CultureInfo.CurrentCulture.DisplayName;
+            => culture?.Name ?? CultureInfo.CurrentCulture.Name;
 
         private string SerializeLocalizationBundle(List<LocalizationEntry> entries)
             => JsonConvert.SerializeObject(entries.ToDictionary(x => x.LocalizationKey.Name, x => x.Value));
