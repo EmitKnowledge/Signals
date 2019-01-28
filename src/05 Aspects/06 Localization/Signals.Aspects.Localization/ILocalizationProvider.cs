@@ -130,5 +130,11 @@ namespace Signals.Aspects.Localization
         /// </summary>
         /// <returns></returns>
         List<LocalizationLanguage> GetAllLanguages();
+
+        /// <summary>
+        /// Returns all localization entries rendered as grid
+        /// </summary>
+        /// <returns></returns>
+        TranslationsGrid RenderTranslationsGrid();
     }
 }

@@ -442,6 +442,63 @@ namespace Signals.Aspects.Localization.Base
             return LocalizationLanguages.ToList();
         }
 
+        /// <summary>
+        /// Returns all localization entries rendered as grid
+        /// </summary>
+        /// <returns></returns>
+        public TranslationsGrid RenderTranslationsGrid()
+        {
+            var groupedEntries = (from entry in GetAll()
+                                  group entry by entry.LocalizationKeyId into gr
+                                  select new
+                                  {
+                                      Id = gr.Key,
+                                      gr.First().LocalizationKey?.Name,
+                                      Translations = gr.Select(x => new GridTranslation
+                                      {
+                                          Id = x.Id,
+                                          Name = x.LocalizationLanguage.Value,
+                                          Translation = x.Value
+                                      }).ToList(),
+                                      Collection = gr.First().LocalizationCollection
+                                  }).ToList();
+
+            var groupedCollections = (from entry in groupedEntries
+                                      group entry by entry.Collection.Id into gr
+                                      select new
+                                      {
+                                          Id = gr.Key,
+                                          gr.First().Collection.Name,
+                                          Entries = gr.Select(x => new TranslationsGridEntry
+                                          {
+                                              Id = x.Id,
+                                              Name = x.Name,
+                                              Translations = x.Translations
+                                          }).ToList(),
+                                          Category = gr.First().Collection.LocalizationCategory
+                                      }).ToList();
+
+            var translations = (from collection in groupedCollections
+                                group collection by collection.Category.Id into gr
+                                select new TranslationsGridCategory
+                                {
+                                    Id = gr.Key,
+                                    Name = gr.First().Category.Name,
+                                    Collections = gr.Select(x => new TranslationGridCollection
+                                    {
+                                        Id = x.Id,
+                                        Name = x.Name,
+                                        Entries = x.Entries
+                                    }).ToList()
+                                }).ToList();
+
+            return new TranslationsGrid
+            {
+                Translations = translations,
+                Languages = GetAllLanguages()
+            };
+        }
+
         private string GetLanguageCodeFromCulture(CultureInfo culture)
             => culture?.TwoLetterISOLanguageName ?? CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
