@@ -77,8 +77,8 @@ namespace Signals.Aspects.Localization.File.DataProviders
                         {
                             Value = localizationPair.Value,
                             LocalizationCollection = localizationCollection,
-                            LocalizationKey = new LocalizationKey { Name = localizationPair.Key },
-                            LocalizationLanguage = new LocalizationLanguage { Name = localizationCode, Value = new CultureInfo(localizationCode)?.EnglishName }
+                            LocalizationKey = new LocalizationKey { Name = localizationPair.Key.ToLower() },
+                            LocalizationLanguage = new LocalizationLanguage { Name = localizationCode.ToLower(), Value = new CultureInfo(localizationCode).DisplayName }
                         });
                     }
                 }
@@ -264,7 +264,7 @@ namespace Signals.Aspects.Localization.File.DataProviders
             if (Categories == null)
                 Categories = LoadLocalizationCategories();
 
-            return Categories.FirstOrDefault(x => x.Name == localizationCategoryName);
+            return Categories.FirstOrDefault(x => x.Name.ToLower() == localizationCategoryName.ToLower());
         }
 
         /// <summary>
@@ -279,8 +279,8 @@ namespace Signals.Aspects.Localization.File.DataProviders
                 Collections = LoadLocalizationCollections();
 
             return Collections
-                .FirstOrDefault(x => x.Name == localizationCollectionName &&
-                                     (localizationCategoryName == null || x.LocalizationCategory.Name == localizationCategoryName));
+                .FirstOrDefault(x => x.Name.ToLower() == localizationCollectionName.ToLower() &&
+                                     (localizationCategoryName == null || x.LocalizationCategory.Name.ToLower() == localizationCategoryName.ToLower()));
         }
 
         /// <summary>

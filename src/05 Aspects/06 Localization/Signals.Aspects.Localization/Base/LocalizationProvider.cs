@@ -90,8 +90,8 @@ namespace Signals.Aspects.Localization.Base
         /// <param name="culture"></param>
         /// <returns></returns>
         public LocalizationEntry Get(string key, string collection = null, string category = null, CultureInfo culture = null)
-            => LocalizationEntries.FirstOrDefault(x => x.LocalizationKey?.Name == key &&
-                                                       x.LocalizationLanguage?.Name == GetLanguageNameFromCulture(culture) &&
+            => LocalizationEntries.FirstOrDefault(x => string.Equals(x.LocalizationKey?.Name, key, StringComparison.CurrentCultureIgnoreCase) &&
+                                                       string.Equals(x.LocalizationLanguage?.Name, GetLanguageNameFromCulture(culture), StringComparison.CurrentCultureIgnoreCase) &&
                                                        (collection == null || string.Equals(x.LocalizationCollection.Name, collection, StringComparison.CurrentCultureIgnoreCase)) &&
                                                        (category == null || string.Equals(x.LocalizationCollection.LocalizationCategory.Name, category, StringComparison.CurrentCultureIgnoreCase)));
 
@@ -117,9 +117,9 @@ namespace Signals.Aspects.Localization.Base
         {
             return LocalizationEntries
                 .FindAll(x =>
-                    x.LocalizationLanguage?.Value == GetLanguageEnglishNameFromCulture(culture) &&
-                    (string.IsNullOrEmpty(collection) || x.LocalizationCollection?.Name == collection) &&
-                    (string.IsNullOrEmpty(category) || x.LocalizationCollection?.LocalizationCategory?.Name == category));
+                    string.Equals(x.LocalizationLanguage?.Name, GetLanguageNameFromCulture(culture), StringComparison.CurrentCultureIgnoreCase) &&
+                    (string.IsNullOrEmpty(collection) || string.Equals(x.LocalizationCollection?.Name, collection, StringComparison.CurrentCultureIgnoreCase)) &&
+                    (string.IsNullOrEmpty(category) || string.Equals(x.LocalizationCollection?.LocalizationCategory?.Name, category, StringComparison.CurrentCultureIgnoreCase)));
         }
 
         /// <summary>
@@ -144,63 +144,63 @@ namespace Signals.Aspects.Localization.Base
             lock (Lock)
             {
                 // Get the localization key Id. If it does not exist, create it first
-                var localizationKey = LocalizationKeys.FirstOrDefault(x => x.Name == key);
+                var localizationKey = LocalizationKeys.FirstOrDefault(x => x.Name.ToLower() == key.ToLower());
                 if (localizationKey == null)
                 {
-                    localizationKey = new LocalizationKey { Name = key };
+                    localizationKey = new LocalizationKey { Name = key.ToLower() };
                     Provider.InsertLocalizationKey(localizationKey);
                     LocalizationKeys = Provider.LoadLocalizationKeys();
-                    localizationKey = LocalizationKeys.FirstOrDefault(x => x.Name == key);
+                    localizationKey = LocalizationKeys.FirstOrDefault(x => x.Name.ToLower() == key.ToLower());
                 }
                 if (localizationKey == null) return;
 
                 // Get the localization language. If it does not exist, create it first
-                var langDisplayName = GetLanguageEnglishNameFromCulture(culture);
-                var langName = GetLanguageNameFromCulture(culture);
-                var localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Name == GetLanguageNameFromCulture(culture));
+                var langName = GetLanguageNameFromCulture(culture).ToLower();
+                var langDisplayName = GetLanguageDisplayNameFromCulture(culture);
+                var localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Name.ToLower() == GetLanguageNameFromCulture(culture).ToLower());
                 if (localizationLanguage == null)
                 {
                     localizationLanguage = new LocalizationLanguage
                     {
-                        Name = langName,
+                        Name = langName.ToLower(),
                         Value = langDisplayName
                     };
                     Provider.InsertLocalizationLanguage(localizationLanguage);
                     LocalizationLanguages = Provider.LoadLocalizationLanguages();
-                    localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Name == GetLanguageNameFromCulture(culture));
+                    localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Name.ToLower() == GetLanguageNameFromCulture(culture).ToLower());
                 }
                 if (localizationLanguage == null) return;
 
                 // Get the localization collection. If it does not exist, create it first
-                var localizationCategory = LocalizationCategories.FirstOrDefault(x => x.Name == category);
+                var localizationCategory = LocalizationCategories.FirstOrDefault(x => x.Name.ToLower() == category.ToLower());
                 if (localizationCategory == null)
                 {
                     localizationCategory = new LocalizationCategory
                     {
-                        Name = category
+                        Name = category.ToLower()
                     };
                     Provider.InsertOrUpdateLocalizationCategory(localizationCategory);
                     LocalizationCategories = Provider.LoadLocalizationCategories();
-                    localizationCategory = LocalizationCategories.FirstOrDefault(x => x.Name == category);
+                    localizationCategory = LocalizationCategories.FirstOrDefault(x => x.Name.ToLower() == category.ToLower());
                 }
                 if (localizationCategory == null) return;
 
                 // Get the localization collection. If it does not exist, create it first
                 var localizationCollection = LocalizationCollections.FirstOrDefault(x =>
-                    x.Name == collection &&
+                    x.Name.ToLower() == collection.ToLower() &&
                     x.LocalizationCategoryId == localizationCategory.Id);
 
                 if (localizationCollection == null)
                 {
                     localizationCollection = new LocalizationCollection
                     {
-                        Name = collection,
+                        Name = collection.ToLower(),
                         LocalizationCategoryId = localizationCategory.Id
                     };
                     Provider.InsertOrUpdateLocalizationCollection(localizationCollection);
                     LocalizationCollections = Provider.LoadLocalizationCollections();
                     localizationCollection = LocalizationCollections.FirstOrDefault(x =>
-                        x.Name == collection &&
+                        x.Name.ToLower() == collection.ToLower() &&
                         x.LocalizationCategoryId == localizationCategory.Id);
                 }
                 if (localizationCollection == null) return;
@@ -261,8 +261,8 @@ namespace Signals.Aspects.Localization.Base
         /// <returns></returns>
         public LocalizationCollection GetCollection(string collection, string category = null)
             => LocalizationCollections.FirstOrDefault(x =>
-                x.Name == collection &&
-                (string.IsNullOrEmpty(category) || x.LocalizationCategory?.Name == category));
+                x.Name.ToLower() == collection.ToLower() &&
+                (string.IsNullOrEmpty(category) || x.LocalizationCategory?.Name.ToLower() == category.ToLower()));
 
         /// <summary>
         /// Returns list of all localization collections
@@ -271,7 +271,7 @@ namespace Signals.Aspects.Localization.Base
         /// <returns></returns>
         public List<LocalizationCollection> GetAllCollections(string category = null)
             => LocalizationCollections.FindAll(x =>
-                string.IsNullOrEmpty(category) || x.LocalizationCategory?.Name == category);
+                string.IsNullOrEmpty(category) || x.LocalizationCategory?.Name.ToLower() == category.ToLower());
 
         /// <summary>
         /// Creates or updates collection
@@ -283,16 +283,16 @@ namespace Signals.Aspects.Localization.Base
             lock (Lock)
             {
                 // Get the localization collection. If it does not exist, create it first
-                var localizationCategory = LocalizationCategories.FirstOrDefault(x => x.Name == categoryName);
+                var localizationCategory = LocalizationCategories.FirstOrDefault(x => x.Name.ToLower() == categoryName.ToLower());
                 if (localizationCategory == null)
                 {
                     localizationCategory = new LocalizationCategory
                     {
-                        Name = categoryName
+                        Name = categoryName.ToLower()
                     };
                     Provider.InsertOrUpdateLocalizationCategory(localizationCategory);
                     LocalizationCategories = Provider.LoadLocalizationCategories();
-                    localizationCategory = LocalizationCategories.FirstOrDefault(x => x.Name == categoryName);
+                    localizationCategory = LocalizationCategories.FirstOrDefault(x => x.Name.ToLower() == categoryName.ToLower());
                 }
 
                 if (localizationCategory == null) return;
@@ -302,7 +302,7 @@ namespace Signals.Aspects.Localization.Base
                     {
                         LocalizationCategoryId = localizationCategory.Id
                     };
-                collection.Name = collectionName;
+                collection.Name = collectionName.ToLower();
                 Provider.InsertOrUpdateLocalizationCollection(collection);
                 LocalizationCollections = Provider.LoadLocalizationCollections();
             }
@@ -323,7 +323,7 @@ namespace Signals.Aspects.Localization.Base
                 Provider.InsertOrUpdateLocalizationCollection(new LocalizationCollection
                 {
                     LocalizationCategoryId = localizationCategory.Id,
-                    Name = collecitonName
+                    Name = collecitonName.ToLower()
                 });
                 LocalizationCollections = Provider.LoadLocalizationCollections();
             }
@@ -357,7 +357,7 @@ namespace Signals.Aspects.Localization.Base
             lock (Lock)
             {
                 var localizationCategory = GetCategory(categoryName) ?? new LocalizationCategory();
-                localizationCategory.Name = categoryName;
+                localizationCategory.Name = categoryName.ToLower();
 
                 Provider.InsertOrUpdateLocalizationCategory(localizationCategory);
                 LocalizationCategories = Provider.LoadLocalizationCategories();
@@ -372,22 +372,22 @@ namespace Signals.Aspects.Localization.Base
         {
             lock (Lock)
             {
-                if (LocalizationLanguages.Any(x => x.Name == culturaInfoName))
+                if (LocalizationLanguages.Any(x => x.Name.ToLower() == culturaInfoName.ToLower()))
                     return;
 
-                if (CultureInfo.GetCultures(CultureTypes.AllCultures).All(x => x.Name != culturaInfoName))
+                if (CultureInfo.GetCultures(CultureTypes.AllCultures).All(x => x.Name.ToLower() != culturaInfoName.ToLower()))
                     return;
 
                 // Insert the new language
                 var cultureInfo = new CultureInfo(culturaInfoName);
                 Provider.InsertLocalizationLanguage(new LocalizationLanguage
                 {
-                    Name = culturaInfoName,
-                    Value = cultureInfo.EnglishName
+                    Name = culturaInfoName.ToLower(),
+                    Value = cultureInfo.DisplayName
                 });
 
                 LocalizationLanguages = Provider.LoadLocalizationLanguages();
-                var newLang = LocalizationLanguages.FirstOrDefault(x => x.Name == culturaInfoName);
+                var newLang = LocalizationLanguages.FirstOrDefault(x => x.Name.ToLower() == culturaInfoName.ToLower());
 
                 if (newLang == null)
                     return;
@@ -426,7 +426,7 @@ namespace Signals.Aspects.Localization.Base
             {
                 foreach (var language in GetAllLanguages())
                 {
-                    Set(key.Replace(" ", "_").ToUpper(), string.Empty, collection, category, new CultureInfo(language.Name)); 
+                    Set(key.Replace(" ", "_").ToLower(), string.Empty, collection, category, new CultureInfo(language.Name.ToLower())); 
                 }
             }
         }
@@ -506,11 +506,11 @@ namespace Signals.Aspects.Localization.Base
             };
         }
 
-        private string GetLanguageEnglishNameFromCulture(CultureInfo culture)
-            => culture?.EnglishName ?? CultureInfo.CurrentCulture.EnglishName;
+        private string GetLanguageDisplayNameFromCulture(CultureInfo culture)
+            => culture?.DisplayName ?? CultureInfo.CurrentCulture.DisplayName;
 
         private string GetLanguageNameFromCulture(CultureInfo culture)
-            => culture?.Name?.ToLower() ?? CultureInfo.CurrentCulture?.Name?.ToLower();
+            => culture?.Name.ToLower() ?? CultureInfo.CurrentCulture.Name.ToLower();
 
         private string SerializeLocalizationBundle(List<LocalizationEntry> entries)
             => JsonConvert.SerializeObject(entries.ToDictionary(x => x.LocalizationKey.Name, x => x.Value));
