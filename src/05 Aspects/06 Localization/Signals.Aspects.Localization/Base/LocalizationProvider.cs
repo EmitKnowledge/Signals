@@ -91,7 +91,7 @@ namespace Signals.Aspects.Localization.Base
         /// <returns></returns>
         public LocalizationEntry Get(string key, string collection = null, string category = null, CultureInfo culture = null)
             => LocalizationEntries.FirstOrDefault(x => x.LocalizationKey?.Name == key &&
-                                                       x.LocalizationLanguage?.Value == GetLanguageEnglishNameFromCulture(culture) &&
+                                                       x.LocalizationLanguage?.Name == GetLanguageNameFromCulture(culture) &&
                                                        (collection == null || string.Equals(x.LocalizationCollection.Name, collection, StringComparison.CurrentCultureIgnoreCase)) &&
                                                        (category == null || string.Equals(x.LocalizationCollection.LocalizationCategory.Name, category, StringComparison.CurrentCultureIgnoreCase)));
 
@@ -157,7 +157,7 @@ namespace Signals.Aspects.Localization.Base
                 // Get the localization language. If it does not exist, create it first
                 var langDisplayName = GetLanguageEnglishNameFromCulture(culture);
                 var langName = GetLanguageNameFromCulture(culture);
-                var localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Value == GetLanguageEnglishNameFromCulture(culture));
+                var localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Name == GetLanguageNameFromCulture(culture));
                 if (localizationLanguage == null)
                 {
                     localizationLanguage = new LocalizationLanguage
@@ -167,7 +167,7 @@ namespace Signals.Aspects.Localization.Base
                     };
                     Provider.InsertLocalizationLanguage(localizationLanguage);
                     LocalizationLanguages = Provider.LoadLocalizationLanguages();
-                    localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Value == GetLanguageEnglishNameFromCulture(culture));
+                    localizationLanguage = LocalizationLanguages.FirstOrDefault(x => x.Name == GetLanguageNameFromCulture(culture));
                 }
                 if (localizationLanguage == null) return;
 

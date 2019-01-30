@@ -81,7 +81,7 @@ namespace Signals.Tests.Localization
                 var collections = _provider.GetAllCollections();
                 var languages = _provider.GetAllLanguages();
                 var categories = _provider.GetAllCategories();
-                var entries = _provider.GetAll(culture);
+                var entries = _provider.GetAllForCulture(culture);
 
                 Assert.Single(keys);
                 Assert.Single(collections);
@@ -96,7 +96,7 @@ namespace Signals.Tests.Localization
                 collections = _provider.GetAllCollections();
                 languages = _provider.GetAllLanguages();
                 categories = _provider.GetAllCategories();
-                entries = _provider.GetAll(culture);
+                entries = _provider.GetAllForCulture(culture);
 
                 Assert.Single(keys);
                 Assert.Single(collections);

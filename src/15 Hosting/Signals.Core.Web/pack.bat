@@ -1,6 +1,6 @@
 ﻿
 REM !important
-SET Version=0.6.51
+SET Version=0.6.56
 
 
 SET NugetUrl=https://pkgs.dev.azure.com/emitknowledge/_packaging/Signals/nuget/v3/index.json
