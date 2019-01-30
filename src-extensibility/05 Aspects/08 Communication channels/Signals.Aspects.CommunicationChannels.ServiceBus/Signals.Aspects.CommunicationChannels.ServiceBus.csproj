@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Management.ServiceBus.Fluent" Version="1.18.0" />
-    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Azure.Management.ServiceBus.Fluent" Version="1.19.0" />
+    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="3.3.0" />
     <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="0.6.1" />
   </ItemGroup>
 

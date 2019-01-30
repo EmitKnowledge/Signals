@@ -4,6 +4,7 @@ using Signals.Aspects.Localization.File.Configurations;
 using Signals.Aspects.Localization.File.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -77,7 +78,7 @@ namespace Signals.Aspects.Localization.File.DataProviders
                             Value = localizationPair.Value,
                             LocalizationCollection = localizationCollection,
                             LocalizationKey = new LocalizationKey { Name = localizationPair.Key },
-                            LocalizationLanguage = new LocalizationLanguage { Value = localizationCode }
+                            LocalizationLanguage = new LocalizationLanguage { Name = localizationCode, Value = new CultureInfo(localizationCode)?.EnglishName }
                         });
                     }
                 }
@@ -288,6 +289,6 @@ namespace Signals.Aspects.Localization.File.DataProviders
         /// <param name="localizationCode"></param>
         /// <returns></returns>
         protected static string FormatLocalizationCode(string localizationCode)
-            => localizationCode.Split('-')[0].ToLower();
+            => localizationCode.ToLower();
     }
 }

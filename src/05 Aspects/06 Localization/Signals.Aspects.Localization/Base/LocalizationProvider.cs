@@ -510,7 +510,7 @@ namespace Signals.Aspects.Localization.Base
             => culture?.EnglishName ?? CultureInfo.CurrentCulture.EnglishName;
 
         private string GetLanguageNameFromCulture(CultureInfo culture)
-            => culture?.Name ?? CultureInfo.CurrentCulture.Name;
+            => culture?.Name?.ToLower() ?? CultureInfo.CurrentCulture?.Name?.ToLower();
 
         private string SerializeLocalizationBundle(List<LocalizationEntry> entries)
             => JsonConvert.SerializeObject(entries.ToDictionary(x => x.LocalizationKey.Name, x => x.Value));

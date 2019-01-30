@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EPPlus" Version="4.5.2.1" />
+    <PackageReference Include="EPPlus" Version="4.5.3" />
     <PackageReference Include="Select.HtmlToPdf.NetCore" Version="18.4.0" />
-    <PackageReference Include="Signals.Core" Version="0.6.53" />
+    <PackageReference Include="Signals.Core" Version="0.6.54" />
   </ItemGroup>
 
 </Project>
