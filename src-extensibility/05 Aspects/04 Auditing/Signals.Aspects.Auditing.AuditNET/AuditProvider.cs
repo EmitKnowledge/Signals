@@ -99,7 +99,7 @@ namespace Signals.Aspects.Auditing.AuditNET
                             [Id] INT IDENTITY(1,1) NOT NULL, 
                             [Process] NVARCHAR(MAX) NOT NULL,
                             [ProcessInstanceId] NVARCHAR(MAX) NOT NULL,
-                            [EventType] NVARCHAR(MAX) NOT NULL,
+                            [EventType] NVARCHAR(MAX) NULL,
                             [Originator] NVARCHAR(MAX) NOT NULL,
                             [StartDate] datetime2(7) NOT NULL,
                             [EndDate] datetime2(7),

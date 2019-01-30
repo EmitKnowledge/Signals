@@ -84,8 +84,9 @@ namespace Signals.Aspects.Auditing.AuditNET.DataProviders
 	            }
 	            else
 	            {
-					throw new ArgumentException("Value must be provided", nameof(customAuditEvent.EventType));
-				}
+                    command.Parameters["EventType"].Value = DBNull.Value;
+
+                }
 
 				// set the process start date
 				command.Parameters.Add("StartDate", SqlDbType.DateTime2);
