@@ -8,7 +8,7 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
     {
         internal static void Configure(this Registry registry, ISyncTask task, RecurrencePatternConfiguration configuration)
         {
-	        switch (configuration)
+            switch (configuration)
 	        {
 		        case DailyRecurrencePatternConfiguration dailyConfiguration:
 			        var dailySchedule = registry.Schedule(() => task.Execute());

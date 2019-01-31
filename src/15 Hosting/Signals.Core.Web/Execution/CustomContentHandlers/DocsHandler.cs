@@ -167,7 +167,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 }
                 else
                 {
-                    if (type.IsPrimitive)
+                    if (type.IsPrimitive || type.IsValueType)
                     {
                         schema.Type = type.Name;
                     }
