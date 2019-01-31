@@ -96,7 +96,13 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                         });
                     }
 
-                    operationItem.Description = instance.Description;
+                    operationItem.Tags = new List<OpenApiTag>();
+                    operationItem.Tags.Add(new OpenApiTag
+                    {
+                        Name = type.Namespace.Split('.').Last()
+                    });
+                    operationItem.Summary = instance.Description.IsNullOrEmpty() ? instance.Name : instance.Description;
+                    operationItem.Description = instance.Name;
                     operationItem.RequestBody = new OpenApiRequestBody
                     {
                         Content = new Dictionary<string, OpenApiMediaType>

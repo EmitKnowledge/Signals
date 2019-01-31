@@ -56,12 +56,12 @@ namespace Signals.Core.Processes.Base
         /// <summary>
         /// Process name
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
         /// <summary>
         /// Process description
         /// </summary>
-        public string Description { get; set; }
+        public virtual string Description { get; set; }
 
         /// <summary>
         /// Base process context
