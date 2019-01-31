@@ -2,21 +2,20 @@
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
-using Signals.Aspects.DI;
 using Signals.Aspects.Caching;
 using Signals.Aspects.Caching.Entries;
 using Signals.Aspects.Caching.Enums;
-using Signals.Core.Processes.Api;
-using Signals.Core.Processes.Base;
+using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization;
 using Signals.Core.Configuration;
+using Signals.Core.Processes.Api;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Behaviour;
 using Signals.Core.Web.Configuration;
-using Signals.Core.Web.Http;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,7 +49,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 },
                 Servers = new List<OpenApiServer>
                 {
-                    new OpenApiServer { Url = WebApplicationConfiguration.Instance.WebUrl }
+                    new OpenApiServer { Url = $"{WebApplicationConfiguration.Instance.WebUrl.TrimEnd('/')}/api/" }
                 },
                 Paths = new OpenApiPaths()
             };
