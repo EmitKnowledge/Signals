@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using EnumExtensions = Signals.Core.Common.Instance.EnumExtensions;
 
 namespace Signals.Core.Web.Execution.CustomContentHandlers
@@ -158,7 +159,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 if (type == null) return null;
 
                 var result = new Dictionary<string, OpenApiSchema>();
-                var props = type.GetProperties();
+                var props = type.GetProperties(BindingFlags.Public);
 
                 OpenApiSchema schema = new OpenApiSchema();
 
@@ -227,13 +228,13 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
         /// <returns></returns>
         public MiddlewareResult RenderContent(IHttpContextWrapper context)
         {
-            if (!context.RawUrl.ToLowerInvariant().Contains("api/docs"))
+            if (!context.RawUrl.ToLowerInvariant().Contains("api/spec"))
             {
                 return MiddlewareResult.DoNothing;
             }
 
             var cache = SystemBootstrapper.GetInstance<ICache>();
-            var cacheKey = "cache:api/docs";
+            var cacheKey = "cache:api/spec";
 
             OpenApiDocument docs = null;
             var cachedDocs = cache.Get<OpenApiDocument>(cacheKey);
