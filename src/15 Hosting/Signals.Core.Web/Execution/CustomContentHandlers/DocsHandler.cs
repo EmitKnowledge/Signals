@@ -159,7 +159,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 if (type == null) return null;
 
                 var result = new Dictionary<string, OpenApiSchema>();
-                var props = type.GetProperties(BindingFlags.Public);
+                var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
                 OpenApiSchema schema = new OpenApiSchema();
 
