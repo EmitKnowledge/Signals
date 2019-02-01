@@ -159,41 +159,62 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 if (type == null) return null;
 
                 var result = new Dictionary<string, OpenApiSchema>();
-                var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
-                OpenApiSchema schema = new OpenApiSchema();
-
-                if (typeof(IDisposable).IsAssignableFrom(type))
+                var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                foreach (var property in properties)
                 {
-                    schema.Type = type.Name;
+                    // set shema props of the parent property
+                    var schema = GetOpenApiSchema(property);
+                    var subProperties = property.PropertyType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                    Stack<PropertyInfo> toProcess = new Stack<PropertyInfo>(subProperties);
+                    Stack<OpenApiSchema> parentSchemas = new Stack<OpenApiSchema>();
+                    for (var i = 0; i < subProperties.Length; i++) parentSchemas.Push(schema);
+
+                    // build the object hierarchy
+                    while (toProcess.Count > 0)
+                    {
+                        var subProperty = toProcess.Pop();
+                        var subSchema = GetOpenApiSchema(subProperty);
+                        var parentSchema = parentSchemas.Pop();
+                        parentSchema.Properties.Add(subSchema.Title, subSchema);
+
+                        // process the complex types
+                        if (!subProperty.PropertyType.IsPrimitive &&
+                            !subProperty.PropertyType.IsValueType &&
+                            !typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
+                        {
+                            subProperties = subProperty.PropertyType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                            foreach (var propertyInfo in subProperties)
+                            {
+                                toProcess.Push(propertyInfo);
+                                parentSchemas.Push(subSchema);
+                            }
+                        }
+                    }
+
+                    result.Add(property.PropertyType.Name, schema);
                 }
-                else if (typeof(IEnumerable).IsAssignableFrom(type))
+                return result;
+            }
+
+            OpenApiSchema GetOpenApiSchema(PropertyInfo property)
+            {
+                var schema = new OpenApiSchema();
+
+                // set the property name
+                if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                 {
-                    schema.Type = type.ToString();
+                    schema.Title = property.Name;
+                    schema.Type = property.ToString();
                 }
                 else
                 {
-                    if (type.IsPrimitive || type.IsValueType)
-                    {
-                        schema.Type = type.Name;
-                    }
-                    else
-                    {
-                        schema.Properties = props
-                            .SelectMany(prop =>
-                            {
-                                var dic = Deserialize(prop.PropertyType);
-                                dic[prop.Name] = dic[prop.PropertyType.Name];
-                                dic.Remove(prop.PropertyType.Name);
-                                return dic;
-                            })
-                             .ToLookup(pair => pair.Key, pair => pair.Value)
-                             .ToDictionary(group => group.Key, group => group.First());
-                    }
+                    schema.Title = property.Name;
+                    schema.Type = property.PropertyType.Name;
                 }
-                result.Add(type.Name, schema);
-                return result;
-            };
+
+                return schema;
+            }
 
             // map http method to open api method
             List<OperationType> Map(ApiProcessMethod method)
