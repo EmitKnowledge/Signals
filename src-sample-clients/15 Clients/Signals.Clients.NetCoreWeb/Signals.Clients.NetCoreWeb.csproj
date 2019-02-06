@@ -22,7 +22,6 @@
     <PackageReference Include="Signals.Aspects.Auditing.AuditNET" version="0.6.3" />
     <PackageReference Include="Signals.Aspects.Auth.NetCore" version="0.6.2" />
     <PackageReference Include="Signals.Aspects.BackgroundProcessing.FluentScheduler" version="0.6.2" />
-    <PackageReference Include="Signals.Aspects.Bootstrap" version="0.2.5" />
     <PackageReference Include="Signals.Aspects.Caching.InMemory" version="0.6.2" />
     <PackageReference Include="Signals.Aspects.CommunicationChannels.ServiceBus" version="0.6.2" />
     <PackageReference Include="Signals.Aspects.Configuration.File" version="0.6.2" />

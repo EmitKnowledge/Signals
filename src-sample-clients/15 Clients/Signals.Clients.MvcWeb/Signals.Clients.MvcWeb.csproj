@@ -375,9 +375,6 @@
     <Reference Include="Signals.Aspects.BackgroundProcessing.FluentScheduler, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.BackgroundProcessing.FluentScheduler.0.2.0\lib\netstandard2.0\Signals.Aspects.BackgroundProcessing.FluentScheduler.dll</HintPath>
     </Reference>
-    <Reference Include="Signals.Aspects.Bootstrap, Version=0.2.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\00 Solution\packages\Signals.Aspects.Bootstrap.0.2.5\lib\netstandard2.0\Signals.Aspects.Bootstrap.dll</HintPath>
-    </Reference>
     <Reference Include="Signals.Aspects.Caching, Version=0.2.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\00 Solution\packages\Signals.Aspects.Caching.0.2.0.1\lib\netstandard2.0\Signals.Aspects.Caching.dll</HintPath>
     </Reference>

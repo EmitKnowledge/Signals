@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.Bootstrap\Signals.Aspects.Bootstrap.csproj" />
     <ProjectReference Include="..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.DotNetCore\Signals.Aspects.DI.DotNetCore.csproj" />
     <ProjectReference Include="..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI\Signals.Aspects.DI.csproj" />
     <ProjectReference Include="..\..\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj" />
