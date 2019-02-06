@@ -23,9 +23,12 @@
                 IssuedUtc = properties.IssuedUtc,
             };
 
-            foreach (var pair in properties.Dictionary)
+            if (properties.Dictionary != null)
             {
-                newProperties.SetParameter(pair.Key, pair.Value);
+                foreach (var pair in properties.Dictionary)
+                {
+                    newProperties.SetParameter(pair.Key, pair.Value);
+                }
             }
 
             return newProperties;
