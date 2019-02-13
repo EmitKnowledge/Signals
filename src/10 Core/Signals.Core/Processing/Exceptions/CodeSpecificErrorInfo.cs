@@ -9,7 +9,7 @@ namespace Signals.Core.Processing.Exceptions
     /// </summary>
     [Serializable]
     [DataContract]
-    public class SpecificErrorInfo : IErrorInfo
+    public class CodeSpecificErrorInfo : IErrorInfo
     {
         /// <summary>
         /// System fault message
@@ -26,7 +26,7 @@ namespace Signals.Core.Processing.Exceptions
         /// <summary>
         /// Http status code sent to the client
         /// </summary>
-        [DataMember]
+        [IgnoreDataMember]
         public HttpStatusCode HttpStatusCode { get; private set; }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Signals.Core.Processing.Exceptions
         /// <param name="faultMessage"></param>
         /// <param name="userVisibleMessage"></param>
         /// <param name="httpStatusCode"></param>
-        public SpecificErrorInfo(string faultMessage, string userVisibleMessage, HttpStatusCode httpStatusCode)
+        public CodeSpecificErrorInfo(string faultMessage, string userVisibleMessage, HttpStatusCode httpStatusCode)
         {
             FaultMessage = faultMessage;
             UserVisibleMessage = userVisibleMessage;

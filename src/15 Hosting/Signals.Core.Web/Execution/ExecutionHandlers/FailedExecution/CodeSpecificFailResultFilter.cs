@@ -4,17 +4,14 @@ using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
 {
     /// <summary>
     /// General fail result handler
     /// </summary>
-    public class SpecificFailResultFilter : IResultHandler
+    public class CodeSpecificFailResultFilter : IResultHandler
     {
         /// <summary>
         /// Handle process result
@@ -27,9 +24,9 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            if (response.IsFaulted && response.ErrorMessages.OfType<SpecificErrorInfo>().Any())
+            if (response.IsFaulted && response.ErrorMessages.OfType<CodeSpecificErrorInfo>().Any())
             {
-                var error = response.ErrorMessages.OfType<SpecificErrorInfo>().First();
+                var error = response.ErrorMessages.OfType<CodeSpecificErrorInfo>().First();
                 context.PutResponse(new System.Net.Http.HttpResponseMessage(error.HttpStatusCode)
                 {
                     Content = type.ToHttpContent(response)
