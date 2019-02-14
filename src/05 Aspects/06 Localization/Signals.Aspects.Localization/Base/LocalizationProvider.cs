@@ -147,7 +147,7 @@ namespace Signals.Aspects.Localization.Base
                 var localizationKey = LocalizationKeys.FirstOrDefault(x => x.Name.ToLower() == key.ToLower());
                 if (localizationKey == null)
                 {
-                    localizationKey = new LocalizationKey { Name = key.ToLower() };
+                    localizationKey = new LocalizationKey { Name = key };
                     Provider.InsertLocalizationKey(localizationKey);
                     LocalizationKeys = Provider.LoadLocalizationKeys();
                     localizationKey = LocalizationKeys.FirstOrDefault(x => x.Name.ToLower() == key.ToLower());
@@ -162,7 +162,7 @@ namespace Signals.Aspects.Localization.Base
                 {
                     localizationLanguage = new LocalizationLanguage
                     {
-                        Name = langName.ToLower(),
+                        Name = langName,
                         Value = langDisplayName
                     };
                     Provider.InsertLocalizationLanguage(localizationLanguage);
@@ -177,7 +177,7 @@ namespace Signals.Aspects.Localization.Base
                 {
                     localizationCategory = new LocalizationCategory
                     {
-                        Name = category.ToLower()
+                        Name = category
                     };
                     Provider.InsertOrUpdateLocalizationCategory(localizationCategory);
                     LocalizationCategories = Provider.LoadLocalizationCategories();
@@ -194,7 +194,7 @@ namespace Signals.Aspects.Localization.Base
                 {
                     localizationCollection = new LocalizationCollection
                     {
-                        Name = collection.ToLower(),
+                        Name = collection,
                         LocalizationCategoryId = localizationCategory.Id
                     };
                     Provider.InsertOrUpdateLocalizationCollection(localizationCollection);
@@ -288,7 +288,7 @@ namespace Signals.Aspects.Localization.Base
                 {
                     localizationCategory = new LocalizationCategory
                     {
-                        Name = categoryName.ToLower()
+                        Name = categoryName
                     };
                     Provider.InsertOrUpdateLocalizationCategory(localizationCategory);
                     LocalizationCategories = Provider.LoadLocalizationCategories();
@@ -302,7 +302,7 @@ namespace Signals.Aspects.Localization.Base
                     {
                         LocalizationCategoryId = localizationCategory.Id
                     };
-                collection.Name = collectionName.ToLower();
+                collection.Name = collectionName;
                 Provider.InsertOrUpdateLocalizationCollection(collection);
                 LocalizationCollections = Provider.LoadLocalizationCollections();
             }
@@ -323,7 +323,7 @@ namespace Signals.Aspects.Localization.Base
                 Provider.InsertOrUpdateLocalizationCollection(new LocalizationCollection
                 {
                     LocalizationCategoryId = localizationCategory.Id,
-                    Name = collecitonName.ToLower()
+                    Name = collecitonName
                 });
                 LocalizationCollections = Provider.LoadLocalizationCollections();
             }
@@ -357,7 +357,7 @@ namespace Signals.Aspects.Localization.Base
             lock (Lock)
             {
                 var localizationCategory = GetCategory(categoryName) ?? new LocalizationCategory();
-                localizationCategory.Name = categoryName.ToLower();
+                localizationCategory.Name = categoryName;
 
                 Provider.InsertOrUpdateLocalizationCategory(localizationCategory);
                 LocalizationCategories = Provider.LoadLocalizationCategories();
@@ -382,7 +382,7 @@ namespace Signals.Aspects.Localization.Base
                 var cultureInfo = new CultureInfo(culturaInfoName);
                 Provider.InsertLocalizationLanguage(new LocalizationLanguage
                 {
-                    Name = culturaInfoName.ToLower(),
+                    Name = culturaInfoName,
                     Value = cultureInfo.DisplayName
                 });
 
@@ -426,7 +426,7 @@ namespace Signals.Aspects.Localization.Base
             {
                 foreach (var language in GetAllLanguages())
                 {
-                    Set(key.Replace(" ", "_").ToLower(), string.Empty, collection, category, new CultureInfo(language.Name.ToLower())); 
+                    Set(key.Replace(" ", "_"), string.Empty, collection, category, new CultureInfo(language.Name)); 
                 }
             }
         }
