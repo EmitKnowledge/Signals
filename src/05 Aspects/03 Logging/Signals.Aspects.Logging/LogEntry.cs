@@ -44,6 +44,11 @@ namespace Signals.Aspects.Logging
         public string Action { get; set; }
 
         /// <summary>
+        /// Name of execution process
+        /// </summary>
+        public string ProcessName { get; set; }
+
+        /// <summary>
         /// Indicate the location of the faulted .cs file
         /// </summary>
         public string ActionFilePath { get; set; }

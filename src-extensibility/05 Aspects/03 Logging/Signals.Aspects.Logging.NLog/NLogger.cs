@@ -81,6 +81,7 @@ namespace Signals.Aspects.Logging.NLog
                                 [ErrorGroup] NVARCHAR(MAX) NULL,
                                 [ErrorCode] NVARCHAR(MAX) NULL,
                                 [Origin] NVARCHAR(MAX) NULL,
+                                [ProcessName] NVARCHAR(MAX) NULL,
                                 [Action] NVARCHAR(MAX) NULL,
                                 [ActionFilePath] NVARCHAR(MAX) NULL,
                                 [ActionSourceLineNumber] NVARCHAR(MAX) NULL,
@@ -114,6 +115,7 @@ namespace Signals.Aspects.Logging.NLog
                         ErrorCode,
                         Origin,
                         Action,
+                        ProcessName,
                         ActionFilePath,
                         ActionSourceLineNumber,
                         Message,
@@ -126,6 +128,7 @@ namespace Signals.Aspects.Logging.NLog
                         @ErrorCode,
                         @Origin,
                         @Action,
+                        @ProcessName,
                         @ActionFilePath,
                         @ActionSourceLineNumber,
                         @Message,
@@ -140,6 +143,7 @@ namespace Signals.Aspects.Logging.NLog
             dbTarget.Parameters.Add(new DatabaseParameterInfo("@errorCode", Layout.FromString(@"${event-properties:item=ErrorCode}")));
             dbTarget.Parameters.Add(new DatabaseParameterInfo("@origin", Layout.FromString(@"${event-properties:item=Origin}")));
             dbTarget.Parameters.Add(new DatabaseParameterInfo("@action", Layout.FromString(@"${event-properties:item=Action}")));
+            dbTarget.Parameters.Add(new DatabaseParameterInfo("@processName", Layout.FromString(@"${event-properties:item=ProcessName}")));
             dbTarget.Parameters.Add(new DatabaseParameterInfo("@actionFilePath", Layout.FromString(@"${event-properties:item=ActionFilePath}")));
             dbTarget.Parameters.Add(new DatabaseParameterInfo("@actionSourceLineNumber", Layout.FromString(@"${event-properties:item=ActionSourceLineNumber}")));
             dbTarget.Parameters.Add(new DatabaseParameterInfo("@message", Layout.FromString(@"${event-properties:item=Message}")));
@@ -320,6 +324,7 @@ namespace Signals.Aspects.Logging.NLog
             logEvent.Properties[nameof(logEntry.ErrorCode)] = logEntry.ErrorCode;
             logEvent.Properties[nameof(logEntry.Origin)] = logEntry.Origin;
             logEvent.Properties[nameof(logEntry.Action)] = logEntry.Action;
+            logEvent.Properties[nameof(logEntry.ProcessName)] = logEntry.ProcessName;
             logEvent.Properties[nameof(logEntry.ActionFilePath)] = logEntry.ActionFilePath;
             logEvent.Properties[nameof(logEntry.ActionSourceLineNumber)] = logEntry.ActionSourceLineNumber;
             logEvent.Properties[nameof(logEntry.Message)] = logEntry.Message;
@@ -392,7 +397,7 @@ namespace Signals.Aspects.Logging.NLog
         {
             var exceptionMessage = GetExceptionMessage(logEntry);
             var payloadMessage = GetPayloadMessage(logEntry);
-            var message = string.Format(@"{0:yyyy-MM-dd HH:mm:ss} {1} {2} {3} {4} {5} {6} {7} {8} {9}", 
+            var message = string.Format(@"{0:yyyy-MM-dd HH:mm:ss} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}", 
 										logEntry.CreatedOn,
                                         GetValue(logEntry.Level),
                                         GetValue(logEntry.ErrorCode),
@@ -400,6 +405,7 @@ namespace Signals.Aspects.Logging.NLog
                                         GetValue(logEntry.Origin),
                                         GetValue(logEntry.UserIdentifier),
                                         GetValue(logEntry.Action),
+                                        GetValue(logEntry.ProcessName),
                                         GetValue(logEntry.Message),
                                         GetValue(exceptionMessage),
                                         GetValue(payloadMessage));

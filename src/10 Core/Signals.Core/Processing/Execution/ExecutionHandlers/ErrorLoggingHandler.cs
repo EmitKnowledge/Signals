@@ -43,6 +43,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                     var exception = errorInfo.Exception;
                     var entry = LogEntry.Exception(exception, message: innerResult.GetFaultMessage());
 
+                    entry.ProcessName = process.Name;
                     entry.Action = exception.TargetSite?.Name;
                     entry.Origin = ApplicationConfiguration.Instance?.ApplicationName ?? Environment.MachineName;
                     entry.Payload = args?.SerializeJson();
@@ -53,6 +54,8 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                 else
                 {
                     var entry = LogEntry.Trace(message: innerResult.GetFaultMessage(), payload: args);
+
+                    entry.ProcessName = process.Name;
                     entry.Action = process.Name;
                     entry.Origin = ApplicationConfiguration.Instance?.ApplicationName ?? Environment.MachineName;
                     entry.Payload = args?.SerializeJson();
