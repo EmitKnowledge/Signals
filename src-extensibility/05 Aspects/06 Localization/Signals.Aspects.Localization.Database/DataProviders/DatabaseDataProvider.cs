@@ -203,7 +203,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 var sql = $"INSERT INTO [{Configuration.LocalizationKeyTableName}]([Name]) VALUES(@KeyName)";
                 var command = new SqlCommand(sql, connection);
                 command.Parameters.Add("KeyName", SqlDbType.NVarChar);
-                command.Parameters["KeyName"].Value = localizationKey.Name.ToLower();
+                command.Parameters["KeyName"].Value = localizationKey.Name;
 
                 command.ExecuteNonQuery();
             }
@@ -225,7 +225,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                     ";
                 var command = new SqlCommand(sql, connection);
                 command.Parameters.Add("LangName", SqlDbType.NVarChar);
-                command.Parameters["LangName"].Value = localizationLanguage.Name.ToLower();
+                command.Parameters["LangName"].Value = localizationLanguage.Name;
                 command.Parameters.Add("LangValue", SqlDbType.NVarChar);
                 command.Parameters["LangValue"].Value = localizationLanguage.Value;
 
@@ -260,7 +260,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                     ";
                 var command = new SqlCommand(sql, connection);
                 command.Parameters.Add("CollName", SqlDbType.NVarChar);
-                command.Parameters["CollName"].Value = localizationCollection.Name.ToLower();
+                command.Parameters["CollName"].Value = localizationCollection.Name;
 
                 command.ExecuteNonQuery();
             }
@@ -315,7 +315,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                     ";
                 var command = new SqlCommand(sql, connection);
                 command.Parameters.Add("CatName", SqlDbType.NVarChar);
-                command.Parameters["CatName"].Value = localizationCategory.Name.ToLower();
+                command.Parameters["CatName"].Value = localizationCategory.Name;
 
                 command.ExecuteNonQuery();
             }
