@@ -36,6 +36,11 @@ namespace Signals.Core.Processing.Input.Http
         Lazy<string> Body { get; set; }
 
         /// <summary>
+        /// Form collection manager
+        /// </summary>
+        IFormCollection Form { get; set; }
+
+        /// <summary>
         /// Headers collection manager
         /// </summary>
         IHeaderCollection Headers { get; set; }

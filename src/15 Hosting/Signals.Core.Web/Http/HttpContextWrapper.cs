@@ -69,15 +69,7 @@ namespace Signals.Core.Web.Http
         /// <returns></returns>
         private string ExtractBody(Stream inputStream)
         {
-            var sr = new StreamReader(inputStream);
-            var bytes = default(byte[]);
-            using (var memstream = new MemoryStream())
-            {
-                sr.BaseStream.CopyTo(memstream);
-                bytes = memstream.ToArray();
-            }
-
-            var content = sr.CurrentEncoding.GetString(bytes);// System.Text.Encoding. //sr?.ReadToEnd();
+            var content = new StreamReader(inputStream).ReadToEnd();
             return content;
         }
 
