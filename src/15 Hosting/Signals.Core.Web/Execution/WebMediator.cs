@@ -1,6 +1,8 @@
-﻿using Signals.Aspects.DI;
+﻿using Newtonsoft.Json.Linq;
+using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Execution;
+using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Execution.CustomContentHandlers;
@@ -10,6 +12,7 @@ using Signals.Core.Web.Execution.FactoryFilters;
 using Signals.Core.Web.Execution.Filters;
 using System.Collections.Generic;
 using System.Linq;
+using Signals.Core.Common.Serialization;
 
 namespace Signals.Core.Web.Execution
 {
@@ -126,9 +129,35 @@ namespace Signals.Core.Web.Execution
                 }
             }
 
+            // determine the parameter binding method
+            var parameterBindingAttribute = validType?
+                .GetCustomAttributes(typeof(SignalsParameterBindingAttribute), false)
+                .Cast<SignalsParameterBindingAttribute>()
+                .FirstOrDefault();
+
+            string param;
+            switch (parameterBindingAttribute?.ParameterBinding)
+            {
+                case ParameterBinding.FromUri:
+                case ParameterBinding.FromBody:
+                    param = httpContext.Body.Value;
+                    break;
+                case ParameterBinding.FromForm:
+                    var obj = new JObject();
+                    foreach (var formKey in httpContext.Form.Keys)
+                    {
+                        httpContext.Form.TryGetValue(formKey, out var value);
+                        obj[formKey] = value.ToString();
+                    }
+                    param = obj.SerializeJson();
+                    break;
+                default:
+                    param = httpContext.Body.Value;
+                    break;
+            }
+
             // execute process
-            var bodyString = httpContext.Body.Value;
-            var response = executor.Execute(process, bodyString);
+            var response = executor.Execute(process, param);
 
             // post execution events
             foreach (var executeEvent in ResultHandlers)
