@@ -48,6 +48,11 @@ namespace Signals.Core.Web.Http
         public IHeaderCollection Headers { get; set; }
 
         /// <summary>
+        /// Form collection manager
+        /// </summary>
+        public Processing.Input.Http.IFormCollection Form { get; set; }
+
+        /// <summary>
         /// Cookies collection manager
         /// </summary>
         public ICookieCollection Cookies { get; set; }
@@ -64,8 +69,15 @@ namespace Signals.Core.Web.Http
         /// <returns></returns>
         private string ExtractBody(Stream inputStream)
         {
-            var content = new StreamReader(inputStream)?.ReadToEnd();
+            var sr = new StreamReader(inputStream);
+            var bytes = default(byte[]);
+            using (var memstream = new MemoryStream())
+            {
+                sr.BaseStream.CopyTo(memstream);
+                bytes = memstream.ToArray();
+            }
 
+            var content = sr.CurrentEncoding.GetString(bytes);// System.Text.Encoding. //sr?.ReadToEnd();
             return content;
         }
 
@@ -77,22 +89,21 @@ namespace Signals.Core.Web.Http
         public HttpContextWrapper()
         {
             var context = System.Web.HttpContext.Current;
+            if (context == null) return;
+            
+            Headers = new HeaderCollection(context);
+            Cookies = new CookieCollection(context);
+            Form = new FormCollection(context);
+            Session = new SessionProvider(context);
 
-            if (context != null)
-            {
-                Headers = new HeaderCollection(context);
-                Cookies = new CookieCollection(context);
-                Session = new SessionProvider(context);
+            var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
+                .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
+            Query = query?.ToDictionary(x => x.Key, x => x.Value);
 
-                var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
-                    .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
-                Query = query?.ToDictionary(x => x.Key, x => x.Value);
-
-                Body = new Lazy<string>(() => ExtractBody(context.Request.InputStream));
-                HttpMethod = context.Request.HttpMethod.ToUpperInvariant();
-                Files = context.Request.Files.AllKeys.Select(x => context.Request.Files[x].InputStream);
-                RawUrl = context.Request.Url.AbsolutePath;
-            }
+            Body = new Lazy<string>(() => ExtractBody(context.Request.InputStream));
+            HttpMethod = context.Request.HttpMethod.ToUpperInvariant();
+            Files = context.Request.Files.AllKeys.Select(x => context.Request.Files[x].InputStream);
+            RawUrl = context.Request.Url.AbsolutePath;
         }
 
         /// <summary>
@@ -130,26 +141,25 @@ namespace Signals.Core.Web.Http
         public HttpContextWrapper(IHttpContextAccessor httpContextAccessor)
         {
             var context = httpContextAccessor.HttpContext;
+            if (context == null) return;
 
-            if (context != null)
-            {
-                Headers = new HeaderCollection(context);
-                Cookies = new CookieCollection(context);
-                Session = new SessionProvider(context);
+            Headers = new HeaderCollection(context);
+            Cookies = new CookieCollection(context);
+            Form = new FormCollection(context);
+            Session = new SessionProvider(context);
 
-                var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
-                    .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
-                Query = query?.ToDictionary(x => x.Key, x => x.Value);
+            var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
+                .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
+            Query = query?.ToDictionary(x => x.Key, x => x.Value);
 
-                Body = new Lazy<string>(() => ExtractBody(context.Request.Body));
-                HttpMethod = context.Request.Method.ToUpperInvariant();
+            Body = new Lazy<string>(() => ExtractBody(context.Request.Body));
+            HttpMethod = context.Request.Method.ToUpperInvariant();
 
-                // Form throws exception
-                try { Files = context.Request?.Form?.Files?.Select(x => x.OpenReadStream()) ?? new List<Stream>(); }
-                catch { Files = new List<Stream>(); }
+            // Form throws exception
+            try { Files = context.Request?.Form?.Files?.Select(x => x.OpenReadStream()) ?? new List<Stream>(); }
+            catch { Files = new List<Stream>(); }
 
-                RawUrl = context.Request.Path.Value;
-            }
+            RawUrl = context.Request.Path.Value;
         }
 
         /// <summary>
