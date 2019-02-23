@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Execution;
-using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Execution.CustomContentHandlers;
@@ -12,7 +11,8 @@ using Signals.Core.Web.Execution.FactoryFilters;
 using Signals.Core.Web.Execution.Filters;
 using System.Collections.Generic;
 using System.Linq;
-using Signals.Core.Common.Serialization;
+using Signals.Core.Processes.Api;
+using Signals.Core.Processing.Input.Http.ModelBinding;
 
 namespace Signals.Core.Web.Execution
 {
@@ -35,6 +35,11 @@ namespace Signals.Core.Web.Execution
         /// Process factory creation handler
         /// </summary>
         internal List<IFactoryFilter> FactoryFilters { get; set; }
+
+		/// <summary>
+		/// Default model binders
+		/// </summary>
+		internal Dictionary<ApiProcessMethod, Type> DefaultModelBinders { get; set; }
 
         /// <summary>
         /// Result handler
@@ -65,8 +70,18 @@ namespace Signals.Core.Web.Execution
                 new IsCachedFactoryFilter()
             };
 
-            // Order is important, JsonResult is default fallback
-            ResultHandlers = new List<IResultHandler> {
+	        DefaultModelBinders = new Dictionary<ApiProcessMethod, Type>
+	        {
+				{ ApiProcessMethod.OPTIONS,  typeof(FromQuery) },
+		        { ApiProcessMethod.GET,  typeof(FromQuery) },
+		        { ApiProcessMethod.HEAD,  typeof(FromHeader) },
+		        { ApiProcessMethod.POST,  typeof(FromBody) },
+		        { ApiProcessMethod.PUT,  typeof(FromBody) },
+		        { ApiProcessMethod.DELETE, typeof(FromQuery) }
+			};
+
+			// Order is important, JsonResult is default fallback
+			ResultHandlers = new List<IResultHandler> {
                 new HeaderAdderHandler(),
                 new AuthenticationFailResultFilter(),
                 new AuthorizationFailResultFilter(),
@@ -129,35 +144,24 @@ namespace Signals.Core.Web.Execution
                 }
             }
 
-            // determine the parameter binding method
-            var parameterBindingAttribute = validType?
-                .GetCustomAttributes(typeof(SignalsParameterBindingAttribute), false)
-                .Cast<SignalsParameterBindingAttribute>()
-                .FirstOrDefault();
+			// determine the parameter binding method
+			var parameterBindingAttribute = validType?
+				.GetCustomAttributes(typeof(SignalsParameterBindingAttribute), false)
+				.Cast<SignalsParameterBindingAttribute>()
+				.FirstOrDefault();
 
-            string param;
-            switch (parameterBindingAttribute?.ParameterBinding)
-            {
-                case ParameterBinding.FromUri:
-                case ParameterBinding.FromBody:
-                    param = httpContext.Body.Value;
-                    break;
-                case ParameterBinding.FromForm:
-                    var obj = new JObject();
-                    foreach (var formKey in httpContext.Form.Keys)
-                    {
-                        httpContext.Form.TryGetValue(formKey, out var value);
-                        obj[formKey] = value.ToString();
-                    }
-                    param = obj.SerializeJson();
-                    break;
-                default:
-                    param = httpContext.Body.Value;
-                    break;
-            }
-
-            // execute process
-            var response = executor.Execute(process, param);
+			// resolve default if not provided
+			if (parameterBindingAttribute.IsNull())
+			{
+				var method = EnumExtensions.FromString<ApiProcessMethod>(httpContext.HttpMethod?.ToUpper());
+				DefaultModelBinders.TryGetValue(method, out var modelBinder);
+				parameterBindingAttribute = new SignalsParameterBindingAttribute(modelBinder);
+			}
+	        
+			var param = parameterBindingAttribute.Binder.Bind(httpContext);
+	        
+			// execute process
+			var response = executor.Execute(process, param);
 
             // post execution events
             foreach (var executeEvent in ResultHandlers)

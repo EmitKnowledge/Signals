@@ -46,12 +46,42 @@ namespace Signals.Core.Web.Http
             _context.Response.ClearHeaders();
         }
 
-        /// <summary>
-        /// Get headers from response
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public string GetFromResponse(string name)
+	    /// <summary>
+	    /// Gets headers from request
+	    /// </summary>
+	    /// <returns></returns>
+	    public Dictionary<string, object> GetFromRequest()
+	    {
+		    var headers = new Dictionary<string, object>();
+		    foreach (var key in _context.Request.Headers.AllKeys)
+		    {
+			    var value = _context.Request.Headers[key];
+			    headers.Add(key, value);
+		    }
+		    return headers;
+	    }
+
+		/// <summary>
+		/// Get headers from response
+		/// </summary>
+		/// <returns></returns>
+		public Dictionary<string, object> GetFromResponse()
+	    {
+			var headers = new Dictionary<string, object>();
+			foreach (var key in _context.Response.Headers.AllKeys)
+		    {
+			    var value = _context.Response.Headers[key];
+			    headers.Add(key, value);
+		    }
+			return headers;
+		}
+
+		/// <summary>
+		/// Get headers from response
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public string GetFromResponse(string name)
         {
             return _context.Response.Headers[name];
         }
@@ -101,6 +131,34 @@ namespace Signals.Core.Web.Http
             _context.Response.Headers.Clear();
         }
 
+	    /// <summary>
+	    /// Gets headers from request
+	    /// </summary>
+	    /// <returns></returns>
+	    public Dictionary<string, object> GetFromRequest()
+	    {
+		    var headers = new Dictionary<string, object>();
+		    foreach (var header in _context.Request.Headers)
+		    {
+			    headers.Add(header.Key, header.Value);
+		    }
+		    return headers;
+	    }
+
+		/// <summary>
+		/// Get headers from response
+		/// </summary>
+		/// <returns></returns>
+		public Dictionary<string, object> GetFromResponse()
+	    {
+			var headers = new Dictionary<string, object>();
+			foreach (var header in _context.Response.Headers)
+		    {
+			    headers.Add(header.Key, header.Value);
+			}
+			return headers;
+		}
+
         /// <summary>
         /// Get headers from response
         /// </summary>
@@ -123,5 +181,5 @@ namespace Signals.Core.Web.Http
 
 #endif
 
-    }
+	}
 }

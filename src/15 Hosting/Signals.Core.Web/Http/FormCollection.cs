@@ -38,19 +38,20 @@ namespace Signals.Core.Web.Http
         public FormCollection(System.Web.HttpContext context)
         {
             _context = context;
-            
-            foreach (var key in _context.Request.Form.AllKeys)
+            var form = _context.Request?.Form;
+			if(form.IsNull()) return;
+            foreach (var key in form.AllKeys)
             {
-                var value = _context.Request.Form[key];
+                var value = form[key];
                 this.Add(key, value);
             }
         }
 
 #else
-        /// <summary>
-        /// Real http context
-        /// </summary>
-        private Microsoft.AspNetCore.Http.HttpContext _context;
+		/// <summary>
+		/// Real http context
+		/// </summary>
+		private Microsoft.AspNetCore.Http.HttpContext _context;
 
         /// <summary>
         /// CTOR
@@ -59,10 +60,12 @@ namespace Signals.Core.Web.Http
         public FormCollection(Microsoft.AspNetCore.Http.HttpContext context)
         {
             _context = context;
-            
-            foreach (var key in _context.Request.Form.Keys)
+			if(!_context.Request.HasFormContentType) return;
+			var form = _context.Request?.Form;
+			if(form.IsNull()) return;
+			foreach (var key in form.Keys)
             {
-                var value = _context.Request.Form[key];
+                var value = form[key];
                 this.Add(key, value);
             }
         }
