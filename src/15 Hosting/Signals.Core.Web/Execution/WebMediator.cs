@@ -103,9 +103,10 @@ namespace Signals.Core.Web.Execution
         public MiddlewareResult Dispatch()
         {
             var httpContext = SystemBootstrapper.GetInstance<IHttpContextWrapper>();
+	        var method = EnumExtensions.FromString<ApiProcessMethod>(httpContext.HttpMethod?.ToUpper());
 
-            // execute custom url handlers
-            foreach (var handler in CustomUrlHandlers)
+			// execute custom url handlers
+			foreach (var handler in CustomUrlHandlers)
             {
                 var result = handler.RenderContent(httpContext);
                 // check if url maches
@@ -153,15 +154,26 @@ namespace Signals.Core.Web.Execution
 			// resolve default if not provided
 			if (parameterBindingAttribute.IsNull())
 			{
-				var method = EnumExtensions.FromString<ApiProcessMethod>(httpContext.HttpMethod?.ToUpper());
 				DefaultModelBinders.TryGetValue(method, out var modelBinder);
 				parameterBindingAttribute = new SignalsParameterBindingAttribute(modelBinder);
 			}
 	        
 			var param = parameterBindingAttribute.Binder.Bind(httpContext);
-	        
+
 			// execute process
-			var response = executor.Execute(process, param);
+			var response = new VoidResult();
+
+			// decide if we need to execute
+	        switch (method)
+	        {
+
+				case ApiProcessMethod.OPTIONS:
+				case ApiProcessMethod.HEAD:
+					break;
+				default:
+					response = executor.Execute(process, param);
+					break;
+			}
 
             // post execution events
             foreach (var executeEvent in ResultHandlers)
