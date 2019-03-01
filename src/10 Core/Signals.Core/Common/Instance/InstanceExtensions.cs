@@ -76,5 +76,22 @@ namespace Signals.Core.Common.Instance
         {
             return value.CompareTo(lower) >= 0 && value.CompareTo(upper) <= 0;
         }
-    }
+
+		/// <summary>
+		/// Get default value for type
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static object GetDefaultValue(this Type type)
+	    {
+			if (type.IsValueType && Nullable.GetUnderlyingType(type) == null)
+			{
+				return Activator.CreateInstance(type);
+			}
+			else
+			{
+				return null;
+			}
+	    }
+	}
 }

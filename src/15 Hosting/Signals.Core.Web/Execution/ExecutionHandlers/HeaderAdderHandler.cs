@@ -3,7 +3,6 @@ using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Behaviour;
-using Signals.Core.Web.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +29,10 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
             var headers = SystemBootstrapper.GetInstance<List<ResponseHeaderAttribute>>();
             headers.ForEach(header =>
             {
-                context.Headers.AddToResponse(header.Name, header.Value);
+	            foreach (var responseHeader in header.Headers)
+	            {
+					context.Headers.AddToResponse(responseHeader.Key, responseHeader.Value);
+				}
             });
 
             var headerAttribute = type
@@ -41,7 +43,10 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
 
             headerAttribute.ForEach(header =>
             {
-                context.Headers.AddToResponse(header.Name, header.Value);
+	            foreach (var responseHeader in header.Headers)
+	            {
+		            context.Headers.AddToResponse(responseHeader.Key, responseHeader.Value);
+	            }
             });
 
             return MiddlewareResult.DoNothing;

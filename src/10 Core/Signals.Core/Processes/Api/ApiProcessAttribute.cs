@@ -45,8 +45,13 @@ namespace Signals.Core.Processes.Api
         /// <summary>
         /// Http method OPTIONS
         /// </summary>
-        OPTIONS
-    }
+        OPTIONS,
+
+	    /// <summary>
+	    /// Http method HEAD
+	    /// </summary>
+		HEAD
+	}
 
     /// <summary>
     /// Api process attribute

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Signals.Core.Processing.Input.Http
 {
@@ -8,7 +6,7 @@ namespace Signals.Core.Processing.Input.Http
     /// Wrapper around real header collection
     /// </summary>
     public interface IHeaderCollection
-    {
+	{
         /// <summary>
         /// Add header to response
         /// </summary>
@@ -21,12 +19,24 @@ namespace Signals.Core.Processing.Input.Http
         /// </summary>
         void RemoveAllFromResponse();
 
-        /// <summary>
-        /// Get headers from response
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        string GetFromResponse(string name);
+		/// <summary>
+		/// Gets headers from request
+		/// </summary>
+		/// <returns></returns>
+		Dictionary<string, object> GetFromRequest();
+
+		/// <summary>
+		/// Get headers from response
+		/// </summary>
+		/// <returns></returns>
+		Dictionary<string, object> GetFromResponse();
+
+		/// <summary>
+		/// Get headers from response
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		string GetFromResponse(string name);
 
         /// <summary>
         /// Gets headers from request

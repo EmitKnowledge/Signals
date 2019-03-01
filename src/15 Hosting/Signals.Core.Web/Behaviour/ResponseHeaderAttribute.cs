@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signals.Core.Web.Behaviour
 {
@@ -12,25 +9,42 @@ namespace Signals.Core.Web.Behaviour
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class ResponseHeaderAttribute : Attribute
     {
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        public ResponseHeaderAttribute(string key, string value)
+		/// <summary>
+		/// Defined response headers
+		/// </summary>
+	    public Dictionary<string, string> Headers { get; }
+
+		/// <summary>
+		/// CTOR
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		public ResponseHeaderAttribute(string key, string value)
         {
-            Name = key;
-            Value = value;
+			Headers = new Dictionary<string, string>()
+			{
+				{ key, value }
+			};
         }
 
-        /// <summary>
-        /// Header name
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Header value
-        /// </summary>
-        public string Value { get; set; }
+		/// <summary>
+		/// CTOR
+		/// </summary>
+		/// <param name="headers"></param>
+		public ResponseHeaderAttribute(params KeyValuePair<string, string>[] headers)
+	    {
+		    Headers = new Dictionary<string, string>();
+		    foreach (var header in headers)
+		    {
+				if (Headers.ContainsKey(header.Key))
+				{
+					Headers[header.Key] = header.Value;
+				}
+				else
+				{
+					Headers.Add(header.Key, header.Value);
+				}
+			}
+	    }
     }
 }

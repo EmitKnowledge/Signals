@@ -55,7 +55,6 @@ namespace Signals.Core.Processing.Input.Http
         /// </summary>
         ISessionProvider Session { get; set; }
 
-
         /// <summary>
         /// Write response
         /// </summary>

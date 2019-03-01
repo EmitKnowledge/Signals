@@ -68,7 +68,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 						.GetCustomAttributes(typeof(ResponseHeaderAttribute), false)
 						.Cast<ResponseHeaderAttribute>()
 						.Concat(headers)
-						.DistinctBy(x => x.Name)
+						.DistinctBy(x => x.Headers.Keys)
 						.ToList();
 
 					var contentType = EnumExtensions.GetDescription(SerializationFormat.Json);
@@ -88,14 +88,17 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
 					foreach (var header in headerAttributes)
 					{
-						headersDictionary.Add(header.Name, new OpenApiHeader
+						foreach (var headerValue in header.Headers)
 						{
-							Schema = new OpenApiSchema
+							headersDictionary.Add(headerValue.Key, new OpenApiHeader
 							{
-								Type = "string"
-							},
-							Example = new OpenApiString(header.Value)
-						});
+								Schema = new OpenApiSchema
+								{
+									Type = "string"
+								},
+								Example = new OpenApiString(headerValue.Value)
+							});
+						}
 					}
 
 					operationItem.Tags = new List<OpenApiTag>();
