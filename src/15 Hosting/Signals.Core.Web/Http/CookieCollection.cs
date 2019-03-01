@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json;
-using Signals.Core.Common.Instance;
-using System;
+﻿using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization;
 using Signals.Core.Processing.Input.Http;
+using System;
 
 namespace Signals.Core.Web.Http
 {
@@ -64,7 +63,13 @@ namespace Signals.Core.Web.Http
         public T Get<T>(string name) where T : class
         {
             var cookie = _context.Request.Cookies[name];
-            if (cookie.IsNull()) return (T)null;
+            if (cookie == null) return null;
+
+            if (typeof(T) == typeof(string))
+            {
+                return cookie.Value as T;
+            }
+
             return cookie.Value.Deserialize<T>(SerializationFormat.Json);
         }
 
@@ -120,6 +125,12 @@ namespace Signals.Core.Web.Http
         {
             var value = _context.Request.Cookies.ContainsKey(name) ? _context.Request.Cookies[name] : null;
             if (value.IsNullOrEmpty()) return(T)null;
+
+            if (typeof(T) == typeof(string))
+            {
+                return value as T;
+            }
+
             return value.Deserialize<T>(SerializationFormat.Json);
         }
 
