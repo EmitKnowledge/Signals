@@ -10,7 +10,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.1.2" />
-    <PackageReference Include="Signals.Core" Version="0.6.65" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)'=='net461'">
@@ -18,6 +17,10 @@
     <PackageReference Include="Microsoft.Owin" Version="4.0.1" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\10 Core\Signals.Core\Signals.Core.csproj" />
   </ItemGroup>
   
 </Project>

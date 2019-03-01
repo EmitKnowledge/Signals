@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Signals.Aspects.Localization.Database.Configurations;
+using Signals.Aspects.Localization.Entries;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
-using Signals.Aspects.Localization.Database.Configurations;
-using Signals.Aspects.Localization.Entries;
 
 namespace Signals.Aspects.Localization.Database.DataProviders
 {
@@ -359,27 +359,52 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 connection.Open();
 
                 var queryBuilder = new StringBuilder();
+                var counter = 0;
                 foreach (var localizationEntry in entries)
                 {
                     var entrySql =
                         $@"
-                            IF EXISTS (SELECT * FROM [{Configuration.LocalizationEntryTableName}] le WHERE le.LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND le.LocalizationLanguageId = {localizationEntry.LocalizationLanguageId})
+                            IF EXISTS 
+                            (
+                                SELECT * 
+                                FROM [{Configuration.LocalizationEntryTableName}] le 
+                                WHERE le.LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND 
+                                    le.LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}
+                            )
                                 UPDATE [{Configuration.LocalizationEntryTableName}]
-                                SET LocalizationCollectionId = {localizationEntry.LocalizationCollectionId}, LocalizationKeyId = {localizationEntry.LocalizationKeyId}, LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}, Value = @Entry
-                                WHERE LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}
+                                SET 
+                                    LocalizationCollectionId = {localizationEntry.LocalizationCollectionId}, 
+                                    LocalizationKeyId = {localizationEntry.LocalizationKeyId}, 
+                                    LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}, 
+                                    Value = @Entry{counter}
+                                WHERE LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND 
+                                    LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}
+
                             ELSE
-                                INSERT INTO [{Configuration.LocalizationEntryTableName}](LocalizationKeyId, LocalizationCollectionId, LocalizationLanguageId, Value)
-                                VALUES ({localizationEntry.LocalizationKeyId}, {localizationEntry.LocalizationCollectionId}, {localizationEntry.LocalizationLanguageId}, @Entry)
+                                INSERT INTO [{Configuration.LocalizationEntryTableName}]
+                                    (LocalizationKeyId, LocalizationCollectionId, LocalizationLanguageId, Value)
+                                VALUES 
+                                    (
+                                        {localizationEntry.LocalizationKeyId}, 
+                                        {localizationEntry.LocalizationCollectionId}, 
+                                        {localizationEntry.LocalizationLanguageId}, 
+                                        @Entry{counter++}
+                                    )
                         ";
+
                     queryBuilder.Append(entrySql + Environment.NewLine);
-
-                    var sql = queryBuilder.ToString();
-                    var command = new SqlCommand(sql, connection);
-                    command.Parameters.Add("Entry", SqlDbType.NVarChar);
-                    command.Parameters["Entry"].Value = localizationEntry.Value;
-
-                    command.ExecuteNonQuery();
                 }
+
+                var sql = queryBuilder.ToString();
+                var command = new SqlCommand(sql, connection);
+
+                for(var i = 0; i < entries.Count; i++)
+                {
+                    command.Parameters.Add($"Entry{i}", SqlDbType.NVarChar);
+                    command.Parameters[$"Entry{i}"].Value = entries[i].Value;
+                }
+
+                command.ExecuteNonQuery();
             }
         }
 
