@@ -100,10 +100,10 @@ namespace Signals.Core.Web.Http
             var options = new Microsoft.AspNetCore.Http.CookieOptions
             {
                 Expires = expiration,
-                HttpOnly = true
+                HttpOnly = true,
+                IsEssential = true
             };
-
-            _context.Response.Cookies.Append(name, value.SerializeJson(), options);
+            _context.Response.Cookies.Append(name, value is string ? value.ToString() : value.SerializeJson(), options);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Signals.Core.Web.Http
         public T Get<T>(string name) where T : class
         {
             var value = _context.Request.Cookies.ContainsKey(name) ? _context.Request.Cookies[name] : null;
-            if (value.IsNullOrEmpty()) return(T)null;
+            if (value.IsNullOrEmpty()) return (T)null;
 
             if (typeof(T) == typeof(string))
             {
