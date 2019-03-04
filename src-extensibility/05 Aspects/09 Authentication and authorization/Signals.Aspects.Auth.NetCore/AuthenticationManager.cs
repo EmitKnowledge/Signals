@@ -95,7 +95,7 @@ namespace Signals.Aspects.Auth.NetCore
         /// </summary>
         public void Logout()
         {
-            Context.SignOutAsync().Wait();
+            Context?.SignOutAsync().Wait();
             Thread.CurrentPrincipal = null;
         }
 
@@ -109,8 +109,13 @@ namespace Signals.Aspects.Auth.NetCore
             var principal = GetCurrentPrincipal();
             if (principal == null) return;
 
+            // Save the auth properties
             var claimProperties = principal.GetClaim<AuthenticationProperties>(PrincipalExtensions.AuthenticationPropertiesClaimName);
+
+            // Perfomr logout
             Logout();
+
+            // Log the user back in
             Login(principal, user, claimProperties);
         }
     }
