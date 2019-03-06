@@ -41,7 +41,10 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
 
             if (correctMethod)
             {
-                context.PutResponse(new HttpResponseMessage
+                var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
+                                 response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+
+                context.PutResponse(new HttpResponseMessage(statusCode)
                 {
                     Content = type.ToHttpContent(response)
                 });

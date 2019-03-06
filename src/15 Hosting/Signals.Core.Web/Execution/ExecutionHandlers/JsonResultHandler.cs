@@ -30,7 +30,10 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            context.PutResponse(new HttpResponseMessage
+            var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
+                             response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+
+            context.PutResponse(new HttpResponseMessage(statusCode)
             {
                 Content = type.ToHttpContent(response)
             });
