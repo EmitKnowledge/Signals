@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Signals.Core.Common.Reflection;
 using Signals.Core.Processing.Input.Http;
+using Signals.Core.Common.Instance;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers
 {
@@ -29,10 +30,13 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         {
             if (response is FileResult fileResponse)
             {
+            var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
+                             response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+
                 // create response
-                var httpRespose = new HttpResponseMessage
+                var httpRespose = new HttpResponseMessage(statusCode)
                 {
-                    Content = new StreamContent(fileResponse.Result),
+                    Content = fileResponse.IsNull() ? null : new StreamContent(fileResponse.Result),
                 };
 
                 httpRespose.Content.Headers.ContentType = new MediaTypeHeaderValue(fileResponse.MimeType);
