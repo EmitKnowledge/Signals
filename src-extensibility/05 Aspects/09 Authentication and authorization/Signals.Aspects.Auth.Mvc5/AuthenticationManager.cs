@@ -81,6 +81,7 @@ namespace Signals.Aspects.Auth.Mvc5
         {
             HttpContext.Current.GetOwinContext().Authentication.SignOut(HttpContext.Current?.User?.Identity?.AuthenticationType);
             Thread.CurrentPrincipal = null;
+            if (HttpContext.Current != null) HttpContext.Current.User = null;
         }
 
         /// <summary>
