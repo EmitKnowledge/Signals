@@ -150,25 +150,27 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         /// <returns></returns>
         private Task<IQueueClient> GetQueue(string queueName)
         {
-            if (!CreatedChannels.Contains(queueName))
+            var fullQueueName = $"{_configuration.ChannelPrefix}{queueName}";
+
+            if (!CreatedChannels.Contains(fullQueueName))
             {
                 lock (CreatedChannels)
                 {
-                    if (!CreatedChannels.Contains(queueName))
+                    if (!CreatedChannels.Contains(fullQueueName))
                     {
                         var managementClient = new ManagementClient(_configuration.ConnectionString);
-                        var exists = managementClient.QueueExistsAsync(queueName).Result;
+                        var exists = managementClient.QueueExistsAsync(fullQueueName).Result;
 
                         if (!exists)
                         {
-                            managementClient.CreateQueueAsync(queueName).Wait();
-                            CreatedChannels.Add(queueName);
+                            managementClient.CreateQueueAsync(fullQueueName).Wait();
+                            CreatedChannels.Add(fullQueueName);
                         }
                     }
                 }
             }
 
-            var client = new QueueClient(_configuration.ConnectionString, queueName, ReceiveMode.PeekLock, RetryPolicy.Default);
+            var client = new QueueClient(_configuration.ConnectionString, fullQueueName, ReceiveMode.PeekLock, RetryPolicy.Default);
             return Task.FromResult((IQueueClient)client);
         }
     }
