@@ -97,6 +97,7 @@ namespace Signals.Aspects.Auth.NetCore
         {
             Context?.SignOutAsync().Wait();
             Thread.CurrentPrincipal = null;
+            if (Context != null) Context.User = null;
         }
 
         /// <summary>
