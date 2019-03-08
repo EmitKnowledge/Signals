@@ -77,8 +77,8 @@ namespace Signals.Aspects.Localization.File.DataProviders
                         {
                             Value = localizationPair.Value,
                             LocalizationCollection = localizationCollection,
-                            LocalizationKey = new LocalizationKey { Name = localizationPair.Key.ToLower() },
-                            LocalizationLanguage = new LocalizationLanguage { Name = localizationCode.ToLower(), Value = new CultureInfo(localizationCode).DisplayName }
+                            LocalizationKey = new LocalizationKey { Name = localizationPair.Key },
+                            LocalizationLanguage = new LocalizationLanguage { Name = localizationCode, Value = new CultureInfo(localizationCode).DisplayName }
                         });
                     }
                 }
