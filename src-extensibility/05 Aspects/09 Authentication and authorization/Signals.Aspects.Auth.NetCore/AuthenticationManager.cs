@@ -34,8 +34,16 @@ namespace Signals.Aspects.Auth.NetCore
         /// <returns></returns>
         public ClaimsPrincipal GetCurrentPrincipal()
         {
-            if (Context?.User?.Identity?.IsAuthenticated == true) return Context.User;
-            if (Thread.CurrentPrincipal?.Identity?.IsAuthenticated == true) return Thread.CurrentPrincipal as ClaimsPrincipal;
+            if (Context != null)
+            {
+                if (Context?.User?.Identity?.IsAuthenticated == true)
+                    return Context.User;
+                else
+                    return null;
+            }
+
+            if (Thread.CurrentPrincipal?.Identity?.IsAuthenticated == true)
+                return Thread.CurrentPrincipal as ClaimsPrincipal;
 
             return null;
         }

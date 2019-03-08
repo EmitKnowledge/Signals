@@ -19,8 +19,16 @@ namespace Signals.Aspects.Auth.Mvc5
         /// <returns></returns>
         public ClaimsPrincipal GetCurrentPrincipal()
         {
-            if (HttpContext.Current.User?.Identity?.IsAuthenticated == true) return HttpContext.Current.User as ClaimsPrincipal;
-            if (Thread.CurrentPrincipal?.Identity?.IsAuthenticated == true) return Thread.CurrentPrincipal as ClaimsPrincipal;
+            if (HttpContext.Current != null)
+            {
+                if (HttpContext.Current?.User?.Identity?.IsAuthenticated == true)
+                    return HttpContext.Current.User as ClaimsPrincipal;
+                else
+                    return null;
+            }
+
+            if (Thread.CurrentPrincipal?.Identity?.IsAuthenticated == true)
+                return Thread.CurrentPrincipal as ClaimsPrincipal;
 
             return null;
         }
