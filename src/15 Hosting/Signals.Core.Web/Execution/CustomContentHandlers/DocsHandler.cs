@@ -19,25 +19,39 @@ using Signals.Core.Web.Configuration;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Reflection.Emit;
 using EnumExtensions = Signals.Core.Common.Instance.EnumExtensions;
 
 namespace Signals.Core.Web.Execution.CustomContentHandlers
 {
-	/// <summary>
-	/// Docs api point handler
-	/// </summary>
-	public class DocsHandler : ICustomUrlHandler
+    /// <summary>
+    /// Docs api point handler
+    /// </summary>
+    public class DocsHandler : ICustomUrlHandler
 	{
-		/// <summary>
-		/// Get api document generated from all api processes
-		/// </summary>
-		/// <returns></returns>
-		private OpenApiDocument GenerateDocs()
+        /// <summary>
+        /// Represents node visitor state
+        /// </summary>
+	    class OpenApiSchemaNode
+	    {
+            /// <summary>
+            /// Property for processing
+            /// </summary>
+            public PropertyInfo Property { get; set; }
+
+            /// <summary>
+            /// Depth of the property in the class hierarchy
+            /// </summary>
+            public int Depth { get; set; }
+        }
+
+        /// <summary>
+        /// Get api document generated from all api processes
+        /// </summary>
+        /// <returns></returns>
+        private OpenApiDocument GenerateDocs()
 		{
 			var headers = SystemBootstrapper.GetInstance<List<ResponseHeaderAttribute>>();
 			var processRepo = SystemBootstrapper.GetInstance<ProcessRepository>();
@@ -166,17 +180,20 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 				var result = new Dictionary<string, OpenApiSchema>();
 				// set shema props of the parent property
 				var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-				Stack<PropertyInfo> toProcess = new Stack<PropertyInfo>(properties);
+				Stack<OpenApiSchemaNode> toProcess = new Stack<OpenApiSchemaNode>(properties.Select(x => new OpenApiSchemaNode { Property = x }));
 				Stack<OpenApiSchema> parentSchemas = new Stack<OpenApiSchema>();
 
-				// build the object hierarchy
-				while (toProcess.Count > 0)
-				{
-					var property = toProcess.Pop();
-					var schema = GetOpenApiSchema(property);
-					var parentSchema = parentSchemas.Count == 0 ? null : parentSchemas.Pop();
+			    var MAX_DEPTH = 5;
 
-					if (parentSchema != null)
+                // build the object hierarchy
+                while (toProcess.Count > 0)
+				{
+					var propertyNode = toProcess.Pop();
+					var schema = GetOpenApiSchema(propertyNode.Property);
+					var parentSchema = parentSchemas.Count == 0 ? null : parentSchemas.Pop();
+				    if (propertyNode.Depth == MAX_DEPTH) continue;
+
+                    if (parentSchema != null)
 					{
 						if (parentSchema.Type == "array")
 						{
@@ -187,28 +204,28 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 						{
 							parentSchema.Properties.Add(schema.Title, schema);
 						}
-					}
+                    }
 					else
 					{
-						result.Add(property.Name, schema);
+						result.Add(propertyNode.Property.Name, schema);
 					}
 
 					// process the complex types
-					if (!property.PropertyType.IsPrimitive &&
-						!property.PropertyType.IsValueType &&
-						!typeof(IEnumerable).IsAssignableFrom(property.PropertyType) &&
-						typeof(string) != property.PropertyType)
+					if (!propertyNode.Property.PropertyType.IsPrimitive &&
+						!propertyNode.Property.PropertyType.IsValueType &&
+						!typeof(IEnumerable).IsAssignableFrom(propertyNode.Property.PropertyType) &&
+						typeof(string) != propertyNode.Property.PropertyType)
 					{
-						properties = property.PropertyType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                        properties = propertyNode.Property.PropertyType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 						foreach (var propertyInfo in properties)
 						{
-							toProcess.Push(propertyInfo);
+							toProcess.Push(new OpenApiSchemaNode { Property = propertyInfo, Depth = propertyNode.Depth + 1 });
 							parentSchemas.Push(schema);
-						}
+                        }
 					}
-					else if (typeof(IDictionary).IsAssignableFrom(property.PropertyType))
+					else if (typeof(IDictionary).IsAssignableFrom(propertyNode.Property.PropertyType))
 					{
-						var argument = property.PropertyType.GetGenericArguments().LastOrDefault();
+                        var argument = propertyNode.Property.PropertyType.GetGenericArguments().LastOrDefault();
 						var value = GetDefaultValue(argument);
 						var obj = new
 						{
@@ -219,23 +236,23 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
 						foreach (var propertyInfo in properties)
 						{
-							toProcess.Push(propertyInfo);
+							toProcess.Push(new OpenApiSchemaNode { Property = propertyInfo, Depth = propertyNode.Depth + 1 });
 							parentSchemas.Push(schema);
-						}
-					}
-					else if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType) &&
-							 typeof(string) != property.PropertyType)
+                        }
+                    }
+					else if (typeof(IEnumerable).IsAssignableFrom(propertyNode.Property.PropertyType) &&
+							 typeof(string) != propertyNode.Property.PropertyType)
 					{
-						properties = property.PropertyType
+                        properties = propertyNode.Property.PropertyType
 												   .GetGenericArguments()
 												   .FirstOrDefault()?
 												   .GetProperties(BindingFlags.Instance | BindingFlags.Public) ?? new PropertyInfo[0];
 						foreach (var propertyInfo in properties)
 						{
-							toProcess.Push(propertyInfo);
+							toProcess.Push(new OpenApiSchemaNode { Property = propertyInfo, Depth = propertyNode.Depth + 1 });
 							parentSchemas.Push(schema);
-						}
-					}
+                        }
+                    }
 				}
 
 				return result;
