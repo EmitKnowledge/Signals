@@ -70,8 +70,6 @@ namespace Signals.Core.Processing.Execution
         {
             var pipe = new List<IExecutionHandler>
             {
-                new AuthenticationHandler(),
-                new AuthorizingHandler(),
                 new ErrorLoggingHandler(),
                 new AuditingHandler(),
                 new ErrorManagingHandler(),
