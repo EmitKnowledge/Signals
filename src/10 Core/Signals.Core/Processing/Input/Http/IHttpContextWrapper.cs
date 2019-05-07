@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using Signals.Core.Processing.Input.Http.Models;
 
 namespace Signals.Core.Processing.Input.Http
 {
@@ -23,7 +24,7 @@ namespace Signals.Core.Processing.Input.Http
         /// <summary>
         /// Streams of input files
         /// </summary>
-        IEnumerable<Stream> Files { get; set; }
+        IEnumerable<InputFile> Files { get; set; }
 
         /// <summary>
         /// Request query

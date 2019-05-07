@@ -4,6 +4,7 @@ using Microsoft.Extensions.Primitives;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Input.Http;
+using Signals.Core.Processing.Input.Http.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +31,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Streams of input files
         /// </summary>
-        public IEnumerable<Stream> Files { get; set; }
+        public IEnumerable<InputFile> Files { get; set; }
 
         /// <summary>
         /// Request query
@@ -82,7 +83,7 @@ namespace Signals.Core.Web.Http
         {
             var context = System.Web.HttpContext.Current;
             if (context == null) return;
-            
+
             Headers = new HeaderCollection(context);
             Cookies = new CookieCollection(context);
             Form = new FormCollection(context);
@@ -94,7 +95,13 @@ namespace Signals.Core.Web.Http
 
             Body = new Lazy<string>(() => ExtractBody(context.Request.InputStream));
             HttpMethod = context.Request.HttpMethod.ToUpperInvariant();
-            Files = context.Request.Files.AllKeys.Select(x => context.Request.Files[x].InputStream);
+            Files = context.Request.Files.AllKeys.Select(x => new InputFile
+            {
+                File = context.Request.Files[x]?.InputStream,
+                MimeType = context.Request.Files[x]?.ContentType,
+                FormInputName = x,
+                FileName = context.Request.Files[x]?.FileName
+            });
             RawUrl = context.Request.Url.AbsolutePath;
         }
 
@@ -148,8 +155,22 @@ namespace Signals.Core.Web.Http
             HttpMethod = context.Request.Method.ToUpperInvariant();
 
             // Form throws exception
-            try { Files = context.Request?.Form?.Files?.Select(x => x.OpenReadStream()) ?? new List<Stream>(); }
-            catch { Files = new List<Stream>(); }
+            try
+            {
+                Files = context.Request?.Form?.Files?
+                            .Select(x => new InputFile
+                            {
+                                File = x.OpenReadStream(),
+                                FileName = x.FileName,
+                                FormInputName = x.Name,
+                                MimeType = x.ContentType
+                            })
+                        ?? new List<InputFile>();
+            }
+            catch
+            {
+                Files = new List<InputFile>();
+            }
 
             RawUrl = context.Request.Path.Value;
         }
