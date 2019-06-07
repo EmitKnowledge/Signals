@@ -1,5 +1,6 @@
 ﻿using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
+using Signals.Core.Common.Serialization;
 using Signals.Core.Configuration;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Behaviour;
@@ -75,7 +76,8 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                                 writer.WriteLine(
                                 $@"Date :{DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
 								Message :{ex.Message}{Environment.NewLine}
-								StackTrace :{ex.StackTrace}");
+								StackTrace :{ex.StackTrace}
+								Data :{args.SerializeJson()}");
 
                                 stream.Position = 0;
                                 Attachment attachment = new Attachment(stream, "text/text");
