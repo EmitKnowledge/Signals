@@ -67,7 +67,8 @@ namespace Signals.Tests.ErrorHandling
             var timesExecuted = 0;
             Exception exception = null;
 
-            var strategy = new RetryStrategy {
+            var strategy = new RetryStrategy
+            {
                 RetryCount = retriesConfiguration,
                 OnRetry = (ex) => exception = ex
             };
@@ -84,6 +85,27 @@ namespace Signals.Tests.ErrorHandling
             Assert.Equal(expectedExecutions, timesExecuted);
             Assert.Equal(expectedException, executionResult.Exception != null);
             Assert.Equal(expectedException, exception != null);
+        }
+
+        [Theory]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        public void EmptyPolicy_WhenException_Throw(bool isPositive, bool expectedException)
+        {
+            var policyRegistry = new StrategyBuilder();
+            var timesExecuted = 0;
+
+            var policy = policyRegistry.Build();
+            var executionResult = policy.Execute(() =>
+            {
+                timesExecuted++;
+                var num = GetNumber(isPositive);
+                if (num <= 0) throw new Exception();
+                return num;
+            });
+
+            Assert.Equal(1, timesExecuted);
+            Assert.Equal(expectedException, executionResult.Exception != null);
         }
     }
 }

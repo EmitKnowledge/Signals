@@ -28,7 +28,7 @@ namespace Signals.Aspects.ErrorHandling.Strategies
         public Action Reset { get; set; }
 
         /// <summary>
-        /// Handle for maually disallowing execution
+        /// Handle for manually disallowing execution
         /// </summary>
         public Action Isolate { get; set; }
     }

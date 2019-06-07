@@ -43,14 +43,20 @@ namespace Signals.Aspects.ErrorHandling.Polly
         /// <returns></returns>
         public IStrategyHandler Build()
         {
-            if (!_strategyHandlers.Any()) return null;
+            if (!_strategyHandlers.Any()) return new EmptyHandler();
 
             if (_strategyHandlers.Count > 1)
             {
                 return new WrapHandler(_strategyHandlers.ToArray());
             }
-
-	        return _strategyHandlers.First();
+            else if (_strategyHandlers.Count == 1)
+            {
+                return _strategyHandlers.First();
+            }
+            else
+            {
+                return new EmptyHandler();
+            }
         }
     }
 }
