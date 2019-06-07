@@ -71,16 +71,12 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                                 var subject = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Subject);
                                 var body = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Body);
 
-                                var stream = new MemoryStream();
-                                var writer = new StreamWriter(stream);
-                                writer.WriteLine(
-                                $@"Date :{DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
-								Message :{ex.Message}{Environment.NewLine}
-								StackTrace :{ex.StackTrace}
-								Data :{args?.SerializeJson()}");
+                                var data = $@"Date: {DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
+Message: {ex.Message}{Environment.NewLine}
+StackTrace: {ex.StackTrace}{Environment.NewLine}
+Data: {args?.SerializeJson()}{Environment.NewLine}";
 
-                                stream.Position = 0;
-                                Attachment attachment = new Attachment(stream, "critical_info.txt", "text/text");
+                                Attachment attachment = Attachment.CreateAttachmentFromString(data, "critical_info.txt");
 
                                 var message = new MailMessage();
                                 message.From = new MailAddress(from);
@@ -95,8 +91,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                                 message.Attachments.Add(attachment);
 
                                 var sendTask = client
-                                    .SendMailAsync(message)
-                                    .ContinueWith(task => writer.Dispose());
+                                    .SendMailAsync(message);
 
                                 sendingEmailTasks.Add(sendTask);
                             }
