@@ -77,10 +77,10 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                                 $@"Date :{DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
 								Message :{ex.Message}{Environment.NewLine}
 								StackTrace :{ex.StackTrace}
-								Data :{args.SerializeJson()}");
+								Data :{args?.SerializeJson()}");
 
                                 stream.Position = 0;
-                                Attachment attachment = new Attachment(stream, "text/text");
+                                Attachment attachment = new Attachment(stream, "critical_info.txt", "text/text");
 
                                 var message = new MailMessage();
                                 message.From = new MailAddress(from);

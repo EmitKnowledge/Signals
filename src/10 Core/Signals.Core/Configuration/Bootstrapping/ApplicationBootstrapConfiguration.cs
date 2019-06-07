@@ -32,7 +32,7 @@ namespace Signals.Core.Configuration.Bootstrapping
 	/// Aspects configuration
 	/// </summary>
 	public abstract class ApplicationBootstrapConfiguration
-	{
+    {
         /// <summary>
         /// Serialization settings
         /// </summary>

@@ -12,6 +12,11 @@ namespace Signals.Aspects.ErrorHandling.Polly.Strategies
     public abstract class StrategyHandler : IStrategyHandler
     {
         /// <summary>
+        /// Should automatically use defined strategy on processes
+        /// </summary>
+        public bool AutoHandleErrorProcesses { get; internal set; }
+        
+        /// <summary>
         /// Polly policy 
         /// </summary>
         internal Policy Policy { get; set; }

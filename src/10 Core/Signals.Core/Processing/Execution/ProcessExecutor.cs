@@ -47,7 +47,7 @@ namespace Signals.Core.Processing.Execution
                 new AuthorizingHandler(),
                 new ErrorLoggingHandler(),
                 new AuditingHandler(),
-                //new ErrorManagingHandler(),
+                new ErrorManagingHandler(),
                 new CriticalNotifyingHandler(),
                 new CommonProcessExecutionHandler(),
             };
@@ -72,7 +72,7 @@ namespace Signals.Core.Processing.Execution
             {
                 new ErrorLoggingHandler(),
                 new AuditingHandler(),
-                //new ErrorManagingHandler(),
+                new ErrorManagingHandler(),
                 new CriticalNotifyingHandler(),
                 new BackgroundProcessExecutionHandler(),
             };

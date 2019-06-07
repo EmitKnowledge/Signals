@@ -30,7 +30,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
             var strategyHandler = SystemBootstrapper.GetInstance<IStrategyHandler>();
-            if (strategyHandler.IsNull())
+            if (strategyHandler.IsNull() || !strategyHandler.AutoHandleErrorProcesses)
             {
                 try
                 {

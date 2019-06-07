@@ -17,11 +17,17 @@ namespace Signals.Aspects.ErrorHandling.Polly
         private readonly List<StrategyHandler> _strategyHandlers;
 
         /// <summary>
+        /// 
+        /// </summary>
+        private bool ShouldAutoHandle { get; set; }
+
+        /// <summary>
         /// CTOR
         /// </summary>
         public StrategyBuilder()
         {
             _strategyHandlers = new List<StrategyHandler>();
+            ShouldAutoHandle = true;
         }
 
         /// <summary>
@@ -43,20 +49,41 @@ namespace Signals.Aspects.ErrorHandling.Polly
         /// <returns></returns>
         public IStrategyHandler Build()
         {
-            if (!_strategyHandlers.Any()) return new EmptyHandler();
-
-            if (_strategyHandlers.Count > 1)
+            if (!_strategyHandlers.Any())
             {
-                return new WrapHandler(_strategyHandlers.ToArray());
+                var _handler = new EmptyHandler();
+                _handler.AutoHandleErrorProcesses = ShouldAutoHandle;
+                return _handler;
+            }
+            else if (_strategyHandlers.Count > 1)
+            {
+                var _handler = new WrapHandler(_strategyHandlers.ToArray());
+                _handler.AutoHandleErrorProcesses = ShouldAutoHandle;
+                return _handler;
             }
             else if (_strategyHandlers.Count == 1)
             {
-                return _strategyHandlers.First();
+                var _handler = _strategyHandlers.First();
+                _handler.AutoHandleErrorProcesses = ShouldAutoHandle;
+                return _handler;
             }
             else
             {
-                return new EmptyHandler();
+                var _handler = new EmptyHandler();
+                _handler.AutoHandleErrorProcesses = ShouldAutoHandle;
+                return _handler;
             }
+        }
+
+        /// <summary>
+        /// Should automatically use defined strategy on processes
+        /// </summary>
+        /// <param name="shouldAutoHandle"></param>
+        /// <returns></returns>
+        public IStrategyBuilder SetAutoHandling(bool shouldAutoHandle = true)
+        {
+            ShouldAutoHandle = shouldAutoHandle;
+            return this;
         }
     }
 }

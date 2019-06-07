@@ -17,9 +17,18 @@ namespace Signals.Aspects.ErrorHandling
         IStrategyBuilder Add<TException>(Strategy strategy) where TException : Exception;
 
         /// <summary>
+        /// Should automatically use defined strategy on processes
+        /// </summary>
+        /// <param name="shouldAutoHandle"></param>
+        /// <returns></returns>
+        IStrategyBuilder SetAutoHandling(bool shouldAutoHandle = true);
+
+        /// <summary>
         /// Builds handler out of strategies
         /// </summary>
         /// <returns></returns>
         IStrategyHandler Build();
+
+
     }
 }

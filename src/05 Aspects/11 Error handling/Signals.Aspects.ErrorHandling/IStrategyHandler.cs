@@ -9,6 +9,11 @@ namespace Signals.Aspects.ErrorHandling
 	public interface IStrategyHandler
 	{
         /// <summary>
+        /// Should automatically use defined strategy on processes
+        /// </summary>
+        bool AutoHandleErrorProcesses { get; }
+
+        /// <summary>
         /// Execute callback wrapped in an execution strategy
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
