@@ -103,7 +103,6 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
                         var obj = JsonConvert.DeserializeObject<T>(messageBody);
                         action(obj);
                     }
-                    
                 }
 
                 Subscriptions.Add(channelName, WrappedAction);
@@ -136,7 +135,8 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
                         }
                     }
                 };
-                SqlDependency.Start();
+                // Keep the connection up to 10 mins before destructing the Sql dependency infrastructure from MSSQL
+                SqlDependency.Start(watchDogTimeOut: 600);
             }
         }
 
