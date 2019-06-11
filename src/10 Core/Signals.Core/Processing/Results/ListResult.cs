@@ -57,7 +57,7 @@ namespace Signals.Core.Processing.Results
         /// Wrap result in list result
         /// </summary>
         /// <param name="result"></param>
-        public static implicit operator ListResult<T>((List<T> list, int totalCount) result)
+        public static implicit operator ListResult<T>((List<T> list, int? totalCount) result)
         {
             return new ListResult<T>(result.list, result.totalCount);
         }
