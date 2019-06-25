@@ -5,15 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Users\**" />
+    <EmbeddedResource Remove="Users\**" />
+    <None Remove="Users\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\20 Domain\21 Configuration\App.Domain.Configuration\App.Domain.Configuration.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\22 Entities\App.Domain.Entities\App.Domain.Entities.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\23 Repository\App.Domain.DataRepositoryContracts\App.Domain.DataRepositoryContracts.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\24 Processes\App.Domain.Processes\App.Domain.Processes.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\24 Processes\App.Domain.Resources\App.Domain.Resources.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Users\" />
   </ItemGroup>
 
 </Project>

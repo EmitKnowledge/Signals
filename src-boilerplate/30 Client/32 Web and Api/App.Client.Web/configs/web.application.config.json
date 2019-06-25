@@ -3,9 +3,9 @@
 	"Analytics": {
 		"enableAnalytics": false
 	},
-	"staticResources": {
-		"cdnUrl": "https://local.app.com"
-	},
+  "staticResources": {
+    "cdnUrl": "http://localhost/"
+  },
 	"sslConfiguration": {
 		"port": 443
 	}

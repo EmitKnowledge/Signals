@@ -1,6 +1,7 @@
 ﻿using App.Domain.Configuration;
 using App.Domain.Entities.Users;
 using Signals.Aspects.Localization.Helpers;
+using Signals.Core.Common.Regexes;
 using Signals.Core.Processing.Specifications;
 
 namespace App.Domain.Processes.Users.Specification

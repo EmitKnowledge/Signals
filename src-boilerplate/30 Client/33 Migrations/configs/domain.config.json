@@ -1,16 +1,16 @@
 ﻿{
   "ApplicationConfiguration": {
-    "ProjectName": null,
-    "ApplicationName": null,
-    "Enviroment": null
+    "ProjectName": "App",
+    "ApplicationName": "App.Client.Migrations",
+    "Enviroment": "Dev"
   },
   "SecurityConfiguration": {
-    "SaltLenght": 0,
-    "AutoPasswordLenght": 0,
-    "MinPasswordLenght": 0,
-    "TokenLenght": 0,
-    "TokenValidityInDays": 0,
-    "Fish": null
+    "SaltLenght": 32,
+    "AutoPasswordLenght": 12,
+    "MinPasswordLenght": 12,
+    "TokenLenght": 128,
+    "TokenValidityInDays": 1,
+    "Fish": "KTVRaRB4AcSkL9ryvYPAEXmU"
   },
   "NotificationConfiguration": {
     "Namespace": null,
@@ -50,12 +50,15 @@
     ]
   },
   "WebConfiguration": {
-    "Url": null,
-    "MaxPageSize": 0
+    "Url": "http://localhost/",
+    "MaxPageSize": 100
   },
   "DatabaseConfiguration": {
     "DatabaseConnections": null,
-    "ActiveEnvironment": null,
-    "ActiveConfiguration": null
+    "ActiveEnvironment": null
+  },
+  "LocalizationConfiguration": {
+    "CookieKey": "_cultureInfo",
+    "DefaultCulture": "en-US"
   }
 }
