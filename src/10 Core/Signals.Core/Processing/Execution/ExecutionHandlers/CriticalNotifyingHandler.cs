@@ -84,6 +84,7 @@ Data: {args?.SerializeJson()}{Environment.NewLine}";
                                 message.From = new MailAddress(from);
                                 message.Subject = subject;
                                 message.Body = body;
+                                message.IsBodyHtml = true;
 
                                 foreach (var email in emails)
                                 {
