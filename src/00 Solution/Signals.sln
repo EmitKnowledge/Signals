@@ -63,6 +63,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Core.Background", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "15 Hosting", "15 Hosting", "{C0D0F511-FF15-427F-85C7-34F48EE15503}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "13 Benchmarking", "13 Benchmarking", "{A67F5365-7789-4A28-8F38-053E951C6989}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signals.Aspects.Benchmarking", "..\05 Aspects\13 Benchmarking\Signals.Aspects.Benchmarking\Signals.Aspects.Benchmarking.csproj", "{B8EE1806-4F80-4660-BE29-E9E1B82BA60B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +133,10 @@ Global
 		{93DD9FC5-75CF-46A3-BEC9-0475CAE361CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93DD9FC5-75CF-46A3-BEC9-0475CAE361CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93DD9FC5-75CF-46A3-BEC9-0475CAE361CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8EE1806-4F80-4660-BE29-E9E1B82BA60B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8EE1806-4F80-4660-BE29-E9E1B82BA60B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8EE1806-4F80-4660-BE29-E9E1B82BA60B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8EE1806-4F80-4660-BE29-E9E1B82BA60B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -161,6 +169,8 @@ Global
 		{6B449A52-D8D4-42B3-ABB1-084AF0A66ADC} = {352DEB71-4C4E-4305-B56F-DC401481AC98}
 		{5D1E453D-6BC9-4C20-A406-248ADFA55D77} = {C0D0F511-FF15-427F-85C7-34F48EE15503}
 		{93DD9FC5-75CF-46A3-BEC9-0475CAE361CC} = {C0D0F511-FF15-427F-85C7-34F48EE15503}
+		{A67F5365-7789-4A28-8F38-053E951C6989} = {D0434DD7-37D0-4C92-9BF9-650C3308E76E}
+		{B8EE1806-4F80-4660-BE29-E9E1B82BA60B} = {A67F5365-7789-4A28-8F38-053E951C6989}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54E67EA7-D94E-47A1-9CD6-B48453B04539}

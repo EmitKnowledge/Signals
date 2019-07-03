@@ -41,16 +41,17 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             }
             catch (Exception ex)
             {
+                var happeningDate = DateTime.UtcNow;
                 if (ApplicationConfiguration.Instance?.CriticalConfiguration != null)
                 {
                     string InterpolateException(string originalString)
                     {
                         return originalString
-                            .Replace("[#Message#]", ex.Message)
+                            .Replace("[#Date#]", happeningDate.ToString(CultureInfo.InvariantCulture))
                             .Replace("[#Process#]", processType.Name)
                             .Replace("[#Message#]", ex.Message)
-                            .Replace("[#Stack#]", ex.StackTrace)
-                            .Replace("[#StackTrace#]", ex.StackTrace);
+                            .Replace("[#StackTrace#]", ex.StackTrace)
+                            .Replace("[#Data#]", args?.SerializeJson());
                     }
 
                     var client = SystemBootstrapper.GetInstance<SmtpClient>();
@@ -71,7 +72,8 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                                 var subject = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Subject);
                                 var body = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Body);
 
-                                var data = $@"Date: {DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
+                                var data = $@"Date: {happeningDate.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
+Process: {processType.Name}{Environment.NewLine}
 Message: {ex.Message}{Environment.NewLine}
 StackTrace: {ex.StackTrace}{Environment.NewLine}
 Data: {args?.SerializeJson()}{Environment.NewLine}";
