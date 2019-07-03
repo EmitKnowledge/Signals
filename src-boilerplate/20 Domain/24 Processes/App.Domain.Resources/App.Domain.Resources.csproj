@@ -14,6 +14,9 @@
     <None Update="system.resources\pages\example.en-US.app">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="system.resources\processes\example.en-US.app">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="system.resources\validationrules\example.en-US.app">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

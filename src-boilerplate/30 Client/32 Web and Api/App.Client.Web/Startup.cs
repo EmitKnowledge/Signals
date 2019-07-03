@@ -1,40 +1,64 @@
+using App.Domain.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NodaTime;
+using NodaTime.Serialization.JsonNet;
+using Signals.Aspects.Auth.NetCore.Extensions;
 using Signals.Core.Web.Extensions;
 using System;
+using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Reflection;
 
 namespace App.Client.Web
 {
+    /// <summary>
+    /// Statrtup configuration
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Application configuration
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services
-                .Configure<CookiePolicyOptions>(options =>
-                {
-                    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                    options.CheckConsentNeeded = context => true;
-                    options.MinimumSameSitePolicy = SameSiteMode.None;
-                })
                 .AddMvc()
+                .AddJsonOptions(o => {
+                    o.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             return services.AddSignals();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -48,11 +72,34 @@ namespace App.Client.Web
             }
 
             app.UseHttpsRedirection();
+
+            app.Use((HttpContext context, Func<Task> next) =>
+            {
+                var cookieKey = DomainConfiguration.Instance.LocalizationConfiguration.CookieKey;
+                var defaultCulture = DomainConfiguration.Instance.LocalizationConfiguration.DefaultCulture;
+
+                if (context.Request.Cookies.ContainsKey(cookieKey))
+                {
+                    var cookie = context.Request.Cookies[cookieKey];
+                    Thread.CurrentThread.CurrentCulture = new CultureInfo(cookie);
+                }
+                else
+                {
+                    context.Response.Cookies.Append(cookieKey, defaultCulture);
+                    Thread.CurrentThread.CurrentCulture = new CultureInfo(defaultCulture);
+                }
+
+                Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+
+                return next();
+            });
+
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            app.UseSignalsAuth();
             app.UseSignals();
-            app.UseMvc();
+            app.UseMvcWithDefaultRoute();
         }
     }
 }
