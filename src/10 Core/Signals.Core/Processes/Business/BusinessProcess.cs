@@ -34,16 +34,10 @@ namespace Signals.Core.Processes.Business
         }
 
         /// <summary>
-        /// Authentication layer
+        /// Authentication and authorization layer
         /// </summary>
         /// <returns></returns>
-        public abstract TResponse Authenticate();
-
-        /// <summary>
-        /// Authorization layer
-        /// </summary>
-        /// <returns></returns>
-        public abstract TResponse Authorize();
+        public abstract TResponse Auth();
 
         /// <summary>
         /// Validation layer
@@ -63,10 +57,7 @@ namespace Signals.Core.Processes.Business
         /// <returns></returns>
         internal virtual TResponse Execute()
         {
-            var result = Authenticate();
-            if (result.IsFaulted) return result;
-
-            result = Authorize();
+            var result = Auth();
             if (result.IsFaulted) return result;
 
             result = Validate();
@@ -113,18 +104,11 @@ namespace Signals.Core.Processes.Business
         }
 
         /// <summary>
-        /// Authentication layer
+        /// Authentication and authorization layer
         /// </summary>
         /// <param name="obj1"></param>
         /// <returns></returns>
-        public abstract TResponse Authenticate(T1 obj1);
-
-        /// <summary>
-        /// Authorization layer
-        /// </summary>
-        /// <param name="obj1"></param>
-        /// <returns></returns>
-        public abstract TResponse Authorize(T1 obj1);
+        public abstract TResponse Auth(T1 obj1);
 
         /// <summary>
         /// Validation layer
@@ -147,10 +131,7 @@ namespace Signals.Core.Processes.Business
         /// <returns></returns>
         internal virtual TResponse Execute(T1 obj1)
         {
-            var result = Authenticate(obj1);
-            if (result.IsFaulted) return result;
-
-            result = Authorize(obj1);
+            var result = Auth(obj1);
             if (result.IsFaulted) return result;
 
             result = Validate(obj1);
@@ -198,20 +179,12 @@ namespace Signals.Core.Processes.Business
         }
 
         /// <summary>
-        /// Authentication layer
+        /// Authentication and authorization layer
         /// </summary>
         /// <param name="obj1"></param>
         /// <param name="obj2"></param>
         /// <returns></returns>
-        public abstract TResponse Authenticate(T1 obj1, T2 obj2);
-
-        /// <summary>
-        /// Authorization layer
-        /// </summary>
-        /// <param name="obj1"></param>
-        /// <param name="obj2"></param>
-        /// <returns></returns>
-        public abstract TResponse Authorize(T1 obj1, T2 obj2);
+        public abstract TResponse Auth(T1 obj1, T2 obj2);
 
         /// <summary>
         /// Validation layer
@@ -237,10 +210,7 @@ namespace Signals.Core.Processes.Business
         /// <returns></returns>
         internal virtual TResponse Execute(T1 obj1, T2 obj2)
         {
-            var result = Authenticate(obj1, obj2);
-            if (result.IsFaulted) return result;
-
-            result = Authorize(obj1, obj2);
+            var result = Auth(obj1, obj2);
             if (result.IsFaulted) return result;
 
             result = Validate(obj1, obj2);
@@ -289,22 +259,13 @@ namespace Signals.Core.Processes.Business
         }
 
         /// <summary>
-        /// Authentication layer
+        /// Authentication and authorization layer
         /// </summary>
         /// <param name="obj1"></param>
         /// <param name="obj2"></param>
         /// <param name="obj3"></param>
         /// <returns></returns>
-        public abstract TResponse Authenticate(T1 obj1, T2 obj2, T3 obj3);
-
-        /// <summary>
-        /// Authorization layer
-        /// </summary>
-        /// <param name="obj1"></param>
-        /// <param name="obj2"></param>
-        /// <param name="obj3"></param>
-        /// <returns></returns>
-        public abstract TResponse Authorize(T1 obj1, T2 obj2, T3 obj3);
+        public abstract TResponse Auth(T1 obj1, T2 obj2, T3 obj3);
 
         /// <summary>
         /// Validation layer
@@ -333,10 +294,7 @@ namespace Signals.Core.Processes.Business
         /// <returns></returns>
         internal virtual TResponse Execute(T1 obj1, T2 obj2, T3 obj3)
         {
-            var result = Authenticate(obj1, obj2, obj3);
-            if (result.IsFaulted) return result;
-
-            result = Authorize(obj1, obj2, obj3);
+            var result = Auth(obj1, obj2, obj3);
             if (result.IsFaulted) return result;
 
             result = Validate(obj1, obj2, obj3);
