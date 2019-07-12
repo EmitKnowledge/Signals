@@ -8,7 +8,6 @@ using Signals.Core.Processing.Results;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -42,9 +41,9 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             catch (Exception ex)
             {
                 var manager = SystemBootstrapper.GetInstance<CriticalErrorCallbackManager>();
-                manager?.InvokeError(processType, args);
+                manager?.InvokeError(process, processType, args);
 
-                 var happeningDate = DateTime.UtcNow;
+                var happeningDate = DateTime.UtcNow;
                 if (ApplicationConfiguration.Instance?.CriticalConfiguration != null)
                 {
                     string InterpolateException(string originalString)
