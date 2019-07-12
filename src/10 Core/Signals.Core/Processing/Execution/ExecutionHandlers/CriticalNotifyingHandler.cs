@@ -40,8 +40,13 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             }
             catch (Exception ex)
             {
-                var manager = SystemBootstrapper.GetInstance<CriticalErrorCallbackManager>();
-                manager?.InvokeError(process, processType, args, ex);
+                var criticalAttributes = processType.GetCustomAttributes(typeof(CriticalAttribute), true).Cast<CriticalAttribute>().ToList();
+
+                if (criticalAttributes.Any())
+                {
+                    var manager = SystemBootstrapper.GetInstance<CriticalErrorCallbackManager>();
+                    manager?.InvokeError(process, processType, args, ex);
+                }
 
                 var happeningDate = DateTime.UtcNow;
                 if (ApplicationConfiguration.Instance?.CriticalConfiguration != null)
@@ -60,8 +65,6 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
 
                     if (!client.IsNull())
                     {
-                        var criticalAttributes = processType.GetCustomAttributes(typeof(CriticalAttribute), true).Cast<CriticalAttribute>().ToList();
-
                         List<Task> sendingEmailTasks = new List<Task>();
                         foreach (var attribute in criticalAttributes)
                         {
