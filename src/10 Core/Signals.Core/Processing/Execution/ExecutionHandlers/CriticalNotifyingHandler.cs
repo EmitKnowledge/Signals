@@ -41,7 +41,10 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             }
             catch (Exception ex)
             {
-                var happeningDate = DateTime.UtcNow;
+                var manager = SystemBootstrapper.GetInstance<CriticalErrorCallbackManager>();
+                manager?.InvokeError(processType, args);
+
+                 var happeningDate = DateTime.UtcNow;
                 if (ApplicationConfiguration.Instance?.CriticalConfiguration != null)
                 {
                     string InterpolateException(string originalString)

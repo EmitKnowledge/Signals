@@ -19,6 +19,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using Newtonsoft.Json;
+using Signals.Core.Processing.Behaviour;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -139,6 +140,7 @@ namespace Signals.Core.Configuration.Bootstrapping
                 }
             }
 
+            resolver.Register<CriticalErrorCallbackManager>();
             resolver.Register<IProcessFactory, ProcessFactory>();
             resolver.Register<IProcessExecutor, ProcessExecutor>();
             resolver.Register<Mediator>();
