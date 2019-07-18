@@ -8,6 +8,7 @@ using Signals.Core.Processing.Execution;
 using System;
 using System.Security.Claims;
 using Signals.Core.Processing.Results;
+using Signals.Aspects.Benchmarking;
 
 namespace Signals.Core.Processes.Base
 {
@@ -50,6 +51,11 @@ namespace Signals.Core.Processes.Base
         /// Permission manager
         /// </summary>
         [Import] public IPermissionManager PermissionManager { get; internal set; }
+
+        /// <summary>
+        /// Benchmark engine
+        /// </summary>
+        [Import] public IBenchmarker Benchmarker { get; internal set; }
 
         /// <summary>
         /// Process factory

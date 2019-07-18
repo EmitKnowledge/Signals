@@ -25,6 +25,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using Signals.Aspects.Benchmarking;
+using Signals.Aspects.Benchmarking.Configurations;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -83,15 +85,20 @@ namespace Signals.Core.Configuration.Bootstrapping
 		/// </summary>
 		public IStrategyBuilder StrategyBuilder { get; set; }
 
-		/// <summary>
-		/// Security configuration
-		/// </summary>
-		public ISecurityConfiguration SecurityConfiguration { get; set; }
+        /// <summary>
+        /// Security configuration
+        /// </summary>
+        public ISecurityConfiguration SecurityConfiguration { get; set; }
 
-		/// <summary>
-		/// Synchronization logging provider
-		/// </summary>
-		protected IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
+        /// <summary>
+        /// Benchmarking configuration
+        /// </summary>
+        public IBenchmarkingConfiguration BenchmarkingConfiguration { get; set; }
+
+        /// <summary>
+        /// Synchronization logging provider
+        /// </summary>
+        protected IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
 
 		/// <summary>
 		/// All loaded Signals types
@@ -118,7 +125,8 @@ namespace Signals.Core.Configuration.Bootstrapping
 			config.Storage = () => GetInstance<IStorageProvider>(StorageConfiguration);
 			config.MessageChannel = () => GetInstance<IMessageChannel>(ChannelConfiguration);
 			config.PermissionProvider = () => GetInstance<IPermissionProvider>(SecurityConfiguration);
-			config.AuthenticationManager = () => GetImplementationTypes<IAuthenticationManager>().SingleOrDefault();
+			config.Benchmarker = () => GetInstance<IBenchmarker>(BenchmarkingConfiguration);
+            config.AuthenticationManager = () => GetImplementationTypes<IAuthenticationManager>().SingleOrDefault();
 			config.AuthorizationManager = () => GetImplementationTypes<IAuthorizationManager>().SingleOrDefault();
 			config.TaskRegistry = () => TaskRegistry;
 			config.ErrorHandling = () => StrategyBuilder;

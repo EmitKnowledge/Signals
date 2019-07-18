@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Signals.Aspects.Benchmarking
 {
@@ -11,34 +12,28 @@ namespace Signals.Aspects.Benchmarking
         /// Hit benchmarking checkpoint
         /// </summary>
         /// <param name="checkpointName"></param>
-        /// <param name="epic"></param>
+        /// <param name="epicId"></param>
         /// <param name="description"></param>
-        void Bench(string checkpointName, string epic, string description);
-
-        /// <summary>
-        /// Hit benchmarking checkpoint
-        /// </summary>
-        /// <param name="checkpointName"></param>
-        /// <param name="epic"></param>
-        /// <param name="description"></param>
-        void Bench(Enum checkpointName, Enum epic, string description);
-
-        /// <summary>
-        /// Mark epic as started
-        /// </summary>
-        /// <param name="epicName"></param>
-        void StartEpic(string epicName);
-
-        /// <summary>
-        /// Mark epic as ended
-        /// </summary>
-        /// <param name="epicName"></param>
-        void EndEpic(string epicName);
+        /// <param name="payload"></param>
+        void Bench(string checkpointName, Guid epicId, string description = null, object payload = null);
 
         /// <summary>
         /// Persist epic data
         /// </summary>
+        /// <param name="epicId"></param>
+        void FlushEpic(Guid epicId);
+
+        /// <summary>
+        /// Get epic report data
+        /// </summary>
         /// <param name="epicName"></param>
-        void FlushEpic(string epicName);
+        Dictionary<Guid, List<BenchmarkEntry>> GetEpicReport(string epicName);
+
+        /// <summary>
+        /// Mark epic as started
+        /// </summary>
+        /// <param name="epicId"></param>
+        /// <param name="epicName"></param>
+        void StartEpic(Guid epicId, string epicName);
     }
 }

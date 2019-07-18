@@ -20,14 +20,9 @@ namespace Signals.Aspects.Benchmarking
         public DateTime CreatedOn { get; set; }
 
         /// <summary>
-        /// Name of collection of checkpoints
-        /// </summary>
-        public string Epic { get; set; }
-
-        /// <summary>
         /// Epic identifier for chaining
         /// </summary>
-        public int EpicIdentifier { get; set; }
+        public Guid EpicId { get; set; }
 
         /// <summary>
         /// Key for benchmarking checkpoint
@@ -40,8 +35,8 @@ namespace Signals.Aspects.Benchmarking
         public string Description { get; set; }
 
         /// <summary>
-        /// Checkpoint description
+        /// Checkpoint payload
         /// </summary>
-        public object Parameters { get; set; }
+        public object Payload { get; set; }
     }
 }

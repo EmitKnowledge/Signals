@@ -20,6 +20,7 @@ using System.Net.Mail;
 using System.Reflection;
 using Newtonsoft.Json;
 using Signals.Core.Processing.Behaviour;
+using Signals.Aspects.Benchmarking;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -94,6 +95,11 @@ namespace Signals.Core.Configuration.Bootstrapping
         public Func<Type> PermissionManager { get; set; }
 
         /// <summary>
+        /// Benchmark engine
+        /// </summary>
+        public Func<IBenchmarker> Benchmarker { get; set; }
+
+        /// <summary>
         /// Synchronization logging provider
         /// </summary>
         public Func<IRecurringTaskLogProvider> RecurringTaskLogProvider { get; set; }
@@ -127,6 +133,7 @@ namespace Signals.Core.Configuration.Bootstrapping
             if (!AuthorizationManager.IsNull() && !AuthorizationManager().IsNull()) resolver.Register(typeof(IAuthorizationManager), AuthorizationManager());
             if (!TaskRegistry.IsNull() && !TaskRegistry().IsNull()) resolver.Register(typeof(ITaskRegistry), TaskRegistry());
             if (!PermissionProvider.IsNull() && !PermissionProvider().IsNull()) resolver.Register(typeof(IPermissionProvider), PermissionProvider());
+            if (!Benchmarker.IsNull() && !Benchmarker().IsNull()) resolver.Register(typeof(IBenchmarker), Benchmarker());
             if (!PermissionManager.IsNull() && !PermissionManager().IsNull()) resolver.Register(typeof(IPermissionManager), PermissionManager());
             if (!ErrorHandling.IsNull() && !ErrorHandling().IsNull())
             {
