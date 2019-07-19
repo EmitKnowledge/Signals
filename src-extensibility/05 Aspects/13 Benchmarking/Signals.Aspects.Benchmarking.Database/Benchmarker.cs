@@ -3,6 +3,7 @@ using Signals.Aspects.Benchmarking.Database.Configurations;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
@@ -28,8 +29,8 @@ namespace Signals.Aspects.Benchmarking.Database
         /// <param name="databaseConfiguration"></param>
         public Benchmarker(DatabaseBenchmarkingConfiguration databaseConfiguration)
         {
-            CreateAuditTableIfNotExist(databaseConfiguration);
             Configuration = databaseConfiguration;
+            CreateAuditTableIfNotExist();
         }
 
         /// <summary>
@@ -51,6 +52,8 @@ namespace Signals.Aspects.Benchmarking.Database
         /// <param name="payload"></param>
         public void Bench(string checkpointName, Guid epicId, string processName, string callerProcessName = null, string description = null, object payload = null)
         {
+            if (!Configuration.IsEnabled) return;
+
             var entry = new BenchmarkEntry();
             entry.Checkpoint = checkpointName;
             entry.EpicId = epicId;
@@ -70,39 +73,64 @@ namespace Signals.Aspects.Benchmarking.Database
         /// <param name="epicId"></param>
         public void FlushEpic(Guid epicId)
         {
+            if (!Configuration.IsEnabled) return;
+
+            bool success = true;
+
+            success = InMemoryNameCache.TryRemove(epicId, out string epicName);
+            if (!success) throw new KeyNotFoundException();
+
+            success = InMemoryEntiryCache.TryRemove(epicId, out ConcurrentBag<BenchmarkEntry> values);
+            if (!success) throw new KeyNotFoundException();
+
+            var entries = values.OrderBy(x => x.CreatedOn);
+
+            DataTable table = new DataTable();
+
+            table.Columns.Add("Id");
+            table.Columns.Add("CreatedOn");
+            table.Columns.Add("EpicId");
+            table.Columns.Add("ProcessName");
+            table.Columns.Add("CallerProcessName");
+            table.Columns.Add("EpicName");
+            table.Columns.Add("Checkpoint", typeof(string));
+            table.Columns.Add("Description");
+            table.Columns.Add("Payload");
+
+            foreach (var entry in entries)
+            {
+                var row = table.NewRow();
+                row["Id"] = 0;
+                row["CreatedOn"] = entry.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss");
+                row["EpicName"] = epicName;
+                row["EpicId"] = entry.EpicId;
+                row["ProcessName"] = entry.ProcessName;
+                row["Checkpoint"] = entry.Checkpoint;
+                row["CallerProcessName"] = string.IsNullOrEmpty(entry.CallerProcessName) ? DBNull.Value : (object)entry.CallerProcessName;
+                row["Description"] = string.IsNullOrEmpty(entry.Description) ? DBNull.Value : (object)entry.Description;
+                row["Payload"] = entry.Payload == null ? DBNull.Value : (object)JsonConvert.SerializeObject(entry.Payload);
+
+                table.Rows.Add(row);
+            }
+
             using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
-                bool success = true;
-
-                success = InMemoryNameCache.TryRemove(epicId, out string epicName);
-                if (!success) throw new KeyNotFoundException();
-
-                success = InMemoryEntiryCache.TryRemove(epicId, out ConcurrentBag<BenchmarkEntry> values);
-                if (!success) throw new KeyNotFoundException();
-
-                var entries = values.OrderBy(x => x.CreatedOn);
-
                 connection.Open();
-                foreach (var entry in entries)
+                SqlTransaction transaction = connection.BeginTransaction();
+
+                using (var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, transaction))
                 {
-                    var hasCallerProcessName = !string.IsNullOrEmpty(entry.CallerProcessName);
-                    var hasDescription = !string.IsNullOrEmpty(entry.Description);
-                    var hasPayload = entry.Payload != null;
-
-                    var sql = $@"INSERT INTO [{Configuration.TableName}] ([EpicName], [EpicId], [ProcessName]{(hasCallerProcessName ? ", [CallerProcessName]" : "")}, [Checkpoint]{(hasDescription ? ", [Description]" : "")}{(hasPayload ? ", [Payload]" : "")}) 
-                             VALUES (@EpicName, @EpicId, @ProcessName{(hasCallerProcessName ? ", @CallerProcessName" : "")}, @Checkpoint{(hasDescription ? ", @Description" : "")}{(hasPayload ? ", @Payload" : "")})";
-
-                    var command = new SqlCommand(sql, connection);
-                    command.Parameters.AddWithValue("EpicName", epicName);
-                    command.Parameters.AddWithValue("EpicId", entry.EpicId.ToString());
-                    command.Parameters.AddWithValue("ProcessName", entry.ProcessName);
-                    command.Parameters.AddWithValue("Checkpoint", entry.Checkpoint);
-
-                    if (hasCallerProcessName) command.Parameters.AddWithValue("CallerProcessName", entry.CallerProcessName);
-                    if (hasDescription) command.Parameters.AddWithValue("Description", entry.Description);
-                    if (hasPayload) command.Parameters.AddWithValue("Payload", JsonConvert.SerializeObject(entry.Payload));
-
-                    command.ExecuteNonQuery();
+                    bulkCopy.BatchSize = 500;
+                    bulkCopy.DestinationTableName = Configuration.TableName;
+                    try
+                    {
+                        bulkCopy.WriteToServer(table);
+                        transaction.Commit();
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
                 }
             }
         }
@@ -114,6 +142,8 @@ namespace Signals.Aspects.Benchmarking.Database
         /// <param name="epicName"></param>
         public void StartEpic(Guid epicId, string epicName)
         {
+            if (!Configuration.IsEnabled) return;
+
             InMemoryNameCache.AddOrUpdate(epicId, epicName, (key, value) => throw new ArgumentException("An item with the same key has already been added."));
         }
 
@@ -125,6 +155,8 @@ namespace Signals.Aspects.Benchmarking.Database
         /// <returns></returns>
         public Dictionary<Guid, List<BenchmarkEntry>> GetEpicReport(string epicName, DateTime afterDate)
         {
+            if (!Configuration.IsEnabled) return new Dictionary<Guid, List<BenchmarkEntry>>();
+
             using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 var sql = $@"SELECT [Id],
@@ -177,10 +209,11 @@ namespace Signals.Aspects.Benchmarking.Database
         /// <summary>
         /// Ensures that table for the audit logs exists in the database
         /// </summary>
-        /// <param name="databaseConfiguration"></param>
-        private void CreateAuditTableIfNotExist(DatabaseBenchmarkingConfiguration databaseConfiguration)
+        private void CreateAuditTableIfNotExist()
         {
-            using (var connection = new SqlConnection(databaseConfiguration.ConnectionString))
+            if (!Configuration.IsEnabled) return;
+
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 connection.Open();
 
@@ -189,9 +222,9 @@ namespace Signals.Aspects.Benchmarking.Database
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE t.name = '{databaseConfiguration.TableName}'
+	                        WHERE t.name = '{Configuration.TableName}'
                         ) 
-                        CREATE TABLE [{databaseConfiguration.TableName}]
+                        CREATE TABLE [{Configuration.TableName}]
                         (
                             [Id] INT IDENTITY(1,1) NOT NULL, 
                             [CreatedOn] datetime2(7) NOT NULL DEFAULT getutcdate(),

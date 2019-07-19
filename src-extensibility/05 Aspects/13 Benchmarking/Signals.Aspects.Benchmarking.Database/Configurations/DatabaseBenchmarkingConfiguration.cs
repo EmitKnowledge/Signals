@@ -16,6 +16,7 @@ namespace Signals.Aspects.Benchmarking.Database.Configurations
         public DatabaseBenchmarkingConfiguration()
         {
             TableName = "BenchmarkingEntry";
+            IsEnabled = true;
         }
 
         /// <summary>
@@ -27,5 +28,10 @@ namespace Signals.Aspects.Benchmarking.Database.Configurations
         /// Represents the benchmarking table name in the database
         /// </summary>
         public string TableName { get; set; }
+
+        /// <summary>
+        /// Is the benchmarking framework active
+        /// </summary>
+        public bool IsEnabled { get; set; }
     }
 }

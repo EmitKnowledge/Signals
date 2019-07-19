@@ -27,7 +27,7 @@ namespace Signals.Tests.Benchmarking
         }
 
         [Fact]
-        public void Test1()
+        public void Benchmarking_PersistsInDatabase_GeneratesReport()
         {
             Guid epicPass1 = Guid.NewGuid();
             string epicName = "My epic";

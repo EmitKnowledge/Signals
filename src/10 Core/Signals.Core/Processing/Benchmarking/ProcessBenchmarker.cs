@@ -9,7 +9,7 @@ namespace Signals.Core.Processing.Benchmarking
     /// <summary>
     /// Process benchmarker
     /// </summary>
-    public class ProcessBenchmarker : IBenchmarker
+    public class ProcessBenchmarker
     {
         private readonly IBenchmarker benchmarker;
         private readonly IBaseProcess<VoidResult> process;
@@ -37,26 +37,11 @@ namespace Signals.Core.Processing.Benchmarking
         }
 
         /// <summary>
-        /// Hit benchmarking checkpoint
-        /// </summary>
-        /// <param name="checkpointName"></param>
-        /// <param name="epicId"></param>
-        /// <param name="processName"></param>
-        /// <param name="callerProcessName"></param>
-        /// <param name="description"></param>
-        /// <param name="payload"></param>
-        public void Bench(string checkpointName, Guid epicId, string processName, string callerProcessName = null, string description = null, object payload = null)
-        {
-            benchmarker.Bench(checkpointName, epicId, processName, callerProcessName, description, payload);
-        }
-
-        /// <summary>
         /// Persist epic data
         /// </summary>
-        /// <param name="epicId"></param>
-        public void FlushEpic(Guid epicId)
+        public void FlushEpic()
         {
-            benchmarker.FlushEpic(epicId);
+            benchmarker.FlushEpic(process.EpicId);
         }
 
         /// <summary>
@@ -72,11 +57,10 @@ namespace Signals.Core.Processing.Benchmarking
         /// <summary>
         /// Mark epic as started
         /// </summary>
-        /// <param name="epicId"></param>
         /// <param name="epicName"></param>
-        public void StartEpic(Guid epicId, string epicName)
+        public void StartEpic(string epicName)
         {
-            benchmarker.StartEpic(epicId, epicName);
+            benchmarker.StartEpic(process.EpicId, epicName);
         }
     }
 }
