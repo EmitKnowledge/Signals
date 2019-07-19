@@ -24,7 +24,7 @@ namespace Signals.Core.Processes
             where TResponse : VoidResult, new()
         {
             var mediator = SystemBootstrapper.GetInstance<Mediator>();
-            return mediator.Dispatch<TResponse>(process.GetType());
+            return mediator.Dispatch<TResponse>(process);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Signals.Core.Processes
             where TResponse : VoidResult, new()
         {
             var mediator = SystemBootstrapper.GetInstance<Mediator>();
-            return mediator.Dispatch<T1, TResponse>(process.GetType(), input1);
+            return mediator.Dispatch<T1, TResponse>(process, input1);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Signals.Core.Processes
             where TResponse : VoidResult, new()
         {
             var mediator = SystemBootstrapper.GetInstance<Mediator>();
-            return mediator.Dispatch<T1, T2, TResponse>(process.GetType(), input1, input2);
+            return mediator.Dispatch<T1, T2, TResponse>(process, input1, input2);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Signals.Core.Processes
             where TResponse : VoidResult, new()
         {
             var mediator = SystemBootstrapper.GetInstance<Mediator>();
-            return mediator.Dispatch<T1, T2, T3, TResponse>(process.GetType(), input1, input2, input3);
+            return mediator.Dispatch<T1, T2, T3, TResponse>(process, input1, input2, input3);
         }
 
         /// <summary>

@@ -238,7 +238,7 @@ namespace Signals.Core.Processes.Base
             where TProcess : class, IBaseProcess<VoidResult>, new()
         {
             var process = SystemBootstrapper.GetInstance<Mediator>().For<TProcess>();
-            process.EpicId = this.EpicId;
+            process.EpicId = EpicId;
             return process;
         }
 
@@ -251,7 +251,7 @@ namespace Signals.Core.Processes.Base
         private TNewResponse Dispatch<TNewResponse>(Type type, params object[] args) where TNewResponse : VoidResult, new()
         {
             var process = BaseContext.ProcessFactory.Create<TNewResponse>(type);
-            process.EpicId = this.EpicId;
+            process.EpicId = EpicId;
             return BaseContext.ProcessExecutor.Execute((BaseProcess<TNewResponse>)process, args);
         }
     }
