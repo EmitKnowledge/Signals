@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
+using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Business;
-using Signals.Core.Common.Serialization;
 using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;
-using System;
 using System.Threading.Tasks;
 
 namespace Signals.Core.Processes.Distributed
@@ -83,7 +82,15 @@ namespace Signals.Core.Processes.Distributed
         /// <returns></returns>
         internal VoidResult ExecuteBackgroundProcess(params object[] args)
         {
-            var transientData = (args[0] as string).Deserialize<TTransientData>(SerializationFormat.Json);
+            TTransientData transientData = default(TTransientData);
+
+            if (args[0] is string str)
+                transientData = str.Deserialize<TTransientData>(SerializationFormat.Json);
+            else if (args[0] is TTransientData tran)
+                transientData = tran;
+            else if (args[0] is object obj)
+                transientData = obj.SerializeJson().Deserialize<TTransientData>(SerializationFormat.Json);
+
             return Work(transientData);
         }
 
@@ -98,9 +105,13 @@ namespace Signals.Core.Processes.Distributed
         /// <param name="name"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        internal Task PublishNotificaiton(string name, object obj)
+        internal Task PublishNotificaiton(string name, TTransientData obj)
         {
-            return Context.Channel?.Publish(name, obj);
+            var metadata = new DistributedProcessMetadata();
+            metadata.EpicId = EpicId;
+            metadata.Payload = obj.SerializeJson();
+
+            return Context.Channel?.Publish(name, metadata);
         }
     }
 
@@ -177,7 +188,15 @@ namespace Signals.Core.Processes.Distributed
         /// <returns></returns>
         internal VoidResult ExecuteBackgroundProcess(params object[] args)
         {
-            var transientData = (args[0] as string).Deserialize<TTransientData>(SerializationFormat.Json);
+            TTransientData transientData = default(TTransientData);
+
+            if (args[0] is string str)
+                transientData = str.Deserialize<TTransientData>(SerializationFormat.Json);
+            else if (args[0] is TTransientData tran)
+                transientData = tran;
+            else if (args[0] is object obj)
+                transientData = obj.SerializeJson().Deserialize<TTransientData>(SerializationFormat.Json);
+
             return Work(transientData);
         }
 
@@ -192,9 +211,13 @@ namespace Signals.Core.Processes.Distributed
         /// <param name="name"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        internal Task PublishNotificaiton(string name, object obj)
+        internal Task PublishNotificaiton(string name, TTransientData obj)
         {
-            return Context.Channel?.Publish(name, obj);
+            var metadata = new DistributedProcessMetadata();
+            metadata.EpicId = EpicId;
+            metadata.Payload = obj.SerializeJson();
+
+            return Context.Channel?.Publish(name, metadata);
         }
     }
 }
