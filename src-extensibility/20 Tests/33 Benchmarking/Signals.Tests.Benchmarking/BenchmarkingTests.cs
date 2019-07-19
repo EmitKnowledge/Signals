@@ -19,10 +19,11 @@ namespace Signals.Tests.Benchmarking
             {
                 ConnectionString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;"
             };
-            _benchmarker = new Benchmarker(_databaseConfiguration);
 
             // Clear the database
             ClearDb();
+
+            _benchmarker = new Benchmarker(_databaseConfiguration);
         }
 
         [Fact]
@@ -30,15 +31,16 @@ namespace Signals.Tests.Benchmarking
         {
             Guid epicPass1 = Guid.NewGuid();
             string epicName = "My epic";
+            string processName = "MyProc";
 
             _benchmarker.StartEpic(epicPass1, epicName);
-            _benchmarker.Bench("Start", epicPass1);
+            _benchmarker.Bench("Start", epicPass1, processName);
             Thread.Sleep(100);
-            _benchmarker.Bench("Processing", epicPass1);
+            _benchmarker.Bench("Processing", epicPass1, processName);
             Thread.Sleep(100);
-            _benchmarker.Bench("End", epicPass1);
+            _benchmarker.Bench("End", epicPass1, processName);
             _benchmarker.FlushEpic(epicPass1);
-            var report = _benchmarker.GetEpicReport(epicName);
+            var report = _benchmarker.GetEpicReport(epicName, DateTime.UtcNow.AddMinutes(-1));
 
             Assert.Single(report);
             Assert.True(report.ContainsKey(epicPass1));
@@ -52,12 +54,17 @@ namespace Signals.Tests.Benchmarking
 
         private void ClearDb()
         {
-            using (var conn = new SqlConnection(_databaseConfiguration.ConnectionString))
+            try
             {
-                var sql = $"DELETE FROM [{_databaseConfiguration.TableName}]";
-                conn.Open();
-                new SqlCommand(sql, conn).ExecuteNonQuery();
+                using (var conn = new SqlConnection(_databaseConfiguration.ConnectionString))
+                {
+                    var sql = $"DROP TABLE [{_databaseConfiguration.TableName}]";
+                    conn.Open();
+                    new SqlCommand(sql, conn).ExecuteNonQuery();
+                }
             }
+            catch
+            { }
         }
     }
 }

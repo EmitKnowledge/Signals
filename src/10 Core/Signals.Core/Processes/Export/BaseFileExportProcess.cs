@@ -61,7 +61,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         protected BaseFileExportProcess()
         {
-            Context = new FileExportProcessContext();
+            Context = new FileExportProcessContext(this);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         protected BaseFileExportProcess()
         {
-            Context = new FileExportProcessContext();
+            Context = new FileExportProcessContext(this);
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         protected BaseFileExportProcess()
         {
-            Context = new FileExportProcessContext();
+            Context = new FileExportProcessContext(this);
         }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         protected BaseFileExportProcess()
         {
-            Context = new FileExportProcessContext();
+            Context = new FileExportProcessContext(this);
         }
 
         /// <summary>

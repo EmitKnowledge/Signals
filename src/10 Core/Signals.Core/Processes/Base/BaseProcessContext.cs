@@ -9,6 +9,8 @@ using System;
 using System.Security.Claims;
 using Signals.Core.Processing.Results;
 using Signals.Aspects.Benchmarking;
+using Signals.Core.Processing.Benchmarking;
+using Signals.Aspects.DI;
 
 namespace Signals.Core.Processes.Base
 {
@@ -17,6 +19,16 @@ namespace Signals.Core.Processes.Base
     /// </summary>
     public class BaseProcessContext
     {
+        private readonly IBaseProcess<VoidResult> process;
+
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        public BaseProcessContext(IBaseProcess<VoidResult> process)
+        {
+            this.process = process;
+        }
+
         /// <summary>
         /// Logger
         /// </summary>
@@ -53,11 +65,6 @@ namespace Signals.Core.Processes.Base
         [Import] public IPermissionManager PermissionManager { get; internal set; }
 
         /// <summary>
-        /// Benchmark engine
-        /// </summary>
-        [Import] public IBenchmarker Benchmarker { get; internal set; }
-
-        /// <summary>
         /// Process factory
         /// </summary>
         [Import] internal IProcessFactory ProcessFactory { get; set; }
@@ -66,6 +73,11 @@ namespace Signals.Core.Processes.Base
         /// Process executor
         /// </summary>
         [Import] internal IProcessExecutor ProcessExecutor { get; set; }
+
+        /// <summary>
+        /// Benchmark engine
+        /// </summary>
+        public ProcessBenchmarker Benchmarker => new ProcessBenchmarker(SystemBootstrapper.GetInstance<IBenchmarker>(), process);
 
         /// <summary>
         /// Current user principal

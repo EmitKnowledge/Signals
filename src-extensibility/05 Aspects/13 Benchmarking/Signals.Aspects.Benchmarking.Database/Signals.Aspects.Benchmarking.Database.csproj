@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Signals.Aspects.Benchmarking" Version="0.6.6" />
+    <PackageReference Include="Signals.Aspects.Benchmarking" Version="0.6.11" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 

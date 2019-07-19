@@ -17,5 +17,10 @@ namespace Signals.Core.Processes.Distributed
         /// Commiunication payload
         /// </summary>
         public string Payload { get; set; }
+
+        /// <summary>
+        /// Caller process name
+        /// </summary>
+        public string CallerProcessName { get; set; }
     }
 }

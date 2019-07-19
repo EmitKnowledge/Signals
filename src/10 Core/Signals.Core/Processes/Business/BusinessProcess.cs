@@ -30,7 +30,7 @@ namespace Signals.Core.Processes.Business
         /// </summary>
         protected BusinessProcess()
         {
-            Context = new BusinessProcessContext();
+            Context = new BusinessProcessContext(this);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Signals.Core.Processes.Business
         /// </summary>
         protected BusinessProcess()
         {
-            Context = new BusinessProcessContext();
+            Context = new BusinessProcessContext(this);
         }
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace Signals.Core.Processes.Business
         /// </summary>
         protected BusinessProcess()
         {
-            Context = new BusinessProcessContext();
+            Context = new BusinessProcessContext(this);
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace Signals.Core.Processes.Business
         /// </summary>
         protected BusinessProcess()
         {
-            Context = new BusinessProcessContext();
+            Context = new BusinessProcessContext(this);
         }
 
         /// <summary>

@@ -36,7 +36,7 @@ namespace Signals.Core.Processes.Distributed
         /// </summary>
         public DistributedProcess()
         {
-            Context = new DistributedProcessContext();
+            Context = new DistributedProcessContext(this);
         }
 
         /// <summary>
@@ -109,6 +109,7 @@ namespace Signals.Core.Processes.Distributed
         {
             var metadata = new DistributedProcessMetadata();
             metadata.EpicId = EpicId;
+            metadata.CallerProcessName = CallerProcessName;
             metadata.Payload = obj.SerializeJson();
 
             return Context.Channel?.Publish(name, metadata);
@@ -139,7 +140,7 @@ namespace Signals.Core.Processes.Distributed
         /// </summary>
         public DistributedProcess()
         {
-            Context = new DistributedProcessContext();
+            Context = new DistributedProcessContext(this);
         }
 
         /// <summary>

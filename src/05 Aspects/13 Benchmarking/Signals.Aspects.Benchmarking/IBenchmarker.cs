@@ -13,9 +13,11 @@ namespace Signals.Aspects.Benchmarking
         /// </summary>
         /// <param name="checkpointName"></param>
         /// <param name="epicId"></param>
+        /// <param name="processName"></param>
+        /// <param name="callerProcessName"></param>
         /// <param name="description"></param>
         /// <param name="payload"></param>
-        void Bench(string checkpointName, Guid epicId, string description = null, object payload = null);
+        void Bench(string checkpointName, Guid epicId, string processName, string callerProcessName = null, string description = null, object payload = null);
 
         /// <summary>
         /// Persist epic data
@@ -27,7 +29,9 @@ namespace Signals.Aspects.Benchmarking
         /// Get epic report data
         /// </summary>
         /// <param name="epicName"></param>
-        Dictionary<Guid, List<BenchmarkEntry>> GetEpicReport(string epicName);
+        /// <param name="afterDate"></param>
+        /// <returns></returns>
+        Dictionary<Guid, List<BenchmarkEntry>> GetEpicReport(string epicName, DateTime afterDate);
 
         /// <summary>
         /// Mark epic as started

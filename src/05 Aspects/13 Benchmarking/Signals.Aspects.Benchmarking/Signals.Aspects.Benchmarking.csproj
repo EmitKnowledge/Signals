@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>obj\Debug\netstandard2.0\\Signals.Aspects.Benchmarking.xml</DocumentationFile>
+    <DocumentationFile>obj\Debug\netstandard2.0\Signals.Aspects.Benchmarking.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

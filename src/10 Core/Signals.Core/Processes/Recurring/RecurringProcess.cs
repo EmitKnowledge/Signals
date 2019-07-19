@@ -44,7 +44,7 @@ namespace Signals.Core.Processes.Recurring
         /// </summary>
         public RecurringProcess()
         {
-            Context = new RecurringProcessContext();
+            Context = new RecurringProcessContext(this);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Signals.Core.Processes.Recurring
         /// </summary>
         public NoOverlapRecurringProcess()
         {
-            Context = new RecurringProcessContext();
+            Context = new RecurringProcessContext(this);
         }
 
         /// <summary>

@@ -86,6 +86,7 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
                         SystemBootstrapper.Bootstrap(instance);
 
                         instance.EpicId = meta.EpicId;
+                        instance.CallerProcessName = meta.CallerProcessName;
 
                         executor.ExecuteBackground(instance, meta.Payload);
                     });

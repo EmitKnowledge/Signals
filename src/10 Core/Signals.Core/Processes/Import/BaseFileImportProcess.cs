@@ -55,7 +55,7 @@ namespace Signals.Core.Processes.Import
         /// </summary>
         protected BaseFileImportProcess()
         {
-            Context = new FileImportProcessContext();
+            Context = new FileImportProcessContext(this);
         }
 
         /// <summary>

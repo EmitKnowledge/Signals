@@ -19,14 +19,19 @@ namespace Signals.Core.Processes.Base
         string Name { get; set; }
 
         /// <summary>
+        /// Process description
+        /// </summary>
+        string Description { get; set; }
+
+        /// <summary>
         /// Processes epic id
         /// </summary>
         Guid EpicId { get; set; }
 
         /// <summary>
-        /// Process description
+        /// Caller process name
         /// </summary>
-        string Description { get; set; }
+        string CallerProcessName { get; set; }
 
         /// <summary>
         /// Base process context
@@ -63,14 +68,19 @@ namespace Signals.Core.Processes.Base
         public virtual string Name { get; set; }
 
         /// <summary>
+        /// Process description
+        /// </summary>
+        public virtual string Description { get; set; }
+
+        /// <summary>
         /// Processes epic id
         /// </summary>
         public virtual Guid EpicId { get; set; }
 
         /// <summary>
-        /// Process description
+        /// Caller process name
         /// </summary>
-        public virtual string Description { get; set; }
+        public string CallerProcessName { get; set; }
 
         /// <summary>
         /// Base process context
@@ -239,6 +249,7 @@ namespace Signals.Core.Processes.Base
         {
             var process = SystemBootstrapper.GetInstance<Mediator>().For<TProcess>();
             process.EpicId = EpicId;
+            process.CallerProcessName = Name;
             return process;
         }
 
@@ -252,6 +263,7 @@ namespace Signals.Core.Processes.Base
         {
             var process = BaseContext.ProcessFactory.Create<TNewResponse>(type);
             process.EpicId = EpicId;
+            process.CallerProcessName = Name;
             return BaseContext.ProcessExecutor.Execute((BaseProcess<TNewResponse>)process, args);
         }
     }

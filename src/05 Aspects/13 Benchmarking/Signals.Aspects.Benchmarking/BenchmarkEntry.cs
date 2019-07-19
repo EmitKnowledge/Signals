@@ -25,6 +25,16 @@ namespace Signals.Aspects.Benchmarking
         public Guid EpicId { get; set; }
 
         /// <summary>
+        /// Benchmarked process
+        /// </summary>
+        public string ProcessName { get; set; }
+
+        /// <summary>
+        /// Caller of benchmarked process
+        /// </summary>
+        public string CallerProcessName { get; set; }
+
+        /// <summary>
         /// Key for benchmarking checkpoint
         /// </summary>
         public string Checkpoint { get; set; }

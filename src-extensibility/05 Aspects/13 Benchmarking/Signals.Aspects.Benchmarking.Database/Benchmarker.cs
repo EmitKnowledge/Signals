@@ -45,13 +45,17 @@ namespace Signals.Aspects.Benchmarking.Database
         /// </summary>
         /// <param name="checkpointName"></param>
         /// <param name="epicId"></param>
+        /// <param name="processName"></param>
+        /// <param name="callerProcessName"></param>
         /// <param name="description"></param>
         /// <param name="payload"></param>
-        public void Bench(string checkpointName, Guid epicId, string description = null, object payload = null)
+        public void Bench(string checkpointName, Guid epicId, string processName, string callerProcessName = null, string description = null, object payload = null)
         {
             var entry = new BenchmarkEntry();
             entry.Checkpoint = checkpointName;
             entry.EpicId = epicId;
+            entry.ProcessName = processName;
+            entry.CallerProcessName = callerProcessName;
             entry.Description = description;
             entry.Payload = payload;
             entry.CreatedOn = DateTime.UtcNow;
@@ -81,17 +85,20 @@ namespace Signals.Aspects.Benchmarking.Database
                 connection.Open();
                 foreach (var entry in entries)
                 {
+                    var hasCallerProcessName = !string.IsNullOrEmpty(entry.CallerProcessName);
                     var hasDescription = !string.IsNullOrEmpty(entry.Description);
                     var hasPayload = entry.Payload != null;
 
-                    var sql = $@"INSERT INTO [{Configuration.TableName}] ([EpicName], [EpicId], [Checkpoint]{(hasDescription ? ", [Description]" : "")}{(hasPayload ? ", [Payload]" : "")}) 
-                             VALUES (@EpicName, @EpicId, @Checkpoint{(hasDescription ? ", @Description" : "")}{(hasPayload ? ", @Payload" : "")})";
+                    var sql = $@"INSERT INTO [{Configuration.TableName}] ([EpicName], [EpicId], [ProcessName]{(hasCallerProcessName ? ", [CallerProcessName]" : "")}, [Checkpoint]{(hasDescription ? ", [Description]" : "")}{(hasPayload ? ", [Payload]" : "")}) 
+                             VALUES (@EpicName, @EpicId, @ProcessName{(hasCallerProcessName ? ", @CallerProcessName" : "")}, @Checkpoint{(hasDescription ? ", @Description" : "")}{(hasPayload ? ", @Payload" : "")})";
 
                     var command = new SqlCommand(sql, connection);
                     command.Parameters.AddWithValue("EpicName", epicName);
                     command.Parameters.AddWithValue("EpicId", entry.EpicId.ToString());
+                    command.Parameters.AddWithValue("ProcessName", entry.ProcessName);
                     command.Parameters.AddWithValue("Checkpoint", entry.Checkpoint);
 
+                    if (hasCallerProcessName) command.Parameters.AddWithValue("CallerProcessName", entry.CallerProcessName);
                     if (hasDescription) command.Parameters.AddWithValue("Description", entry.Description);
                     if (hasPayload) command.Parameters.AddWithValue("Payload", JsonConvert.SerializeObject(entry.Payload));
 
@@ -114,23 +121,28 @@ namespace Signals.Aspects.Benchmarking.Database
         /// Get epic report data
         /// </summary>
         /// <param name="epicName"></param>
-        public Dictionary<Guid, List<BenchmarkEntry>> GetEpicReport(string epicName)
+        /// <param name="afterDate"></param>
+        /// <returns></returns>
+        public Dictionary<Guid, List<BenchmarkEntry>> GetEpicReport(string epicName, DateTime afterDate)
         {
             using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 var sql = $@"SELECT [Id],
                                     [CreatedOn],
                                     [EpicId],
+                                    [ProcessName],
+                                    [CallerProcessName],
                                     [Checkpoint],
                                     [Description],
                                     [Payload] 
                                 FROM [{Configuration.TableName}] 
-                                WHERE EpicName = @EpicName";
+                                WHERE [EpicName] = @EpicName AND [CreatedOn] >= @AfterDate";
 
                 connection.Open();
 
                 var command = new SqlCommand(sql, connection);
                 command.Parameters.AddWithValue("EpicName", epicName);
+                command.Parameters.AddWithValue("AfterDate", afterDate.ToString("yyyy-MM-dd HH:mm:ss"));
 
                 var result = new List<BenchmarkEntry>();
 
@@ -138,14 +150,18 @@ namespace Signals.Aspects.Benchmarking.Database
                 {
                     while (reader.Read())
                     {
-                        var description = reader.GetSqlString(4);
-                        var payload = reader.GetSqlString(5);
+                        var callerProcessName = reader.GetSqlString(4);
+                        var description = reader.GetSqlString(6);
+                        var payload = reader.GetSqlString(7);
+
                         var entry = new BenchmarkEntry
                         {
                             Id = reader.GetInt32(0),
                             CreatedOn = reader.GetDateTime(1),
                             EpicId = Guid.Parse(reader.GetString(2)),
-                            Checkpoint = reader.GetString(3),
+                            ProcessName = reader.GetString(3),
+                            CallerProcessName = callerProcessName.IsNull ? null : callerProcessName.Value,
+                            Checkpoint = reader.GetString(5),
                             Description = description.IsNull ? null : description.Value,
                             Payload = payload.IsNull ? null : JsonConvert.DeserializeObject(payload.Value)
                         };
@@ -180,6 +196,8 @@ namespace Signals.Aspects.Benchmarking.Database
                             [Id] INT IDENTITY(1,1) NOT NULL, 
                             [CreatedOn] datetime2(7) NOT NULL DEFAULT getutcdate(),
                             [EpicId] NVARCHAR(MAX) NOT NULL,
+                            [ProcessName] NVARCHAR(MAX) NOT NULL,
+                            [CallerProcessName] NVARCHAR(MAX) NULL,
                             [EpicName] NVARCHAR(MAX) NULL,
                             [Checkpoint] NVARCHAR(MAX) NOT NULL,
                             [Description] NVARCHAR(MAX) NULL,

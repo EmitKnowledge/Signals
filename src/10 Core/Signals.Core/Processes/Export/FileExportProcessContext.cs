@@ -1,4 +1,5 @@
 ﻿using Signals.Core.Processes.Base;
+using Signals.Core.Processing.Results;
 
 namespace Signals.Core.Processes.Export
 {
@@ -7,6 +8,12 @@ namespace Signals.Core.Processes.Export
     /// </summary>
     public class FileExportProcessContext : BaseProcessContext
     {
-
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="process"></param>
+        public FileExportProcessContext(IBaseProcess<VoidResult> process) : base(process)
+        {
+        }
     }
 }
