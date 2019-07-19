@@ -216,6 +216,7 @@ namespace Signals.Core.Processes.Distributed
         {
             var metadata = new DistributedProcessMetadata();
             metadata.EpicId = EpicId;
+            metadata.CallerProcessName = CallerProcessName;
             metadata.Payload = obj.SerializeJson();
 
             return Context.Channel?.Publish(name, metadata);
