@@ -62,12 +62,14 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         /// <param name="message"></param>
         public async Task Publish<T>(string channelName, T message) where T : class
         {
-            var queue = await GetQueue(channelName);
-            if (queue == null) throw new ChannelDoesntExistException(channelName);
+            var queueTask = GetQueue(channelName);
 
             var messageBody = JsonConvert.SerializeObject(message);
             var messageBytes = Encoding.UTF8.GetBytes(messageBody);
             var queueMessage = new Message(messageBytes);
+
+            var queue = await queueTask;
+            if (queue == null) throw new ChannelDoesntExistException(channelName);
 
             try
             {
@@ -164,8 +166,8 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
                         if (!exists)
                         {
                             managementClient.CreateQueueAsync(fullQueueName).Wait();
-                            CreatedChannels.Add(fullQueueName);
                         }
+                        CreatedChannels.Add(fullQueueName);
                     }
                 }
             }

@@ -93,7 +93,7 @@ namespace Signals.Aspects.Benchmarking.Database
             table.Columns.Add("ProcessName");
             table.Columns.Add("CallerProcessName");
             table.Columns.Add("EpicName");
-            table.Columns.Add("Checkpoint", typeof(string));
+            table.Columns.Add("Checkpoint");
             table.Columns.Add("Description");
             table.Columns.Add("Payload");
 
@@ -101,7 +101,7 @@ namespace Signals.Aspects.Benchmarking.Database
             {
                 var row = table.NewRow();
                 row["Id"] = 0;
-                row["CreatedOn"] = entry.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss");
+                row["CreatedOn"] = entry.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
                 row["EpicName"] = epicName;
                 row["EpicId"] = entry.EpicId;
                 row["ProcessName"] = entry.ProcessName;
@@ -174,7 +174,7 @@ namespace Signals.Aspects.Benchmarking.Database
 
                 var command = new SqlCommand(sql, connection);
                 command.Parameters.AddWithValue("EpicName", epicName);
-                command.Parameters.AddWithValue("AfterDate", afterDate.ToString("yyyy-MM-dd HH:mm:ss"));
+                command.Parameters.AddWithValue("AfterDate", afterDate.ToString("yyyy-MM-dd HH:mm:ss.fffffff"));
 
                 var result = new List<BenchmarkEntry>();
 
