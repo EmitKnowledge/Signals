@@ -2,6 +2,7 @@
 using Signals.Aspects.CommunicationChannels;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
+using Signals.Core.Common.Serialization;
 using Signals.Core.Configuration.Bootstrapping;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Distributed;
@@ -78,10 +79,16 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
                 {
                     channel.Subscribe<string>(type.Name, message =>
                     {
+                        var meta = message.Deserialize<DistributedProcessMetadata>();
+
                         var executor = SystemBootstrapper.GetInstance<IProcessExecutor>();
                         var instance = SystemBootstrapper.GetInstance(type) as IBaseProcess<VoidResult>;
                         SystemBootstrapper.Bootstrap(instance);
-                        executor.ExecuteBackground(instance, message);
+
+                        instance.EpicId = meta.EpicId;
+                        instance.CallerProcessName = meta.CallerProcessName;
+
+                        executor.ExecuteBackground(instance, meta.Payload);
                     });
                 });
             }

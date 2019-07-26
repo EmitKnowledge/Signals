@@ -21,6 +21,8 @@ namespace Signals.Core.Processing.Behaviour
         /// </summary>
         public CriticalAttribute()
         {
+            if (!NotificaitonEmails.IsNullOrEmpty()) return;
+
             var emails = ApplicationConfiguration.Instance?.CriticalConfiguration?.Emails;
             if (!emails.IsNullOrHasZeroElements())
                 NotificaitonEmails = string.Join(",", emails);

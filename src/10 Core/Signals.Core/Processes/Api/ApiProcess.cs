@@ -37,7 +37,7 @@ namespace Signals.Core.Processes.Api
         /// </summary>
         protected ApiProcess()
         {
-            Context = new ApiProcessContext();
+            Context = new ApiProcessContext(this);
         }
     }
 
@@ -64,7 +64,7 @@ namespace Signals.Core.Processes.Api
         /// </summary>
         protected ApiProcess()
         {
-            Context = new ApiProcessContext();
+            Context = new ApiProcessContext(this);
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Signals.Core.Processing.Results;
 
 namespace Signals.Core.Processes.Distributed
 {
@@ -16,6 +17,14 @@ namespace Signals.Core.Processes.Distributed
     /// </summary>
     public class DistributedProcessContext : BaseProcessContext
     {
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="process"></param>
+        public DistributedProcessContext(IBaseProcess<VoidResult> process) : base(process)
+        {
+        }
+
         /// <summary>
         /// Message channel
         /// </summary>

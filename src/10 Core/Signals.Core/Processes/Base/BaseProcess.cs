@@ -1,6 +1,5 @@
 ﻿using Signals.Aspects.DI;
 using Signals.Core.Processing.Exceptions;
-using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using Signals.Core.Processing.Specifications;
 using System;
@@ -14,20 +13,30 @@ namespace Signals.Core.Processes.Base
     public interface IBaseProcess<out TResponse>
         where TResponse : VoidResult
     {
-	    /// <summary>
-	    /// Process name
-	    /// </summary>
-	    string Name { get; set; }
+        /// <summary>
+        /// Process name
+        /// </summary>
+        string Name { get; set; }
 
-	    /// <summary>
-	    /// Process description
-	    /// </summary>
-	    string Description { get; set; }
+        /// <summary>
+        /// Process description
+        /// </summary>
+        string Description { get; set; }
 
-	    /// <summary>
-	    /// Base process context
-	    /// </summary>
-	    BaseProcessContext BaseContext { get; }
+        /// <summary>
+        /// Processes epic id
+        /// </summary>
+        Guid EpicId { get; set; }
+
+        /// <summary>
+        /// Caller process name
+        /// </summary>
+        string CallerProcessName { get; set; }
+
+        /// <summary>
+        /// Base process context
+        /// </summary>
+        BaseProcessContext BaseContext { get; }
 
         /// <summary>
         /// Entry point executed by the factory
@@ -35,7 +44,7 @@ namespace Signals.Core.Processes.Base
         /// <param name="args"></param>
         /// <returns></returns>
         TResponse ExecuteProcess(params object[] args);
-	}
+    }
 
     /// <summary>
     /// Represents a base process
@@ -64,38 +73,49 @@ namespace Signals.Core.Processes.Base
         public virtual string Description { get; set; }
 
         /// <summary>
+        /// Processes epic id
+        /// </summary>
+        public virtual Guid EpicId { get; set; }
+
+        /// <summary>
+        /// Caller process name
+        /// </summary>
+        public string CallerProcessName { get; set; }
+
+        /// <summary>
         /// Base process context
         /// </summary>
         internal abstract BaseProcessContext BaseContext { get; }
 
-	    /// <summary>
-	    /// Base process context
-	    /// </summary>
-		BaseProcessContext IBaseProcess<TResponse>.BaseContext => BaseContext;
+        /// <summary>
+        /// Base process context
+        /// </summary>
+        BaseProcessContext IBaseProcess<TResponse>.BaseContext => BaseContext;
 
-		/// <summary>
-		/// CTOR
-		/// </summary>
-		protected BaseProcess()
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        protected BaseProcess()
         {
             Name = GetType().Name;
+            EpicId = Guid.NewGuid();
         }
 
-		/// <summary>
-		/// Entry point executed by the factory
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		internal abstract TResponse ExecuteProcess(params object[] args);
+        /// <summary>
+        /// Entry point executed by the factory
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        internal abstract TResponse ExecuteProcess(params object[] args);
 
-		/// <summary>
-		/// Entry point executed by the factory
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		TResponse IBaseProcess<TResponse>.ExecuteProcess(params object[] args)
-	    {
-			return ExecuteProcess(args);
+        /// <summary>
+        /// Entry point executed by the factory
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        TResponse IBaseProcess<TResponse>.ExecuteProcess(params object[] args)
+        {
+            return ExecuteProcess(args);
         }
 
         /// <summary>
@@ -226,7 +246,12 @@ namespace Signals.Core.Processes.Base
         /// <returns></returns>
         protected TProcess Continue<TProcess>()
             where TProcess : class, IBaseProcess<VoidResult>, new()
-            => SystemBootstrapper.GetInstance<Mediator>().For<TProcess>();
+        {
+            var process = SystemBootstrapper.GetInstance<Mediator>().For<TProcess>();
+            process.EpicId = EpicId;
+            process.CallerProcessName = Name;
+            return process;
+        }
 
         /// <summary>
         /// Handler for chain-executing business processes
@@ -237,6 +262,8 @@ namespace Signals.Core.Processes.Base
         private TNewResponse Dispatch<TNewResponse>(Type type, params object[] args) where TNewResponse : VoidResult, new()
         {
             var process = BaseContext.ProcessFactory.Create<TNewResponse>(type);
+            process.EpicId = EpicId;
+            process.CallerProcessName = Name;
             return BaseContext.ProcessExecutor.Execute((BaseProcess<TNewResponse>)process, args);
         }
     }

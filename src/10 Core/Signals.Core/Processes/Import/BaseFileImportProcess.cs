@@ -39,16 +39,10 @@ namespace Signals.Core.Processes.Import
         protected abstract IFileImporter<TResponse> ResolveFileImporter();
 
         /// <summary>
-        /// Authentication step
+        /// Authentication and authorization step
         /// </summary>
         /// <returns></returns>
-        public abstract ListResult<TResponse> Authenticate(TInput stream);
-
-        /// <summary>
-        /// Authorization step
-        /// </summary>
-        /// <returns></returns>
-        public abstract ListResult<TResponse> Authorize(TInput stream);
+        public abstract ListResult<TResponse> Auth(TInput stream);
 
         /// <summary>
         /// Validation step
@@ -61,7 +55,7 @@ namespace Signals.Core.Processes.Import
         /// </summary>
         protected BaseFileImportProcess()
         {
-            Context = new FileImportProcessContext();
+            Context = new FileImportProcessContext(this);
         }
 
         /// <summary>
@@ -81,10 +75,7 @@ namespace Signals.Core.Processes.Import
         /// <returns></returns>
         internal ListResult<TResponse> Execute(TInput stream)
         {
-            var result = Authenticate(stream);
-            if (result.IsFaulted) return result;
-
-            result = Authorize(stream);
+            var result = Auth(stream);
             if (result.IsFaulted) return result;
 
             result = Validate(stream);

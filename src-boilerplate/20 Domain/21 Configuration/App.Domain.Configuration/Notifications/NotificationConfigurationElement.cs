@@ -31,6 +31,11 @@ namespace App.Domain.Configuration.Notifications
         public bool IsEnabled { get; set; }
 
         /// <summary>
+        /// To conneciton string
+        /// </summary>
+        public string ConnectionString => $"Endpoint={Namespace};SharedAccessKeyName={Issuer};SharedAccessKey={IssuerKey}";
+
+        /// <summary>
         /// CTOR
         /// </summary>
         public NotificationConfigurationElement()

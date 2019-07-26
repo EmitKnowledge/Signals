@@ -227,7 +227,8 @@ namespace Signals.Aspects.Logging.NLog
         /// <param name="exception"></param>
         public void Exception(string message, Exception exception)
         {
-            InternalLog(new LogEntry { Message = message, ExceptionObject = exception }, LogLevel.Error);
+            var logEntry = LogEntry.Exception(exception, message);
+            InternalLog(logEntry, LogLevel.Fatal);
         }
 
 

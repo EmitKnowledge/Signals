@@ -39,16 +39,10 @@ namespace Signals.Core.Processes.Export
         protected abstract IFileExporter<TData> ResolveFileExporter();
 
         /// <summary>
-        /// Authentication step
+        /// Authentication and authorization step
         /// </summary>
         /// <returns></returns>
-        public abstract FileResult Authenticate();
-
-        /// <summary>
-        /// Authorization step
-        /// </summary>
-        /// <returns></returns>
-        public abstract FileResult Authorize();
+        public abstract FileResult Auth();
 
         /// <summary>
         /// Validation step
@@ -67,7 +61,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         protected BaseFileExportProcess()
         {
-            Context = new FileExportProcessContext();
+            Context = new FileExportProcessContext(this);
         }
 
         /// <summary>
@@ -86,10 +80,7 @@ namespace Signals.Core.Processes.Export
         /// <returns></returns>
         internal FileResult Execute()
         {
-            var result = Authenticate();
-            if (result.IsFaulted) return result;
-
-            result = Authorize();
+            var result = Auth();
             if (result.IsFaulted) return result;
 
             result = Validate();
@@ -131,16 +122,10 @@ namespace Signals.Core.Processes.Export
         protected abstract IFileExporter<TData> ResolveFileExporter();
 
         /// <summary>
-        /// Authentication step
+        /// Authentication and authorization step
         /// </summary>
         /// <returns></returns>
-        public abstract FileResult Authenticate(T1 obj);
-
-        /// <summary>
-        /// Authorization step
-        /// </summary>
-        /// <returns></returns>
-        public abstract FileResult Authorize(T1 obj);
+        public abstract FileResult Auth(T1 obj);
 
         /// <summary>
         /// Validation step
@@ -159,7 +144,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         protected BaseFileExportProcess()
         {
-            Context = new FileExportProcessContext();
+            Context = new FileExportProcessContext(this);
         }
 
         /// <summary>
@@ -179,10 +164,7 @@ namespace Signals.Core.Processes.Export
         /// <returns></returns>
         internal FileResult Execute(T1 obj)
         {
-            var result = Authenticate(obj);
-            if (result.IsFaulted) return result;
-
-            result = Authorize(obj);
+            var result = Auth(obj);
             if (result.IsFaulted) return result;
 
             result = Validate(obj);
@@ -225,16 +207,10 @@ namespace Signals.Core.Processes.Export
         protected abstract IFileExporter<TData> ResolveFileExporter();
 
         /// <summary>
-        /// Authentication step
+        /// Authentication and authorization step
         /// </summary>
         /// <returns></returns>
-        public abstract FileResult Authenticate(T1 obj1, T2 obj2);
-
-        /// <summary>
-        /// Authorization step
-        /// </summary>
-        /// <returns></returns>
-        public abstract FileResult Authorize(T1 obj1, T2 obj2);
+        public abstract FileResult Auth(T1 obj1, T2 obj2);
 
         /// <summary>
         /// Validation step
@@ -253,7 +229,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         protected BaseFileExportProcess()
         {
-            Context = new FileExportProcessContext();
+            Context = new FileExportProcessContext(this);
         }
 
         /// <summary>
@@ -274,10 +250,7 @@ namespace Signals.Core.Processes.Export
         /// <returns></returns>
         internal FileResult Execute(T1 obj1, T2 obj2)
         {
-            var result = Authenticate(obj1, obj2);
-            if (result.IsFaulted) return result;
-
-            result = Authorize(obj1, obj2);
+            var result = Auth(obj1, obj2);
             if (result.IsFaulted) return result;
 
             result = Validate(obj1, obj2);
@@ -321,16 +294,10 @@ namespace Signals.Core.Processes.Export
         protected abstract IFileExporter<TData> ResolveFileExporter();
 
         /// <summary>
-        /// Authentication step
+        /// Authentication and authorization step
         /// </summary>
         /// <returns></returns>
-        public abstract FileResult Authenticate(T1 obj1, T2 obj2, T3 obj3);
-
-        /// <summary>
-        /// Authorization step
-        /// </summary>
-        /// <returns></returns>
-        public abstract FileResult Authorize(T1 obj1, T2 obj2, T3 obj3);
+        public abstract FileResult Auth(T1 obj1, T2 obj2, T3 obj3);
 
         /// <summary>
         /// Validation step
@@ -349,7 +316,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         protected BaseFileExportProcess()
         {
-            Context = new FileExportProcessContext();
+            Context = new FileExportProcessContext(this);
         }
 
         /// <summary>
@@ -371,10 +338,7 @@ namespace Signals.Core.Processes.Export
         /// <returns></returns>
         internal FileResult Execute(T1 obj1, T2 obj2, T3 obj3)
         {
-            var result = Authenticate(obj1, obj2, obj3);
-            if (result.IsFaulted) return result;
-
-            result = Authorize(obj1, obj2, obj3);
+            var result = Auth(obj1, obj2, obj3);
             if (result.IsFaulted) return result;
 
             result = Validate(obj1, obj2, obj3);

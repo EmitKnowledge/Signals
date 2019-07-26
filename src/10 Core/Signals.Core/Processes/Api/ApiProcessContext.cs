@@ -2,6 +2,7 @@
 using Signals.Aspects.DI.Attributes;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
+using Signals.Core.Processing.Results;
 
 namespace Signals.Core.Processes.Api
 {
@@ -10,6 +11,14 @@ namespace Signals.Core.Processes.Api
     /// </summary>
     public class ApiProcessContext : BaseProcessContext
     {
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="process"></param>
+        public ApiProcessContext(IBaseProcess<VoidResult> process) : base(process)
+        {
+        }
+
         /// <summary>
         /// Http context
         /// </summary>

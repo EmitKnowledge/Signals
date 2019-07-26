@@ -5,6 +5,7 @@ using Signals.Core.Common.Instance;
 using System;
 using System.Collections.Generic;
 using Signals.Core.Processes.Recurring.Logging;
+using Signals.Core.Processing.Results;
 
 namespace Signals.Core.Processes.Recurring
 {
@@ -13,6 +14,14 @@ namespace Signals.Core.Processes.Recurring
     /// </summary>
     public class RecurringProcessContext : BaseProcessContext
     {
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="process"></param>
+        public RecurringProcessContext(IBaseProcess<VoidResult> process) : base(process)
+        {
+        }
+
         /// <summary>
         /// Recurring task log provider
         /// </summary>

@@ -1,4 +1,5 @@
 ﻿using Signals.Core.Processes.Base;
+using Signals.Core.Processing.Results;
 
 namespace Signals.Core.Processes.Import
 {
@@ -7,6 +8,12 @@ namespace Signals.Core.Processes.Import
     /// </summary>
     public class FileImportProcessContext : BaseProcessContext
     {
-        
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="process"></param>
+        public FileImportProcessContext(IBaseProcess<VoidResult> process) : base(process)
+        {
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using App.Domain.Configuration.Application;
 using App.Domain.Configuration.Database;
 using App.Domain.Configuration.ExternalApis;
+using App.Domain.Configuration.Localization;
 using App.Domain.Configuration.Notifications;
 using App.Domain.Configuration.Security;
 using App.Domain.Configuration.Storage;
@@ -50,5 +51,10 @@ namespace App.Domain.Configuration
         /// Configuration for database
         /// </summary>
         public DatabaseConfigurationElement DatabaseConfiguration { get; set; }
+
+        /// <summary>
+        /// Localization configuration
+        /// </summary>
+        public LocalizationConfigurationElement LocalizationConfiguration { get; set; }
     }
 }

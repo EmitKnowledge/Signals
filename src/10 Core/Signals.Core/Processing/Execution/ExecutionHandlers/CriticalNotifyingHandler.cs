@@ -8,7 +8,6 @@ using Signals.Core.Processing.Results;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -41,24 +40,31 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             }
             catch (Exception ex)
             {
+                var criticalAttributes = processType.GetCustomAttributes(typeof(CriticalAttribute), true).Cast<CriticalAttribute>().ToList();
+
+                if (criticalAttributes.Any())
+                {
+                    var manager = SystemBootstrapper.GetInstance<CriticalErrorCallbackManager>();
+                    manager?.InvokeError(process, processType, args, ex);
+                }
+
+                var happeningDate = DateTime.UtcNow;
                 if (ApplicationConfiguration.Instance?.CriticalConfiguration != null)
                 {
                     string InterpolateException(string originalString)
                     {
                         return originalString
-                            .Replace("[#Message#]", ex.Message)
+                            .Replace("[#Date#]", happeningDate.ToString(CultureInfo.InvariantCulture))
                             .Replace("[#Process#]", processType.Name)
                             .Replace("[#Message#]", ex.Message)
-                            .Replace("[#Stack#]", ex.StackTrace)
-                            .Replace("[#StackTrace#]", ex.StackTrace);
+                            .Replace("[#StackTrace#]", ex.StackTrace)
+                            .Replace("[#Data#]", args?.SerializeJson());
                     }
 
                     var client = SystemBootstrapper.GetInstance<SmtpClient>();
 
                     if (!client.IsNull())
                     {
-                        var criticalAttributes = processType.GetCustomAttributes(typeof(CriticalAttribute), true).Cast<CriticalAttribute>().ToList();
-
                         List<Task> sendingEmailTasks = new List<Task>();
                         foreach (var attribute in criticalAttributes)
                         {
@@ -71,7 +77,8 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                                 var subject = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Subject);
                                 var body = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Body);
 
-                                var data = $@"Date: {DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
+                                var data = $@"Date: {happeningDate.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
+Process: {processType.Name}{Environment.NewLine}
 Message: {ex.Message}{Environment.NewLine}
 StackTrace: {ex.StackTrace}{Environment.NewLine}
 Data: {args?.SerializeJson()}{Environment.NewLine}";
@@ -82,6 +89,7 @@ Data: {args?.SerializeJson()}{Environment.NewLine}";
                                 message.From = new MailAddress(from);
                                 message.Subject = subject;
                                 message.Body = body;
+                                message.IsBodyHtml = true;
 
                                 foreach (var email in emails)
                                 {

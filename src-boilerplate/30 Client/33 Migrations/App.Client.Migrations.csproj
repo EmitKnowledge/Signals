@@ -1,12 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.2.0" />
+    <PackageReference Include="Signals.Aspects.Configuration.File" Version="0.6.3" />
+    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="0.6.7" />
+    <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="0.6.4" />
+    <PackageReference Include="Signals.Core" Version="0.6.84" />
     <PackageReference Include="Simple.Migrations" Version="0.9.19" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,12 +21,6 @@
 
   <ItemGroup>
     <None Update="configs\application.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="configs\business.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="configs\web.application.config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

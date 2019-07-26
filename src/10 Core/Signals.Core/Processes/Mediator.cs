@@ -1,6 +1,7 @@
 ﻿using Signals.Aspects.DI.Attributes;
-using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;
+using Signals.Core.Processes.Base;
+using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using System;
@@ -122,7 +123,7 @@ namespace Signals.Core.Processes
 
             // execute process
             var response = ProcessExecutor.Execute(process, obj1);
-            
+
             return response;
         }
 
@@ -156,6 +157,59 @@ namespace Signals.Core.Processes
             var process = ProcessFactory.Create<TResponse>(typeof(TProcess));
             if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
 
+            // execute process
+            var response = ProcessExecutor.Execute(process, obj1, obj2, obj3);
+
+            return response;
+        }
+
+
+        /// <summary>
+        /// Handle the request
+        /// </summary>
+        /// <returns></returns>
+        public TResponse Dispatch<TResponse>(BusinessProcess<TResponse> process)
+            where TResponse : VoidResult, new()
+        {
+            // execute process
+            var response = ProcessExecutor.Execute<TResponse>(process);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Handle the request
+        /// </summary>
+        /// <returns></returns>
+        public TResponse Dispatch<T1, TResponse>(BusinessProcess<T1, TResponse> process, T1 obj1)
+            where TResponse : VoidResult, new()
+        {
+            // execute process
+            var response = ProcessExecutor.Execute(process, obj1);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Handle the request
+        /// </summary>
+        /// <returns></returns>
+        public TResponse Dispatch<T1, T2, TResponse>(BusinessProcess<T1, T2, TResponse> process, T1 obj1, T2 obj2)
+            where TResponse : VoidResult, new()
+        {
+            // execute process
+            var response = ProcessExecutor.Execute(process, obj1, obj2);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Handle the request
+        /// </summary>
+        /// <returns></returns>
+        public TResponse Dispatch<T1, T2, T3, TResponse>(BusinessProcess<T1, T2, T3, TResponse> process, T1 obj1, T2 obj2, T3 obj3)
+            where TResponse : VoidResult, new()
+        {
             // execute process
             var response = ProcessExecutor.Execute(process, obj1, obj2, obj3);
 
