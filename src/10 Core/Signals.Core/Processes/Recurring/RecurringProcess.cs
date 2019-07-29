@@ -140,7 +140,7 @@ namespace Signals.Core.Processes.Recurring
             var thisType = this.GetType();
             var currentExecuting = Context.Current(thisType);
 
-            if (!currentExecuting.IsNull()) return null;
+            if (!currentExecuting.IsNull()) return Ok();
 
             RecurringTaskLog log = new RecurringTaskLog();
             log.StartTime = DateTime.UtcNow;

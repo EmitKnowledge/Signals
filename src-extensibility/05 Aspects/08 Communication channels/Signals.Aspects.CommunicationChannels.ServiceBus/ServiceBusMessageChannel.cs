@@ -108,7 +108,8 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
 
             var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
             {
-                AutoComplete = false
+                AutoComplete = false,
+                MaxConcurrentCalls = _configuration.MaxConcurrentCalls
             };
 
             // Register the function that processes messages.
