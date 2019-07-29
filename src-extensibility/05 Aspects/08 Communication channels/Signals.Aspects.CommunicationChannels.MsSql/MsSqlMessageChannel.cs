@@ -129,14 +129,17 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
                             var queue = message.MessageQueue;
                             if (Subscriptions.ContainsKey(queue))
                             {
-                                Subscriptions[queue](message.MessagePayload);
-                                MarkSystemMessageAsProcessed(message.Id);
+                                Task.Run(() =>
+                                {
+                                    Subscriptions[queue](message.MessagePayload);
+                                    MarkSystemMessageAsProcessed(message.Id);
+                                });
                             }
                         }
                     }
                 };
                 // Keep the connection up to 10 mins before destructing the Sql dependency infrastructure from MSSQL
-                SqlDependency.Start(watchDogTimeOut: 600);
+                SqlDependency.Start(timeOut: 60, watchDogTimeOut: 600);
             }
         }
 
