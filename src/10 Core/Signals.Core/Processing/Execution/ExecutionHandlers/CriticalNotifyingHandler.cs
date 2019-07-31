@@ -68,7 +68,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                         List<Task> sendingEmailTasks = new List<Task>();
                         foreach (var attribute in criticalAttributes)
                         {
-                            var emails = attribute.NotificaitonEmails.Split(',').Select(x => x.Trim()).ToList();
+                            var emails = attribute.NotificaitonEmails?.Split(',')?.Select(x => x.Trim())?.ToList();
 
                             if (!emails.IsNullOrHasZeroElements())
                             {

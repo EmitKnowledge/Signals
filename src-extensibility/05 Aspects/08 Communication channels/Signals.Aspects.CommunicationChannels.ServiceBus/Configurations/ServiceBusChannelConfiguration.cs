@@ -13,6 +13,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus.Configurations
         public ServiceBusChannelConfiguration()
         {
             ChannelPrefix = "";
+            MaxConcurrentCalls = 1;
         }
 
         /// <summary>
@@ -24,5 +25,10 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus.Configurations
         /// Service bus channel prefix
         /// </summary>
         public string ChannelPrefix { get; set; }
+
+        /// <summary>
+        /// Number of threads to receive and execute messages in parallel manner
+        /// </summary>
+        public int MaxConcurrentCalls { get; set; }
     }
 }
