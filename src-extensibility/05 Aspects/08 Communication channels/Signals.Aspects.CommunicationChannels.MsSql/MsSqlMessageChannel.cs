@@ -241,12 +241,12 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
                 var uniqueTransactionId = Guid.NewGuid().ToString().Substring(0, 20).Replace("-", string.Empty);
                 var sql =
                     $@"
-                        BEGIN TRANSACTION {uniqueTransactionId}
+                        BEGIN TRANSACTION T{uniqueTransactionId}
                             SELECT * FROM [{_configuration.DbTableName}]
                             WHERE Id = @Id AND MessageStatus = @PendingStatus;
                             UPDATE [{_configuration.DbTableName}] SET MessageStatus = @ProcessingStatus
                             WHERE Id = @Id AND MessageStatus = @PendingStatus;
-                        COMMIT TRANSACTION {uniqueTransactionId}
+                        COMMIT TRANSACTION T{uniqueTransactionId}
                     ";
 
                 var command = new SqlCommand(sql, connection);
@@ -259,7 +259,6 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
 
                 command.Parameters.Add("ProcessingStatus", SqlDbType.Int);
                 command.Parameters["ProcessingStatus"].Value = (int)SystemMessageStatus.Processing;
-
 
                 using (var reader = command.ExecuteReader())
                 {
