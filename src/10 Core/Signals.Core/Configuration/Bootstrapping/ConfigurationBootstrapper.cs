@@ -116,7 +116,16 @@ namespace Signals.Core.Configuration.Bootstrapping
         public IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
             // Proc config validation
-            var config = ApplicationConfiguration.Instance;
+            ApplicationConfiguration config = null;
+            try
+            {
+                config = ApplicationConfiguration.Instance;
+            }
+            catch { }
+            finally
+            {
+                if (config.IsNull()) throw new Exception("Signals.Core.Configuration.ApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+            }
 
             if (DependencyResolver.IsNull() || DependencyResolver().IsNull()) throw new Exception("Dependency resolver not configured");
 

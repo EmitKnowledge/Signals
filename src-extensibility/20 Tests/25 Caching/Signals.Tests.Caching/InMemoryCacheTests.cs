@@ -95,6 +95,23 @@ namespace Signals.Tests.Caching
         }
 
         [Fact]
+        public void CachingEntry_UnexistantInvalidated_Exists()
+        {
+            var config = InitConfig();
+            var _cache = new InMemoryCache(config);
+
+            var key = "test_value";
+            var unexistantKey = "test_value_2";
+            var value = new CachedModel();
+            _cache.Set(key, value);
+
+            _cache.Invalidate(unexistantKey);
+
+            var cachedValue = _cache.Get<CachedModel>(key);
+            Assert.NotNull(cachedValue);
+        }
+
+        [Fact]
         public void CachingEntry_InvalidatedAll_DoesntExist()
         {
             var config = InitConfig();
@@ -128,34 +145,6 @@ namespace Signals.Tests.Caching
 
         [Fact]
         public void CachingReloadableEntry_CachedAndExpired_ExistsByReload()
-        {
-            var expirationTime = 300;
-            var timeout = 400;
-
-            var config = InitConfig();
-            config.ExpirationTime = TimeSpan.FromMilliseconds(expirationTime);
-
-            var _cache = new InMemoryCache(config);
-
-            var key = "test_value";
-            var value = new CachedModel();
-            var entry = new ReloadableCacheEntry(key, () =>
-            {
-                value.Value++;
-                return value;
-            });
-            _cache.Set(entry);
-
-            Thread.Sleep(timeout);
-
-            var cachedValue = _cache.Get<CachedModel>(key);
-            Assert.NotNull(cachedValue);
-            Assert.Equal(value, cachedValue);
-            Assert.Equal(2, value.Value);
-        }
-
-        [Fact]
-        public void CachingReloadableEntry_CachedAndExpired_ExistsByReloadOnGet()
         {
             var expirationTime = 300;
             var timeout = 400;
@@ -223,6 +212,24 @@ namespace Signals.Tests.Caching
 
             var cachedValue = _cache.Get<CachedModel>(key);
             Assert.Null(cachedValue);
+        }
+
+        [Fact]
+        public void CachingReloadableEntry_UnexistantInvalidated_Exists()
+        {
+            var config = InitConfig();
+            var _cache = new InMemoryCache(config);
+
+            var key = "test_value";
+            var unexistantKey = "test_value_2";
+            var value = new CachedModel();
+            var entry = new ReloadableCacheEntry(key, () => { value.Value++; return value; });
+            _cache.Set(entry);
+
+            _cache.Invalidate(unexistantKey);
+
+            var cachedValue = _cache.Get<CachedModel>(key);
+            Assert.NotNull(cachedValue);
         }
 
         [Fact]

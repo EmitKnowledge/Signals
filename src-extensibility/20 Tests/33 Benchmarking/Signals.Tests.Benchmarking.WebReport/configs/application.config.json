@@ -1,0 +1,18 @@
+﻿{
+	"ApplicationName": "OHD Web",
+	"ApplicationVersion": "1.0.0",
+	"ApplicationEmail": "no-reply@outbound.ohd.dk",
+  "CriticalConfiguration": {
+    "Emails": [
+    ],
+    "Subject": "Some critical process failed",
+    "Body": "Process name: [#Process#]<br>Date: [#Date#]<br>Data: [#Data#]<br><br> Details in attachment"
+  },
+	"SmtpConfiguration": {
+		"Server": "smtp.eu.sparkpostmail.com",
+		"Port": 587,
+		"Username": "SMTP_Injection",
+		"Password": "10b595ec33cbc6cc45ba8c233af4a06894e6ec1a",
+		"UseSsl": true
+	}
+}

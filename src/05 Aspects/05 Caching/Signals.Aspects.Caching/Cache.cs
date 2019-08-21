@@ -103,6 +103,7 @@ namespace Signals.Aspects.Caching
         public virtual void Invalidate(string key)
         {
             var entry = Configuration.DataProvider.Get(key);
+            if (entry == null) return;
             entry.InvokeInvalidate();
         }
 

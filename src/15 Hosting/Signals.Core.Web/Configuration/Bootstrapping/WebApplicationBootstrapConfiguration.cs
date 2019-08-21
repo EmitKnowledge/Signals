@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Signals.Aspects.DI;
+using Signals.Core.Common.Instance;
 using Signals.Core.Configuration;
 using Signals.Core.Configuration.Bootstrapping;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Web.Behaviour;
 using Signals.Core.Web.Execution;
 using Signals.Core.Web.Http;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -43,7 +45,16 @@ namespace Signals.Core.Web.Configuration.Bootstrapping
         internal IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
             // Proc config validation
-            var config = WebApplicationConfiguration.Instance;
+            WebApplicationConfiguration config = null;
+            try
+            {
+                config = WebApplicationConfiguration.Instance;
+            }
+            catch { }
+            finally
+            {
+                if (config.IsNull()) throw new Exception("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+            }
 
             return Resolve(scanAssemblies);
         }

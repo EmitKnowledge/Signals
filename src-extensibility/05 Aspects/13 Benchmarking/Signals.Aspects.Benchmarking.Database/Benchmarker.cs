@@ -144,7 +144,7 @@ namespace Signals.Aspects.Benchmarking.Database
         {
             if (!Configuration.IsEnabled) return;
 
-            InMemoryNameCache.AddOrUpdate(epicId, epicName, (key, value) => throw new ArgumentException("An item with the same key has already been added."));
+            InMemoryNameCache.AddOrUpdate(epicId, epicName, (key, value) => value);
         }
 
         /// <summary>
