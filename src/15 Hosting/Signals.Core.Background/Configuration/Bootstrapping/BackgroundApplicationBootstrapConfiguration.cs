@@ -3,6 +3,7 @@ using Signals.Aspects.CommunicationChannels;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization;
+using Signals.Core.Configuration;
 using Signals.Core.Configuration.Bootstrapping;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Distributed;
@@ -12,7 +13,9 @@ using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using System;
 using System.Diagnostics;
+using System.Net.Mail;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Signals.Core.Background.Configuration.Bootstrapping
 {
@@ -61,8 +64,57 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         /// </summary>
         private void Start()
         {
+            // Proc config validation
+            BackgroundApplicationConfiguration config = null;
+            try
+            {
+                config = BackgroundApplicationConfiguration.Instance;
+            }
+            catch { }
+            finally
+            {
+                if (config.IsNull()) throw new Exception("Signals.Core.Background.Configuration.BackgroundApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+            }
+
             RegisterBackground();
             ScheduleRecurring();
+            NotifyOnStartup();
+        }
+
+        /// <summary>
+        /// Send email on startup
+        /// </summary>
+        private void NotifyOnStartup()
+        {
+            var config = BackgroundApplicationConfiguration.Instance.StartupNotificationConfiguration;
+            var smtpClient = SystemBootstrapper.GetInstance<SmtpClient>();
+
+            if (!smtpClient.IsNull() && !config.IsNull())
+            {
+                var tos = config.Emails;
+                var subject = config.Subject;
+                var body = config.Body;
+
+                if (tos.IsNullOrHasZeroElements()) return;
+                if (subject.IsNullOrEmpty()) return;
+                if (body.IsNullOrEmpty()) return;
+
+                var from = ApplicationConfiguration.Instance.ApplicationEmail;
+
+                var message = new MailMessage();
+                message.From = new MailAddress(from);
+                message.Subject = subject;
+                message.Body = body;
+                message.IsBodyHtml = true;
+
+                foreach (var to in tos)
+                {
+                    message.To.Add(to);
+                }
+
+                var sendTask = smtpClient.SendMailAsync(message);
+                Task.WaitAll(sendTask);
+            }
         }
 
         /// <summary>

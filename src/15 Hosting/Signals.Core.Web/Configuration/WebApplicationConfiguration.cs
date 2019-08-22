@@ -1,15 +1,10 @@
 ﻿using Signals.Aspects.Configuration;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signals.Core.Web.Configuration
 {
     /// <summary>
-    /// Base application information
+    /// Web application information
     /// </summary>
     public class WebApplicationConfiguration : BaseConfiguration<WebApplicationConfiguration>
     {
