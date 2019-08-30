@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Signals.Aspects.Benchmarking
 {
@@ -25,13 +24,13 @@ namespace Signals.Aspects.Benchmarking
         /// <param name="epicId"></param>
         void FlushEpic(Guid epicId);
 
-        /// <summary>
-        /// Get epic report data
-        /// </summary>
-        /// <param name="epicName"></param>
-        /// <param name="afterDate"></param>
-        /// <returns></returns>
-        Dictionary<Guid, List<BenchmarkEntry>> GetEpicReport(string epicName, DateTime afterDate);
+	    /// <summary>
+	    /// Get epic report data
+	    /// </summary>
+	    /// <param name="epicName"></param>
+	    /// <param name="afterDate"></param>
+	    /// <returns></returns>
+	    EpicsReport GetEpicReport(string epicName, DateTime afterDate);
 
         /// <summary>
         /// Mark epic as started

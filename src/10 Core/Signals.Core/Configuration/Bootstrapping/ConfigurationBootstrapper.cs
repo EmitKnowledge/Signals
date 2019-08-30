@@ -10,7 +10,6 @@ using Signals.Aspects.Logging;
 using Signals.Aspects.Security;
 using Signals.Aspects.Storage;
 using Signals.Core.Processes;
-using Signals.Core.Processes.Recurring;
 using Signals.Core.Processes.Recurring.Logging;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Execution;
