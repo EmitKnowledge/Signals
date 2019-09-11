@@ -10,10 +10,10 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Signals.Aspects.Benchmarking.Database" Version="0.6.15" />
+    <PackageReference Include="Signals.Aspects.Benchmarking.Database" Version="0.6.16" />
     <PackageReference Include="Signals.Aspects.Configuration.File" Version="0.6.3" />
     <PackageReference Include="Signals.Aspects.DI.Autofac" Version="0.6.7" />
-    <PackageReference Include="Signals.Core.Web" Version="0.6.115" />
+    <PackageReference Include="Signals.Core.Web" Version="0.6.117" />
   </ItemGroup>
 
 

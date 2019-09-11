@@ -65,7 +65,6 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
 
                     if (!client.IsNull())
                     {
-                        List<Task> sendingEmailTasks = new List<Task>();
                         foreach (var attribute in criticalAttributes)
                         {
                             var emails = attribute.NotificaitonEmails?.Split(',')?.Select(x => x.Trim())?.ToList();
@@ -97,16 +96,9 @@ Data: {args?.SerializeJson()}{Environment.NewLine}";
                                 }
 
                                 message.Attachments.Add(attachment);
-
-                                var sendTask = client
-                                    .SendMailAsync(message);
-
-                                sendingEmailTasks.Add(sendTask);
+                                client.Send(message);                                
                             }
                         }
-
-                        if (sendingEmailTasks.Any())
-                            Task.WaitAll(sendingEmailTasks.ToArray());
                     }
                 }
 
