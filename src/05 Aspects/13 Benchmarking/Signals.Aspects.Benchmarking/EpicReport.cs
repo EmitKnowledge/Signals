@@ -40,8 +40,9 @@ namespace Signals.Aspects.Benchmarking
 		/// <summary>
 		/// CTOR
 		/// </summary>
-		public EpicReport()
+		public EpicReport(Guid epicId)
 		{
+            EpicId = epicId;
 			BenchmarkEntries = new List<BenchmarkEntry>();
 		}
 	}

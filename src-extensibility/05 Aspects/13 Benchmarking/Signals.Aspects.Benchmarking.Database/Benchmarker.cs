@@ -153,9 +153,9 @@ namespace Signals.Aspects.Benchmarking.Database
         /// <param name="epicName"></param>
         /// <param name="afterDate"></param>
         /// <returns></returns>
-        public Dictionary<Guid, List<BenchmarkEntry>> GetEpicReport(string epicName, DateTime afterDate)
+        public EpicsReport GetEpicReport(string epicName, DateTime afterDate)
         {
-            if (!Configuration.IsEnabled) return new Dictionary<Guid, List<BenchmarkEntry>>();
+            if (!Configuration.IsEnabled) return new EpicsReport();
 
             using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
@@ -202,7 +202,19 @@ namespace Signals.Aspects.Benchmarking.Database
                     }
                 }
 
-                return result.GroupBy(x => x.EpicId).ToDictionary(x => x.Key, x => x.ToList());
+                var reports = result.GroupBy(x => x.EpicId).Select(x =>
+                {
+                    var report = new EpicReport(x.Key);
+
+                    report.BenchmarkEntries.AddRange(x.ToList());
+
+                    return report;
+                }).ToList();
+
+                var epicReport = new EpicsReport();
+                epicReport.EpicReports.AddRange(reports);
+
+                return epicReport;
             }
         }
 
