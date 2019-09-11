@@ -42,7 +42,7 @@ namespace Signals.Core.Processes.Recurring
         /// <summary>
         /// CTOR
         /// </summary>
-        public RecurringProcess()
+        protected RecurringProcess()
         {
             Context = new RecurringProcessContext(this);
         }

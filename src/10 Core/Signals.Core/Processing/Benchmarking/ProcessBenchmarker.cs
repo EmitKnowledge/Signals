@@ -2,7 +2,6 @@
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Results;
 using System;
-using System.Collections.Generic;
 
 namespace Signals.Core.Processing.Benchmarking
 {
@@ -49,7 +48,7 @@ namespace Signals.Core.Processing.Benchmarking
         /// </summary>
         /// <param name="epicName"></param>
         /// <param name="afterDate"></param>
-        public Dictionary<Guid, List<BenchmarkEntry>> GetEpicReport(string epicName, DateTime afterDate)
+        public EpicsReport GetEpicReport(string epicName, DateTime afterDate)
         {
             return benchmarker.GetEpicReport(epicName, afterDate);
         }
