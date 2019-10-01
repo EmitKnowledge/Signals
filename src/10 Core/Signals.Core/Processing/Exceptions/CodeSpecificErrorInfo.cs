@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Signals.Aspects.DI;
+using Signals.Aspects.Localization;
+using System;
 using System.Net;
 using System.Runtime.Serialization;
 
@@ -39,6 +41,21 @@ namespace Signals.Core.Processing.Exceptions
         {
             FaultMessage = faultMessage;
             UserVisibleMessage = userVisibleMessage;
+            HttpStatusCode = httpStatusCode;
+        }
+
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="faultMessage"></param>
+        /// <param name="httpStatusCode"></param>
+        /// <param name="translateFaultMessage"></param>
+        public CodeSpecificErrorInfo(string faultMessage, HttpStatusCode httpStatusCode, bool translateFaultMessage = true)
+        {
+            var localizer = SystemBootstrapper.GetInstance<ILocalizationProvider>();
+
+            FaultMessage = faultMessage;
+            UserVisibleMessage = translateFaultMessage ? localizer?.Get(faultMessage)?.Value ?? null : null;
             HttpStatusCode = httpStatusCode;
         }
     }

@@ -3,6 +3,7 @@ using Signals.Aspects.Benchmarking.Database;
 using Signals.Aspects.Benchmarking.Database.Configurations;
 using System;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading;
 using Xunit;
 
@@ -42,13 +43,13 @@ namespace Signals.Tests.Benchmarking
             _benchmarker.FlushEpic(epicPass1);
             var report = _benchmarker.GetEpicReport(epicName, DateTime.UtcNow.AddMinutes(-1));
 
-            Assert.Single(report);
-            Assert.True(report.ContainsKey(epicPass1));
-            Assert.Equal(3, report[epicPass1].Count);
+            Assert.Single(report.EpicReports);
+            Assert.Contains(report.EpicReports, x => x.EpicId == epicPass1);
+            Assert.Equal(3, report.EpicReports.SingleOrDefault(x => x.EpicId == epicPass1)?.BenchmarkEntries.Count);
 
-            Assert.Equal("Start", report[epicPass1][0].Checkpoint);
-            Assert.Equal("Processing", report[epicPass1][1].Checkpoint);
-            Assert.Equal("End", report[epicPass1][2].Checkpoint);
+            Assert.Equal("Start", report.EpicReports.SingleOrDefault(x => x.EpicId == epicPass1).BenchmarkEntries[0].Checkpoint);
+            Assert.Equal("Processing", report.EpicReports.SingleOrDefault(x => x.EpicId == epicPass1).BenchmarkEntries[1].Checkpoint);
+            Assert.Equal("End", report.EpicReports.SingleOrDefault(x => x.EpicId == epicPass1).BenchmarkEntries[2].Checkpoint);
 
         }
 
