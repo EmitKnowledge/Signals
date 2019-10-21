@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Signals.Aspects.Auth.Attributes;
+﻿using Signals.Aspects.Auth.Attributes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Signals.Aspects.Auth.Extensions
 {
@@ -25,7 +25,7 @@ namespace Signals.Aspects.Auth.Extensions
         /// <param name="obj"></param>
         public static void AddClaim<T>(this ClaimsPrincipal principal, string name, T obj)
         {
-	        (principal.Identity as ClaimsIdentity)?.AddClaim(new Claim(name, JsonConvert.SerializeObject(obj)));
+	        (principal.Identity as ClaimsIdentity)?.AddClaim(new Claim(name, JsonSerializer.Serialize(obj)));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Signals.Aspects.Auth.Extensions
         {
             var claim = principal.Claims.FirstOrDefault(x => x.Type == name);
             if (claim == null) return default(T);
-            return JsonConvert.DeserializeObject<T>(claim.Value);
+            return JsonSerializer.Deserialize<T>(claim.Value);
         }
 
         /// <summary>

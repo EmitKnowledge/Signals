@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Signals.Aspects.Localization.Entries;
+﻿using Signals.Aspects.Localization.Entries;
 using Signals.Aspects.Localization.File.Configurations;
 using Signals.Aspects.Localization.File.Helpers;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 
 namespace Signals.Aspects.Localization.File.DataProviders
 {
@@ -57,7 +57,7 @@ namespace Signals.Aspects.Localization.File.DataProviders
                     var fileContent = IoHelper.ReadTextFile(file);
 
                     // Deserialize the json content to dictionary
-                    var localizationDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileContent);
+                    var localizationDictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(fileContent);
 
                     if (localizationDictionary == null)
                     {

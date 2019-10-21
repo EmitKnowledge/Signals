@@ -38,16 +38,16 @@ namespace Signals.Tests.Localization
         [Fact]
         public void Localization_FromFile_Exists()
         {
-            var message = _provider.Get("SOME_KEY", null, null, new CultureInfo("en"));
+            var message = _provider.Get("SOME_KEY", null, null, new CultureInfo("en-US"));
             Assert.Equal("Some message", message.Value);
         }
 
         [Fact]
         public void Localization_From_Specific_Collection_Exists()
         {
-            var messageFirst = _provider.Get("SOME_KEY", "localization-strings", null, new CultureInfo("en"));
-            var messageC1 = _provider.Get("SOME_KEY", "localization-strings", "Category01", new CultureInfo("en"));
-            var messageC2 = _provider.Get("SOME_KEY", "localization-strings", "Category02", new CultureInfo("en"));
+            var messageFirst = _provider.Get("SOME_KEY", "localization-strings", null, new CultureInfo("en-US"));
+            var messageC1 = _provider.Get("SOME_KEY", "localization-strings", "Category01", new CultureInfo("en-US"));
+            var messageC2 = _provider.Get("SOME_KEY", "localization-strings", "Category02", new CultureInfo("en-US"));
 
             Assert.Equal("Some message", messageFirst.Value);
             Assert.Equal("Message from category 01", messageC1.Value);
@@ -57,8 +57,8 @@ namespace Signals.Tests.Localization
         [Fact]
         public void Localization_From_Specific_Category_Exists()
         {
-            var messageFirst = _provider.Get("SOME_KEY", null, "Category01", new CultureInfo("en"));
-            var messageSecond = _provider.Get("SOME_KEY", null, "Category02", new CultureInfo("en"));
+            var messageFirst = _provider.Get("SOME_KEY", null, "Category01", new CultureInfo("en-US"));
+            var messageSecond = _provider.Get("SOME_KEY", null, "Category02", new CultureInfo("en-US"));
 
             Assert.Equal("Message from category 01", messageFirst.Value);
             Assert.Equal("Message from category 02", messageSecond.Value);

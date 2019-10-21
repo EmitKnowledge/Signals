@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
-using Signals.Core.Common.Serialization;
+﻿using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;
-using System.IO;
 using Ganss.XSS;
 using System;
 

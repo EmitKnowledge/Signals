@@ -1,7 +1,7 @@
 ﻿using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using Signals.Core.Common.Instance;
+using Signals.Core.Common.Serialization;
 
 namespace Signals.Core.Processing.Input.Http.ModelBinding
 {
@@ -19,14 +19,14 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
 			var headers = httpContext?.Headers.GetFromRequest();
 			if (headers.IsNull()) return null;
 
-			var obj = new JObject();
+			var obj = new Dictionary<string, string>();
 			foreach (var key in headers.Keys)
 			{
 				headers.TryGetValue(key, out var value);
 				obj[key] = value?.ToString();
 			}
 
-			var dto = obj.ToString(Formatting.None);
+			var dto = obj.SerializeJson();
 			return dto;
 		}
 	}
