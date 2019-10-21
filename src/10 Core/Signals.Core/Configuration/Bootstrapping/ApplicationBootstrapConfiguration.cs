@@ -24,9 +24,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Newtonsoft.Json;
 using Signals.Aspects.Benchmarking;
 using Signals.Aspects.Benchmarking.Configurations;
+using System.Text.Json;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -38,7 +38,7 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// <summary>
         /// Serialization settings
         /// </summary>
-        public JsonSerializerSettings JsonSerializerSettings { get; set; }
+        public JsonSerializerOptions JsonSerializerSettings { get; set; }
 
         /// <summary>
         /// DI registration service

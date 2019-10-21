@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Signals.Core.Common.Serialization;
+﻿using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Input;
@@ -178,7 +177,7 @@ namespace Signals.Core.Processes.Distributed
             if (args[0] is TRequest obj)
                 return Execute(obj);
 
-            var fallbackInput = JsonConvert.DeserializeObject<TRequest>(args[0] as string);
+            var fallbackInput = (args[0] as string).Deserialize<TRequest>();
             return Execute(fallbackInput);
         }
 

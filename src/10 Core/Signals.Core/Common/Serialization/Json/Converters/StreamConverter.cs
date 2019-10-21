@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Signals.Core.Common.Serialization.Json.Converters
 {
     /// <summary>
     /// Custom JSON.NET Serializer/Deserializer for Streams
     /// </summary>
-    public class StreamConverter : JsonConverter
+    public class StreamConverter : JsonConverter<Stream>
     {
         /// <summary>
         /// Determines whether this instance can convert the specified object type.
@@ -24,23 +25,26 @@ namespace Signals.Core.Common.Serialization.Json.Converters
         }
 
         /// <summary>
-        /// Reads the JSON representation of the object.
+        /// Read value
         /// </summary>
-        /// <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader"/> to read from.</param><param name="objectType">Type of the object.</param><param name="existingValue">The existing value of object being read.</param><param name="serializer">The calling serializer.</param>
-        /// <returns>
-        /// The object value.
-        /// </returns>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
+        /// <param name="reader"></param>
+        /// <param name="typeToConvert"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public override Stream Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             return null;
         }
+
         /// <summary>
-        /// Writes the JSON representation of the object.
+        /// Write value
         /// </summary>
-        /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter"/> to write to.</param><param name="value">The value.</param><param name="serializer">The calling serializer.</param>
-        public override void WriteJson(JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer)
+        /// <param name="writer"></param>
+        /// <param name="value"></param>
+        /// <param name="options"></param>
+        public override void Write(Utf8JsonWriter writer, Stream value, JsonSerializerOptions options)
         {
-            writer.WriteValue("");
+            writer.WriteStringValue("");
         }
     }
 }

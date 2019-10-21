@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Signals.Aspects.Localization.Entries;
 
 namespace Signals.Aspects.Localization.Base
@@ -513,6 +513,6 @@ namespace Signals.Aspects.Localization.Base
             => culture?.Name.ToLower() ?? CultureInfo.CurrentCulture.Name.ToLower();
 
         private string SerializeLocalizationBundle(List<LocalizationEntry> entries)
-            => JsonConvert.SerializeObject(entries.ToDictionary(x => x.LocalizationKey.Name, x => x.Value));
+            => JsonSerializer.Serialize(entries.ToDictionary(x => x.LocalizationKey.Name, x => x.Value));
     }
 }

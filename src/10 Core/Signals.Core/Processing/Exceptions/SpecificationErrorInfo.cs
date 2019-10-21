@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Signals.Aspects.DI;
+﻿using Signals.Aspects.DI;
 using Signals.Aspects.Localization;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization;
