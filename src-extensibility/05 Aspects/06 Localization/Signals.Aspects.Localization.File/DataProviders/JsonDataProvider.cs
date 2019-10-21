@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace Signals.Aspects.Localization.File.DataProviders
 {
@@ -57,7 +57,7 @@ namespace Signals.Aspects.Localization.File.DataProviders
                     var fileContent = IoHelper.ReadTextFile(file);
 
                     // Deserialize the json content to dictionary
-                    var localizationDictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(fileContent);
+                    var localizationDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileContent);
 
                     if (localizationDictionary == null)
                     {

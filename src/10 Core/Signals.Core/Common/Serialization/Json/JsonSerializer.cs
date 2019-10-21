@@ -1,10 +1,11 @@
-﻿using Signals.Aspects.DI;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization.Json.Converters;
 using System;
 using System.IO;
 using System.Text;
-using System.Text.Json;
 
 namespace Signals.Core.Common.Serialization.Json
 {
@@ -21,7 +22,7 @@ namespace Signals.Core.Common.Serialization.Json
         /// <returns></returns>
         public T Deserialize<T>(string json)
         {
-            return System.Text.Json.JsonSerializer.Deserialize<T>(json);
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace Signals.Core.Common.Serialization.Json
         /// <returns></returns>
         public object Deserialize(string json, Type type)
         {
-            return System.Text.Json.JsonSerializer.Deserialize(json, type);
+            return JsonConvert.DeserializeObject(json, type);
         }
 
         /// <summary>
@@ -42,18 +43,31 @@ namespace Signals.Core.Common.Serialization.Json
         /// <returns></returns>
         public string Serialize(object instance)
         {
-            var options = SystemBootstrapper.GetInstance<System.Text.Json.JsonSerializerOptions>();
-            if (options.IsNull())
-            {
-                options = new JsonSerializerOptions();
-                options.WriteIndented = false;
-                options.PropertyNamingPolicy = new PascalCaseNamingPolicy();
-                options.Converters.Add(new UnixDateTimeConverter());
-                options.Converters.Add(new NullUnixDateTimeConverter());
-                options.Converters.Add(new StreamConverter());
-            }
+            if (instance == null) return null;
+            var serializer = new Newtonsoft.Json.JsonSerializer();
 
-            return System.Text.Json.JsonSerializer.Serialize(instance, options: options);
+            var settings = SystemBootstrapper.GetInstance<JsonSerializerSettings>();
+            if (!settings.IsNull()) serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
+
+            serializer.Converters.Add(new IsoDateTimeConverter());
+            serializer.Converters.Add(new StreamConverter());
+            serializer.StringEscapeHandling = StringEscapeHandling.Default;
+
+
+            using (var ms = new MemoryStream())
+            {
+                using (var sw = new StreamWriter(ms))
+                {
+                    using (var writer = new JsonTextWriter(sw))
+                    {
+                        writer.Formatting = Formatting.None;
+                        serializer.Serialize(writer, instance);
+                        sw.Flush();
+                        var json = Encoding.UTF8.GetString(ms.ToArray());
+                        return json;
+                    }
+                }
+            }
         }
     }
 }

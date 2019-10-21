@@ -18,7 +18,7 @@ namespace Signals.Tests.Localization
         {
             // Create instance
 
-            var databaseConfig = new DatabaseDataProviderConfiguration(ConnectionString`);
+            var databaseConfig = new DatabaseDataProviderConfiguration(ConnectionString);
             var databaseDataProvider = new DatabaseDataProvider(databaseConfig);
 
             _provider = new LocalizationProvider(databaseDataProvider);
