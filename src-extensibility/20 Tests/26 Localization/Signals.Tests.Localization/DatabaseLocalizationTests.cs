@@ -35,7 +35,7 @@ namespace Signals.Tests.Localization
                 var translation = "Translation";
                 var collection = "some_collection";
                 var category = "some_category";
-                var culture = new CultureInfo("en");
+                var culture = new CultureInfo("en-US");
 
                 _provider.Set(key, translation, collection, category, culture);
 
@@ -72,7 +72,7 @@ namespace Signals.Tests.Localization
                 var translation = "Translation";
                 var collection = "some_collection";
                 var category = "some_category";
-                var culture = new CultureInfo("en");
+                var culture = new CultureInfo("en-US");
 
                 // This should create, since the database is clean
                 _provider.Set(key, translation, collection, category, culture);
@@ -119,7 +119,7 @@ namespace Signals.Tests.Localization
                 var translation = "Translation";
                 var collection = "some_collection";
                 var category = "some_category";
-                var culture = new CultureInfo("en");
+                var culture = new CultureInfo("en-US");
 
                 // This should create, since the database is clean
                 _provider.Set(key, translation, collection, category, culture);
