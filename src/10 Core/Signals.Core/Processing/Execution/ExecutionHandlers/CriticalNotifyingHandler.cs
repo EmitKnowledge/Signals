@@ -1,6 +1,7 @@
 ﻿using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization;
+using Signals.Core.Common.Smtp;
 using Signals.Core.Configuration;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Behaviour;
@@ -61,7 +62,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                             .Replace("[#Data#]", args?.SerializeJson());
                     }
 
-                    var client = SystemBootstrapper.GetInstance<SmtpClient>();
+                    var client = SystemBootstrapper.GetInstance<ISmtpClient>();
 
                     if (!client.IsNull())
                     {

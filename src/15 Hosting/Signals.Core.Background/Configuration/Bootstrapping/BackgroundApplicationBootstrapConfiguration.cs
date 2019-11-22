@@ -3,6 +3,7 @@ using Signals.Aspects.CommunicationChannels;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization;
+using Signals.Core.Common.Smtp;
 using Signals.Core.Configuration;
 using Signals.Core.Configuration.Bootstrapping;
 using Signals.Core.Processes.Base;
@@ -87,7 +88,7 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         private void NotifyOnStartup()
         {
             var config = BackgroundApplicationConfiguration.Instance.StartupNotificationConfiguration;
-            var smtpClient = SystemBootstrapper.GetInstance<SmtpClient>();
+            var smtpClient = SystemBootstrapper.GetInstance<ISmtpClient>();
 
             if (!smtpClient.IsNull() && !config.IsNull())
             {
