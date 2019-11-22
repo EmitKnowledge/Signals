@@ -200,7 +200,7 @@ namespace Signals.Core.Configuration.Bootstrapping
         {
             if (!TaskRegistry.IsNull() && !TaskRegistry().IsNull())
             {
-                if(RecurringTaskLogProvider.IsNull() || RecurringTaskLogProvider().IsNull())
+                if (RecurringTaskLogProvider.IsNull() || RecurringTaskLogProvider().IsNull())
                 {
                     RecurringTaskLogProvider = () => new RecurringTaskLogProvider();
                 }

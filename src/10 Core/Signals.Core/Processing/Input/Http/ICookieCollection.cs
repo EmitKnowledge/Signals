@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Signals.Core.Common.Instance;
+﻿using Signals.Core.Common.Instance;
 using System;
 using Signals.Core.Common.Serialization;
 

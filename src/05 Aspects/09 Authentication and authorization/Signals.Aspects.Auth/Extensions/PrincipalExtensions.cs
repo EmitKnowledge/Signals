@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Signals.Aspects.Auth.Attributes;
+﻿using Signals.Aspects.Auth.Attributes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using Newtonsoft.Json;
 
 namespace Signals.Aspects.Auth.Extensions
 {

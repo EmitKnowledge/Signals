@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Signals.Aspects.Localization.Entries;
+﻿using Signals.Aspects.Localization.Entries;
 using Signals.Aspects.Localization.File.Configurations;
 using Signals.Aspects.Localization.File.Helpers;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Signals.Aspects.Localization.File.DataProviders
 {
