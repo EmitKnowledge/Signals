@@ -37,16 +37,13 @@ namespace Signals.Core.Common.Smtp
             else
             {
                 var to = recipients?.Split(',', ';');
-                if (to.IsNullOrHasZeroElements())
-                {
-                    _smtpClient.Send(from, recipients, subject, body);
-                }
-                else
+                if (!to.IsNullOrHasZeroElements())
                 {
                     var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
                     var verifiedTo = to.Where(x => whitelistedTo.Contains(x)).ToList();
 
-                    _smtpClient.Send(from, string.Join(";", verifiedTo), subject, body);
+                    if (!verifiedTo.IsNullOrHasZeroElements())
+                        _smtpClient.Send(from, string.Join(";", verifiedTo), subject, body);
                 }
             }
         }
@@ -64,11 +61,7 @@ namespace Signals.Core.Common.Smtp
             else
             {
                 var to = message.To;
-                if (to.IsNullOrHasZeroElements())
-                {
-                    _smtpClient.Send(message);
-                }
-                else
+                if (!to.IsNullOrHasZeroElements())
                 {
                     var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
                     var verifiedTo = to.Where(x => whitelistedTo.Contains(x.Address)).ToList();
@@ -76,7 +69,11 @@ namespace Signals.Core.Common.Smtp
                     message.To.Clear();
                     verifiedTo.ForEach(x => message.To.Add(x));
 
-                    _smtpClient.Send(message);
+                    message.CC.Clear();
+                    verifiedTo.ForEach(x => message.CC.Add(x));
+
+                    if (!verifiedTo.IsNullOrHasZeroElements())
+                        _smtpClient.Send(message);
                 }
             }
         }
@@ -98,16 +95,13 @@ namespace Signals.Core.Common.Smtp
             else
             {
                 var to = recipients?.Split(',', ';');
-                if (to.IsNullOrHasZeroElements())
-                {
-                    _smtpClient.SendAsync(from, recipients, subject, body, userToken);
-                }
-                else
+                if (!to.IsNullOrHasZeroElements())
                 {
                     var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
                     var verifiedTo = to.Where(x => whitelistedTo.Contains(x)).ToList();
 
-                    _smtpClient.SendAsync(from, string.Join(";", verifiedTo), subject, body, userToken);
+                    if (!verifiedTo.IsNullOrHasZeroElements())
+                        _smtpClient.SendAsync(from, string.Join(";", verifiedTo), subject, body, userToken);
                 }
             }
         }
@@ -126,11 +120,7 @@ namespace Signals.Core.Common.Smtp
             else
             {
                 var to = message.To;
-                if (to.IsNullOrHasZeroElements())
-                {
-                    _smtpClient.SendAsync(message, userToken);
-                }
-                else
+                if (!to.IsNullOrHasZeroElements())
                 {
                     var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
                     var verifiedTo = to.Where(x => whitelistedTo.Contains(x.Address)).ToList();
@@ -138,7 +128,11 @@ namespace Signals.Core.Common.Smtp
                     message.To.Clear();
                     verifiedTo.ForEach(x => message.To.Add(x));
 
-                    _smtpClient.SendAsync(message, userToken);
+                    message.CC.Clear();
+                    verifiedTo.ForEach(x => message.CC.Add(x));
+
+                    if (!verifiedTo.IsNullOrHasZeroElements())
+                        _smtpClient.SendAsync(message, userToken);
                 }
             }
         }
@@ -157,11 +151,7 @@ namespace Signals.Core.Common.Smtp
             else
             {
                 var to = message.To;
-                if (to.IsNullOrHasZeroElements())
-                {
-                    await _smtpClient.SendMailAsync(message);
-                }
-                else
+                if (!to.IsNullOrHasZeroElements())
                 {
                     var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
                     var verifiedTo = to.Where(x => whitelistedTo.Contains(x.Address)).ToList();
@@ -169,7 +159,11 @@ namespace Signals.Core.Common.Smtp
                     message.To.Clear();
                     verifiedTo.ForEach(x => message.To.Add(x));
 
-                    await _smtpClient.SendMailAsync(message);
+                    message.CC.Clear();
+                    verifiedTo.ForEach(x => message.CC.Add(x));
+
+                    if (!verifiedTo.IsNullOrHasZeroElements())
+                        await _smtpClient.SendMailAsync(message);
                 }
             }
         }
@@ -191,16 +185,13 @@ namespace Signals.Core.Common.Smtp
             else
             {
                 var to = recipients?.Split(',', ';');
-                if (to.IsNullOrHasZeroElements())
-                {
-                    await _smtpClient.SendMailAsync(from, recipients, subject, body);
-                }
-                else
+                if (!to.IsNullOrHasZeroElements())
                 {
                     var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
                     var verifiedTo = to.Where(x => whitelistedTo.Contains(x)).ToList();
 
-                    await _smtpClient.SendMailAsync(from, string.Join(";", verifiedTo), subject, body);
+                    if (!verifiedTo.IsNullOrHasZeroElements())
+                        await _smtpClient.SendMailAsync(from, string.Join(";", verifiedTo), subject, body);
                 }
             }
         }
