@@ -60,15 +60,15 @@ namespace Signals.Core.Common.Smtp
             }
             else
             {
-                var to = message.To;
-                if (!to.IsNullOrHasZeroElements())
+                if (!message.To.IsNullOrHasZeroElements())
                 {
                     var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
-                    var verifiedTo = to.Where(x => whitelistedTo.Contains(x.Address)).ToList();
 
+                    var verifiedTo = message.To.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.To.Clear();
                     verifiedTo.ForEach(x => message.To.Add(x));
 
+                    var verifiedCc = message.CC.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.CC.Clear();
                     verifiedTo.ForEach(x => message.CC.Add(x));
 
@@ -119,15 +119,15 @@ namespace Signals.Core.Common.Smtp
             }
             else
             {
-                var to = message.To;
-                if (!to.IsNullOrHasZeroElements())
+                if (!message.To.IsNullOrHasZeroElements())
                 {
                     var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
-                    var verifiedTo = to.Where(x => whitelistedTo.Contains(x.Address)).ToList();
 
+                    var verifiedTo = message.To.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.To.Clear();
                     verifiedTo.ForEach(x => message.To.Add(x));
 
+                    var verifiedCc = message.CC.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.CC.Clear();
                     verifiedTo.ForEach(x => message.CC.Add(x));
 
@@ -150,15 +150,15 @@ namespace Signals.Core.Common.Smtp
             }
             else
             {
-                var to = message.To;
-                if (!to.IsNullOrHasZeroElements())
+                if (!message.To.IsNullOrHasZeroElements())
                 {
                     var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
-                    var verifiedTo = to.Where(x => whitelistedTo.Contains(x.Address)).ToList();
 
+                    var verifiedTo = message.To.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.To.Clear();
                     verifiedTo.ForEach(x => message.To.Add(x));
 
+                    var verifiedCc = message.CC.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.CC.Clear();
                     verifiedTo.ForEach(x => message.CC.Add(x));
 

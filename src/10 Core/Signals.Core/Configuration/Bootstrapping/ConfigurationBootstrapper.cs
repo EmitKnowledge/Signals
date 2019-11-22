@@ -192,7 +192,7 @@ namespace Signals.Core.Configuration.Bootstrapping
                 var wrapper = new SmtpClientWrapper(instance);
 
                 resolver.Register<ISmtpClient>(wrapper);
-                resolver.Register<SmtpClient>(wrapper);
+                resolver.Register<SmtpClient>(instance);
             }
         }
 
