@@ -49,36 +49,6 @@ namespace Signals.Core.Common.Smtp
         }
 
         /// <summary>
-        /// Send message
-        /// </summary>
-        /// <param name="message"></param>
-        public new void Send(MailMessage message)
-        {
-            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
-            {
-                _smtpClient.Send(message);
-            }
-            else
-            {
-                if (!message.To.IsNullOrHasZeroElements())
-                {
-                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
-
-                    var verifiedTo = message.To.Where(x => whitelistedTo.Contains(x.Address)).ToList();
-                    message.To.Clear();
-                    verifiedTo.ForEach(x => message.To.Add(x));
-
-                    var verifiedCc = message.CC.Where(x => whitelistedTo.Contains(x.Address)).ToList();
-                    message.CC.Clear();
-                    verifiedTo.ForEach(x => message.CC.Add(x));
-
-                    if (!verifiedTo.IsNullOrHasZeroElements())
-                        _smtpClient.Send(message);
-                }
-            }
-        }
-
-        /// <summary>
         /// Send async message
         /// </summary>
         /// <param name="from"></param>
@@ -109,6 +79,68 @@ namespace Signals.Core.Common.Smtp
         /// <summary>
         /// Send async message
         /// </summary>
+        /// <param name="from"></param>
+        /// <param name="recipients"></param>
+        /// <param name="subject"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        public new async Task SendMailAsync(string from, string recipients, string subject, string body)
+        {
+            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
+            {
+                await _smtpClient.SendMailAsync(from, recipients, subject, body);
+            }
+            else
+            {
+                var to = recipients?.Split(',', ';');
+                if (!to.IsNullOrHasZeroElements())
+                {
+                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
+                    var verifiedTo = to.Where(x => whitelistedTo.Contains(x)).ToList();
+
+                    if (!verifiedTo.IsNullOrHasZeroElements())
+                        await _smtpClient.SendMailAsync(from, string.Join(";", verifiedTo), subject, body);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Send message
+        /// </summary>
+        /// <param name="message"></param>
+        public new void Send(MailMessage message)
+        {
+            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
+            {
+                _smtpClient.Send(message);
+            }
+            else
+            {
+                if (!message.To.IsNullOrHasZeroElements())
+                {
+                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
+
+                    var verifiedTo = message.To.Where(x => whitelistedTo.Contains(x.Address)).ToList();
+                    message.To.Clear();
+                    verifiedTo.ForEach(x => message.To.Add(x));
+
+                    var verifiedCc = message.CC.Where(x => whitelistedTo.Contains(x.Address)).ToList();
+                    message.CC.Clear();
+                    verifiedCc.ForEach(x => message.CC.Add(x));
+
+                    var verifiedBcc = message.Bcc.Where(x => whitelistedTo.Contains(x.Address)).ToList();
+                    message.Bcc.Clear();
+                    verifiedBcc.ForEach(x => message.Bcc.Add(x));
+
+                    if (!verifiedTo.IsNullOrHasZeroElements())
+                        _smtpClient.Send(message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Send async message
+        /// </summary>
         /// <param name="message"></param>
         /// <param name="userToken"></param>
         public new async void SendAsync(MailMessage message, object userToken)
@@ -129,7 +161,11 @@ namespace Signals.Core.Common.Smtp
 
                     var verifiedCc = message.CC.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.CC.Clear();
-                    verifiedTo.ForEach(x => message.CC.Add(x));
+                    verifiedCc.ForEach(x => message.CC.Add(x));
+
+                    var verifiedBcc = message.Bcc.Where(x => whitelistedTo.Contains(x.Address)).ToList();
+                    message.Bcc.Clear();
+                    verifiedBcc.ForEach(x => message.Bcc.Add(x));
 
                     if (!verifiedTo.IsNullOrHasZeroElements())
                         _smtpClient.SendAsync(message, userToken);
@@ -160,38 +196,14 @@ namespace Signals.Core.Common.Smtp
 
                     var verifiedCc = message.CC.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.CC.Clear();
-                    verifiedTo.ForEach(x => message.CC.Add(x));
+                    verifiedCc.ForEach(x => message.CC.Add(x));
+
+                    var verifiedBcc = message.Bcc.Where(x => whitelistedTo.Contains(x.Address)).ToList();
+                    message.Bcc.Clear();
+                    verifiedBcc.ForEach(x => message.Bcc.Add(x));
 
                     if (!verifiedTo.IsNullOrHasZeroElements())
                         await _smtpClient.SendMailAsync(message);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Send async message
-        /// </summary>
-        /// <param name="from"></param>
-        /// <param name="recipients"></param>
-        /// <param name="subject"></param>
-        /// <param name="body"></param>
-        /// <returns></returns>
-        public new async Task SendMailAsync(string from, string recipients, string subject, string body)
-        {
-            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
-            {
-                await _smtpClient.SendMailAsync(from, recipients, subject, body);
-            }
-            else
-            {
-                var to = recipients?.Split(',', ';');
-                if (!to.IsNullOrHasZeroElements())
-                {
-                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
-                    var verifiedTo = to.Where(x => whitelistedTo.Contains(x)).ToList();
-
-                    if (!verifiedTo.IsNullOrHasZeroElements())
-                        await _smtpClient.SendMailAsync(from, string.Join(";", verifiedTo), subject, body);
                 }
             }
         }
