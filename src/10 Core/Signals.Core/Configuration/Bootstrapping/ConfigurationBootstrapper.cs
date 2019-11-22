@@ -20,6 +20,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Signals.Core.Processing.Behaviour;
 using Signals.Aspects.Benchmarking;
+using Signals.Core.Common.Smtp;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -188,7 +189,10 @@ namespace Signals.Core.Configuration.Bootstrapping
                     Credentials = new NetworkCredential(username, password)
                 };
 
-                resolver.Register(instance);
+                var wrapper = new SmtpClientWrapper(instance);
+
+                resolver.Register<ISmtpClient>(wrapper);
+                resolver.Register<SmtpClient>(wrapper);
             }
         }
 

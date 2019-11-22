@@ -1,5 +1,6 @@
 ﻿using Signals.Aspects.Configuration;
 using Signals.Core.Configuration.ConfigurationSegments;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Signals.Core.Configuration
@@ -32,6 +33,11 @@ namespace Signals.Core.Configuration
         [EmailAddress]
         [Required]
         public string ApplicationEmail { get; set; }
+
+        /// <summary>
+        /// Person to contact in case of emergency
+        /// </summary>
+        public List<string> WhitelistedEmails { get; set; }
 
         /// <summary>
         /// Critical process data
