@@ -343,7 +343,11 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
 	                        [MessageQueue] [nvarchar](max) NOT NULL,
 	                        [MessagePayload] [nvarchar](max) NOT NULL,
 	                        [MessageStatus] [int] NOT NULL
-                        )
+                            CONSTRAINT [PK_{_configuration.DbTableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
                     ";
 
                 var command = new SqlCommand(sql, connection);

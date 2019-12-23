@@ -16,7 +16,9 @@ namespace Signals.Tests.Configuration
         {
             lock (ConnectionStirng)
             {
-                var configuration = new MsSqlConfigurationProvider(ConnectionStirng);
+                var configuration = new MsSqlConfigurationProvider(ConnectionStirng, "Configuration2")
+                {
+                };
 
                 // Delete the configuration table from the database if exists
                 using (var connection = new SqlConnection(ConnectionStirng))
@@ -50,7 +52,10 @@ namespace Signals.Tests.Configuration
         {
             lock (ConnectionStirng)
             {
-                var configuration = new MsSqlConfigurationProvider(ConnectionStirng) { ReloadOnAccess = true };
+                var configuration = new MsSqlConfigurationProvider(ConnectionStirng, "Configuration2")
+                {
+                    ReloadOnAccess = true
+                };
 
                 // Sets up and loads controller configuration using the default MSSQL configuration provider
                 ControllersConfiguration.UseProvider(configuration);
@@ -184,7 +189,10 @@ namespace Signals.Tests.Configuration
         {
             lock (ConnectionStirng)
             {
-                var configuration = new MsSqlConfigurationProvider(ConnectionStirng) { ReloadOnAccess = true };
+                var configuration = new MsSqlConfigurationProvider(ConnectionStirng, "Configuration2")
+                {
+                    ReloadOnAccess = true
+                };
 
                 // Sets up and loads controller configuration using the default MSSQL configuration provider
                 ControllersConfiguration.UseProvider(configuration);
@@ -221,7 +229,7 @@ namespace Signals.Tests.Configuration
                         connection.Close();
                     }
                 }
-                
+
                 var appName = ControllersConfiguration.Instance?.ApplicationConfiguration?.ApplicationName;
                 var externalApis = ControllersConfiguration.Instance?.ExternalApisConfiguration?.ExternalApis;
                 var saltLength = ControllersConfiguration.Instance?.SecurityConfiguration?.SaltLength;
@@ -252,7 +260,7 @@ namespace Signals.Tests.Configuration
                 appName = ControllersConfiguration.Instance.ApplicationConfiguration?.ApplicationName;
                 externalApis = ControllersConfiguration.Instance.ExternalApisConfiguration?.ExternalApis;
                 saltLength = ControllersConfiguration.Instance.SecurityConfiguration?.SaltLength;
-                
+
                 Assert.NotNull(appName);
                 Assert.NotNull(externalApis);
                 Assert.Equal("AppName", appName);

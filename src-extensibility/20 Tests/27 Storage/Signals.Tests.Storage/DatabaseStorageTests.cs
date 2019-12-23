@@ -19,7 +19,8 @@ namespace Signals.Tests.Storage
 
         private DatabaseStorageConfiguration Configuration => new DatabaseStorageConfiguration
         {
-            ConnectionString = "Data Source=sql.emitknowledge.com;Initial Catalog=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e"
+            ConnectionString = "Data Source=sql.emitknowledge.com;Initial Catalog=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e",
+            TableName = "File2"
         };
 
         private Task Lock(Func<Task> action)

@@ -104,7 +104,11 @@ namespace Signals.Aspects.Auditing.AuditNET
                             [StartDate] datetime2(7) NOT NULL,
                             [EndDate] datetime2(7),
                             [Data] NVARCHAR(MAX)
-                        )
+                            CONSTRAINT [PK_{databaseConfiguration.TableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
                     ";
 
                 var command = new SqlCommand(sql, connection);

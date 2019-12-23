@@ -151,9 +151,9 @@ namespace Signals.Aspects.Security.Database
                 // Checks if there is 'grant access' permission entry for the roles and not 'denied access' for the user
                 // OR if there is 'grant access' permission entry for the user (without role checking)
                 var sql =
-                    @"
+                    $@"
                         SELECT COUNT(*)
-                        FROM Permission p
+                        FROM {Configuration.TableName} p
                         WHERE p.Feature = @Feature AND
                         (
 	                        (
@@ -161,7 +161,7 @@ namespace Signals.Aspects.Security.Database
 		                        p.HasAccess = 1 AND 
 		                        (
 			                        SELECT COUNT(*) 
-			                        FROM Permission p1 
+			                        FROM {Configuration.TableName} p1 
 			                        WHERE p1.[User] = @User AND 
 			                        p1.Feature = @Feature AND 
 			                        p1.HasAccess = 0
@@ -233,7 +233,11 @@ namespace Signals.Aspects.Security.Database
 	                        [Role] [nvarchar](max) NULL,
 	                        [Feature] [nvarchar](max) NOT NULL,
 	                        [HasAccess] [bit] NOT NULL
-                        )
+                            CONSTRAINT [PK_{databaseConfiguration.TableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
                     ";
 
                 var command = new SqlCommand(sql, connection);

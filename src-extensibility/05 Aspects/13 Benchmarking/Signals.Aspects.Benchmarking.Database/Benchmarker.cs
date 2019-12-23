@@ -30,7 +30,7 @@ namespace Signals.Aspects.Benchmarking.Database
         public Benchmarker(DatabaseBenchmarkingConfiguration databaseConfiguration)
         {
             Configuration = databaseConfiguration;
-            CreateAuditTableIfNotExist();
+            CreateBenchmarkTableIfNotExist();
         }
 
         /// <summary>
@@ -219,9 +219,9 @@ namespace Signals.Aspects.Benchmarking.Database
         }
 
         /// <summary>
-        /// Ensures that table for the audit logs exists in the database
+        /// Ensures that table for the benchmark logs exists in the database
         /// </summary>
-        private void CreateAuditTableIfNotExist()
+        private void CreateBenchmarkTableIfNotExist()
         {
             if (!Configuration.IsEnabled) return;
 
@@ -247,7 +247,11 @@ namespace Signals.Aspects.Benchmarking.Database
                             [Checkpoint] NVARCHAR(MAX) NOT NULL,
                             [Description] NVARCHAR(MAX) NULL,
                             [Payload] NVARCHAR(MAX) NULL
-                        )
+                            CONSTRAINT [PK_{Configuration.TableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
                     ";
 
                 var command = new SqlCommand(sql, connection);

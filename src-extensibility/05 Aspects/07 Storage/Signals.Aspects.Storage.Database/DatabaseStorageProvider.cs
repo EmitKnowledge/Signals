@@ -1,11 +1,11 @@
-﻿using Signals.Aspects.Storage.Helpers;
-using Signals.Aspects.Storage.Database.Configurations;
+﻿using Signals.Aspects.Storage.Database.Configurations;
+using Signals.Aspects.Storage.Helpers;
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Signals.Aspects.Storage.Database
 {
@@ -13,7 +13,7 @@ namespace Signals.Aspects.Storage.Database
     /// Database storage provider
     /// </summary>
     public class DatabaseStorageProvider : IStorageProvider
-    {        
+    {
         /// <summary>
         /// Database configuration
         /// </summary>
@@ -26,8 +26,9 @@ namespace Signals.Aspects.Storage.Database
         public DatabaseStorageProvider(DatabaseStorageConfiguration configuration)
         {
             Configuration = configuration;
+            CreateFileTableIfNotExist();
         }
-        
+
         /// <summary>
         /// Retrieve stored file
         /// </summary>
@@ -44,12 +45,12 @@ namespace Signals.Aspects.Storage.Database
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Data FROM [File] WHERE Path = @Path AND Name = @Name";
+                command.CommandText = $"SELECT Data FROM [{Configuration.TableName}] WHERE Path = @Path AND Name = @Name";
 
                 command.Parameters.Add(new SqlParameter("@Path", path));
                 command.Parameters.Add(new SqlParameter("@Name", name));
 
-	            if (!(command.ExecuteScalar() is byte[] data)) return null;
+                if (!(command.ExecuteScalar() is byte[] data)) return null;
 
                 using (var encryptStream = Configuration.Decrypt(new MemoryStream(data)))
                 {
@@ -60,7 +61,7 @@ namespace Signals.Aspects.Storage.Database
                 return new MemoryStream(data);
             }
         }
-        
+
         /// <summary>
         /// Remove stored file
         /// </summary>
@@ -76,7 +77,7 @@ namespace Signals.Aspects.Storage.Database
             {
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM [File] WHERE Path = @Path AND Name = @Name";
+                command.CommandText = $"DELETE FROM [{Configuration.TableName}] WHERE Path = @Path AND Name = @Name";
 
                 command.Parameters.Add(new SqlParameter("@Path", path));
                 command.Parameters.Add(new SqlParameter("@Name", name));
@@ -86,7 +87,7 @@ namespace Signals.Aspects.Storage.Database
                 return Task.CompletedTask;
             }
         }
-        
+
         /// <summary>
         /// Store file from stream
         /// </summary>
@@ -116,13 +117,13 @@ namespace Signals.Aspects.Storage.Database
 
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = @"
+                command.CommandText = $@"
                     BEGIN TRANSACTION
 	                    DECLARE @Count int = (SELECT COUNT(*) FROM [File] WHERE Path = @Path AND Name = @Name)
 	                    IF @Count > 0
-		                    UPDATE [File] SET Path = @Path, Name = @Name, Data = @Data, IsEncrypted = @IsEncrypted
+		                    UPDATE [{Configuration.TableName}] SET Path = @Path, Name = @Name, Data = @Data, IsEncrypted = @IsEncrypted
 	                    ELSE
-		                    INSERT INTO [File] (Path, Name, Data, IsEncrypted) VALUES (@Path, @Name, @Data, @IsEncrypted)
+		                    INSERT INTO [{Configuration.TableName}] (Path, Name, Data, IsEncrypted) VALUES (@Path, @Name, @Data, @IsEncrypted)
                     COMMIT
                 ";
 
@@ -130,13 +131,13 @@ namespace Signals.Aspects.Storage.Database
                 command.Parameters.Add(new SqlParameter("@Name", name));
                 command.Parameters.Add(new SqlParameter("@Data", data));
                 command.Parameters.Add(new SqlParameter("@IsEncrypted", Configuration.Encrypt));
-                
+
                 command.ExecuteNonQuery();
 
                 return Task.CompletedTask;
             }
         }
-        
+
         /// <summary>
         /// Store file as bytes
         /// </summary>
@@ -155,7 +156,7 @@ namespace Signals.Aspects.Storage.Database
                 await Store(path, name, stream);
             }
         }
-        
+
         /// <summary>
         /// Store file from location path
         /// </summary>
@@ -182,6 +183,46 @@ namespace Signals.Aspects.Storage.Database
         private IDbConnection GetConnection()
         {
             return new SqlConnection(Configuration.ConnectionString);
+        }
+
+        /// <summary>
+        /// Ensures that table for the benchmark logs exists in the database
+        /// </summary>
+        private void CreateFileTableIfNotExist()
+        {
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
+            {
+                connection.Open();
+
+                var sql = $@"
+                        IF NOT EXISTS 
+                        (	
+                            SELECT * 
+	                        FROM sys.tables t 
+	                        WHERE t.name = '{Configuration.TableName}'
+                        )
+                        BEGIN
+	                        CREATE TABLE [{Configuration.TableName}](
+		                        [Id] [int] IDENTITY(1,1) NOT NULL,
+		                        [CreatedOn] [datetime2](7) NOT NULL,
+		                        [Path] [nvarchar](max) NOT NULL,
+		                        [Name] [nvarchar](max) NOT NULL,
+		                        [IsEncrypted] [bit] NOT NULL,
+		                        [Data] [varbinary](max) NOT NULL,
+		                        CONSTRAINT [PK_{Configuration.TableName}] PRIMARY KEY CLUSTERED 
+	                            (
+		                            [Id] ASC
+	                            )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+	                        ALTER TABLE [{Configuration.TableName}] ADD  CONSTRAINT [DF_{Configuration.TableName}_CreatedOn]  DEFAULT (getutcdate()) FOR [CreatedOn]
+	                        ALTER TABLE [{Configuration.TableName}] ADD  CONSTRAINT [DF_{Configuration.TableName}_IsEncrypted]  DEFAULT ((0)) FOR [IsEncrypted]
+                        END
+                    ";
+
+                var command = new SqlCommand(sql, connection);
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

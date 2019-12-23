@@ -89,7 +89,11 @@ namespace Signals.Aspects.Logging.NLog
                                 [ExceptionMessage] NVARCHAR(MAX) NULL,
                                 [UserIdentifier] NVARCHAR(MAX) NULL,
                                 [Payload] NVARCHAR(MAX) NULL
-                            )
+                                CONSTRAINT [PK_{configuration.TableName}] PRIMARY KEY CLUSTERED 
+                                (
+	                                [Id] ASC
+                                )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                            ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
                         
                             ALTER TABLE [{configuration.TableName}] ADD CONSTRAINT [DF_{configuration.TableName}_CreateOn]  DEFAULT (getutcdate()) FOR [CreatedOn]; 
                         END

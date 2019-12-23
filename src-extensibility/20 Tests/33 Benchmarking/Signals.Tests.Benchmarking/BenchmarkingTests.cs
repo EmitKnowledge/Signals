@@ -18,7 +18,8 @@ namespace Signals.Tests.Benchmarking
         {
             _databaseConfiguration = new DatabaseBenchmarkingConfiguration
             {
-                ConnectionString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;"
+                ConnectionString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;",
+                TableName = "BenchmarkEntry2"
             };
 
             // Clear the database

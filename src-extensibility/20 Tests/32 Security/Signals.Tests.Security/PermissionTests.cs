@@ -14,7 +14,8 @@ namespace Signals.Tests.Security
         {
             _databaseConfiguration = new DatabaseSecurityConfiguration
             {
-                ConnectionString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;"
+                ConnectionString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;",
+                TableName = "Permissions2"
             };
             _permissionProvider = new PermissionProvider(_databaseConfiguration);
 

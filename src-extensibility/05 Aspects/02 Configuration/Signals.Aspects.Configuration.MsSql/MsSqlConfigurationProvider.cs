@@ -18,11 +18,11 @@ namespace Signals.Aspects.Configuration.MsSql
         /// <summary>
         /// Default CTOR with ConnectionString
         /// </summary>
-        public MsSqlConfigurationProvider(string connectionString)
+        public MsSqlConfigurationProvider(string connectionString, string tableName = "Configuration")
         {
             isDirty = true;
             ConnectionString = connectionString;
-            TableName = "Configuration";
+            TableName = tableName;
             KeyColumnName = "Key";
             ValueColumnName = "Value";
 
@@ -140,7 +140,11 @@ namespace Signals.Aspects.Configuration.MsSql
                             [Id] INT IDENTITY(1,1) NOT NULL, 
                             [{KeyColumnName}] NVARCHAR(MAX) NOT NULL, 
                             [{ValueColumnName}] NVARCHAR(MAX)
-                        )
+                            CONSTRAINT [PK_{TableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
                     ";
 
                 var command = new SqlCommand(query, connection);

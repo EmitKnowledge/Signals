@@ -109,11 +109,9 @@ namespace Signals.Tests.CommunicaitonChannels
             }, channelName: channelName1);
 
             Thread.Sleep(1000);
+            channel.Publish(channelName2, Event).Wait();
 
-            Assert.Throws<AggregateException>(() =>
-            {
-                channel.Publish(channelName2, Event).Wait();
-            });
+            Thread.Sleep(1000);
 
             Assert.False(task.Result);
             channel.Close().Wait();

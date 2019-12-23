@@ -31,5 +31,10 @@ namespace Signals.Aspects.Storage.Database.Configurations
         /// Certificate thumbprint for ecntrypting files
         /// </summary>
         public string CertificateThumbprint { get; set; }
+
+        /// <summary>
+        /// File storage table name
+        /// </summary>
+        public string TableName { get; set; }
     }
 }

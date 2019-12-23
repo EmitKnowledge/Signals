@@ -467,7 +467,11 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [Name] [nvarchar](max) NOT NULL
-                        )
+                            CONSTRAINT [PK_{databaseConfiguration.LocalizationCategoryTableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
                         IF NOT EXISTS 
                         (	
@@ -480,7 +484,11 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [Name] [nvarchar](max) NOT NULL,
 	                        [LocalizationCategoryId] [int] NOT NULL
-                        )
+                            CONSTRAINT [PK_{databaseConfiguration.LocalizationCollectionTableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
                         IF NOT EXISTS 
                         (	
@@ -495,7 +503,11 @@ namespace Signals.Aspects.Localization.Database.DataProviders
 	                        [LocalizationCollectionId] [int] NOT NULL,
 	                        [LocalizationLanguageId] [int] NOT NULL,
 	                        [LocalizationKeyId] [int] NOT NULL
-                        )
+                            CONSTRAINT [PK_{databaseConfiguration.LocalizationEntryTableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
                         IF NOT EXISTS 
                         (	
@@ -507,7 +519,11 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [Name] [nvarchar](max) NOT NULL
-                        )
+                            CONSTRAINT [PK_{databaseConfiguration.LocalizationKeyTableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
                         IF NOT EXISTS 
                         (	
@@ -520,7 +536,11 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [Name] [nvarchar](max) NOT NULL,
 	                        [Value] [nvarchar](max) NOT NULL
-                        )
+                            CONSTRAINT [PK_{databaseConfiguration.LocalizationLanguageTableName}] PRIMARY KEY CLUSTERED 
+                            (
+	                            [Id] ASC
+                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
                     ";
 
                 var command = new SqlCommand(sql, connection);

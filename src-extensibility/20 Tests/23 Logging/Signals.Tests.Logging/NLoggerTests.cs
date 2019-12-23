@@ -86,6 +86,7 @@ namespace Signals.Tests.Logging
             config.Username = "appusr";
             config.Password = "FYGncRXGySXDz6RFNg2e";
             config.DataProvider = DataProvider.SqlClient;
+            config.TableName = "Log2";
 
             Aspects.Logging.ILogger logger = new NLogger(config);
 
@@ -117,6 +118,7 @@ namespace Signals.Tests.Logging
             config.Username = "appusr";
             config.Password = "FYGncRXGySXDz6RFNg2e";
             config.DataProvider = DataProvider.SqlClient;
+            config.TableName = "Log2";
 
             Aspects.Logging.ILogger logger = new NLogger(config);
 

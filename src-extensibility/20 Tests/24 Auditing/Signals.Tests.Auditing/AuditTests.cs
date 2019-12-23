@@ -64,7 +64,7 @@ namespace Signals.Tests.Auditing
         {
             var databaseConfiguration = new DatabaseAuditingConfiguration
             {
-                TableName = "AuditLogTest",
+                TableName = "AuditLogTest2",
                 ConnectionString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;"
             };
 
@@ -155,7 +155,7 @@ namespace Signals.Tests.Auditing
         {
             var databaseConfiguration = new DatabaseAuditingConfiguration
             {
-                TableName = "AuditLogTest",
+                TableName = "AuditLogTest2",
                 ConnectionString = "Server=sql.emitknowledge.com;Database=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e;"
             };
 
