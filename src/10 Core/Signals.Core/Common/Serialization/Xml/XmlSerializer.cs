@@ -20,6 +20,7 @@ namespace Signals.Core.Common.Serialization.Xml
         /// <returns></returns>
         public T Deserialize<T>(string str)
         {
+            str = str.Trim('\n', '\t', ' ');
             return (T)Deserialize(str, typeof(T));
         }
 
@@ -31,6 +32,7 @@ namespace Signals.Core.Common.Serialization.Xml
         /// <returns></returns>
         public object Deserialize(string str, Type type)
         {
+            str = str.Trim('\n', '\t', ' ');
             var serializer = new System.Xml.Serialization.XmlSerializer(type);
             var xmlReader = XmlReader.Create(new StringReader(str));
             return serializer.Deserialize(xmlReader);
