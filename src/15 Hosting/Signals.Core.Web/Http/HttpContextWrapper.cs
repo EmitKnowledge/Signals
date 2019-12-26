@@ -83,17 +83,21 @@ namespace Signals.Core.Web.Http
         {
             var context = System.Web.HttpContext.Current;
             if (context == null) return;
+            
+            if (!context.Items.Contains("body"))
+                context.Items.Add("body", ExtractBody(context.Request.InputStream));
 
             Headers = new HeaderCollection(context);
             Cookies = new CookieCollection(context);
             Form = new FormCollection(context);
             Session = new SessionProvider(context);
 
-            var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
-                .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
-            Query = query?.ToDictionary(x => x.Key, x => x.Value);
+            Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
+                .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()))?
+                .ToDictionary(x => x.Key, x => x.Value);
 
-            Body = new Lazy<string>(() => ExtractBody(context.Request.InputStream));
+            Body = new Lazy<string>(() => context.Items["body"] as string);
+
             HttpMethod = context.Request.HttpMethod.ToUpperInvariant();
             Files = context.Request.Files.AllKeys.Select(x => new InputFile
             {
@@ -141,17 +145,20 @@ namespace Signals.Core.Web.Http
         {
             var context = httpContextAccessor.HttpContext;
             if (context == null) return;
+        
+            if (!context.Items.ContainsKey("body"))
+                context.Items.Add("body", ExtractBody(context.Request.Body));
 
             Headers = new HeaderCollection(context);
             Cookies = new CookieCollection(context);
             Form = new FormCollection(context);
             Session = new SessionProvider(context);
 
-            var query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
-                .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()));
-            Query = query?.ToDictionary(x => x.Key, x => x.Value);
+            Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
+                .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()))?
+                .ToDictionary(x => x.Key, x => x.Value);
 
-            Body = new Lazy<string>(() => ExtractBody(context.Request.Body));
+            Body = new Lazy<string>(() => context.Items["body"] as string);
             HttpMethod = context.Request.Method.ToUpperInvariant();
 
             // Form throws exception
