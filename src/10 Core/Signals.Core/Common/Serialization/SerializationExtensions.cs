@@ -60,10 +60,12 @@ namespace Signals.Core.Common.Serialization
 
             if(!input.IsNullOrEmpty())
             {
-                if (input.StartsWith("{") && input.EndsWith("}") || input.StartsWith("[") && input.EndsWith("]"))
-                    return JsonSerializer;
-                if (input.StartsWith("<") && input.EndsWith(">"))
+                var trimmed = input.Trim('\n', '\t', ' ');
+
+                if (trimmed.StartsWith("<") && trimmed.EndsWith(">"))
                     return XmlSerializer;
+                if ((trimmed.StartsWith("{") && trimmed.EndsWith("}")) || (trimmed.StartsWith("[") && trimmed.EndsWith("]")))
+                    return JsonSerializer;
             }
 
             return null;

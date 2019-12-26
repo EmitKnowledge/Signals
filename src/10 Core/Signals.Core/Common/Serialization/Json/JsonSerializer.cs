@@ -3,6 +3,7 @@ using Newtonsoft.Json.Converters;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization.Json.Converters;
+using Signals.Core.Common.Text;
 using System;
 using System.IO;
 using System.Text;
@@ -22,6 +23,7 @@ namespace Signals.Core.Common.Serialization.Json
         /// <returns></returns>
         public T Deserialize<T>(string json)
         {
+            json = json.Trim('\n', '\t', ' ');
             return JsonConvert.DeserializeObject<T>(json);
         }
 
@@ -33,6 +35,7 @@ namespace Signals.Core.Common.Serialization.Json
         /// <returns></returns>
         public object Deserialize(string json, Type type)
         {
+            json = json.Trim('\n', '\t', ' ');
             return JsonConvert.DeserializeObject(json, type);
         }
 
