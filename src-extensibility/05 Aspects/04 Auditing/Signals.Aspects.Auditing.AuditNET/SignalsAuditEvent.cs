@@ -1,4 +1,5 @@
 ﻿using Audit.Core;
+using System;
 
 namespace Signals.Aspects.Auditing.AuditNET
 {
@@ -24,10 +25,20 @@ namespace Signals.Aspects.Auditing.AuditNET
         /// </summary>
         public string Originator { get; set; }
 
-		/// <summary>
-		/// Implicitly convert AuditTrail to SignalsAuditEvent
-		/// </summary>
-		/// <param name="auditEntry"></param>
+        /// <summary>
+        /// Represents the payload data
+        /// </summary>
+        public string Payload { get; set; }
+
+        /// <summary>
+        /// Represents the process epic id
+        /// </summary>
+        public Guid EpicId { get; set; }
+
+        /// <summary>
+        /// Implicitly convert AuditTrail to SignalsAuditEvent
+        /// </summary>
+        /// <param name="auditEntry"></param>
         public static implicit operator SignalsAuditEvent(AuditEntry auditEntry)
         {
             if (auditEntry == null) return null;
@@ -40,7 +51,9 @@ namespace Signals.Aspects.Auditing.AuditNET
                 EventType = auditEntry.EventType,
                 StartDate = auditEntry.StartDate,
                 EndDate = auditEntry.EndDate,
-                Data = auditEntry.Data
+                Data = auditEntry.Data,
+                Payload = auditEntry.Payload,
+                EpicId = auditEntry.EpicId
             };
         }
 

@@ -39,7 +39,7 @@ namespace Signals.Aspects.Auditing.AuditNET.DataProviders
                 var sql =
                     $@"
                         INSERT INTO [{_databaseConfiguration.TableName}]
-                        (Process, ProcessInstanceId, EventType, StartDate, EndDate, Originator, [Data])
+                        (Process, ProcessInstanceId, EventType, StartDate, EndDate, Originator, [Data], [Payload], [EpicId])
                         VALUES
                         (
                             @Process, 
@@ -48,7 +48,9 @@ namespace Signals.Aspects.Auditing.AuditNET.DataProviders
                             @StartDate, 
                             @EndDate,
                             @Originator,
-                            @Data
+                            @Data,
+                            @Payload,
+                            @EpicId
                         )
                     ";
 
@@ -119,20 +121,35 @@ namespace Signals.Aspects.Auditing.AuditNET.DataProviders
 	            else
 	            {
 					throw new ArgumentException("Value must be provided", nameof(customAuditEvent.Originator));
-				}
+                }
 
-				// set the process instance payload
-				command.Parameters.Add("Data", SqlDbType.NVarChar);
-	            if (customAuditEvent.Data != null)
-	            {
-					command.Parameters["Data"].Value = JsonConvert.SerializeObject(customAuditEvent.Data);
-				}
-				else
-	            {
-		            command.Parameters["Data"].Value = System.DBNull.Value;
-				}
+                // set the process instance payload
+                command.Parameters.Add("Data", SqlDbType.NVarChar);
+                if (customAuditEvent.Data != null)
+                {
+                    command.Parameters["Data"].Value = JsonConvert.SerializeObject(customAuditEvent.Data);
+                }
+                else
+                {
+                    command.Parameters["Data"].Value = System.DBNull.Value;
+                }
 
-				command.ExecuteNonQuery();
+                // set the process instance payload
+                command.Parameters.Add("Payload", SqlDbType.NVarChar);
+                if (customAuditEvent.Data != null)
+                {
+                    command.Parameters["Payload"].Value = customAuditEvent.Payload;
+                }
+                else
+                {
+                    command.Parameters["Payload"].Value = System.DBNull.Value;
+                }
+
+                // set the process instance epic id
+                command.Parameters.Add("EpicId", SqlDbType.NVarChar);
+                command.Parameters["EpicId"].Value = customAuditEvent.EpicId.ToString();
+
+                command.ExecuteNonQuery();
 
                 return auditEvent;
             }

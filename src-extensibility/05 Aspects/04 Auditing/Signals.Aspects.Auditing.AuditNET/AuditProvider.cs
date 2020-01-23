@@ -102,8 +102,10 @@ namespace Signals.Aspects.Auditing.AuditNET
                             [EventType] NVARCHAR(MAX) NULL,
                             [Originator] NVARCHAR(MAX) NOT NULL,
                             [StartDate] datetime2(7) NOT NULL,
-                            [EndDate] datetime2(7),
-                            [Data] NVARCHAR(MAX)
+                            [EndDate] datetime2(7) NULL,
+                            [Data] NVARCHAR(MAX) NULL,
+                            [Payload] NVARCHAR(MAX) NULL,
+                            [EpicId] NVARCHAR(38) NOT NULL
                             CONSTRAINT [PK_{databaseConfiguration.TableName}] PRIMARY KEY CLUSTERED 
                             (
 	                            [Id] ASC

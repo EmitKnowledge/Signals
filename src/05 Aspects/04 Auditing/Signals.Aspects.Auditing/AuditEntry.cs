@@ -49,6 +49,16 @@ namespace Signals.Aspects.Auditing
         public string Originator { get; set; }
 
         /// <summary>
+        /// Represents the epic run id
+        /// </summary>
+        public Guid EpicId { get; set; }
+
+        /// <summary>
+        /// Represents the process payload
+        /// </summary>
+        public string Payload { get; set; }
+
+        /// <summary>
         /// Represents additional data about the audit entry
         /// </summary>
         public AuditEntryData Data { get; set; }

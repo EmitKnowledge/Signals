@@ -7,6 +7,7 @@ using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;
 using Signals.Core.Configuration;
 using Signals.Core.Processing.Results;
+using Signals.Core.Common.Serialization;
 
 namespace Signals.Core.Processing.Execution.ExecutionHandlers
 {
@@ -37,6 +38,8 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             entry.Originator = ApplicationConfiguration.Instance?.ApplicationName ?? Environment.MachineName;
             entry.Process = process.Name;
             entry.EventType = process.Description;
+            entry.EpicId = process.EpicId;
+            entry.Payload = args?.SerializeJson();
 
             return auditProvider.Audit(entry, () => Next.Execute(process, processType, args));
         }
