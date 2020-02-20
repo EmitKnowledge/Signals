@@ -20,7 +20,7 @@ namespace Signals.Core.Processes
         /// <typeparam name="TResponse"></typeparam>
         /// <param name="process"></param>
         /// <returns></returns>
-        public static TResponse With<TResponse>(this BusinessProcess<TResponse> process)
+        public static TResponse With<TResponse>(this IBaseProcess<TResponse> process)
             where TResponse : VoidResult, new()
         {
             var mediator = SystemBootstrapper.GetInstance<Mediator>();
@@ -35,7 +35,7 @@ namespace Signals.Core.Processes
         /// <param name="process"></param>
         /// <param name="input1"></param>
         /// <returns></returns>
-        public static TResponse With<T1, TResponse>(this BusinessProcess<T1, TResponse> process, T1 input1)
+        public static TResponse With<T1, TResponse>(this IBaseProcess<TResponse> process, T1 input1)
             where TResponse : VoidResult, new()
         {
             var mediator = SystemBootstrapper.GetInstance<Mediator>();
@@ -52,7 +52,7 @@ namespace Signals.Core.Processes
         /// <param name="input1"></param>
         /// <param name="input2"></param>
         /// <returns></returns>
-        public static TResponse With<T1, T2, TResponse>(this BusinessProcess<T1, T2, TResponse> process, T1 input1, T2 input2)
+        public static TResponse With<T1, T2, TResponse>(this IBaseProcess<TResponse> process, T1 input1, T2 input2)
             where TResponse : VoidResult, new()
         {
             var mediator = SystemBootstrapper.GetInstance<Mediator>();
@@ -71,7 +71,7 @@ namespace Signals.Core.Processes
         /// <param name="input2"></param>
         /// <param name="input3"></param>
         /// <returns></returns>
-        public static TResponse With<T1, T2, T3, TResponse>(this BusinessProcess<T1, T2, T3, TResponse> process, T1 input1, T2 input2, T3 input3)
+        public static TResponse With<T1, T2, T3, TResponse>(this IBaseProcess<TResponse> process, T1 input1, T2 input2, T3 input3)
             where TResponse : VoidResult, new()
         {
             var mediator = SystemBootstrapper.GetInstance<Mediator>();

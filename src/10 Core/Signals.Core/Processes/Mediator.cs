@@ -132,7 +132,7 @@ namespace Signals.Core.Processes
         /// </summary>
         /// <returns></returns>
         public TResponse Dispatch<TProcess, T1, T2, TResponse>(T1 obj1, T2 obj2)
-            where TProcess : BaseProcess<TResponse>, new()
+            where TProcess : IBaseProcess<TResponse>, new()
             where TResponse : VoidResult, new()
         {
             // create instance
@@ -150,7 +150,7 @@ namespace Signals.Core.Processes
         /// </summary>
         /// <returns></returns>
         public TResponse Dispatch<TProcess, T1, T2, T3, TResponse>(T1 obj1, T2 obj2, T3 obj3)
-            where TProcess : BaseProcess<TResponse>, new()
+            where TProcess : IBaseProcess<TResponse>, new()
             where TResponse : VoidResult, new()
         {
             // create instance
@@ -168,7 +168,7 @@ namespace Signals.Core.Processes
         /// Handle the request
         /// </summary>
         /// <returns></returns>
-        public TResponse Dispatch<TResponse>(BusinessProcess<TResponse> process)
+        public TResponse Dispatch<TResponse>(IBaseProcess<TResponse> process)
             where TResponse : VoidResult, new()
         {
             // execute process
@@ -181,7 +181,7 @@ namespace Signals.Core.Processes
         /// Handle the request
         /// </summary>
         /// <returns></returns>
-        public TResponse Dispatch<T1, TResponse>(BusinessProcess<T1, TResponse> process, T1 obj1)
+        public TResponse Dispatch<T1, TResponse>(IBaseProcess<TResponse> process, T1 obj1)
             where TResponse : VoidResult, new()
         {
             // execute process
@@ -194,7 +194,7 @@ namespace Signals.Core.Processes
         /// Handle the request
         /// </summary>
         /// <returns></returns>
-        public TResponse Dispatch<T1, T2, TResponse>(BusinessProcess<T1, T2, TResponse> process, T1 obj1, T2 obj2)
+        public TResponse Dispatch<T1, T2, TResponse>(IBaseProcess<TResponse> process, T1 obj1, T2 obj2)
             where TResponse : VoidResult, new()
         {
             // execute process
@@ -207,7 +207,7 @@ namespace Signals.Core.Processes
         /// Handle the request
         /// </summary>
         /// <returns></returns>
-        public TResponse Dispatch<T1, T2, T3, TResponse>(BusinessProcess<T1, T2, T3, TResponse> process, T1 obj1, T2 obj2, T3 obj3)
+        public TResponse Dispatch<T1, T2, T3, TResponse>(IBaseProcess<TResponse> process, T1 obj1, T2 obj2, T3 obj3)
             where TResponse : VoidResult, new()
         {
             // execute process

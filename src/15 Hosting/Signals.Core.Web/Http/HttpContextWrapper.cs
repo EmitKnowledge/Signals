@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
+using Signals.Core.Common.Serialization;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Input.Http.Models;
 using System;
@@ -66,12 +67,21 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Reads body as string
         /// </summary>
+        /// <param name="contentType"></param>
         /// <param name="inputStream"></param>
         /// <returns></returns>
-        private string ExtractBody(Stream inputStream)
+        private string ExtractBody(string contentType, Stream inputStream)
         {
-            var content = new StreamReader(inputStream).ReadToEnd();
-            return content;
+            if (contentType?.StartsWith("application/x-www-form-urlencoded") == true
+             || contentType?.StartsWith("multipart/form-data") == true)
+            {
+                return Form.SerializeJson();
+            }
+            else
+            {
+                var content = new StreamReader(inputStream).ReadToEnd();
+                return content;
+            }
         }
 
 #if (NET461)
@@ -83,14 +93,14 @@ namespace Signals.Core.Web.Http
         {
             var context = System.Web.HttpContext.Current;
             if (context == null) return;
-            
-            if (!context.Items.Contains("body"))
-                context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.InputStream)));
 
             Headers = new HeaderCollection(context);
             Cookies = new CookieCollection(context);
             Form = new FormCollection(context);
             Session = new SessionProvider(context);
+            
+            if (!context.Items.Contains("body"))
+                context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.InputStream)));
 
             Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
                 .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()))?
@@ -145,14 +155,14 @@ namespace Signals.Core.Web.Http
         {
             var context = httpContextAccessor.HttpContext;
             if (context == null) return;
-        
-            if (!context.Items.ContainsKey("body"))
-                context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.Body)));
 
             Headers = new HeaderCollection(context);
             Cookies = new CookieCollection(context);
             Form = new FormCollection(context);
             Session = new SessionProvider(context);
+
+            if (!context.Items.ContainsKey("body"))
+                context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.Body)));
 
             Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
                 .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()))?
