@@ -53,7 +53,7 @@ namespace Signals.Core.Web.Configuration.Bootstrapping
             webBootstrapConfiguration.RegistrationService.Register<WebMediator>();
             webBootstrapConfiguration.RegistrationService.Register(webBootstrapConfiguration.ResponseHeaders);
 
-            return webBootstrapConfiguration.Bootstrap(scanAssemblies: scanAssemblies);
+            return webBootstrapConfiguration.Resolve(scanAssemblies: scanAssemblies);
         }
     }
 
