@@ -20,22 +20,23 @@ using System.Threading.Tasks;
 
 namespace Signals.Core.Background.Configuration.Bootstrapping
 {
-    /// <summary>
-    /// Aspects configuration
-    /// </summary>
-    public class BackgroundApplicationBootstrapConfiguration : ApplicationBootstrapConfiguration
+    internal interface IBackgroundApplicationBootstrapConfiguration : IApplicationBootstrapConfiguration
     {
         /// <summary>
         /// Sync logs provider
         /// </summary>
-        public new Func<IRecurringTaskLogProvider> RecurringTaskLogProvider { get; set; }
+        IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
+    }
 
+    internal static class BackgroundApplicationBootstrapConfigurationExtensions
+    {
         /// <summary>
         /// Bootstrapping entry
         /// </summary>
+        /// <param name="backgroundBootstrapConfiguration"></param>
         /// <param name="scanAssemblies"></param>
         /// <returns></returns>
-        public IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
+        public static IServiceContainer BootstrapHelper(this IBackgroundApplicationBootstrapConfiguration backgroundBootstrapConfiguration, params Assembly[] scanAssemblies)
         {
             if (scanAssemblies == null)
             {
@@ -45,26 +46,12 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
 
                 scanAssemblies = new Assembly[] { assembly };
             }
-            return Resolve(scanAssemblies);
-        }
 
-        /// <summary>
-        /// Build instances from configurations by convention
-        /// </summary>
-        /// <returns></returns>
-        protected override IServiceContainer Resolve(params Assembly[] scanAssemblies)
-        {
-            var result = base.Resolve(scanAssemblies);
-            Start();
+            ConfigurationBootstrapper configurationBootstrapper = new ConfigurationBootstrapper();
+            configurationBootstrapper.RecurringTaskLogProvider = () => backgroundBootstrapConfiguration.RecurringTaskLogProvider;
 
-            return result;
-        }
+            var result = backgroundBootstrapConfiguration.Resolve(configurationBootstrapper, scanAssemblies);
 
-        /// <summary>
-        /// Start background and recurring tasks
-        /// </summary>
-        private void Start()
-        {
             // Proc config validation
             BackgroundApplicationConfiguration config = null;
             try
@@ -80,12 +67,13 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
             RegisterBackground();
             ScheduleRecurring();
             NotifyOnStartup();
-        }
 
+            return result;
+        }
         /// <summary>
         /// Send email on startup
         /// </summary>
-        private void NotifyOnStartup()
+        private static void NotifyOnStartup()
         {
             var config = BackgroundApplicationConfiguration.Instance.StartupNotificationConfiguration;
             var smtpClient = SystemBootstrapper.GetInstance<ISmtpClient>();
@@ -121,7 +109,7 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         /// <summary>
         /// Register background tasks
         /// </summary>
-        private void RegisterBackground()
+        private static void RegisterBackground()
         {
             var channel = SystemBootstrapper.GetInstance<IMessageChannel>();
 
@@ -150,7 +138,7 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         /// <summary>
         /// Schedule recurring tasks
         /// </summary>
-        private void ScheduleRecurring()
+        private static void ScheduleRecurring()
         {
             var bgRegistry = SystemBootstrapper.GetInstance<ITaskRegistry>();
 
@@ -167,6 +155,27 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
 
                 bgRegistry.Start();
             }
+        }
+    }
+
+    /// <summary>
+    /// Aspects configuration
+    /// </summary>
+    public class BackgroundApplicationBootstrapConfiguration : ApplicationBootstrapConfiguration, IBackgroundApplicationBootstrapConfiguration
+    {
+        /// <summary>
+        /// Sync logs provider
+        /// </summary>
+        public IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
+
+        /// <summary>
+        /// Build instances from configurations by convention
+        /// </summary>
+        /// <param name="scanAssemblies"></param>
+        /// <returns></returns>
+        public override IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
+        {
+            return this.BootstrapHelper(scanAssemblies);
         }
     }
 }

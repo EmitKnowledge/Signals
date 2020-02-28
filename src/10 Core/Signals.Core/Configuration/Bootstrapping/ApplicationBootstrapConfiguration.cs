@@ -30,10 +30,85 @@ using Signals.Aspects.Benchmarking.Configurations;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
+    internal interface IApplicationBootstrapConfiguration
+    {
+        /// <summary>
+        /// Serialization settings
+        /// </summary>
+        JsonSerializerSettings JsonSerializerSettings { get; set; }
+
+        /// <summary>
+        /// DI registration service
+        /// </summary>
+        IRegistrationService RegistrationService { get; set; }
+
+        /// <summary>
+        /// Logger configuration
+        /// </summary>
+        ILoggingConfiguration LoggerConfiguration { get; set; }
+
+        /// <summary>
+        /// Auditing configuration
+        /// </summary>
+        IAuditingConfiguration AuditingConfiguration { get; set; }
+
+        /// <summary>
+        /// Cache configuration
+        /// </summary>
+        ICacheConfiguration CacheConfiguration { get; set; }
+
+        /// <summary>
+        /// Localization configuration
+        /// </summary>
+        ILocalizationConfiguration LocalizationConfiguration { get; set; }
+
+        /// <summary>
+        /// Storage configuration
+        /// </summary>
+        IStorageConfiguration StorageConfiguration { get; set; }
+
+        /// <summary>
+        /// Communication channel configuration
+        /// </summary>
+        IChannelConfiguration ChannelConfiguration { get; set; }
+
+        /// <summary>
+        /// Background tasks registry
+        /// </summary>
+        ITaskRegistry TaskRegistry { get; set; }
+
+        /// <summary>
+        /// Error handling strategy builder
+        /// </summary>
+        IStrategyBuilder StrategyBuilder { get; set; }
+
+        /// <summary>
+        /// Security configuration
+        /// </summary>
+        ISecurityConfiguration SecurityConfiguration { get; set; }
+
+        /// <summary>
+        /// Benchmarking configuration
+        /// </summary>
+        IBenchmarkingConfiguration BenchmarkingConfiguration { get; set; }
+
+        /// <summary>
+        /// Build instances from configurations by convention
+        /// </summary>
+        /// <returns></returns>
+        IServiceContainer Bootstrap(params Assembly[] scanAssemblies);
+
+        /// <summary>
+        /// Build instances from configurations by convention
+        /// </summary>
+        /// <returns></returns>
+        IServiceContainer Resolve(ConfigurationBootstrapper configurationBootstrapper = null, params Assembly[] scanAssemblies);
+    }
+
     /// <summary>
     /// Aspects configuration
     /// </summary>
-    public abstract class ApplicationBootstrapConfiguration
+    public abstract class ApplicationBootstrapConfiguration : IApplicationBootstrapConfiguration
     {
         /// <summary>
         /// Serialization settings
@@ -98,7 +173,7 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// <summary>
         /// Synchronization logging provider
         /// </summary>
-        protected IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
+        //protected IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
 
         /// <summary>
         /// All loaded Signals types
@@ -109,15 +184,35 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// Build instances from configurations by convention
         /// </summary>
         /// <returns></returns>
-        protected virtual IServiceContainer Resolve(params Assembly[] scanAssemblies)
+        public virtual IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
+            return Resolve(scanAssemblies: scanAssemblies);
+        }
+        
+        /// <summary>
+        /// Internal resolver
+        /// </summary>
+        /// <param name="configurationBootstrapper"></param>
+        /// <param name="scanAssemblies"></param>
+        /// <returns></returns>
+        IServiceContainer IApplicationBootstrapConfiguration.Resolve(ConfigurationBootstrapper configurationBootstrapper, params Assembly[] scanAssemblies)
+        {
+            return Resolve(configurationBootstrapper, scanAssemblies);
+        }
+
+        /// <summary>
+        /// Build instances from configurations by convention
+        /// </summary>
+        /// <returns></returns>
+        internal virtual IServiceContainer Resolve(ConfigurationBootstrapper configurationBootstrapper = null, params Assembly[] scanAssemblies)
+        {
+            var config = configurationBootstrapper ?? new ConfigurationBootstrapper();
+
             scanAssemblies = scanAssemblies ?? new Assembly[0];
             _allTypes = scanAssemblies.SelectMany(assembly => assembly.LoadAllTypesFromAssembly().Where(type => type.FullName.StartsWith("Signals"))).ToList();
 
-            var config = new ConfigurationBootstrapper();
-
             config.JsonSerializerSettings = () => JsonSerializerSettings;
-            config.RecurringTaskLogProvider = () => RecurringTaskLogProvider;
+            //config.RecurringTaskLogProvider = () => RecurringTaskLogProvider;
             config.DependencyResolver = () => RegistrationService;
             config.Logging = () => GetInstance<ILogger>(LoggerConfiguration);
             config.Auditing = () => GetInstance<IAuditProvider>(AuditingConfiguration);

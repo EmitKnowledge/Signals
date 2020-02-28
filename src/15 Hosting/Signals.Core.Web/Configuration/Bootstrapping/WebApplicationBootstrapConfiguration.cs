@@ -13,10 +13,54 @@ using System.Reflection;
 
 namespace Signals.Core.Web.Configuration.Bootstrapping
 {
+    internal interface IWebApplicationBootstrapConfiguration : IApplicationBootstrapConfiguration
+    {
+        /// <summary>
+        /// Default response headers
+        /// </summary>
+        List<ResponseHeaderAttribute> ResponseHeaders { get; set; }
+
+        /// <summary>
+        /// Application assemblies to be scanned for processes and type exports
+        /// </summary>
+        List<Assembly> ScanAssemblies { get; set; }
+    }
+
+    internal static class webApplicationBootstrapConfigurationExtensions
+    {
+        /// <summary>
+        /// Bootstrapping entry
+        /// </summary>
+        /// <param name="webBootstrapConfiguration"></param>
+        /// <param name="scanAssemblies"></param>
+        /// <returns></returns>
+        public static IServiceContainer BootstrapHelper(this IWebApplicationBootstrapConfiguration webBootstrapConfiguration, params Assembly[] scanAssemblies)
+        {
+            // Proc config validation
+            WebApplicationConfiguration config = null;
+            try
+            {
+                config = WebApplicationConfiguration.Instance;
+            }
+            catch { }
+            finally
+            {
+                if (config.IsNull()) throw new Exception("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+            }
+
+            webBootstrapConfiguration.RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
+            webBootstrapConfiguration.RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
+            webBootstrapConfiguration.RegistrationService.Register<WebMediator>();
+            webBootstrapConfiguration.RegistrationService.Register(webBootstrapConfiguration.ResponseHeaders);
+
+            return webBootstrapConfiguration.Bootstrap(scanAssemblies: scanAssemblies);
+        }
+    }
+
     /// <summary>
     /// Aspects configuration
     /// </summary>
-    public class WebApplicationBootstrapConfiguration : ApplicationBootstrapConfiguration
+    public class WebApplicationBootstrapConfiguration : FluentApplicationBootstrapConfiguration, IWebApplicationBootstrapConfiguration
     {
         /// <summary>
         /// Default response headers
@@ -24,7 +68,7 @@ namespace Signals.Core.Web.Configuration.Bootstrapping
         public List<ResponseHeaderAttribute> ResponseHeaders { get; set; }
 
         /// <summary>
-        /// Applization assemblies to be scanned for processes and type exports
+        /// Application assemblies to be scanned for processes and type exports
         /// </summary>
         public List<Assembly> ScanAssemblies { get; set; }
 
@@ -42,35 +86,9 @@ namespace Signals.Core.Web.Configuration.Bootstrapping
         /// </summary>
         /// <param name="scanAssemblies"></param>
         /// <returns></returns>
-        internal IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
+        public override IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
-            // Proc config validation
-            WebApplicationConfiguration config = null;
-            try
-            {
-                config = WebApplicationConfiguration.Instance;
-            }
-            catch { }
-            finally
-            {
-                if (config.IsNull()) throw new Exception("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
-            }
-
-            return Resolve(scanAssemblies);
-        }
-
-        /// <summary>
-        /// Build instances from configurations by convention
-        /// </summary>
-        /// <returns></returns>
-        protected override IServiceContainer Resolve(params Assembly[] scanAssemblies)
-        {
-            RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
-            RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
-            RegistrationService.Register<WebMediator>();
-            RegistrationService.Register<List<ResponseHeaderAttribute>>(ResponseHeaders);
-
-            return base.Resolve(scanAssemblies);
+            return this.BootstrapHelper(scanAssemblies);
         }
     }
 }
