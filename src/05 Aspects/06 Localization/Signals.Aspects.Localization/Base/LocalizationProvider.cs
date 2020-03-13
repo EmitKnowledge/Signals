@@ -219,7 +219,9 @@ namespace Signals.Aspects.Localization.Base
                         Value = value,
                         LocalizationCollectionId = localizationCollection.Id,
                         LocalizationKeyId = localizationKey.Id,
-                        LocalizationLanguageId = localizationLanguage.Id
+                        LocalizationLanguageId = localizationLanguage.Id,
+                        CreatedOn = DateTime.UtcNow,
+                        UpdatedOn = DateTime.UtcNow
                     };
                     Provider.InsertLocalizationEntry(entry);
                     LocalizationEntries = Provider.LoadLocalizationEntries();
@@ -407,6 +409,8 @@ namespace Signals.Aspects.Localization.Base
                         LocalizationCollectionId = x.LocalizationCollectionId,
                         LocalizationLanguageId = newLang.Id,
                         LocalizationKeyId = x.Key,
+                        CreatedOn = DateTime.UtcNow,
+                        UpdatedOn= DateTime.UtcNow,
                         Value = string.Empty
                     })
                     .ToList();

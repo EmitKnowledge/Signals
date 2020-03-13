@@ -38,7 +38,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 connection.Open();
                 var sql =
                     $@"
-                        SELECT le.Value AS leValue, le.Id as leId, le.*, coll.Name AS collName, coll.*, cat.Name AS catName,  cat.*, k.Name AS kName, k.*, lang.Name AS langName, lang.Value AS langValue, lang.*
+                        SELECT le.Value AS leValue, le.Id as leId, le.CreatedOn as leCreatedOn, le.UpdatedOn as leUpdatedOn, le.*, coll.Name AS collName, coll.*, cat.Name AS catName, cat.*, k.Name AS kName, k.*, lang.Name AS langName, lang.Value AS langValue, lang.*
                         FROM [{Configuration.LocalizationEntryTableName}] le
                         JOIN [{Configuration.LocalizationCollectionTableName}] coll ON le.LocalizationCollectionId = coll.Id
                         JOIN [{Configuration.LocalizationCategoryTableName}] cat ON coll.LocalizationCategoryId = cat.Id
@@ -57,6 +57,8 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         {
                             Id = (int)reader["leId"],
                             Value = reader["leValue"].ToString(),
+                            CreatedOn = (DateTime)reader["leCreatedOn"],
+                            UpdatedOn = (DateTime)reader["leUpdatedOn"],
                             LocalizationLanguageId = (int)reader["LocalizationLanguageId"],
                             LocalizationLanguage = new LocalizationLanguage(
                                 (int)reader["LocalizationLanguageId"],
@@ -280,8 +282,8 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 var sql =
                     $@"
                         INSERT INTO [{Configuration.LocalizationEntryTableName}]
-                        ([Value], LocalizationCollectionId, LocalizationKeyId, LocalizationLanguageId) 
-                        VALUES(@Entry, {entry.LocalizationCollectionId}, {entry.LocalizationKeyId}, {entry.LocalizationLanguageId})
+                        ([Value], LocalizationCollectionId, LocalizationKeyId, LocalizationLanguageId, CreatedOn, UpdatedOn) 
+                        VALUES(@Entry, {entry.LocalizationCollectionId}, {entry.LocalizationKeyId}, {entry.LocalizationLanguageId}, '{entry.CreatedOn:s}', '{entry.UpdatedOn:s}')
                     ";
                 var command = new SqlCommand(sql, connection);
                 command.Parameters.Add("Entry", SqlDbType.NVarChar);
@@ -339,7 +341,8 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                             [Value] = @Entry,
                             [LocalizationLanguageId] = {entry.LocalizationLanguageId},
                             [LocalizationKeyId] = {entry.LocalizationKeyId},
-                            [LocalizationCollectionId] = {entry.LocalizationCollectionId}
+                            [LocalizationCollectionId] = {entry.LocalizationCollectionId},
+                            [UpdatedOn] = '{entry.UpdatedOn:s}'
                         WHERE [Id] = {entry.Id}
                     ";
                 var command = new SqlCommand(sql, connection);
@@ -378,19 +381,22 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                                     LocalizationCollectionId = {localizationEntry.LocalizationCollectionId}, 
                                     LocalizationKeyId = {localizationEntry.LocalizationKeyId}, 
                                     LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}, 
+                                    UpdatedOn = '{localizationEntry.UpdatedOn:s}', 
                                     Value = @Entry{counter}
                                 WHERE LocalizationKeyId = {localizationEntry.LocalizationKeyId} AND 
                                     LocalizationLanguageId = {localizationEntry.LocalizationLanguageId}
 
                             ELSE
                                 INSERT INTO [{Configuration.LocalizationEntryTableName}]
-                                    (LocalizationKeyId, LocalizationCollectionId, LocalizationLanguageId, Value)
+                                    (LocalizationKeyId, LocalizationCollectionId, LocalizationLanguageId, Value, CreatedOn, UpdatedOn)
                                 VALUES 
                                     (
                                         {localizationEntry.LocalizationKeyId}, 
                                         {localizationEntry.LocalizationCollectionId}, 
                                         {localizationEntry.LocalizationLanguageId}, 
-                                        @Entry{counter++}
+                                        @Entry{counter++},
+                                        '{localizationEntry.CreatedOn:s}',
+                                        '{localizationEntry.UpdatedOn:s}'
                                     )
                         ";
 
@@ -431,7 +437,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                     var entrySql =
                         $@"
                             UPDATE [{Configuration.LocalizationEntryTableName}]
-                            SET Value = @Entry{count}
+                            SET Value = @Entry{count}, UpdatedOn = '{localizationEntry.UpdatedOn:s}'
                             WHERE Id = {localizationEntry.Id};
                         ";
                     queryBuilder.Append(entrySql + Environment.NewLine);

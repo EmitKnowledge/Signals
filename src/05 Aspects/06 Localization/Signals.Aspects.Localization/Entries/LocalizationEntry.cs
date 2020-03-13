@@ -1,4 +1,6 @@
-﻿namespace Signals.Aspects.Localization.Entries
+﻿using System;
+
+namespace Signals.Aspects.Localization.Entries
 {
     /// <summary>
     /// Localization entry
@@ -9,6 +11,16 @@
         /// Represents the entry's ID
         /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        /// Represents the entry's creation date
+        /// </summary>
+        public DateTime CreatedOn { get; set; }
+
+        /// <summary>
+        /// Represents the entry's last update date
+        /// </summary>
+        public DateTime UpdatedOn { get; set; }
 
         /// <summary>
         /// Represents the entry's value
