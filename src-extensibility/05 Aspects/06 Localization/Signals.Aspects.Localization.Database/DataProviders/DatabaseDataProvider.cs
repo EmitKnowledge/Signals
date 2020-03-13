@@ -14,6 +14,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
     public class DatabaseDataProvider : ILocalizationDataProvider
     {
         private DatabaseDataProviderConfiguration Configuration { get; }
+        private List<string> DatabaseMigrations { get; set; }
 
         /// <summary>
         /// CTOR
@@ -22,7 +23,8 @@ namespace Signals.Aspects.Localization.Database.DataProviders
         public DatabaseDataProvider(DatabaseDataProviderConfiguration configuration)
         {
             Configuration = configuration;
-            CreateLocalizationsTablesIfNotExist(configuration);
+            InitDatabaseMigrations();
+            CreateLocalizationsTablesIfNotExist();
         }
 
         /// <summary>
@@ -398,7 +400,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                 var sql = queryBuilder.ToString();
                 var command = new SqlCommand(sql, connection);
 
-                for(var i = 0; i < entries.Count; i++)
+                for (var i = 0; i < entries.Count; i++)
                 {
                     command.Parameters.Add($"Entry{i}", SqlDbType.NVarChar);
                     command.Parameters[$"Entry{i}"].Value = entries[i].Value;
@@ -439,7 +441,7 @@ namespace Signals.Aspects.Localization.Database.DataProviders
 
                     count++;
                 }
-                
+
                 command.CommandText = queryBuilder.ToString();
                 command.ExecuteNonQuery();
             }
@@ -448,10 +450,9 @@ namespace Signals.Aspects.Localization.Database.DataProviders
         /// <summary>
         /// Ensures that tables for localization entries exist in the database
         /// </summary>
-        /// <param name="databaseConfiguration"></param>
-        private void CreateLocalizationsTablesIfNotExist(DatabaseDataProviderConfiguration databaseConfiguration)
+        private void CreateLocalizationsTablesIfNotExist()
         {
-            using (var connection = new SqlConnection(databaseConfiguration.ConnectionString))
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 connection.Open();
 
@@ -461,13 +462,13 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE t.name = '{databaseConfiguration.LocalizationCategoryTableName}'
+	                        WHERE t.name = '{Configuration.LocalizationCategoryTableName}'
                         ) 
-                        CREATE TABLE [{databaseConfiguration.LocalizationCategoryTableName}]
+                        CREATE TABLE [{Configuration.LocalizationCategoryTableName}]
                         (
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [Name] [nvarchar](max) NOT NULL
-                            CONSTRAINT [PK_{databaseConfiguration.LocalizationCategoryTableName}] PRIMARY KEY CLUSTERED 
+                            CONSTRAINT [PK_{Configuration.LocalizationCategoryTableName}] PRIMARY KEY CLUSTERED 
                             (
 	                            [Id] ASC
                             )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
@@ -477,14 +478,14 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE t.name = '{databaseConfiguration.LocalizationCollectionTableName}'
+	                        WHERE t.name = '{Configuration.LocalizationCollectionTableName}'
                         ) 
-                        CREATE TABLE [{databaseConfiguration.LocalizationCollectionTableName}]
+                        CREATE TABLE [{Configuration.LocalizationCollectionTableName}]
                         (
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [Name] [nvarchar](max) NOT NULL,
 	                        [LocalizationCategoryId] [int] NOT NULL
-                            CONSTRAINT [PK_{databaseConfiguration.LocalizationCollectionTableName}] PRIMARY KEY CLUSTERED 
+                            CONSTRAINT [PK_{Configuration.LocalizationCollectionTableName}] PRIMARY KEY CLUSTERED 
                             (
 	                            [Id] ASC
                             )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
@@ -494,32 +495,38 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE t.name = '{databaseConfiguration.LocalizationEntryTableName}'
-                        ) 
-                        CREATE TABLE [{databaseConfiguration.LocalizationEntryTableName}]
-                        (
-                            [Id] [int] IDENTITY(1,1) NOT NULL,
-	                        [Value] [nvarchar](max) NOT NULL,
-	                        [LocalizationCollectionId] [int] NOT NULL,
-	                        [LocalizationLanguageId] [int] NOT NULL,
-	                        [LocalizationKeyId] [int] NOT NULL
-                            CONSTRAINT [PK_{databaseConfiguration.LocalizationEntryTableName}] PRIMARY KEY CLUSTERED 
+	                        WHERE t.name = '{Configuration.LocalizationEntryTableName}'
+                        )
+                        BEGIN
+                            CREATE TABLE [{Configuration.LocalizationEntryTableName}]
                             (
-	                            [Id] ASC
-                            )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-                        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+                                [Id] [int] IDENTITY(1,1) NOT NULL,
+                                [CreatedOn] [datetime2](7) NOT NULL,
+                                [UpdatedOn] [datetime2](7) NOT NULL,
+	                            [Value] [nvarchar](max) NOT NULL,
+	                            [LocalizationCollectionId] [int] NOT NULL,
+	                            [LocalizationLanguageId] [int] NOT NULL,
+	                            [LocalizationKeyId] [int] NOT NULL
+                                CONSTRAINT [PK_{Configuration.LocalizationEntryTableName}] PRIMARY KEY CLUSTERED 
+                                (
+	                                [Id] ASC
+                                )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+                            ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+                            ALTER TABLE [{Configuration.LocalizationEntryTableName}] ADD  CONSTRAINT [DF_{Configuration.LocalizationEntryTableName}_CreatedOn]  DEFAULT (getutcdate()) FOR [CreatedOn]
+                            ALTER TABLE [{Configuration.LocalizationEntryTableName}] ADD  CONSTRAINT [DF_{Configuration.LocalizationEntryTableName}_UpdatedOn]  DEFAULT (getutcdate()) FOR [UpdatedOn]
+                        END
 
                         IF NOT EXISTS 
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE t.name = '{databaseConfiguration.LocalizationKeyTableName}'
+	                        WHERE t.name = '{Configuration.LocalizationKeyTableName}'
                         ) 
-                        CREATE TABLE [{databaseConfiguration.LocalizationKeyTableName}]
+                        CREATE TABLE [{Configuration.LocalizationKeyTableName}]
                         (
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [Name] [nvarchar](max) NOT NULL
-                            CONSTRAINT [PK_{databaseConfiguration.LocalizationKeyTableName}] PRIMARY KEY CLUSTERED 
+                            CONSTRAINT [PK_{Configuration.LocalizationKeyTableName}] PRIMARY KEY CLUSTERED 
                             (
 	                            [Id] ASC
                             )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
@@ -529,14 +536,14 @@ namespace Signals.Aspects.Localization.Database.DataProviders
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE t.name = '{databaseConfiguration.LocalizationLanguageTableName}'
+	                        WHERE t.name = '{Configuration.LocalizationLanguageTableName}'
                         ) 
-                        CREATE TABLE [{databaseConfiguration.LocalizationLanguageTableName}]
+                        CREATE TABLE [{Configuration.LocalizationLanguageTableName}]
                         (
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [Name] [nvarchar](max) NOT NULL,
 	                        [Value] [nvarchar](max) NOT NULL
-                            CONSTRAINT [PK_{databaseConfiguration.LocalizationLanguageTableName}] PRIMARY KEY CLUSTERED 
+                            CONSTRAINT [PK_{Configuration.LocalizationLanguageTableName}] PRIMARY KEY CLUSTERED 
                             (
 	                            [Id] ASC
                             )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
@@ -545,8 +552,53 @@ namespace Signals.Aspects.Localization.Database.DataProviders
 
                 var command = new SqlCommand(sql, connection);
                 command.ExecuteNonQuery();
+
+                ExecuteDatabaseMigrations();
             }
         }
 
+        private void InitDatabaseMigrations()
+        {
+            DatabaseMigrations = new List<string>
+            {
+                $@"
+                    IF COL_LENGTH('{Configuration.LocalizationEntryTableName}', 'CreatedOn') IS NULL
+                    BEGIN
+                        ALTER TABLE [{Configuration.LocalizationEntryTableName}]
+                        ADD CreatedOn [datetime2](7) NULL
+
+                        ALTER TABLE [{Configuration.LocalizationEntryTableName}]
+                        ADD UpdatedOn [datetime2](7) NULL
+
+	                    EXEC ('UPDATE [{Configuration.LocalizationEntryTableName}] SET CreatedOn = GETUTCDATE(), UpdatedOn = GETUTCDATE()')
+
+                        ALTER TABLE [{Configuration.LocalizationEntryTableName}]
+                        ALTER COLUMN CreatedOn [datetime2](7) NOT NULL
+
+                        ALTER TABLE [{Configuration.LocalizationEntryTableName}]
+                        ALTER COLUMN UpdatedOn [datetime2](7) NOT NULL
+
+                        ALTER TABLE [{Configuration.LocalizationEntryTableName}] ADD CONSTRAINT [DF_{Configuration.LocalizationEntryTableName}_CreatedOn] DEFAULT (getutcdate()) FOR [CreatedOn]
+                        ALTER TABLE [{Configuration.LocalizationEntryTableName}] ADD CONSTRAINT [DF_{Configuration.LocalizationEntryTableName}_UpdatedOn] DEFAULT (getutcdate()) FOR [UpdatedOn]
+                    END
+                "
+            };
+        }
+
+        private void ExecuteDatabaseMigrations()
+        {
+            foreach (var databaseMigration in DatabaseMigrations)
+            {
+                using (var connection = new SqlConnection(Configuration.ConnectionString))
+                {
+                    connection.Open();
+
+                    var command = new SqlCommand(databaseMigration, connection);
+                    command.ExecuteNonQuery();
+
+                    connection.Close();
+                }
+            }
+        }
     }
 }
