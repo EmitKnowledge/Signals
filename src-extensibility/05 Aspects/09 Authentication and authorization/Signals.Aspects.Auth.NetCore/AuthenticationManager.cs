@@ -29,6 +29,14 @@ namespace Signals.Aspects.Auth.NetCore
         }
 
         /// <summary>
+        /// Ctor
+        /// </summary>
+        public AuthenticationManager()
+        {
+
+        }
+
+        /// <summary>
         /// Get currently logged in user principal
         /// </summary>
         /// <returns></returns>
