@@ -92,6 +92,7 @@ namespace Signals.Core.Web.Execution
                 new CacheResultHandler(),
                 new FileResultHandler(),
                 new XmlResultHandler(),
+                new NativeResultHandler(),
                 new JsonResultHandler()
             };
         }

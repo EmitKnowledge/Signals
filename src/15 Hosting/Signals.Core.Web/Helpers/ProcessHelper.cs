@@ -27,7 +27,8 @@ namespace Signals.Core.Web.Helpers
                 if (attribute.ResponseType == SerializationFormat.Xml)
                 {
                     return new StringContent(response.SerializeXml(), System.Text.Encoding.UTF8, "application/xml");
-                }else if (attribute.ResponseType == SerializationFormat.Xml)
+                }
+                else if (attribute.ResponseType == SerializationFormat.Xml)
                 {
                     return new StringContent(response.SerializeJson(), System.Text.Encoding.UTF8, "application/json");
                 }

@@ -16,6 +16,26 @@ namespace Signals.Core.Common.Reflection
     public static class ReflectionsHelper
     {
         /// <summary>
+        /// Determine whether a type is simple (String, Decimal, DateTime, etc) 
+        /// or complex (i.e. custom class with public properties and methods).
+        /// </summary>
+        public static bool IsSimpleType(this Type type)
+        {
+            return
+                type.IsValueType ||
+                type.IsPrimitive ||
+                new[] {
+                    typeof(String),
+                    typeof(Decimal),
+                    typeof(DateTime),
+                    typeof(DateTimeOffset),
+                    typeof(TimeSpan),
+                    typeof(Guid)
+                }.Contains(type) ||
+                Convert.GetTypeCode(type) != TypeCode.Object;
+        }
+
+        /// <summary>
         /// Check if a type is deriving from another type
         /// </summary>
         /// <param name="givenType"></param>

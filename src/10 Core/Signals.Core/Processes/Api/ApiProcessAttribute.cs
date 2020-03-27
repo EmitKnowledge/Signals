@@ -1,9 +1,5 @@
 ﻿using Signals.Core.Common.Serialization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signals.Core.Processes.Api
 {
@@ -83,5 +79,10 @@ namespace Signals.Core.Processes.Api
         /// Expose api docs
         /// </summary>
         public SerializationFormat ResponseType { get; set; }
+
+        /// <summary>
+        /// Indicates if the api process should return a native response
+        /// </summary>
+        public bool NativeResponse { get; set; }
     }
 }
