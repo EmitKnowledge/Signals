@@ -1,10 +1,10 @@
 ﻿
 REM !important
-SET Version=0.6.105
+SET Version=1.0.1
 
 
-SET NugetUrl=https://pkgs.dev.azure.com/emitknowledge/_packaging/Signals/nuget/v3/index.json
-SET ApiKey=VSTS
+SET NugetUrl=https://api.nuget.org/v3/index.json
+SET ApiKey=oy2jt7aifor352qeokrqnhpptc6yvngedjgsbrasawmyzy
 
 for %%i in (bin\Release\*.nupkg) do del "%%i"
 dotnet msbuild /t:pack /p:Configuration=Release /p:Version=%Version% /p:PackageVersion=%Version%

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="0.6.1" />
+    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="1.0.1" />
     <PackageReference Include="SqlTableDependency" Version="8.5.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
