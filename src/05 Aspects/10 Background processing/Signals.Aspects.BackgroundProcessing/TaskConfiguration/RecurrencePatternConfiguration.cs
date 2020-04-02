@@ -26,7 +26,7 @@ namespace Signals.Aspects.BackgroundProcessing.TaskConfiguration
 		/// <summary>
 		/// Indicates if the process should run now and then follow the recurrence pattern
 		/// </summary>
-	    public bool RunNow { get; protected set; }
+	    public bool RunNow { get; set; }
 
 		/// <summary>
 		/// CTOR

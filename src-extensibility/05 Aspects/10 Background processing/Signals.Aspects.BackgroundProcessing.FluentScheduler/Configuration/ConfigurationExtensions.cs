@@ -12,8 +12,8 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 	        {
 		        case DailyRecurrencePatternConfiguration dailyConfiguration:
 			        var dailySchedule = registry.Schedule(() => task.Execute());
-					Schedule(dailySchedule, dailyConfiguration);
-			        break;
+					Schedule(dailySchedule, dailyConfiguration); 
+					break;
 		        case MonthlyNamedRecurrencePatternConfiguration monthlyNamedConfiguration:
 			        var monthlyNamedSchedule = registry.Schedule(() => task.Execute());
 					Schedule(monthlyNamedSchedule, monthlyNamedConfiguration);
@@ -51,10 +51,21 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 		    Schedule schedule,
 		    DailyRecurrencePatternConfiguration configuration)
 	    {
-		    schedule
-			    .ToRunEvery(configuration.Value)
-			    .Days()
-			    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+		    if (configuration.RunNow)
+		    {
+			    schedule
+					.ToRunNow()
+				    .AndEvery(configuration.Value)
+				    .Days()
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
+		    else
+		    {
+			    schedule
+				    .ToRunEvery(configuration.Value)
+				    .Days()
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
 	    }
 
 		/// <summary>
@@ -65,12 +76,24 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 		private static void Schedule(
 		    Schedule schedule,
 		    MonthlyNamedRecurrencePatternConfiguration configuration)
-	    {
-		    var monthSchedule = schedule
-			    .ToRunEvery(configuration.Value)
-			    .Months();
+		{
+			MonthUnit monthSchedule;
 
-		    MonthOnDayOfWeekUnit orderedSchedule = null;
+		    if (configuration.RunNow)
+		    {
+			    monthSchedule = schedule
+					.ToRunNow()
+				    .AndEvery(configuration.Value)
+				    .Months();
+			}
+		    else
+		    {
+			    monthSchedule = schedule
+				    .ToRunEvery(configuration.Value)
+				    .Months();
+			}
+
+			MonthOnDayOfWeekUnit orderedSchedule = null;
 
 		    switch (configuration.Order)
 		    {
@@ -103,11 +126,23 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 		    Schedule schedule,
 		    MonthlyRecurrencePatternConfiguration configuration)
 	    {
-		    schedule
-			    .ToRunEvery(configuration.Value)
-			    .Months()
-			    .On(configuration.Day)
-			    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+		    if (configuration.RunNow)
+		    {
+			    schedule
+					.ToRunNow()
+				    .AndEvery(configuration.Value)
+				    .Months()
+				    .On(configuration.Day)
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
+		    else
+		    {
+			    schedule
+				    .ToRunEvery(configuration.Value)
+				    .Months()
+				    .On(configuration.Day)
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
 	    }
 
 		/// <summary>
@@ -119,9 +154,19 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 		    Schedule schedule,
 		    TimePartRecurrencePatternConfiguration configuration)
 	    {
-		    schedule
-			    .ToRunEvery(configuration.Value)
-			    .Seconds();
+		    if (configuration.RunNow)
+		    {
+			    schedule
+					.ToRunNow()
+				    .AndEvery(configuration.Value)
+				    .Seconds();
+			}
+		    else
+		    {
+			    schedule
+				    .ToRunEvery(configuration.Value)
+				    .Seconds();
+			}
 	    }
 
 		/// <summary>
@@ -135,17 +180,41 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 		    Schedule secondSchedule,
 			WeekendRecurrencePatternConfiguration configuration)
 	    {
-		    schedule
-			    .ToRunEvery(configuration.Value)
-			    .Weeks()
-			    .On(DayOfWeek.Saturday)
-			    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+		    if (configuration.RunNow)
+		    {
+			    schedule
+					.ToRunNow()
+				    .AndEvery(configuration.Value)
+				    .Weeks()
+				    .On(DayOfWeek.Saturday)
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
+		    else
+		    {
+			    schedule
+				    .ToRunEvery(configuration.Value)
+				    .Weeks()
+				    .On(DayOfWeek.Saturday)
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
 
-			secondSchedule
-				.ToRunEvery(configuration.Value)
-			    .Weeks()
-			    .On(DayOfWeek.Sunday)
-			    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+		    if (configuration.RunNow)
+		    {
+			    secondSchedule
+					.ToRunNow()
+				    .AndEvery(configuration.Value)
+				    .Weeks()
+				    .On(DayOfWeek.Sunday)
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
+		    else
+		    {
+			    secondSchedule
+				    .ToRunEvery(configuration.Value)
+				    .Weeks()
+				    .On(DayOfWeek.Sunday)
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
 	    }
 
 		/// <summary>
@@ -157,11 +226,23 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 		    Schedule schedule,
 		    WeeklyRecurrencePatternConfiguration configuration)
 	    {
-		    schedule
-			    .ToRunEvery(configuration.Value)
-			    .Weeks()
-			    .On(configuration.Day)
-			    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+		    if (configuration.RunNow)
+		    {
+			    schedule
+					.ToRunNow()
+				    .AndEvery(configuration.Value)
+				    .Weeks()
+				    .On(configuration.Day)
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
+		    else
+		    {
+			    schedule
+				    .ToRunEvery(configuration.Value)
+				    .Weeks()
+				    .On(configuration.Day)
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
 	    }
 
 		/// <summary>
@@ -173,10 +254,21 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 		    Schedule schedule,
 		    WorkdayRecurrencePatternConfiguration configuration)
 	    {
-		    schedule
-			    .ToRunEvery(configuration.Value)
-			    .Weekdays()
-			    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+		    if (configuration.RunNow)
+		    {
+			    schedule
+					.ToRunNow()
+				    .AndEvery(configuration.Value)
+				    .Weekdays()
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
+		    else
+		    {
+			    schedule
+				    .ToRunEvery(configuration.Value)
+				    .Weekdays()
+				    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+			}
 	    }
 	}
 }
