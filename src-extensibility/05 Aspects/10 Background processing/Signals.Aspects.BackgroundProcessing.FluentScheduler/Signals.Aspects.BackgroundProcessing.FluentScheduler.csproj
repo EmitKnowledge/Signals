@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentScheduler" Version="5.3.0" />
-    <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

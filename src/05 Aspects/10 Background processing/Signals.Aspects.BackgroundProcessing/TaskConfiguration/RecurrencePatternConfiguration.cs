@@ -23,10 +23,15 @@ namespace Signals.Aspects.BackgroundProcessing.TaskConfiguration
         /// </summary>
         public TimeSpan TimePart { get; protected set; }
 
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        internal RecurrencePatternConfiguration()
+		/// <summary>
+		/// Indicates if the process should run now and then follow the recurrence pattern
+		/// </summary>
+	    public bool RunNow { get; set; }
+
+		/// <summary>
+		/// CTOR
+		/// </summary>
+		internal RecurrencePatternConfiguration()
         {
             TimePart = new TimeSpan();
         }
