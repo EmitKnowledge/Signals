@@ -18,7 +18,7 @@
     <PackageReference Include="Signals.Aspects.Auditing" Version="1.0.1" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
     <PackageReference Include="Signals.Aspects.Auth" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="1.0.2" />
     <PackageReference Include="Signals.Aspects.Benchmarking" Version="1.0.1" />
     <PackageReference Include="Signals.Aspects.Caching" Version="1.0.1" />
     <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="1.0.1" />
