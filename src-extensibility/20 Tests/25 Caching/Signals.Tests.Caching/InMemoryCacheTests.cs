@@ -36,6 +36,25 @@ namespace Signals.Tests.Caching
         }
 
         [Fact]
+        public void CachingEntry_Recached_Exists()
+        {
+            var config = InitConfig();
+            var _cache = new InMemoryCache(config);
+
+            var key = "test_key";
+
+            var value = new CachedModel { Value = 1 };
+            _cache.Set(key, value, TimeSpan.FromHours(1));
+            var cachedValue = _cache.Get<CachedModel>(key);
+            Assert.Equal(value.Value, cachedValue.Value);
+
+            var value2 = "value2";
+            _cache.Set(key, value2, TimeSpan.FromHours(1));
+            var cachedValue2 = _cache.Get<string>(key);
+            Assert.Equal(value2, cachedValue2);
+        }
+
+        [Fact]
         public void CachingEntry_CachedAndExpired_DoesntExist()
         {
             var config = InitConfig();

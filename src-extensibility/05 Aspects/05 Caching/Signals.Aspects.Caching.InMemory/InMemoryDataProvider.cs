@@ -1,5 +1,4 @@
 ﻿using Signals.Aspects.Caching.Entries;
-using Signals.Aspects.Caching.Exceptions;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +30,7 @@ namespace Signals.Aspects.Caching.InMemory
         /// <returns></returns>
         public CacheEntry Get(string key)
         {
-	        return _entries.TryGetValue(key, out var value) ? value : null;
+            return _entries.TryGetValue(key, out var value) ? value : null;
         }
 
         /// <summary>
@@ -50,8 +49,12 @@ namespace Signals.Aspects.Caching.InMemory
         /// <returns></returns>
         public CacheEntry Remove(string key)
         {
-            if (_entries.TryRemove(key, out var value)) return value;
-            throw new CannotRemoveEntryException(key);
+            if (_entries.TryRemove(key, out var value))
+                return value;
+
+            //throw new CannotRemoveEntryException(key);
+
+            return null;
         }
 
         /// <summary>
@@ -65,8 +68,12 @@ namespace Signals.Aspects.Caching.InMemory
         {
             var entry = new CacheEntry(key, value);
             entry.Cache = cache;
-            if (_entries.TryAdd(key, entry)) return entry;
-            throw new CannotRemoveEntryException(key);
+            if (!_entries.TryAdd(key, entry))
+                _entries[key] = entry;
+
+            //throw new CannotCacheException(key);
+
+            return entry;
         }
 
         /// <summary>
@@ -76,14 +83,12 @@ namespace Signals.Aspects.Caching.InMemory
         /// <returns></returns>
         public CacheEntry Set(CacheEntry entry)
         {
-            if (!_entries.ContainsKey(entry.Key))
-            {
-                if (_entries.TryAdd(entry.Key, entry)) return entry;
-                throw new CannotCacheException(entry.Key);
-            }
+            if (!_entries.TryAdd(entry.Key, entry))
+                _entries[entry.Key] = entry;
 
-	        _entries[entry.Key] = entry;
-	        return entry;
-		}
+            //throw new CannotCacheException(entry.Key);
+
+            return entry;
+        }
     }
 }
