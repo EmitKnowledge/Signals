@@ -330,15 +330,6 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
 
                 var command = new SqlCommand(sql, connection);
                 command.ExecuteNonQuery();
-
-                try
-                {
-                    var indexSql = $@"";
-
-                    var indexCommand = new SqlCommand(indexSql, connection);
-                    indexCommand.ExecuteNonQuery();
-                }
-                catch { }
             }
         }
 
