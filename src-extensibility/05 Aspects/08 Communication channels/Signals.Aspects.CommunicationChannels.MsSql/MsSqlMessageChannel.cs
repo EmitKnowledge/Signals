@@ -1,24 +1,31 @@
 ﻿using Newtonsoft.Json;
 using Signals.Aspects.CommunicationChannels.MsSql.Configurations;
+using Signals.Aspects.CommunicationChannels.MsSql.Processors;
+using Signals.Aspects.CommunicationChannels.MsSql.Processors.Base;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using TableDependency.SqlClient;
 
 namespace Signals.Aspects.CommunicationChannels.MsSql
 {
     public class MsSqlMessageChannel : IMessageChannel
     {
-        private readonly MsSqlChannelConfiguration _configuration;
+        /// <summary>
+        /// MsSql Configuration
+        /// </summary>
+        internal readonly MsSqlChannelConfiguration Configuration;
 
         /// <summary>
         /// Represents dictionary of subscriptions with queue name and Action for processing the message queue
         /// </summary>
-        private Dictionary<string, Action<string>> Subscriptions { get; } = new Dictionary<string, Action<string>>();
+        internal Dictionary<string, Action<string>> Subscriptions { get; } = new Dictionary<string, Action<string>>();
 
-        private SqlTableDependency<SystemMessage> SqlDependency { get; set; }
+        /// <summary>
+        /// Message processor
+        /// </summary>
+        private BaseProcessor Processor { get; set; }
 
         /// <summary>
         /// Ctor
@@ -26,17 +33,35 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
         /// <param name="configuration"></param>
         public MsSqlMessageChannel(MsSqlChannelConfiguration configuration)
         {
-            _configuration = configuration;
+            Configuration = configuration;
             CreateDbTableIfDoesntExist();
+
+            if (Configuration.MessageListeningStrategy == MessageListeningStrategy.Broker)
+                Processor = new BrokerProcessor(this);
+            else if (Configuration.MessageListeningStrategy == MessageListeningStrategy.LongPolling)
+                Processor = new LongPollingProcessor(this);
+
+            Processor?.Init();
         }
 
+        /// <summary>
+        /// Close message channel
+        /// </summary>
+        /// <returns></returns>
         public Task Close()
         {
-            SqlDependency.Stop();
+            Processor?.Dispose();
             Subscriptions.Clear();
+
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Publish message
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public Task Publish<T>(T message) where T : class
         {
             var queueForType = message.GetType();
@@ -45,14 +70,21 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
             return Publish(queueName, message);
         }
 
+        /// <summary>
+        /// Publish message to channel
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="channelName"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public Task Publish<T>(string channelName, T message) where T : class
         {
-            using (var connection = new SqlConnection(_configuration.ConnectionString))
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 var serializedMessage = JsonConvert.SerializeObject(message);
                 var query =
                     $@"
-                        INSERT INTO [{_configuration.DbTableName}](CreatedOn, MessageQueue, MessagePayload, MessageStatus)
+                        INSERT INTO [{Configuration.DbTableName}](CreatedOn, MessageQueue, MessagePayload, MessageStatus)
                         VALUES(@CreatedOn, @MessageQueue, @MessagePayload, @MessageStatus)
                     ";
                 connection.Open();
@@ -76,6 +108,12 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Subscribe to channel
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public Task Subscribe<T>(Action<T> action) where T : class
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
@@ -86,28 +124,30 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
             return Subscribe(queueName, action);
         }
 
+        /// <summary>
+        /// Subscribe to channel
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="channelName"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public Task Subscribe<T>(string channelName, Action<T> action) where T : class
         {
-            InitSqlDependency();
-
-            // Create handler for executing the processes
-            void WrappedAction(string messageBody)
-            {
-                if (messageBody is T)
-                {
-                    action(messageBody as T);
-                }
-                else
-                {
-                    var obj = JsonConvert.DeserializeObject<T>(messageBody);
-                    action(obj);
-                }
-            }
-
             // Add the process type to the list of subscribed processes
             if (!Subscriptions.ContainsKey(channelName))
             {
-                Subscriptions.Add(channelName, WrappedAction);
+                Subscriptions.Add(channelName, (messageBody) =>
+                {
+                    if (messageBody is T)
+                    {
+                        action(messageBody as T);
+                    }
+                    else
+                    {
+                        var obj = JsonConvert.DeserializeObject<T>(messageBody);
+                        action(obj);
+                    }
+                });
             }
 
             // Execute all unexecuted processes from the queue (database in this case)
@@ -119,122 +159,9 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
             return Task.CompletedTask;
         }
 
-        private void ProcessUnprocessedTasks<T>(string channelName, Action<T> action) where T : class
+        internal List<SystemMessage> GetAllUnprocessedTasks(string channelName = null)
         {
-            // Create handler for executing the processes
-            void WrappedAction(string messageBody)
-            {
-                if (messageBody is T)
-                {
-                    action(messageBody as T);
-                }
-                else
-                {
-                    var obj = JsonConvert.DeserializeObject<T>(messageBody);
-                    action(obj);
-                }
-            }
-
-            // Get all unprocessed tasks in the channel and process them all
-            var unprocessedTasks = GetAllUnprocessedTasksFromChannel(channelName);
-            foreach (var unprocessedTask in unprocessedTasks)
-            {
-                try
-                {
-                    WrappedAction(unprocessedTask.MessagePayload);
-                    MarkSystemMessageAsProcessed(unprocessedTask.Id);
-                }
-                catch (Exception)
-                {
-                    MarkSystemMessageAsUnprocessed(unprocessedTask.Id);
-                }
-            }
-        }
-
-        private void InitSqlDependency()
-        {
-            // Init only if it hasn't been set before
-            if (SqlDependency == null && _configuration.MessageListeningStrategy == MessageListeningStrategy.Broker)
-            {
-                SqlDependency = new SqlTableDependency<SystemMessage>(_configuration.ConnectionString,
-                    executeUserPermissionCheck: false);
-
-                SqlDependency.OnChanged += (o, e) =>
-                {
-                    if (e.Entity != null)
-                    {
-                        var message = GetAndLockSystemMessageById(e.Entity.Id);
-                        if (message != null)
-                        {
-                            var queue = message.MessageQueue;
-                            if (Subscriptions.ContainsKey(queue))
-                            {
-                                Task.Run(() =>
-                                {
-                                    Subscriptions[queue](message.MessagePayload);
-                                    MarkSystemMessageAsProcessed(message.Id);
-                                });
-                            }
-                        }
-                    }
-                };
-
-                // Keep the connection up to 10 mins before destructing the Sql dependency infrastructure from MSSQL
-                SqlDependency.Start(timeOut: 60, watchDogTimeOut: 600);
-            }
-        }
-
-        private void MarkSystemMessageAsProcessed(int messageId)
-        {
-            using (var connection = new SqlConnection(_configuration.ConnectionString))
-            {
-                connection.Open();
-
-                var sql =
-                    $@"
-                        UPDATE [{_configuration.DbTableName}] SET MessageStatus = @ProcessedStatus
-                        WHERE Id = @Id
-                    ";
-
-                var command = new SqlCommand(sql, connection);
-
-                command.Parameters.Add("Id", SqlDbType.Int);
-                command.Parameters["Id"].Value = messageId;
-
-                command.Parameters.Add("ProcessedStatus", SqlDbType.Int);
-                command.Parameters["ProcessedStatus"].Value = (int)SystemMessageStatus.Processed;
-
-                command.ExecuteNonQuery();
-            }
-        }
-
-        private void MarkSystemMessageAsUnprocessed(int messageId)
-        {
-            using (var connection = new SqlConnection(_configuration.ConnectionString))
-            {
-                connection.Open();
-
-                var sql =
-                    $@"
-                        UPDATE [{_configuration.DbTableName}] SET MessageStatus = @PendingStatus
-                        WHERE Id = @Id
-                    ";
-
-                var command = new SqlCommand(sql, connection);
-
-                command.Parameters.Add("Id", SqlDbType.Int);
-                command.Parameters["Id"].Value = messageId;
-
-                command.Parameters.Add("PendingStatus", SqlDbType.Int);
-                command.Parameters["PendingStatus"].Value = (int)SystemMessageStatus.Pending;
-
-                command.ExecuteNonQuery();
-            }
-        }
-
-        private SystemMessage GetAndLockSystemMessageById(int messageId)
-        {
-            using (var connection = new SqlConnection(_configuration.ConnectionString))
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 connection.Open();
 
@@ -242,9 +169,55 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
                 var sql =
                     $@"
                         BEGIN TRANSACTION T{uniqueTransactionId}
-                            SELECT * FROM [{_configuration.DbTableName}]
+                            SELECT * FROM [{Configuration.DbTableName}]
+                            WHERE MessageStatus = @PendingStatus {(channelName == null ? "" : "AND MessageQueue = @MessageQueue")};
+                        COMMIT TRANSACTION T{uniqueTransactionId}
+                    ";
+
+                var command = new SqlCommand(sql, connection);
+
+                command.Parameters.Add("PendingStatus", SqlDbType.Int);
+                command.Parameters["PendingStatus"].Value = (int)SystemMessageStatus.Pending;
+
+                if (channelName != null)
+                {
+                    command.Parameters.Add("MessageQueue", SqlDbType.NVarChar);
+                    command.Parameters["MessageQueue"].Value = channelName;
+                }
+
+                var result = new List<SystemMessage>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(new SystemMessage
+                        {
+                            Id = reader.GetInt32(0),
+                            CreatedOn = reader.GetDateTime(1),
+                            MessageQueue = reader.GetString(2),
+                            MessagePayload = reader.GetString(3),
+                            MessageStatus = (SystemMessageStatus)reader.GetInt32(4)
+                        });
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        internal SystemMessage GetAndLockSystemMessageById(int messageId)
+        {
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
+            {
+                connection.Open();
+
+                var uniqueTransactionId = Guid.NewGuid().ToString().Substring(0, 20).Replace("-", string.Empty);
+                var sql =
+                    $@"
+                        BEGIN TRANSACTION T{uniqueTransactionId}
+                            SELECT * FROM [{Configuration.DbTableName}]
                             WHERE Id = @Id AND MessageStatus = @PendingStatus;
-                            UPDATE [{_configuration.DbTableName}] SET MessageStatus = @ProcessingStatus
+                            UPDATE [{Configuration.DbTableName}] SET MessageStatus = @ProcessingStatus
                             WHERE Id = @Id AND MessageStatus = @PendingStatus;
                         COMMIT TRANSACTION T{uniqueTransactionId}
                     ";
@@ -279,52 +252,57 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
             }
         }
 
-        private List<SystemMessage> GetAllUnprocessedTasksFromChannel(string channelName)
+        internal void MarkSystemMessageAsProcessed(int messageId)
         {
-            using (var connection = new SqlConnection(_configuration.ConnectionString))
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 connection.Open();
 
-                var uniqueTransactionId = Guid.NewGuid().ToString().Substring(0, 20).Replace("-", string.Empty);
                 var sql =
                     $@"
-                        BEGIN TRANSACTION T{uniqueTransactionId}
-                            SELECT * FROM [{_configuration.DbTableName}]
-                            WHERE MessageStatus = @PendingStatus AND MessageQueue = @MessageQueue;
-                        COMMIT TRANSACTION T{uniqueTransactionId}
+                        UPDATE [{Configuration.DbTableName}] SET MessageStatus = @ProcessedStatus
+                        WHERE Id = @Id
                     ";
 
                 var command = new SqlCommand(sql, connection);
 
+                command.Parameters.Add("Id", SqlDbType.Int);
+                command.Parameters["Id"].Value = messageId;
+
+                command.Parameters.Add("ProcessedStatus", SqlDbType.Int);
+                command.Parameters["ProcessedStatus"].Value = (int)SystemMessageStatus.Processed;
+
+                command.ExecuteNonQuery();
+            }
+        }
+
+        internal void MarkSystemMessageAsUnprocessed(int messageId)
+        {
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
+            {
+                connection.Open();
+
+                var sql =
+                    $@"
+                        UPDATE [{Configuration.DbTableName}] SET MessageStatus = @PendingStatus
+                        WHERE Id = @Id
+                    ";
+
+                var command = new SqlCommand(sql, connection);
+
+                command.Parameters.Add("Id", SqlDbType.Int);
+                command.Parameters["Id"].Value = messageId;
+
                 command.Parameters.Add("PendingStatus", SqlDbType.Int);
                 command.Parameters["PendingStatus"].Value = (int)SystemMessageStatus.Pending;
 
-                command.Parameters.Add("MessageQueue", SqlDbType.NVarChar);
-                command.Parameters["MessageQueue"].Value = channelName;
-
-                var result = new List<SystemMessage>();
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        result.Add(new SystemMessage
-                        {
-                            Id = reader.GetInt32(0),
-                            CreatedOn = reader.GetDateTime(1),
-                            MessageQueue = reader.GetString(2),
-                            MessagePayload = reader.GetString(3),
-                            MessageStatus = (SystemMessageStatus)reader.GetInt32(4)
-                        });
-                    }
-                }
-
-                return result;
+                command.ExecuteNonQuery();
             }
         }
 
         private void CreateDbTableIfDoesntExist()
         {
-            using (var connection = new SqlConnection(_configuration.ConnectionString))
+            using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 connection.Open();
 
@@ -334,16 +312,16 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
                         (	
                             SELECT * 
 	                        FROM sys.tables t 
-	                        WHERE t.name = '{_configuration.DbTableName}'
+	                        WHERE t.name = '{Configuration.DbTableName}'
                         ) 
-                        CREATE TABLE [{_configuration.DbTableName}]
+                        CREATE TABLE [{Configuration.DbTableName}]
                         (
                             [Id] [int] IDENTITY(1,1) NOT NULL,
 	                        [CreatedOn] [datetime2](7) NOT NULL,
 	                        [MessageQueue] [nvarchar](max) NOT NULL,
 	                        [MessagePayload] [nvarchar](max) NOT NULL,
 	                        [MessageStatus] [int] NOT NULL
-                            CONSTRAINT [PK_{_configuration.DbTableName}] PRIMARY KEY CLUSTERED 
+                            CONSTRAINT [PK_{Configuration.DbTableName}] PRIMARY KEY CLUSTERED 
                             (
 	                            [Id] ASC
                             )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
@@ -352,6 +330,42 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
 
                 var command = new SqlCommand(sql, connection);
                 command.ExecuteNonQuery();
+
+                try
+                {
+                    var indexSql = $@"";
+
+                    var indexCommand = new SqlCommand(indexSql, connection);
+                    indexCommand.ExecuteNonQuery();
+                }
+                catch { }
+            }
+        }
+
+        private void ProcessUnprocessedTasks<T>(string channelName, Action<T> action) where T : class
+        {
+            // Get all unprocessed tasks in the channel and process them all
+            var unprocessedTasks = GetAllUnprocessedTasks(channelName);
+            foreach (var unprocessedTask in unprocessedTasks)
+            {
+                try
+                {
+                    if (unprocessedTask.MessagePayload is T)
+                    {
+                        action(unprocessedTask.MessagePayload as T);
+                    }
+                    else
+                    {
+                        var obj = JsonConvert.DeserializeObject<T>(unprocessedTask.MessagePayload);
+                        action(obj);
+                    }
+
+                    MarkSystemMessageAsProcessed(unprocessedTask.Id);
+                }
+                catch
+                {
+                    MarkSystemMessageAsUnprocessed(unprocessedTask.Id);
+                }
             }
         }
     }

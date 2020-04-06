@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.MsSql\Signals.Aspects.CommunicationChannels.MsSql.csproj" />
     <ProjectReference Include="..\..\..\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.ServiceBus\Signals.Aspects.CommunicationChannels.ServiceBus.csproj" />
   </ItemGroup>
 
