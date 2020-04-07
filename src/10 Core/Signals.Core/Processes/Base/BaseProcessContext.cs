@@ -11,6 +11,7 @@ using Signals.Core.Processing.Results;
 using Signals.Aspects.Benchmarking;
 using Signals.Core.Processing.Benchmarking;
 using Signals.Aspects.DI;
+using Signals.Aspects.Localization;
 
 namespace Signals.Core.Processes.Base
 {
@@ -63,6 +64,11 @@ namespace Signals.Core.Processes.Base
         /// Permission manager
         /// </summary>
         [Import] public IPermissionManager PermissionManager { get; internal set; }
+
+        /// <summary>
+        /// Localization provider
+        /// </summary>
+        [Import] public ILocalizationProvider LocalizationProvider { get; internal set; }
 
         /// <summary>
         /// Process factory
