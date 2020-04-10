@@ -143,6 +143,7 @@ namespace Signals.Core.Web.Http
             {
                 var body = httpResponse.Content.ReadAsStreamAsync().Result;
                 body.CopyTo(context.Response.OutputStream);
+                body.Close();
             }
         }
 
@@ -216,6 +217,7 @@ namespace Signals.Core.Web.Http
             {
                 var body = httpResponse.Content.ReadAsStreamAsync().Result;
                 body.CopyToAsync(context.Response.Body).Wait();
+                body.Close();
             }
         }
 
