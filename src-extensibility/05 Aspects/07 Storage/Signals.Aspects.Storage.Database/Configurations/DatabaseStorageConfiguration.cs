@@ -8,6 +8,14 @@ namespace Signals.Aspects.Storage.Database.Configurations
     public class DatabaseStorageConfiguration : IStorageConfiguration
     {
         /// <summary>
+        /// CTOR
+        /// </summary>
+        public DatabaseStorageConfiguration()
+        {
+            TableName = "Storage";
+        }
+
+        /// <summary>
         /// Database connection string
         /// </summary>
         public string ConnectionString { get; set; }

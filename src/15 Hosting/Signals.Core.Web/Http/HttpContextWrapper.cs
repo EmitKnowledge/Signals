@@ -99,6 +99,7 @@ namespace Signals.Core.Web.Http
             Form = new FormCollection(context);
             Session = new SessionProvider(context);
             
+            // single lazy per http context
             if (!context.Items.Contains("body"))
                 context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.InputStream)));
 
@@ -161,7 +162,8 @@ namespace Signals.Core.Web.Http
             Cookies = new CookieCollection(context);
             Form = new FormCollection(context);
             Session = new SessionProvider(context);
-
+        
+            // single lazy per http context
             if (!context.Items.ContainsKey("body"))
                 context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.Body)));
 

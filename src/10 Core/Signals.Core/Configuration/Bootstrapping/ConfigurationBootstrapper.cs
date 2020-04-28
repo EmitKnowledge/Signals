@@ -131,7 +131,6 @@ namespace Signals.Core.Configuration.Bootstrapping
 
             var resolver = DependencyResolver();
 
-            if (!JsonSerializerSettings.IsNull() && !JsonSerializerSettings().IsNull()) resolver.Register(typeof(JsonSerializerSettings), JsonSerializerSettings());
             if (!Logging.IsNull() && !Logging().IsNull()) resolver.Register(typeof(ILogger), Logging());
             if (!Auditing.IsNull() && !Auditing().IsNull()) resolver.Register(typeof(IAuditProvider), Auditing());
             if (!Cache.IsNull() && !Cache().IsNull()) resolver.Register(typeof(ICache), Cache());
@@ -144,6 +143,32 @@ namespace Signals.Core.Configuration.Bootstrapping
             if (!PermissionProvider.IsNull() && !PermissionProvider().IsNull()) resolver.Register(typeof(IPermissionProvider), PermissionProvider());
             if (!Benchmarker.IsNull() && !Benchmarker().IsNull()) resolver.Register(typeof(IBenchmarker), Benchmarker());
             if (!PermissionManager.IsNull() && !PermissionManager().IsNull()) resolver.Register(typeof(IPermissionManager), PermissionManager());
+            
+            resolver.Register<CriticalErrorCallbackManager>();
+            resolver.Register<IProcessFactory, ProcessFactory>();
+            resolver.Register<IProcessExecutor, ProcessExecutor>();
+            resolver.Register<Mediator>();
+
+            RegisterProcesses(config, resolver, scanAssemblies);
+            RegisterErrorHendling(config, resolver);
+            RegisterJsonSerializerSettings(config, resolver);
+            RegisterSmtp(config, resolver);
+            RegisterSyncLogProvider(config, resolver);
+
+            var services = SystemBootstrapper.Init(resolver, scanAssemblies);
+
+            return services;
+        }
+
+        private void RegisterProcesses(ApplicationConfiguration config, IRegistrationService resolver, params Assembly[] scanAssemblies)
+        {
+            var processRepo = new ProcessRepository(scanAssemblies);
+            resolver.Register(processRepo);
+            processRepo.All().ForEach(type => resolver.Register(type));
+        }
+
+        private void RegisterErrorHendling(ApplicationConfiguration config, IRegistrationService resolver)
+        {
             if (!ErrorHandling.IsNull() && !ErrorHandling().IsNull())
             {
                 resolver.Register(typeof(IStrategyBuilder), ErrorHandling());
@@ -155,22 +180,15 @@ namespace Signals.Core.Configuration.Bootstrapping
                     resolver.Register(typeof(IStrategyHandler), handler);
                 }
             }
+        }
 
-            resolver.Register<CriticalErrorCallbackManager>();
-            resolver.Register<IProcessFactory, ProcessFactory>();
-            resolver.Register<IProcessExecutor, ProcessExecutor>();
-            resolver.Register<Mediator>();
-
-            var processRepo = new ProcessRepository(scanAssemblies);
-            resolver.Register(processRepo);
-            processRepo.All().ForEach(type => resolver.Register(type));
-
-            RegisterSmtp(config, resolver);
-            RegisterSyncLogProvider(config, resolver);
-
-            var services = SystemBootstrapper.Init(resolver, scanAssemblies);
-
-            return services;
+        private void RegisterJsonSerializerSettings(ApplicationConfiguration config, IRegistrationService resolver)
+        {
+            if (!JsonSerializerSettings.IsNull() && !JsonSerializerSettings().IsNull())
+            {
+                resolver.Register(typeof(JsonSerializerSettings), JsonSerializerSettings());
+                JsonConvert.DefaultSettings = JsonSerializerSettings;
+            }
         }
 
         private void RegisterSmtp(ApplicationConfiguration config, IRegistrationService resolver)
@@ -190,6 +208,7 @@ namespace Signals.Core.Configuration.Bootstrapping
                 };
 
                 var wrapper = new SmtpClientWrapper(instance);
+                wrapper.WhitelistedEmails = config.WhitelistedEmails;
 
                 resolver.Register<ISmtpClient>(wrapper);
                 resolver.Register<SmtpClient>(instance);

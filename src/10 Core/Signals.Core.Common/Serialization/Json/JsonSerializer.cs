@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization.Json.Converters;
-using Signals.Core.Common.Text;
 using System;
 using System.IO;
 using System.Text;
@@ -49,7 +47,7 @@ namespace Signals.Core.Common.Serialization.Json
             if (instance == null) return null;
             var serializer = new Newtonsoft.Json.JsonSerializer();
 
-            var settings = SystemBootstrapper.GetInstance<JsonSerializerSettings>();
+            var settings = JsonConvert.DefaultSettings();
             if (!settings.IsNull()) serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
 
             serializer.Converters.Add(new IsoDateTimeConverter());

@@ -15,8 +15,10 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.8.14" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.197" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Signals.Aspects.Auditing" Version="1.0.1" />
+    <PackageReference Include="Signals.Core.Common" Version="1.0.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.205" />
+    <PackageReference Include="Signals.Aspects.Auditing" Version="1.0.1" />
     <PackageReference Include="Signals.Aspects.Auth" Version="1.0.1" />
     <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="1.0.2" />
     <PackageReference Include="Signals.Aspects.Benchmarking" Version="1.0.1" />
@@ -29,7 +31,6 @@
     <PackageReference Include="Signals.Aspects.Logging" Version="1.0.1" />
     <PackageReference Include="Signals.Aspects.Security" Version="1.0.1" />
     <PackageReference Include="Signals.Aspects.Storage" Version="1.0.1" />
-    <PackageReference Include="HtmlSanitizer" Version="4.0.205" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 ﻿using Signals.Core.Common.Instance;
-using Signals.Core.Configuration;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -12,6 +12,8 @@ namespace Signals.Core.Common.Smtp
     public class SmtpClientWrapper : SmtpClient, ISmtpClient
     {
         private SmtpClient _smtpClient { get; }
+
+        public List<string> WhitelistedEmails { get; set; }
 
         /// <summary>
         /// CTOR
@@ -30,7 +32,7 @@ namespace Signals.Core.Common.Smtp
         /// <param name="body"></param>
         public new void Send(string from, string recipients, string subject, string body)
         {
-            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
+            if (WhitelistedEmails.IsNullOrHasZeroElements())
             {
                 _smtpClient.Send(from, recipients, subject, body);
             }
@@ -39,7 +41,7 @@ namespace Signals.Core.Common.Smtp
                 var to = recipients?.Split(',', ';');
                 if (!to.IsNullOrHasZeroElements())
                 {
-                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
+                    var whitelistedTo = WhitelistedEmails;
                     var verifiedTo = to.Where(x => whitelistedTo.Contains(x)).ToList();
 
                     if (!verifiedTo.IsNullOrHasZeroElements())
@@ -58,7 +60,7 @@ namespace Signals.Core.Common.Smtp
         /// <param name="userToken"></param>
         public new async void SendAsync(string from, string recipients, string subject, string body, object userToken)
         {
-            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
+            if (WhitelistedEmails.IsNullOrHasZeroElements())
             {
                 _smtpClient.SendAsync(from, recipients, subject, body, userToken);
             }
@@ -67,7 +69,7 @@ namespace Signals.Core.Common.Smtp
                 var to = recipients?.Split(',', ';');
                 if (!to.IsNullOrHasZeroElements())
                 {
-                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
+                    var whitelistedTo = WhitelistedEmails;
                     var verifiedTo = to.Where(x => whitelistedTo.Contains(x)).ToList();
 
                     if (!verifiedTo.IsNullOrHasZeroElements())
@@ -86,7 +88,7 @@ namespace Signals.Core.Common.Smtp
         /// <returns></returns>
         public new async Task SendMailAsync(string from, string recipients, string subject, string body)
         {
-            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
+            if (WhitelistedEmails.IsNullOrHasZeroElements())
             {
                 await _smtpClient.SendMailAsync(from, recipients, subject, body);
             }
@@ -95,7 +97,7 @@ namespace Signals.Core.Common.Smtp
                 var to = recipients?.Split(',', ';');
                 if (!to.IsNullOrHasZeroElements())
                 {
-                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
+                    var whitelistedTo = WhitelistedEmails;
                     var verifiedTo = to.Where(x => whitelistedTo.Contains(x)).ToList();
 
                     if (!verifiedTo.IsNullOrHasZeroElements())
@@ -110,7 +112,7 @@ namespace Signals.Core.Common.Smtp
         /// <param name="message"></param>
         public new void Send(MailMessage message)
         {
-            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
+            if (WhitelistedEmails.IsNullOrHasZeroElements())
             {
                 _smtpClient.Send(message);
             }
@@ -118,7 +120,7 @@ namespace Signals.Core.Common.Smtp
             {
                 if (!message.To.IsNullOrHasZeroElements())
                 {
-                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
+                    var whitelistedTo = WhitelistedEmails;
 
                     var verifiedTo = message.To.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.To.Clear();
@@ -145,7 +147,7 @@ namespace Signals.Core.Common.Smtp
         /// <param name="userToken"></param>
         public new async void SendAsync(MailMessage message, object userToken)
         {
-            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
+            if (WhitelistedEmails.IsNullOrHasZeroElements())
             {
                 _smtpClient.SendAsync(message, userToken);
             }
@@ -153,7 +155,7 @@ namespace Signals.Core.Common.Smtp
             {
                 if (!message.To.IsNullOrHasZeroElements())
                 {
-                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
+                    var whitelistedTo = WhitelistedEmails;
 
                     var verifiedTo = message.To.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.To.Clear();
@@ -180,7 +182,7 @@ namespace Signals.Core.Common.Smtp
         /// <returns></returns>
         public new async Task SendMailAsync(MailMessage message)
         {
-            if (ApplicationConfiguration.Instance.WhitelistedEmails.IsNullOrHasZeroElements())
+            if (WhitelistedEmails.IsNullOrHasZeroElements())
             {
                 await _smtpClient.SendMailAsync(message);
             }
@@ -188,7 +190,7 @@ namespace Signals.Core.Common.Smtp
             {
                 if (!message.To.IsNullOrHasZeroElements())
                 {
-                    var whitelistedTo = ApplicationConfiguration.Instance.WhitelistedEmails;
+                    var whitelistedTo = WhitelistedEmails;
 
                     var verifiedTo = message.To.Where(x => whitelistedTo.Contains(x.Address)).ToList();
                     message.To.Clear();

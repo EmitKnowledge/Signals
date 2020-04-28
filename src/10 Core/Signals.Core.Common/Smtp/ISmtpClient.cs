@@ -1,7 +1,4 @@
-﻿using Signals.Core.Common.Instance;
-using Signals.Core.Configuration;
-using System.Linq;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace Signals.Core.Common.Smtp
