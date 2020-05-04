@@ -101,7 +101,10 @@ namespace Signals.Aspects.Auth.NetCore
             {
                 var scheme = principal.Identity.AuthenticationType ?? CookieAuthenticationDefaults.AuthenticationScheme;
 
-                Context.SignInAsync(scheme, principal, claimProperties.To()).Wait();
+                if (scheme == CookieAuthenticationDefaults.AuthenticationScheme)
+                {
+                    Context.SignInAsync(scheme, principal, claimProperties.To()).Wait();
+                }
                 Context.User = principal;
             }
 
