@@ -1,6 +1,5 @@
 ﻿using Signals.Aspects.CommunicationChannels.MsSql.Configurations;
 using Signals.Aspects.CommunicationChannels.MsSql.Processors.Base;
-using System.Linq;
 using System.Threading.Tasks;
 using TableDependency.SqlClient;
 
@@ -49,11 +48,15 @@ namespace Signals.Aspects.CommunicationChannels.MsSql.Processors
                         if (!string.IsNullOrEmpty(queue) && Channel.Subscriptions.ContainsKey(queue))
                         {
                             var message = Channel.GetAndLockSystemMessageById(e.Entity.Id);
-                            Task.Run(() =>
+
+                            if (message != null)
                             {
-                                Channel.Subscriptions[queue](message.MessagePayload);
-                                Channel.MarkSystemMessageAsProcessed(message.Id);
-                            });
+                                Task.Run(() =>
+                                {
+                                    Channel.Subscriptions[queue](message.MessagePayload);
+                                    Channel.MarkSystemMessageAsProcessed(message.Id);
+                                });
+                            }
                         }
                     }
                 };
