@@ -1,5 +1,6 @@
 ﻿using Signals.Aspects.CommunicationChannels.MsSql.Configurations;
 using Signals.Aspects.CommunicationChannels.MsSql.Processors.Base;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -45,6 +46,7 @@ namespace Signals.Aspects.CommunicationChannels.MsSql.Processors
                     while (true)
                     {
                         Thread.Sleep(Channel.Configuration.LongPollingTimeout);
+
                         if (LongPollingLoopCancellationTokenSource.Token.IsCancellationRequested)
                             LongPollingLoopCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
@@ -54,11 +56,13 @@ namespace Signals.Aspects.CommunicationChannels.MsSql.Processors
                             if (LongPollingLoopCancellationTokenSource.Token.IsCancellationRequested)
                                 LongPollingLoopCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                            var message = Channel.GetAndLockSystemMessageById(task.Id);
-                            if (message != null)
+                            var queue = task?.MessageQueue;
+
+                            if (!string.IsNullOrEmpty(queue) && Channel.Subscriptions.ContainsKey(queue))
                             {
-                                var queue = message.MessageQueue;
-                                if (Channel.Subscriptions.ContainsKey(queue))
+                                var message = Channel.GetAndLockSystemMessageById(task.Id);
+
+                                if (message != null)
                                 {
                                     Channel.Subscriptions[queue](message.MessagePayload);
                                     Channel.MarkSystemMessageAsProcessed(message.Id);

@@ -1,8 +1,6 @@
 ﻿using Signals.Aspects.CommunicationChannels.MsSql.Configurations;
 using Signals.Aspects.CommunicationChannels.MsSql.Processors.Base;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using TableDependency.SqlClient;
 
@@ -39,25 +37,23 @@ namespace Signals.Aspects.CommunicationChannels.MsSql.Processors
             {
                 SqlDependency = new SqlTableDependency<SystemMessage>(
                     Channel.Configuration.ConnectionString,
-                    executeUserPermissionCheck: false, 
+                    executeUserPermissionCheck: false,
                     tableName: Channel.Configuration.DbTableName);
 
                 SqlDependency.OnChanged += (o, e) =>
                 {
-                    if (e.Entity != null)
+                    if (e.Entity != null && e.Entity.MessageStatus == SystemMessageStatus.Pending /* && Channel.Subscriptions.Any()*/)
                     {
-                        var message = Channel.GetAndLockSystemMessageById(e.Entity.Id);
-                        if (message != null)
+                        var queue = e.Entity?.MessageQueue;
+
+                        if (!string.IsNullOrEmpty(queue) && Channel.Subscriptions.ContainsKey(queue))
                         {
-                            var queue = message.MessageQueue;
-                            if (Channel.Subscriptions.ContainsKey(queue))
+                            var message = Channel.GetAndLockSystemMessageById(e.Entity.Id);
+                            Task.Run(() =>
                             {
-                                Task.Run(() =>
-                                {
-                                    Channel.Subscriptions[queue](message.MessagePayload);
-                                    Channel.MarkSystemMessageAsProcessed(message.Id);
-                                });
-                            }
+                                Channel.Subscriptions[queue](message.MessagePayload);
+                                Channel.MarkSystemMessageAsProcessed(message.Id);
+                            });
                         }
                     }
                 };
