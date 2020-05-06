@@ -14,8 +14,10 @@ using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net.Mail;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Signals.Core.Background.Configuration.Bootstrapping
@@ -128,6 +130,8 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
 
                         instance.EpicId = meta.EpicId;
                         instance.CallerProcessName = meta.CallerProcessName;
+
+                        Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = new CultureInfo(meta.CultureName);
 
                         executor.ExecuteBackground(instance, meta.Payload);
                     });

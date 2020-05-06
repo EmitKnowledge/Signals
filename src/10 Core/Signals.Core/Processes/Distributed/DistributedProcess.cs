@@ -3,6 +3,7 @@ using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Signals.Core.Processes.Distributed
@@ -109,6 +110,7 @@ namespace Signals.Core.Processes.Distributed
             var metadata = new DistributedProcessMetadata();
             metadata.EpicId = EpicId;
             metadata.CallerProcessName = CallerProcessName;
+            metadata.CultureName = Thread.CurrentThread.CurrentCulture.Name;
             metadata.Payload = obj.SerializeJson();
 
             return Context.Channel?.Publish(name, metadata);
@@ -216,6 +218,7 @@ namespace Signals.Core.Processes.Distributed
             var metadata = new DistributedProcessMetadata();
             metadata.EpicId = EpicId;
             metadata.CallerProcessName = CallerProcessName;
+            metadata.CultureName = Thread.CurrentThread.CurrentCulture.Name;
             metadata.Payload = obj.SerializeJson();
 
             return Context.Channel?.Publish(name, metadata);
