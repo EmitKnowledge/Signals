@@ -25,7 +25,7 @@ namespace Signals.Aspects.Auth.Extensions
         /// <param name="obj"></param>
         public static void AddClaim<T>(this ClaimsPrincipal principal, string name, T obj)
         {
-	        (principal.Identity as ClaimsIdentity)?.AddClaim(new Claim(name, JsonConvert.SerializeObject(obj)));
+	        (principal.Identity as ClaimsIdentity)?.AddClaim(new Claim(name, JsonConvert.SerializeObject(obj, new JsonSerializerSettings())));
         }
 
         /// <summary>
@@ -69,7 +69,14 @@ namespace Signals.Aspects.Auth.Extensions
         {
             var claim = principal.Claims.FirstOrDefault(x => x.Type == name);
             if (claim == null) return default(T);
-            return JsonConvert.DeserializeObject<T>(claim.Value);
+
+            // Instant CreatedOn is not serialized in older versions
+            // No migration is possible in existing applications
+            // Best to ignore error
+            var settings = new JsonSerializerSettings();
+            settings.Error = (a, b) => b.ErrorContext.Handled = true;
+
+            return JsonConvert.DeserializeObject<T>(claim.Value, settings);
         }
 
         /// <summary>
