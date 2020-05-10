@@ -6,16 +6,11 @@ namespace App.Domain.Processes.Users
 {
     public class LoginUser : ApiProcess<VoidResult>
     {
-        public override VoidResult Authenticate()
+        public override VoidResult Auth()
         {
             return Context.CurrentUserPrincipal.IsNull() ? 
                 Fail() : 
                 Ok();
-        }
-
-        public override VoidResult Authorize()
-        {
-            return Ok();
         }
 
         public override VoidResult Validate()

@@ -8,15 +8,15 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.2.0" />
     <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.2.0" />
-    <PackageReference Include="Signals.Aspects.BackgroundProcessing.FluentScheduler" Version="0.6.2" />
-    <PackageReference Include="Signals.Aspects.Caching.InMemory" Version="0.6.2" />
-    <PackageReference Include="Signals.Aspects.CommunicationChannels.ServiceBus" Version="0.6.5" />
-    <PackageReference Include="Signals.Aspects.Configuration.File" Version="0.6.3" />
-    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="0.6.7" />
-    <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="0.6.4" />
-    <PackageReference Include="Signals.Aspects.Localization.File" Version="0.6.12" />
-    <PackageReference Include="Signals.Aspects.Logging.NLog" Version="0.6.7" />
-    <PackageReference Include="Signals.Core.Background" Version="0.6.77" />
+    <PackageReference Include="Signals.Aspects.BackgroundProcessing.FluentScheduler" Version="1.0.3" />
+    <PackageReference Include="Signals.Aspects.Caching.InMemory" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.CommunicationChannels.ServiceBus" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.Configuration.File" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.Localization.File" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.Logging.NLog" Version="1.0.1" />
+    <PackageReference Include="Signals.Core.Background" Version="1.0.5" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.5.0" />
   </ItemGroup>
@@ -26,20 +26,6 @@
     <ProjectReference Include="..\..\..\20 Domain\22 Entities\App.Domain.Entities\App.Domain.Entities.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\24 Processes\App.Domain.Processes\App.Domain.Processes.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\24 Processes\App.Domain.Resources\App.Domain.Resources.csproj" />
-    <ProjectReference Include="..\..\32 Web and Api\App.Client.Web.Processes\App.Client.Web.Processes.csproj" />
-    <ProjectReference Include="..\App.Client.Background.Processes\App.Client.Background.Processes.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="configs\application.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="configs\business.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="configs\web.application.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

@@ -13,8 +13,6 @@ using System;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using System.Reflection;
 
 namespace App.Client.Web
 {
@@ -46,7 +44,8 @@ namespace App.Client.Web
         {
             services
                 .AddMvc()
-                .AddJsonOptions(o => {
+                .AddJsonOptions(o =>
+                {
                     o.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -61,7 +60,7 @@ namespace App.Client.Web
         /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (EnvironmentConfiguration.IsDevelopment)
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -71,7 +70,8 @@ namespace App.Client.Web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            if (!EnvironmentConfiguration.IsDevelopment)
+                app.UseHttpsRedirection();
 
             app.Use((HttpContext context, Func<Task> next) =>
             {
@@ -95,8 +95,6 @@ namespace App.Client.Web
             });
 
             app.UseStaticFiles();
-            app.UseCookiePolicy();
-
             app.UseSignalsAuth();
             app.UseSignals();
             app.UseMvcWithDefaultRoute();

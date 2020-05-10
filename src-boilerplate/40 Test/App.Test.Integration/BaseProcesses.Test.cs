@@ -27,15 +27,6 @@ namespace App.Test.Integration
 {
     public class TestBootstrapConfiguraiton : ApplicationBootstrapConfiguration
     {
-        public void Bootstrap(params Assembly[] scanAssemblies)
-        {
-            Resolve(scanAssemblies);
-        }
-
-        protected override IServiceContainer Resolve(params Assembly[] scanAssemblies)
-        {
-            return base.Resolve(scanAssemblies);
-        }
     }
 
     public class BaseProcessesTest
@@ -45,12 +36,16 @@ namespace App.Test.Integration
         /// </summary>
         public BaseProcessesTest()
         {
+            string environment = null;
             FileConfigurationProvider ProviderForFile(string name) => new FileConfigurationProvider
             {
                 File = name,
-                Path = Path.Combine(Environment.CurrentDirectory, $"configs"),
+                Path = environment.IsNullOrEmpty() ? Path.Combine(AppContext.BaseDirectory, $"configs") : Path.Combine(AppContext.BaseDirectory, $"configs", environment),
                 ReloadOnAccess = false
             };
+
+            EnvironmentConfiguration.UseProvider(ProviderForFile("environment.config.json"));
+            environment = EnvironmentConfiguration.Instance.Environment;
 
             ApplicationConfiguration.UseProvider(ProviderForFile("application.config.json"));
             DomainConfiguration.UseProvider(ProviderForFile("domain.config.json"));
@@ -107,7 +102,7 @@ namespace App.Test.Integration
             config.JsonSerializerSettings = new Newtonsoft.Json.JsonSerializerSettings();
             config.JsonSerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
 
-            var assemblies = Directory.GetFiles(Environment.CurrentDirectory, "*.dll").Select(file => Assembly.LoadFrom(file)).ToArray();
+            var assemblies = Directory.GetFiles(AppContext.BaseDirectory, "*.dll").Select(file => Assembly.LoadFrom(file)).ToArray();
 
             config.Bootstrap(assemblies);
 

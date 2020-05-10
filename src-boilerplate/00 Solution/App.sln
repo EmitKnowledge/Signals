@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Domain.DataRepository",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Domain.DataRepositoryContracts", "..\20 Domain\23 Repository\App.Domain.DataRepositoryContracts\App.Domain.DataRepositoryContracts.csproj", "{7149EAF2-B0B3-41DE-A419-E1B07C090020}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Client.Background.Service", "..\30 Client\31 Background\App.Client.Background.Service\App.Client.Background.Service.csproj", "{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Domain.Resources", "..\20 Domain\24 Processes\App.Domain.Resources\App.Domain.Resources.csproj", "{78C008CD-2FF8-4367-9029-6AAE35FE59F9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Test.Integration", "..\40 Test\App.Test.Integration\App.Test.Integration.csproj", "{9FC620F1-E9F3-4C97-AF6A-87F5583AD445}"
@@ -43,15 +41,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "21 Configuration", "21 Conf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Client.Web", "..\30 Client\32 Web and Api\App.Client.Web\App.Client.Web.csproj", "{2C5938FF-B231-433D-978D-848056B20909}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Client.Background.Processes", "..\30 Client\31 Background\App.Client.Background.Processes\App.Client.Background.Processes.csproj", "{FBCD9725-D992-4E52-88D1-1243AAA3CC36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Client.Background.Service", "..\30 Client\31 Background\App.Client.Background.Service\App.Client.Background.Service.csproj", "{049B697C-4287-4255-8209-61405B3BB391}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Client.Web.Processes", "..\30 Client\32 Web and Api\App.Client.Web.Processes\App.Client.Web.Processes.csproj", "{6C6DFEEC-022F-468A-98D5-9E36BD296350}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10 Common", "10 Common", "{06538218-6419-44B9-8B58-60098A636F64}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Common.Helpers", "..\10 Common\App.Common.Helpers\App.Common.Helpers.csproj", "{581254E2-2003-4213-AC45-F699687AF7BF}"
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -91,14 +87,6 @@ Global
 		{7149EAF2-B0B3-41DE-A419-E1B07C090020}.Staging|Any CPU.Build.0 = Release|Any CPU
 		{7149EAF2-B0B3-41DE-A419-E1B07C090020}.Test|Any CPU.ActiveCfg = Release|Any CPU
 		{7149EAF2-B0B3-41DE-A419-E1B07C090020}.Test|Any CPU.Build.0 = Release|Any CPU
-		{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}.Staging|Any CPU.ActiveCfg = Release|Any CPU
-		{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}.Staging|Any CPU.Build.0 = Release|Any CPU
-		{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}.Test|Any CPU.ActiveCfg = Release|Any CPU
-		{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D}.Test|Any CPU.Build.0 = Release|Any CPU
 		{78C008CD-2FF8-4367-9029-6AAE35FE59F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{78C008CD-2FF8-4367-9029-6AAE35FE59F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78C008CD-2FF8-4367-9029-6AAE35FE59F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -139,22 +127,22 @@ Global
 		{2C5938FF-B231-433D-978D-848056B20909}.Staging|Any CPU.Build.0 = Debug|Any CPU
 		{2C5938FF-B231-433D-978D-848056B20909}.Test|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C5938FF-B231-433D-978D-848056B20909}.Test|Any CPU.Build.0 = Debug|Any CPU
-		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
-		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Staging|Any CPU.Build.0 = Debug|Any CPU
-		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Test|Any CPU.ActiveCfg = Debug|Any CPU
-		{FBCD9725-D992-4E52-88D1-1243AAA3CC36}.Test|Any CPU.Build.0 = Debug|Any CPU
-		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Staging|Any CPU.Build.0 = Debug|Any CPU
-		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Test|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C6DFEEC-022F-468A-98D5-9E36BD296350}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{049B697C-4287-4255-8209-61405B3BB391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{049B697C-4287-4255-8209-61405B3BB391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{049B697C-4287-4255-8209-61405B3BB391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{049B697C-4287-4255-8209-61405B3BB391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{049B697C-4287-4255-8209-61405B3BB391}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
+		{049B697C-4287-4255-8209-61405B3BB391}.Staging|Any CPU.Build.0 = Debug|Any CPU
+		{049B697C-4287-4255-8209-61405B3BB391}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{049B697C-4287-4255-8209-61405B3BB391}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{581254E2-2003-4213-AC45-F699687AF7BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{581254E2-2003-4213-AC45-F699687AF7BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{581254E2-2003-4213-AC45-F699687AF7BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{581254E2-2003-4213-AC45-F699687AF7BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{581254E2-2003-4213-AC45-F699687AF7BF}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
+		{581254E2-2003-4213-AC45-F699687AF7BF}.Staging|Any CPU.Build.0 = Debug|Any CPU
+		{581254E2-2003-4213-AC45-F699687AF7BF}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{581254E2-2003-4213-AC45-F699687AF7BF}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -169,7 +157,6 @@ Global
 		{BE11431D-414B-4F72-9605-A9B345BB30D5} = {64AA7758-3439-4902-B4DD-38697FDA5494}
 		{5EF5D8D3-B135-4641-B63A-0DBF035B009F} = {7DCE7332-4F43-44FF-8F92-C24B914A989B}
 		{7149EAF2-B0B3-41DE-A419-E1B07C090020} = {7DCE7332-4F43-44FF-8F92-C24B914A989B}
-		{45870002-0A12-4C5D-9CDA-A9E6A81DAC1D} = {DB197D13-C823-43CD-92CF-C9039DEDAE98}
 		{78C008CD-2FF8-4367-9029-6AAE35FE59F9} = {64AA7758-3439-4902-B4DD-38697FDA5494}
 		{9FC620F1-E9F3-4C97-AF6A-87F5583AD445} = {8E70162D-B6C9-4D64-BC49-35FB5B3DA597}
 		{82AEF908-4E1A-4071-BBBA-02399404F830} = {047908C1-BFE3-4685-BCEC-A869211F72E8}
@@ -177,10 +164,14 @@ Global
 		{185F9910-AB09-498A-B03C-A06543AFD3D7} = {D17A949E-0E01-424D-8C58-E8AA89D07CE4}
 		{047908C1-BFE3-4685-BCEC-A869211F72E8} = {058AFDC2-0EE8-4EF3-AB0B-43A4E63D6C3F}
 		{2C5938FF-B231-433D-978D-848056B20909} = {D63A5AF8-685A-44F5-AE02-71E51A02F412}
-		{FBCD9725-D992-4E52-88D1-1243AAA3CC36} = {DB197D13-C823-43CD-92CF-C9039DEDAE98}
-		{6C6DFEEC-022F-468A-98D5-9E36BD296350} = {D63A5AF8-685A-44F5-AE02-71E51A02F412}
+		{049B697C-4287-4255-8209-61405B3BB391} = {DB197D13-C823-43CD-92CF-C9039DEDAE98}
+		{581254E2-2003-4213-AC45-F699687AF7BF} = {06538218-6419-44B9-8B58-60098A636F64}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {658C404F-56B1-4508-B7F4-03069BAEB77D}
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal

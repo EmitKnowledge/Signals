@@ -5,38 +5,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="configs\application.config.json" />
-    <Content Remove="configs\business.config.json" />
-    <Content Remove="configs\domain.config.json" />
-    <Content Remove="configs\web.application.config.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="configs\application.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="configs\domain.config.json" />
-    <None Include="configs\web.application.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
     <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.2.0" />
-    <PackageReference Include="Signals.Aspects.Auth.NetCore" Version="0.6.10" />
-    <PackageReference Include="Signals.Aspects.Caching.InMemory" Version="0.6.2" />
-    <PackageReference Include="Signals.Aspects.CommunicationChannels.ServiceBus" Version="0.6.5" />
-    <PackageReference Include="Signals.Aspects.Configuration.File" Version="0.6.3" />
-    <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="0.6.4" />
-    <PackageReference Include="Signals.Aspects.Localization.File" Version="0.6.12" />
-    <PackageReference Include="Signals.Aspects.Logging.NLog" Version="0.6.7" />
-    <PackageReference Include="Signals.Aspects.Security.Database" Version="0.6.3" />
-    <PackageReference Include="Signals.Core.Web" Version="0.6.96" />
-    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="0.6.7" />
+    <PackageReference Include="Signals.Aspects.Auth.NetCore" Version="1.0.4" />
+    <PackageReference Include="Signals.Aspects.Caching.InMemory" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.CommunicationChannels.ServiceBus" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.Configuration.File" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.Localization.File" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.Logging.NLog" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.Security.Database" Version="1.0.1" />
+    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="1.0.1" />
+    <PackageReference Include="Signals.Core.Web" Version="1.0.6" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 
@@ -45,7 +28,6 @@
     <ProjectReference Include="..\..\..\20 Domain\22 Entities\App.Domain.Entities\App.Domain.Entities.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\24 Processes\App.Domain.Processes\App.Domain.Processes.csproj" />
     <ProjectReference Include="..\..\..\20 Domain\24 Processes\App.Domain.Resources\App.Domain.Resources.csproj" />
-    <ProjectReference Include="..\App.Client.Web.Processes\App.Client.Web.Processes.csproj" />
   </ItemGroup>
 
 </Project>

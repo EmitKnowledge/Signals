@@ -11,7 +11,6 @@ using Signals.Aspects.Caching.InMemory;
 using Signals.Aspects.Caching.InMemory.Configurations;
 using Signals.Aspects.CommunicationChannels.ServiceBus.Configurations;
 using Signals.Aspects.Configuration.File;
-using Signals.Aspects.Configuration.MsSql;
 using Signals.Aspects.DI;
 using Signals.Aspects.DI.Autofac;
 using Signals.Aspects.Localization.File.Configurations;
@@ -64,7 +63,7 @@ namespace App.Client.Web
                     });
 
             services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, @"..\persisted_keys")))
+                .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(AppContext.BaseDirectory, @"..\persisted_keys")))
                 .SetDefaultKeyLifetime(TimeSpan.FromDays(365))
                 .SetApplicationName(ApplicationConfiguration.Instance.ApplicationName);
 
@@ -118,10 +117,10 @@ namespace App.Client.Web
                             }
                         }
                     };
-                    config.ChannelConfiguration = new ServiceBusChannelConfiguration
-                    {
-                        ConnectionString = DomainConfiguration.Instance.NotificationConfiguration.ConnectionString
-                    };
+                    //config.ChannelConfiguration = new ServiceBusChannelConfiguration
+                    //{
+                    //    ConnectionString = DomainConfiguration.Instance.NotificationConfiguration.ConnectionString
+                    //};
                     config.StrategyBuilder = new StrategyBuilder().SetAutoHandling(false);
                 });
 
@@ -136,12 +135,16 @@ namespace App.Client.Web
         /// <returns></returns>
         private static void AddConfiguration(this IServiceCollection services)
         {
+            string environment = null;
             FileConfigurationProvider ProviderForFile(string name) => new FileConfigurationProvider
             {
                 File = name,
-                Path = Path.Combine(Environment.CurrentDirectory, $"configs"),
+                Path = environment.IsNullOrEmpty() ? Path.Combine(AppContext.BaseDirectory, $"configs") : Path.Combine(AppContext.BaseDirectory, $"configs", environment),
                 ReloadOnAccess = false
             };
+
+            EnvironmentConfiguration.UseProvider(ProviderForFile("environment.config.json"));
+            environment = EnvironmentConfiguration.Instance.Environment;
 
             WebApplicationConfiguration.UseProvider(ProviderForFile("web.application.config.json"));
             ApplicationConfiguration.UseProvider(ProviderForFile("application.config.json"));

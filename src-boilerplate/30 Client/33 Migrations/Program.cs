@@ -1,17 +1,13 @@
 ﻿using App.Client.Migrations.Base;
-using App.Client.Migrations.Migrations;
 using App.Domain.Configuration;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using Signals.Aspects.Configuration.File;
-using Signals.Aspects.DI;
 using Signals.Aspects.DI.Autofac;
 using Signals.Aspects.ErrorHandling.Polly;
 using Signals.Core.Common.Instance;
 using Signals.Core.Configuration;
 using Signals.Core.Configuration.Bootstrapping;
-using Signals.Core.Processes;
-using Signals.Core.Processing.Results;
 using SimpleMigrations;
 using SimpleMigrations.Console;
 using System;
@@ -25,16 +21,21 @@ namespace App.Client.Migrations
 {
     public class Program
     {
-        public static long? RollbackVersionBeforeMigratingToLatest = null;
+        public static long? RollbackVersion = null;
+        public static bool MigrateToLatest = true;
 
         public static void Main(string[] args)
         {
+            string environment = null;
             FileConfigurationProvider ProviderForFile(string name) => new FileConfigurationProvider
             {
                 File = name,
-                Path = Path.Combine(Environment.CurrentDirectory, $"configs"),
+                Path = environment.IsNullOrEmpty() ? Path.Combine(AppContext.BaseDirectory, $"configs") : Path.Combine(AppContext.BaseDirectory, $"configs", environment),
                 ReloadOnAccess = false
             };
+
+            EnvironmentConfiguration.UseProvider(ProviderForFile("environment.config.json"));
+            environment = EnvironmentConfiguration.Instance.Environment;
 
             ApplicationConfiguration.UseProvider(ProviderForFile("application.config.json"));
             DomainConfiguration.UseProvider(ProviderForFile("domain.config.json"));
@@ -49,7 +50,7 @@ namespace App.Client.Migrations
 
             config.StrategyBuilder = new StrategyBuilder().SetAutoHandling(false);
 
-            var assemblies = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "App.*.dll").Select(file => Assembly.LoadFrom(file)).ToArray();
+            var assemblies = Directory.GetFiles(AppContext.BaseDirectory, "App.*.dll").Select(file => Assembly.LoadFrom(file)).ToArray();
 
             config.Bootstrap(assemblies);
 
@@ -70,9 +71,11 @@ namespace App.Client.Migrations
                     if (args == null || args.Length == 0)
                     {
                         migrator.Load();
-                        if (RollbackVersionBeforeMigratingToLatest.HasValue && RollbackVersionBeforeMigratingToLatest > 0)
-                            migrator.MigrateTo(RollbackVersionBeforeMigratingToLatest.Value);
-                        migrator.MigrateToLatest();
+                        if (RollbackVersion.HasValue && RollbackVersion > 0)
+                            migrator.MigrateTo(RollbackVersion.Value);
+
+                        if (MigrateToLatest)
+                            migrator.MigrateToLatest();
                     }
                     else
                     {
@@ -108,14 +111,5 @@ namespace App.Client.Migrations
 
     public class MigrationBootstrapConfiguraiton : ApplicationBootstrapConfiguration
     {
-        public void Bootstrap(params Assembly[] scanAssemblies)
-        {
-            Resolve(scanAssemblies);
-        }
-
-        protected override IServiceContainer Resolve(params Assembly[] scanAssemblies)
-        {
-            return base.Resolve(scanAssemblies);
-        }
     }
 }

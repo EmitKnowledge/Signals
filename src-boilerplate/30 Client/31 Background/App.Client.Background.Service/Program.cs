@@ -1,26 +1,23 @@
 ﻿using App.Domain.Configuration;
-using App.Domain.Processes.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
-using Signals.Aspects.BackgroundProcessing.FluentScheduler;
 using Signals.Aspects.Caching.Enums;
 using Signals.Aspects.Caching.InMemory;
 using Signals.Aspects.Caching.InMemory.Configurations;
 using Signals.Aspects.CommunicationChannels.ServiceBus.Configurations;
 using Signals.Aspects.Configuration.File;
-using Signals.Aspects.DI;
 using Signals.Aspects.DI.Autofac;
 using Signals.Aspects.ErrorHandling.Polly;
 using Signals.Aspects.ErrorHandling.Strategies;
 using Signals.Aspects.Localization.File.Configurations;
 using Signals.Aspects.Logging.Enums;
 using Signals.Aspects.Logging.NLog.Configurations;
+using Signals.Core.Background.Configuration;
 using Signals.Core.Background.Configuration.Bootstrapping;
 using Signals.Core.Common.Instance;
 using Signals.Core.Configuration;
-using Signals.Core.Processes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -79,14 +76,19 @@ namespace App.Client.Background.Service
         /// <returns></returns>
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            string environment = null;
             FileConfigurationProvider ProviderForFile(string name) => new FileConfigurationProvider
             {
                 File = name,
-                Path = Path.Combine(Environment.CurrentDirectory, $"configs"),
+                Path = environment.IsNullOrEmpty() ? Path.Combine(AppContext.BaseDirectory, $"configs") : Path.Combine(AppContext.BaseDirectory, $"configs", environment),
                 ReloadOnAccess = false
             };
 
+            EnvironmentConfiguration.UseProvider(ProviderForFile("environment.config.json"));
+            environment = EnvironmentConfiguration.Instance.Environment;
+
             ApplicationConfiguration.UseProvider(ProviderForFile("application.config.json"));
+            BackgroundApplicationConfiguration.UseProvider(ProviderForFile("background.application.config.json"));
             DomainConfiguration.UseProvider(ProviderForFile("domain.config.json"));
 
             var strategyBuilder = new StrategyBuilder();
@@ -139,10 +141,10 @@ namespace App.Client.Background.Service
                     }
                 },
                 StrategyBuilder = new StrategyBuilder().SetAutoHandling(false),
-                ChannelConfiguration = new ServiceBusChannelConfiguration
-                {
-                    ConnectionString = DomainConfiguration.Instance.NotificationConfiguration.ConnectionString
-                }
+                //ChannelConfiguration = new ServiceBusChannelConfiguration
+                //{
+                //    ConnectionString = DomainConfiguration.Instance.NotificationConfiguration.ConnectionString
+                //}
             };
 
             config.JsonSerializerSettings = new Newtonsoft.Json.JsonSerializerSettings();

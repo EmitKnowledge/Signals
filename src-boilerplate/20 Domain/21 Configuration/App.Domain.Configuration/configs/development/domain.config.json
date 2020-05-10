@@ -22,40 +22,21 @@
     "Name": null,
     "ConnectionString": null
   },
-  "ExternalApisConfiguration": {
-    "ExternalApisCollection": [
-      {
-        "Name": null,
-        "Sid": null,
-        "AppId": null,
-        "AppSecret": null,
-        "ClientId": null,
-        "ClientSecret": null,
-        "SecretKey": null,
-        "SecretWord": null,
-        "PublishableKey": null,
-        "ConsumerKey": null,
-        "ConsumerSecret": null,
-        "AccessToken": null,
-        "ApiKey": null,
-        "ApiSecret": null,
-        "PrivateKey": null,
-        "Username": null,
-        "Password": null,
-        "ListId": null,
-        "PhoneNumber": null,
-        "IsSandbox": false,
-        "PartnerId": null
-      }
-    ]
-  },
   "WebConfiguration": {
     "Url": "http://localhost/",
     "MaxPageSize": 100
   },
   "DatabaseConfiguration": {
-    "DatabaseConnections": null,
-    "ActiveEnvironment": null
+    "DatabaseConnections": [
+      {
+        "Name": "Development",
+        "IpAddress": "localhost",
+        "Database": "boilerplate.db",
+        "Uid": "boilerplate.usr",
+        "Pwd": "boilerplate.pass"
+      }
+    ],
+    "ActiveEnvironment": "Development"
   },
   "LocalizationConfiguration": {
     "CookieKey": "_cultureInfo",

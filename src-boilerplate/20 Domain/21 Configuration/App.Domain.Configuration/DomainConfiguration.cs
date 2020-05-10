@@ -1,6 +1,5 @@
 ﻿using App.Domain.Configuration.Application;
 using App.Domain.Configuration.Database;
-using App.Domain.Configuration.ExternalApis;
 using App.Domain.Configuration.Localization;
 using App.Domain.Configuration.Notifications;
 using App.Domain.Configuration.Security;
@@ -36,12 +35,7 @@ namespace App.Domain.Configuration
         /// Configuration for storage
         /// </summary>
         public StorageConfigurationElement StorageConfiguration { get; set; }
-
-        /// <summary>
-        /// External apis configuration
-        /// </summary>
-        public ExternalApisConfigurationElement ExternalApisConfiguration { get; set; }
-
+        
         /// <summary>
         /// Configuration for web
         /// </summary>
