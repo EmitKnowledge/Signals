@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Signals.Core.Common" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net461'">
@@ -13,7 +14,6 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
   </ItemGroup>
-
 
   <ItemGroup>
     <ProjectReference Include="..\Signals.Features.Base\Signals.Features.Base.csproj" />

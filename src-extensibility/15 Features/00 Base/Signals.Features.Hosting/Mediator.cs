@@ -4,7 +4,7 @@ using Signals.Core.Common.Instance;
 using Signals.Core.Common.Reflection;
 using Signals.Core.Common.Serialization;
 using Signals.Features.Base;
-using Signals.Features.Base.Configurations;
+using Signals.Features.Base.Configurations.Feature;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,12 +13,19 @@ using System.Reflection;
 
 namespace Signals.Features.Hosting
 {
+    /// <summary>
+    /// Web request mediator
+    /// </summary>
     internal class Mediator
     {
         private readonly IFeatureConfiguration _configuration;
         private readonly IFeature _server;
         private readonly Dictionary<string, MethodInfo> _serverMethods;
 
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        /// <param name="configuration"></param>
         internal Mediator(IFeatureConfiguration configuration)
         {
             if (configuration.IsNull() || configuration.MicroServiceConfiguration.IsNull())
@@ -30,7 +37,7 @@ namespace Signals.Features.Hosting
                 .Select(Assembly.LoadFrom)
                 .SelectMany(assembly => assembly.LoadAllTypesFromAssembly())
                 .Where(x => (x.GetInterfaces().Contains(requiringType) || x.IsSubclassOf(requiringType)) && !x.IsInterface && !x.IsAbstract)
-                .Where(x => x.GetConstructors().Any(ctor => ctor.GetParameters().All(param => param.ParameterType == configuration.GetType())))
+                .Where(x => x.GetConstructors().Any(ctor => ctor.GetParameters().Any() && ctor.GetParameters().All(param => param.ParameterType == configuration.GetType())))
                 .Distinct()
                 .SingleOrDefault();
 
@@ -63,6 +70,14 @@ namespace Signals.Features.Hosting
             }
         }
 
+        /// <summary>
+        /// Process http request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="body"></param>
+        /// <param name="method"></param>
+        /// <param name="headers"></param>
+        /// <returns></returns>
         private bool ProcessRequest(string url, Lazy<string> body, string method, Dictionary<string, string> headers)
         {
             var uri = new Uri(url);
@@ -110,6 +125,11 @@ namespace Signals.Features.Hosting
 
 #if (NET461)
 
+        /// <summary>
+        /// Dispatch http request
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <returns></returns>
         internal bool Dispatch(System.Web.HttpContext httpContext)
         {
             var headers = new Dictionary<string, string>(httpContext.Request.Headers.Count);
@@ -137,7 +157,12 @@ namespace Signals.Features.Hosting
         }
 
 #else
-
+        
+        /// <summary>
+        /// Dispatch http request
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <returns></returns>
         internal bool Dispatch(Microsoft.AspNetCore.Http.HttpContext httpContext)
         {
             var headers = new Dictionary<string, string>(httpContext.Request.Headers.Count);

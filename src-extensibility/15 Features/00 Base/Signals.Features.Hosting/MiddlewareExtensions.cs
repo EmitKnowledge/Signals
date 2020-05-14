@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Signals.Features.Base.Configurations;
 using System;
 using System.Threading.Tasks;
 using System.Web;
+using Signals.Features.Base.Configurations.Feature;
 
 #if (NET461)
 using Microsoft.Owin;

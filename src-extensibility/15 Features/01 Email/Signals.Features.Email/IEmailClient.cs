@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Signals.Features.Email
 {
-    public interface IEmailClient
+    public interface IEmailClient : IFeature
     {
         /// <summary>
         /// Send email

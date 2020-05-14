@@ -1,14 +1,11 @@
 ﻿using Signals.Core.Common.Smtp;
-using Signals.Features.Base;
-using Signals.Features.Base.Web;
 using Signals.Features.Email.Configurations;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
 
 namespace Signals.Features.Email
 {
-    public class EmailClient : BaseClient, IEmailClient, IFeature
+    public class EmailClient : IEmailClient
     {
         private readonly EmailFeatureConfiguration _emailConfiguration;
         private readonly SmtpClientWrapper _smtpClient;
@@ -17,19 +14,19 @@ namespace Signals.Features.Email
         /// CTOR
         /// </summary>
         /// <param name="emailConfiguration"></param>
-        public EmailClient(EmailFeatureConfiguration emailConfiguration) : base(emailConfiguration)
+        public EmailClient(EmailFeatureConfiguration emailConfiguration)
         {
             _emailConfiguration = emailConfiguration;
 
             _smtpClient = new SmtpClientWrapper(new SmtpClient
             {
-                Host = _emailConfiguration.Server,
-                Port = _emailConfiguration.Port,
-                EnableSsl = _emailConfiguration.UseSsl,
-                Credentials = new NetworkCredential(_emailConfiguration.Username, _emailConfiguration.Password)
+                Host = _emailConfiguration.SmtpConfiguration.Server,
+                Port = _emailConfiguration.SmtpConfiguration.Port,
+                EnableSsl = _emailConfiguration.SmtpConfiguration.UseSsl,
+                Credentials = new NetworkCredential(_emailConfiguration.SmtpConfiguration.Username, _emailConfiguration.SmtpConfiguration.Password)
             });
 
-            _smtpClient.WhitelistedEmails = _emailConfiguration.WhitelistedEmails;
+            _smtpClient.WhitelistedEmails = _emailConfiguration.SmtpConfiguration.WhitelistedEmails;
         }
 
         /// <summary>
@@ -38,14 +35,6 @@ namespace Signals.Features.Email
         /// <param name="mailMessage"></param>
         public void Send(MailMessage mailMessage)
         {
-            Process("Send",
-                new Dictionary<string, object> {
-                    { "mailMessage", mailMessage }
-                },
-                () =>
-                {
-
-                });
         }
 
         /// <summary>
@@ -55,15 +44,6 @@ namespace Signals.Features.Email
         /// <param name="mailMessage"></param>
         public void Schedule(string key, MailMessage mailMessage)
         {
-            Process("Schedule",
-                new Dictionary<string, object> {
-                    { "key", key },
-                    { "mailMessage", mailMessage }
-                },
-                () =>
-                {
-
-                });
         }
 
         /// <summary>
@@ -72,24 +52,13 @@ namespace Signals.Features.Email
         /// <param name="key"></param>
         public void Unschedule(string key)
         {
-            Process("Unschedule",
-                new Dictionary<string, object> {
-                    { "key", key }
-                },
-                () =>
-                {
-
-                });
         }
 
+        /// <summary>
+        /// Process all scheaduled messages
+        /// </summary>
         public void ProcessScheduledMessages()
         {
-            Process("ProcessScheduledMessages",
-                new Dictionary<string, object> { },
-                () =>
-                {
-
-                });
         }
     }
 }
