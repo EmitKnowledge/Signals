@@ -162,7 +162,7 @@ namespace Signals.Core.Web.Http
             Cookies = new CookieCollection(context);
             Form = new FormCollection(context);
             Session = new SessionProvider(context);
-        
+
             // single lazy per http context
             if (!context.Items.ContainsKey("body"))
                 context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.Body)));
@@ -170,26 +170,21 @@ namespace Signals.Core.Web.Http
             Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
                 .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()))?
                 .ToDictionary(x => x.Key, x => x.Value);
-        
+
             Body = context.Items["body"] as Lazy<string>;
             HttpMethod = context.Request.Method.ToUpperInvariant();
 
-            // Form throws exception
-            try
+            if (context.Request.HasFormContentType)
             {
                 Files = context.Request?.Form?.Files?
-                            .Select(x => new InputFile
-                            {
-                                File = x.OpenReadStream(),
-                                FileName = x.FileName,
-                                FormInputName = x.Name,
-                                MimeType = x.ContentType
-                            })
-                        ?? new List<InputFile>();
-            }
-            catch
-            {
-                Files = new List<InputFile>();
+                                .Select(x => new InputFile
+                                {
+                                    File = x.OpenReadStream(),
+                                    FileName = x.FileName,
+                                    FormInputName = x.Name,
+                                    MimeType = x.ContentType
+                                })
+                            ?? new List<InputFile>();
             }
 
             RawUrl = context.Request.Path.Value;

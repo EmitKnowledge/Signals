@@ -1,5 +1,6 @@
 ﻿using Signals.Aspects.DI.Attributes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -33,6 +34,7 @@ namespace Signals.Aspects.DI.Helpers
             try
             {
                 if (obj == null) return;
+                if (obj is IEnumerable) return;
                 if (_set.Contains(obj.GetType())) return;
                 if (obj.GetType().Assembly.FullName.StartsWith("System")) return;
                 if (obj.GetType().Assembly.FullName.StartsWith("Microsoft")) return;

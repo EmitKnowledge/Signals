@@ -19,8 +19,8 @@
     <PackageReference Include="Signals.Aspects.Localization.File" Version="1.0.1" />
     <PackageReference Include="Signals.Aspects.Logging.NLog" Version="1.0.1" />
     <PackageReference Include="Signals.Aspects.Security.Database" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="1.0.1" />
-    <PackageReference Include="Signals.Core.Web" Version="1.0.6" />
+    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="1.0.2" />
+    <PackageReference Include="Signals.Core.Web" Version="1.0.7" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 
