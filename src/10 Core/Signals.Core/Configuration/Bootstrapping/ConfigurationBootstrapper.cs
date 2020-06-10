@@ -209,6 +209,7 @@ namespace Signals.Core.Configuration.Bootstrapping
 
                 var wrapper = new SmtpClientWrapper(instance);
                 wrapper.WhitelistedEmails = config.WhitelistedEmails;
+                wrapper.WhitelistedEmailDomains = config.WhitelistedEmailDomains;
 
                 resolver.Register<ISmtpClient>(wrapper);
                 resolver.Register<SmtpClient>(instance);

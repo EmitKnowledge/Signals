@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="4.5.3" />
-    <PackageReference Include="Signals.Core" Version="1.0.6" />
+    <PackageReference Include="Signals.Core" Version="1.0.10" />
   </ItemGroup>
   
 </Project>

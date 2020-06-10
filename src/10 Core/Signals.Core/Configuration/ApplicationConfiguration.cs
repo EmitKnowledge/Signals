@@ -40,6 +40,11 @@ namespace Signals.Core.Configuration
         public List<string> WhitelistedEmails { get; set; }
 
         /// <summary>
+        /// Person to contact in case of emergency
+        /// </summary>
+        public List<string> WhitelistedEmailDomains { get; set; }
+
+        /// <summary>
         /// Critical process data
         /// </summary>
         public CriticalConfiguration CriticalConfiguration { get; set; }
