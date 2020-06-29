@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Signals.Aspects.DI" Version="1.0.2" />
-    <PackageReference Include="SimpleInjector" Version="4.4.3" />
+    <PackageReference Include="SimpleInjector" Version="5.0.2" />
   </ItemGroup>
 
 </Project>
