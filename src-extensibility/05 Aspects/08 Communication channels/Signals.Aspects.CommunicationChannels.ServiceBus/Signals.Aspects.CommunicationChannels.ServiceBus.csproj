@@ -8,7 +8,20 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Management.ServiceBus.Fluent" Version="1.19.0" />
     <PackageReference Include="Microsoft.Azure.ServiceBus" Version="3.3.0" />
-    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="1.0.1" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="1.0.1" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels\Signals.Aspects.CommunicationChannels.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
 </Project>

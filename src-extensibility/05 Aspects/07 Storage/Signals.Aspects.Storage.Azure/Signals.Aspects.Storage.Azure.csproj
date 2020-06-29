@@ -8,9 +8,22 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.KeyVault.Extensions" Version="3.0.3" />
     <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="9.4.2" />
-    <PackageReference Include="Signals.Aspects.Storage" Version="1.0.1" />
     <PackageReference Include="System.Security.Cryptography.Cng" Version="4.5.0" />
     <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Aspects.Storage" Version="1.0.1" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\05 Aspects\07 Storage\Signals.Aspects.Storage\Signals.Aspects.Storage.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
 </Project>

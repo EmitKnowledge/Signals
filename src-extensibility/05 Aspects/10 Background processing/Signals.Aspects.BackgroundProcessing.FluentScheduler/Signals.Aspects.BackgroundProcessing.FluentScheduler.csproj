@@ -7,7 +7,20 @@
 
   <ItemGroup>
     <PackageReference Include="FluentScheduler" Version="5.3.0" />
-    <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="1.0.2" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="1.0.2" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\05 Aspects\10 Background processing\Signals.Aspects.BackgroundProcessing\Signals.Aspects.BackgroundProcessing.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
 </Project>

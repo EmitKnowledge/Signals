@@ -12,6 +12,7 @@ using Signals.Aspects.Benchmarking;
 using Signals.Core.Processing.Benchmarking;
 using Signals.Aspects.DI;
 using Signals.Aspects.Localization;
+using Signals.Core.Common.Instance;
 
 namespace Signals.Core.Processes.Base
 {
@@ -69,21 +70,21 @@ namespace Signals.Core.Processes.Base
         /// Localization provider
         /// </summary>
         [Import] public ILocalizationProvider LocalizationProvider { get; internal set; }
+        
+        /// <summary>
+        /// Mediator
+        /// </summary>
+        [Import] internal Mediator Mediator { get; set; }
 
         /// <summary>
-        /// Process factory
+        /// Benchmarker
         /// </summary>
-        [Import] internal IProcessFactory ProcessFactory { get; set; }
+        [Import] private IBenchmarker InternalBenchmarker { get; set; }
 
         /// <summary>
-        /// Process executor
+        /// Process benchmark engine
         /// </summary>
-        [Import] internal IProcessExecutor ProcessExecutor { get; set; }
-
-        /// <summary>
-        /// Benchmark engine
-        /// </summary>
-        public ProcessBenchmarker Benchmarker => new ProcessBenchmarker(SystemBootstrapper.GetInstance<IBenchmarker>(), process);
+        public ProcessBenchmarker Benchmarker => !InternalBenchmarker.IsNull() ? new ProcessBenchmarker(InternalBenchmarker, process) : null;
 
         /// <summary>
         /// Current user principal

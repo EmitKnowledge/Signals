@@ -1,4 +1,5 @@
 ﻿using Signals.Core.Common.Instance;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
@@ -30,55 +31,67 @@ namespace Signals.Core.Common.Smtp
         /// </summary>
         /// <param name="recipientsBundle"></param>
         /// <returns></returns>
-        private string GetWhitelistedRecipients(string recipientsBundle)
+        private List<string> GetWhitelistedRecipients(List<string> recipients)
         {
-            var recipients = recipientsBundle?.Split(',', ';').ToList();
             var validRecipients = new List<string>();
+
+            if (recipients.IsNullOrHasZeroElements())
+                return validRecipients;
 
             var whitelistedDomains = WhitelistedEmailDomains?.Select(x => x.ToLower()).ToList();
             var whitelistedEmails = WhitelistedEmails?.Select(x => x.ToLower()).ToList();
 
-            if (recipients?.Any() == true)
+            foreach (var recipient in recipients)
             {
-                foreach (var recipient in recipients)
+                if (recipient.Contains("@"))
                 {
-                    if (!recipient.Contains("@"))
-                    {
-                        continue;
-                    }
-
-                    if (whitelistedDomains.IsNullOrHasZeroElements() &&
-                        whitelistedEmails.IsNullOrHasZeroElements())
+                    if (whitelistedDomains.IsNullOrHasZeroElements() && whitelistedEmails.IsNullOrHasZeroElements())
                     {
                         validRecipients.Add(recipient);
-                        continue;
                     }
-
-                    if (whitelistedDomains?.Any() == true)
+                    else
                     {
-                        if (whitelistedDomains.Contains(recipient.Split('@')[1].ToLower()))
+                        if (!whitelistedDomains.IsNullOrHasZeroElements())
                         {
-                            validRecipients.Add(recipient);
-                            continue;
+                            if (whitelistedDomains.Contains(recipient.Split('@')[1].ToLower()))
+                            {
+                                validRecipients.Add(recipient);
+                            }
+                        }
+                        else if (!whitelistedEmails.IsNullOrHasZeroElements())
+                        {
+                            if (whitelistedEmails.Contains(recipient.ToLower()))
+                            {
+                                validRecipients.Add(recipient);
+                            }
                         }
                     }
-
-                    if (whitelistedEmails?.Any() == true)
-                    {
-                        if (whitelistedEmails.Contains(recipient.ToLower()))
-                        {
-                            validRecipients.Add(recipient);
-                        }
-                    }
-                }
-
-                if (validRecipients.Any())
-                {
-                    return string.Join(";", validRecipients);
                 }
             }
 
-            return string.Empty;
+            return validRecipients;
+        }
+
+        /// <summary>
+        /// Returns list of whitelisted recipients
+        /// </summary>
+        /// <param name="recipientsBundle"></param>
+        /// <returns></returns>
+        private List<string> GetWhitelistedRecipients(MailAddressCollection recipientsBundle)
+        {
+            var recipients = recipientsBundle.Select(x => x.Address).ToList();
+            return GetWhitelistedRecipients(recipients);
+        }
+
+        /// <summary>
+        /// Returns list of whitelisted recipients
+        /// </summary>
+        /// <param name="recipientsBundle"></param>
+        /// <returns></returns>
+        private List<string> GetWhitelistedRecipients(string recipientsBundle)
+        {
+            var recipients = recipientsBundle?.Split(',', ';').ToList();
+            return GetWhitelistedRecipients(recipients);
         }
 
         /// <summary>
@@ -90,7 +103,7 @@ namespace Signals.Core.Common.Smtp
         /// <param name="body"></param>
         public new void Send(string from, string recipients, string subject, string body)
         {
-            recipients = GetWhitelistedRecipients(recipients);
+            recipients = string.Join(";", GetWhitelistedRecipients(recipients));
             if (!recipients.IsNullOrEmpty())
             {
                 SmtpClient.Send(from, recipients, subject, body);
@@ -107,7 +120,7 @@ namespace Signals.Core.Common.Smtp
         /// <param name="userToken"></param>
         public new async void SendAsync(string from, string recipients, string subject, string body, object userToken)
         {
-            recipients = GetWhitelistedRecipients(recipients);
+            recipients = string.Join(";", GetWhitelistedRecipients(recipients));
             if (!recipients.IsNullOrEmpty())
             {
                 SmtpClient.SendAsync(from, recipients, subject, body, userToken);
@@ -124,7 +137,7 @@ namespace Signals.Core.Common.Smtp
         /// <returns></returns>
         public new async Task SendMailAsync(string from, string recipients, string subject, string body)
         {
-            recipients = GetWhitelistedRecipients(recipients);
+            recipients = string.Join(";", GetWhitelistedRecipients(recipients));
             if (!recipients.IsNullOrEmpty())
             {
                 await SmtpClient.SendMailAsync(from, recipients, subject, body);
@@ -137,33 +150,34 @@ namespace Signals.Core.Common.Smtp
         /// <param name="message"></param>
         public new void Send(MailMessage message)
         {
-            var recipients = GetWhitelistedRecipients(string.Join(";", message.To.Select(x => x.Address).ToList()));
-            var cc = GetWhitelistedRecipients(string.Join(";", message.CC.Select(x => x.Address).ToList()));
-            var bcc = GetWhitelistedRecipients(string.Join(";", message.Bcc.Select(x => x.Address).ToList()));
+            var to = GetWhitelistedRecipients(message.To);
+            var cc = GetWhitelistedRecipients(message.CC);
+            var bcc = GetWhitelistedRecipients(message.Bcc);
+
+            var originalTo = message.To.ToList();
+            var originalCc = message.CC.ToList();
+            var originalBcc = message.Bcc.ToList();
 
             message.To.Clear();
             message.CC.Clear();
             message.Bcc.Clear();
 
-            if (!string.IsNullOrEmpty(recipients))
-            {
-                recipients.Split(';').ToList().ForEach(x => message.To.Add(x));
-            }
-
-            if (!string.IsNullOrEmpty(cc))
-            {
-                cc.Split(';').ToList().ForEach(x => message.CC.Add(x));
-            }
-
-            if (!string.IsNullOrEmpty(bcc))
-            {
-                bcc.Split(';').ToList().ForEach(x => message.Bcc.Add(x));
-            }
+            to?.ForEach(message.To.Add);
+            cc?.ForEach(message.CC.Add);
+            bcc?.ForEach(message.Bcc.Add);
 
             if (!message.To.IsNullOrHasZeroElements())
             {
                 SmtpClient.Send(message);
             }
+
+            message.To.Clear();
+            message.CC.Clear();
+            message.Bcc.Clear();
+
+            originalTo.ForEach(message.To.Add);
+            originalCc.ForEach(message.CC.Add);
+            originalBcc.ForEach(message.Bcc.Add);
         }
 
         /// <summary>
@@ -173,33 +187,34 @@ namespace Signals.Core.Common.Smtp
         /// <param name="userToken"></param>
         public new async void SendAsync(MailMessage message, object userToken)
         {
-            var recipients = GetWhitelistedRecipients(string.Join(";", message.To.Select(x => x.Address).ToList()));
-            var cc = GetWhitelistedRecipients(string.Join(";", message.CC.Select(x => x.Address).ToList()));
-            var bcc = GetWhitelistedRecipients(string.Join(";", message.Bcc.Select(x => x.Address).ToList()));
+            var to = GetWhitelistedRecipients(message.To);
+            var cc = GetWhitelistedRecipients(message.CC);
+            var bcc = GetWhitelistedRecipients(message.Bcc);
+
+            var originalTo = message.To.ToList();
+            var originalCc = message.CC.ToList();
+            var originalBcc = message.Bcc.ToList();
 
             message.To.Clear();
             message.CC.Clear();
             message.Bcc.Clear();
 
-            if (!string.IsNullOrEmpty(recipients))
-            {
-                recipients.Split(';').ToList().ForEach(x => message.To.Add(x));
-            }
-
-            if (!string.IsNullOrEmpty(cc))
-            {
-                cc.Split(';').ToList().ForEach(x => message.CC.Add(x));
-            }
-
-            if (!string.IsNullOrEmpty(bcc))
-            {
-                bcc.Split(';').ToList().ForEach(x => message.Bcc.Add(x));
-            }
+            to?.ForEach(message.To.Add);
+            cc?.ForEach(message.CC.Add);
+            bcc?.ForEach(message.Bcc.Add);
 
             if (!message.To.IsNullOrHasZeroElements())
             {
                 SmtpClient.SendAsync(message, userToken);
             }
+
+            message.To.Clear();
+            message.CC.Clear();
+            message.Bcc.Clear();
+
+            originalTo.ForEach(message.To.Add);
+            originalCc.ForEach(message.CC.Add);
+            originalBcc.ForEach(message.Bcc.Add);
         }
 
         /// <summary>
@@ -209,34 +224,34 @@ namespace Signals.Core.Common.Smtp
         /// <returns></returns>
         public new async Task SendMailAsync(MailMessage message)
         {
+            var to = GetWhitelistedRecipients(message.To);
+            var cc = GetWhitelistedRecipients(message.CC);
+            var bcc = GetWhitelistedRecipients(message.Bcc);
 
-            var recipients = GetWhitelistedRecipients(string.Join(";", message.To.Select(x => x.Address).ToList()));
-            var cc = GetWhitelistedRecipients(string.Join(";", message.CC.Select(x => x.Address).ToList()));
-            var bcc = GetWhitelistedRecipients(string.Join(";", message.Bcc.Select(x => x.Address).ToList()));
+            var originalTo = message.To.ToList();
+            var originalCc = message.CC.ToList();
+            var originalBcc = message.Bcc.ToList();
 
             message.To.Clear();
             message.CC.Clear();
             message.Bcc.Clear();
 
-            if (!string.IsNullOrEmpty(recipients))
-            {
-                recipients.Split(';').ToList().ForEach(x => message.To.Add(x));
-            }
-
-            if (!string.IsNullOrEmpty(cc))
-            {
-                cc.Split(';').ToList().ForEach(x => message.CC.Add(x));
-            }
-
-            if (!string.IsNullOrEmpty(bcc))
-            {
-                bcc.Split(';').ToList().ForEach(x => message.Bcc.Add(x));
-            }
+            to?.ForEach(message.To.Add);
+            cc?.ForEach(message.CC.Add);
+            bcc?.ForEach(message.Bcc.Add);
 
             if (!message.To.IsNullOrHasZeroElements())
             {
                 await SmtpClient.SendMailAsync(message);
             }
+
+            message.To.Clear();
+            message.CC.Clear();
+            message.Bcc.Clear();
+
+            originalTo.ForEach(message.To.Add);
+            originalCc.ForEach(message.CC.Add);
+            originalBcc.ForEach(message.Bcc.Add);
         }
     }
 }

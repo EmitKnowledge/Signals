@@ -7,7 +7,20 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Signals.Aspects.Configuration" Version="1.0.1" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Aspects.Configuration" Version="1.0.1" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\05 Aspects\02 Configuration\Signals.Aspects.Configuration\Signals.Aspects.Configuration.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
 </Project>

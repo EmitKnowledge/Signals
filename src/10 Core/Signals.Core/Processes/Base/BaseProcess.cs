@@ -247,10 +247,13 @@ namespace Signals.Core.Processes.Base
         protected TProcess Continue<TProcess>()
             where TProcess : class, IBaseProcess<VoidResult>, new()
         {
-            var process = SystemBootstrapper.GetInstance<Mediator>().For<TProcess>();
+            var processType = typeof(TProcess);
+            var process = BaseContext.Mediator.ProcessFactory.Create<VoidResult>(processType);
+
             process.EpicId = EpicId;
             process.CallerProcessName = Name;
-            return process;
+
+            return process as TProcess;
         }
 
         /// <summary>
@@ -261,10 +264,12 @@ namespace Signals.Core.Processes.Base
         /// <returns></returns>
         private TNewResponse Dispatch<TNewResponse>(Type type, params object[] args) where TNewResponse : VoidResult, new()
         {
-            var process = BaseContext.ProcessFactory.Create<TNewResponse>(type);
+            var process = BaseContext.Mediator.ProcessFactory.Create<TNewResponse>(type);
+
             process.EpicId = EpicId;
             process.CallerProcessName = Name;
-            return BaseContext.ProcessExecutor.Execute((BaseProcess<TNewResponse>)process, args);
+
+            return BaseContext.Mediator.ProcessExecutor.Execute((BaseProcess<TNewResponse>)process, args);
         }
     }
 }

@@ -6,11 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="1.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="System.Messaging" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="1.0.1" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels\Signals.Aspects.CommunicationChannels.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
 </Project>

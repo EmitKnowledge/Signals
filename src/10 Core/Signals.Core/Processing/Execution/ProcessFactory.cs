@@ -31,7 +31,7 @@ namespace Signals.Core.Processing.Execution
         public IBaseProcess<TResponse> Create<TResponse>(Type processType) where TResponse : VoidResult
         {
             var instance = SystemBootstrapper.GetInstance(processType) as IBaseProcess<TResponse>;
-            SystemBootstrapper.Bootstrap(instance);
+            SystemBootstrapper.Bootstrap(instance.BaseContext);
             return instance;
         }
     }

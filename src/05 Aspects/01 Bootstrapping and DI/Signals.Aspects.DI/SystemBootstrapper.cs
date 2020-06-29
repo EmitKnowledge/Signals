@@ -23,9 +23,7 @@ namespace Signals.Aspects.DI
         /// <param name="obj"></param>
         public static void Bootstrap(object obj)
         {
-            if (obj == null) throw new NullReferenceException();
-
-            new PropertyInjector().Inject(obj);
+            _serviceContainer.Bootstrap(obj);
         }
 
         /// <summary>

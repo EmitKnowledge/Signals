@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Signals.Core.Common" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net461'">
@@ -18,5 +18,19 @@
   <ItemGroup>
     <ProjectReference Include="..\Signals.Features.Base\Signals.Features.Base.csproj" />
   </ItemGroup>
+  
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Core.Common" Version="1.0.3" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\10 Core\Signals.Core.Common\Signals.Core.Common.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
   
 </Project>

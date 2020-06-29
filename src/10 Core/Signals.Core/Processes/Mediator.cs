@@ -16,12 +16,12 @@ namespace Signals.Core.Processes
         /// <summary>
         /// Process factory
         /// </summary>
-        [Import] private IProcessFactory ProcessFactory { get; set; }
+        [Import] internal IProcessFactory ProcessFactory { get; set; }
 
         /// <summary>
         /// Process executor
         /// </summary>
-        [Import] private IProcessExecutor ProcessExecutor { get; set; }
+        [Import] internal IProcessExecutor ProcessExecutor { get; set; }
 
         /// <summary>
         /// Handle the request
@@ -35,7 +35,7 @@ namespace Signals.Core.Processes
             if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
 
             // execute process
-            var response = ProcessExecutor.Execute<TResponse>(process);
+            var response = ProcessExecutor.Execute(process);
 
             return response;
         }
@@ -104,7 +104,7 @@ namespace Signals.Core.Processes
             if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
 
             // execute process
-            var response = ProcessExecutor.Execute<TResponse>(process);
+            var response = ProcessExecutor.Execute(process);
 
             return response;
         }
@@ -172,7 +172,7 @@ namespace Signals.Core.Processes
             where TResponse : VoidResult, new()
         {
             // execute process
-            var response = ProcessExecutor.Execute<TResponse>(process);
+            var response = ProcessExecutor.Execute(process);
 
             return response;
         }
@@ -214,6 +214,20 @@ namespace Signals.Core.Processes
             var response = ProcessExecutor.Execute(process, obj1, obj2, obj3);
 
             return response;
+        }
+
+        /// <summary>
+        /// Specify process to invoke
+        /// </summary>
+        /// <typeparam name="TProcess"></typeparam>
+        /// <returns></returns>
+        public TProcess For<TProcess>()
+            where TProcess : class, IBaseProcess<VoidResult>, new()
+        {
+            var processType = typeof(TProcess);
+            var instance = ProcessFactory.Create<VoidResult>(processType);
+
+            return instance as TProcess;
         }
     }
 }

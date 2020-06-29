@@ -13,13 +13,22 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
         /// </summary>
         public BaseModelBinder Binder { get; }
 
-		/// <summary>
-		/// Ctor
-		/// </summary>
-		/// <param name="modelBinder"></param>
-		public SignalsParameterBindingAttribute(Type modelBinder)
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="modelBinder"></param>
+        public SignalsParameterBindingAttribute(Type modelBinder)
         {
-	        Binder = (BaseModelBinder)Activator.CreateInstance(modelBinder);
+            Binder = (BaseModelBinder)Activator.CreateInstance(modelBinder);
+        }
+
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="modelBinder"></param>
+        public SignalsParameterBindingAttribute(BaseModelBinder modelBinder)
+        {
+            Binder = modelBinder;
         }
     }
 }

@@ -12,25 +12,49 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.8.14" />
-    <PackageReference Include="HtmlSanitizer" Version="4.0.197" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Signals.Core.Common" Version="1.0.7" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-    <PackageReference Include="HtmlSanitizer" Version="4.0.205" />
-    <PackageReference Include="Signals.Aspects.Auditing" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Auth" Version="1.0.2" />
-    <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="1.0.2" />
-    <PackageReference Include="Signals.Aspects.Benchmarking" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Caching" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Configuration" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.DI" Version="1.0.2" />
-    <PackageReference Include="Signals.Aspects.ErrorHandling" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Localization" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Logging" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Security" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Storage" Version="1.0.1" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.DotNetCore\Signals.Aspects.DI.DotNetCore.csproj" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.SimpleInjector\Signals.Aspects.DI.SimpleInjector.csproj" />
   </ItemGroup>
+  
+  <Choose>    
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Core.Common" Version="1.0.7" />
+        <PackageReference Include="Signals.Aspects.Auditing" Version="1.0.1" />
+        <PackageReference Include="Signals.Aspects.Auth" Version="1.0.2" />
+        <PackageReference Include="Signals.Aspects.BackgroundProcessing" Version="1.0.2" />
+        <PackageReference Include="Signals.Aspects.Benchmarking" Version="1.0.1" />
+        <PackageReference Include="Signals.Aspects.Caching" Version="1.0.1" />
+        <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="1.0.1" />
+        <PackageReference Include="Signals.Aspects.Configuration" Version="1.0.1" />
+        <PackageReference Include="Signals.Aspects.DI" Version="1.0.2" />
+        <PackageReference Include="Signals.Aspects.ErrorHandling" Version="1.0.1" />
+        <PackageReference Include="Signals.Aspects.Localization" Version="1.0.1" />
+        <PackageReference Include="Signals.Aspects.Logging" Version="1.0.1" />
+        <PackageReference Include="Signals.Aspects.Security" Version="1.0.1" />
+        <PackageReference Include="Signals.Aspects.Storage" Version="1.0.1" />
+      </ItemGroup>
+    </When>
+    
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI\Signals.Aspects.DI.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\02 Configuration\Signals.Aspects.Configuration\Signals.Aspects.Configuration.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\03 Logging\Signals.Aspects.Logging\Signals.Aspects.Logging.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\04 Auditing\Signals.Aspects.Auditing\Signals.Aspects.Auditing.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\05 Caching\Signals.Aspects.Caching\Signals.Aspects.Caching.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\06 Localization\Signals.Aspects.Localization\Signals.Aspects.Localization.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\07 Storage\Signals.Aspects.Storage\Signals.Aspects.Storage.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels\Signals.Aspects.CommunicationChannels.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\09 Authentication and authorization\Signals.Aspects.Auth\Signals.Aspects.Auth.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\10 Background processing\Signals.Aspects.BackgroundProcessing\Signals.Aspects.BackgroundProcessing.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\11 Error handling\Signals.Aspects.ErrorHandling\Signals.Aspects.ErrorHandling.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\12 Security\Signals.Aspects.Security\Signals.Aspects.Security.csproj" />
+        <ProjectReference Include="..\..\05 Aspects\13 Benchmarking\Signals.Aspects.Benchmarking\Signals.Aspects.Benchmarking.csproj" />
+        <ProjectReference Include="..\Signals.Core.Common\Signals.Core.Common.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
 </Project>

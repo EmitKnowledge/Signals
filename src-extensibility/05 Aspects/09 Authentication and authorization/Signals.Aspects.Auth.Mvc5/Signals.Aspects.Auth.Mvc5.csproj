@@ -12,11 +12,24 @@
     <PackageReference Include="Microsoft.Owin.Security" Version="4.0.1" />
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.0.1" />
     <PackageReference Include="Owin" Version="1.0.0" />
-    <PackageReference Include="Signals.Aspects.Auth" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Web" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Aspects.Auth" Version="1.0.2" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\05 Aspects\09 Authentication and authorization\Signals.Aspects.Auth\Signals.Aspects.Auth.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
 </Project>

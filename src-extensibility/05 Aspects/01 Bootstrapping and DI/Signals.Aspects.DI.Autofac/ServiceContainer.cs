@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Signals.Aspects.DI.Helpers;
 using System;
 
 namespace Signals.Aspects.DI.Autofac
@@ -12,6 +13,11 @@ namespace Signals.Aspects.DI.Autofac
         /// Autofac container
         /// </summary>
         public IContainer Container { get; }
+
+        /// <summary>
+        /// Property injector
+        /// </summary>
+        private static PropertyInjector PropertyInjector => new PropertyInjector();
 
         /// <summary>
         /// CTOR
@@ -42,6 +48,15 @@ namespace Signals.Aspects.DI.Autofac
         {
             if (!Container.IsRegistered(serviceType)) return null;
             return Container.Resolve(serviceType);
+        }
+
+        /// <summary>
+        /// Inject all public properties annotated with <see cref="ImportAttribute"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        public void Bootstrap(object obj)
+        {
+            PropertyInjector.Inject(obj, false);
         }
     }
 }

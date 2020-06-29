@@ -31,10 +31,10 @@ namespace Signals.Core.Processes.Recurring
         /// </summary>
         public void Execute()
         {
+            var factor = SystemBootstrapper.GetInstance<IProcessFactory>();
             var executor = SystemBootstrapper.GetInstance<IProcessExecutor>();
-            var instance = SystemBootstrapper.GetInstance(InnerProcessType) as IBaseProcess<VoidResult>;
 
-            SystemBootstrapper.Bootstrap(instance);
+            var instance = factor.Create<VoidResult>(InnerProcessType);
 
             executor.Execute(instance);
         }

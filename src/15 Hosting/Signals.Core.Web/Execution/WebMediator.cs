@@ -39,12 +39,27 @@ namespace Signals.Core.Web.Execution
 		/// <summary>
 		/// Default model binders
 		/// </summary>
-		internal Dictionary<ApiProcessMethod, Type> DefaultModelBinders { get; set; }
+		internal Dictionary<ApiProcessMethod, BaseModelBinder> DefaultModelBinders { get; set; }
 
         /// <summary>
         /// Result handler
         /// </summary>
         internal List<IResultHandler> ResultHandlers { get; set; }
+
+        /// <summary>
+        /// Process repository
+        /// </summary>
+        internal ProcessRepository ProcessRepository { get; set; }
+
+        /// <summary>
+        /// Process factory
+        /// </summary>
+        internal IProcessFactory ProcessFactory { get; set; }
+
+        /// <summary>
+        /// Process executor
+        /// </summary>
+        internal IProcessExecutor ProcessExecutor { get; set; }
 
         /// <summary>
         /// CTOR
@@ -70,17 +85,17 @@ namespace Signals.Core.Web.Execution
                 new IsCachedFactoryFilter()
             };
 
-	        DefaultModelBinders = new Dictionary<ApiProcessMethod, Type>
+	        DefaultModelBinders = new Dictionary<ApiProcessMethod, BaseModelBinder>
 	        {
-				{ ApiProcessMethod.OPTIONS,  typeof(FromQuery) },
-		        { ApiProcessMethod.GET,  typeof(FromQuery) },
-		        { ApiProcessMethod.HEAD,  typeof(FromHeader) },
-		        { ApiProcessMethod.POST,  typeof(FromBody) },
-		        { ApiProcessMethod.PUT,  typeof(FromBody) },
-		        { ApiProcessMethod.DELETE, typeof(FromQuery) }
+				{ ApiProcessMethod.OPTIONS,  new FromQuery() },
+		        { ApiProcessMethod.GET,  new FromQuery() },
+		        { ApiProcessMethod.HEAD,  new FromHeader() },
+		        { ApiProcessMethod.POST,  new FromBody() },
+		        { ApiProcessMethod.PUT,  new FromBody() },
+		        { ApiProcessMethod.DELETE, new FromQuery() }
 			};
 
-			// Order is important, JsonResult is default fallback
+			// order is important, JsonResult is default fallback
 			ResultHandlers = new List<IResultHandler> {
                 new HeaderAdderHandler(),
                 new AuthenticationFailResultFilter(),
@@ -95,16 +110,21 @@ namespace Signals.Core.Web.Execution
                 new NativeResultHandler(),
                 new JsonResultHandler()
             };
+            
+            // get process repo instance
+            ProcessRepository = SystemBootstrapper.GetInstance<ProcessRepository>();
+            ProcessFactory = SystemBootstrapper.GetInstance<IProcessFactory>();
+            ProcessExecutor = SystemBootstrapper.GetInstance<IProcessExecutor>();
         }
 
         /// <summary>
         /// Handle the request
         /// </summary>
+        /// <param name="context">For testing</param>
         /// <returns></returns>
-        public MiddlewareResult Dispatch()
+        public MiddlewareResult Dispatch(IHttpContextWrapper context = null)
         {
-            var httpContext = SystemBootstrapper.GetInstance<IHttpContextWrapper>();
-	        var method = EnumExtensions.FromString<ApiProcessMethod>(httpContext.HttpMethod?.ToUpper());
+            var httpContext = context ?? SystemBootstrapper.GetInstance<IHttpContextWrapper>();
 
 			// execute custom url handlers
 			foreach (var handler in CustomUrlHandlers)
@@ -117,23 +137,12 @@ namespace Signals.Core.Web.Execution
                 }
             }
 
-            // get process repo instance
-            var processRepo = SystemBootstrapper.GetInstance<ProcessRepository>();
-
             // get valid process type
-            var validType = processRepo.All(type => Filters.All(filter => filter.IsCorrectProcessType(type, httpContext))).FirstOrDefault();
-
-            // flag to continue pipe execution
+            var validType = ProcessRepository.All(type => Filters.All(filter => filter.IsCorrectProcessType(type, httpContext))).FirstOrDefault();
             if (validType.IsNull()) return MiddlewareResult.StopExecutionAndInvokeNextMiddleware;
-
-            // get factory and executor instances
-            var factory = SystemBootstrapper.GetInstance<IProcessFactory>();
-            var executor = SystemBootstrapper.GetInstance<IProcessExecutor>();
-
+            
             // create instance
-            var process = factory.Create<VoidResult>(validType);
-
-            // flag to continue pipe execution
+            var process = ProcessFactory.Create<VoidResult>(validType);
             if (process.IsNull()) return MiddlewareResult.StopExecutionAndInvokeNextMiddleware;
 
             // execute factory filters
@@ -146,8 +155,10 @@ namespace Signals.Core.Web.Execution
                 }
             }
 
-			// determine the parameter binding method
-			var parameterBindingAttribute = validType?
+            var method = EnumExtensions.FromString<ApiProcessMethod>(httpContext.HttpMethod?.ToUpper());
+
+            // determine the parameter binding method
+            var parameterBindingAttribute = validType?
 				.GetCustomAttributes(typeof(SignalsParameterBindingAttribute), false)
 				.Cast<SignalsParameterBindingAttribute>()
 				.FirstOrDefault();
@@ -159,7 +170,7 @@ namespace Signals.Core.Web.Execution
 				parameterBindingAttribute = new SignalsParameterBindingAttribute(modelBinder);
 			}
 	        
-			var param = parameterBindingAttribute.Binder.Bind(httpContext);
+			var requestInput = parameterBindingAttribute.Binder.Bind(httpContext);
 
 			// execute process
 			var response = new VoidResult();
@@ -172,7 +183,7 @@ namespace Signals.Core.Web.Execution
 				case ApiProcessMethod.HEAD:
 					break;
 				default:
-					response = executor.Execute(process, param);
+					response = ProcessExecutor.Execute(process, requestInput);
 					break;
 			}
 

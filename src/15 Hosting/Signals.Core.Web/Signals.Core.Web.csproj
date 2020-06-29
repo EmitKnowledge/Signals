@@ -10,8 +10,21 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.1.2" />
-    <PackageReference Include="Signals.Core" Version="1.0.10" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Core" Version="1.0.10" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\10 Core\Signals.Core\Signals.Core.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
   
   <ItemGroup Condition="'$(TargetFramework)'=='net461'">
     <PackageReference Include="Owin" Version="1.0.0" />

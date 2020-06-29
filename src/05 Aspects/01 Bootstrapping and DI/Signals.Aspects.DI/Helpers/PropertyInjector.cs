@@ -12,66 +12,124 @@ namespace Signals.Aspects.DI.Helpers
     /// </summary>
     public class PropertyInjector
     {
-        private HashSet<Type> _set;
+        private static Dictionary<Type, PropertyInfo[]> _injectables { get; } = new Dictionary<Type, PropertyInfo[]>();
+        private static Dictionary<Type, PropertyInfo[]> _properties { get; } = new Dictionary<Type, PropertyInfo[]>();
+        private static Dictionary<Type, FieldInfo[]> _fields { get; } = new Dictionary<Type, FieldInfo[]>();
 
         /// <summary>
         /// Inject all properties and fields annotated with <see cref="ImportAttribute"/> 
         /// </summary>
         /// <param name="obj"></param>
-        public void Inject(object obj)
+        /// <param name="recursive"></param>
+        public void Inject(object obj, bool recursive)
         {
-            _set = new HashSet<Type>();
-            InjectInternal(obj);
-            _set = null;
+            InjectInternal(obj, recursive);
         }
 
         /// <summary>
         /// Inject all properties and fields annotated with <see cref="ImportAttribute"/> 
         /// </summary>
         /// <param name="obj"></param>
-        private void InjectInternal(object obj)
+        /// <param name="recursive"></param>
+        private void InjectInternal(object obj, bool recursive)
         {
-            try
+            if (obj == null) return;
+            if (obj is IEnumerable) return;
+
+            var type = obj.GetType();
+            var assemblyName = type.Assembly.FullName;
+
+            if (assemblyName.StartsWith("System")) return;
+            if (assemblyName.StartsWith("Microsoft")) return;
+
+            // public and private properties and fields
+            var injectables = GetInjectables(type);
+
+            foreach (var injectable in injectables)
             {
-                if (obj == null) return;
-                if (obj is IEnumerable) return;
-                if (_set.Contains(obj.GetType())) return;
-                if (obj.GetType().Assembly.FullName.StartsWith("System")) return;
-                if (obj.GetType().Assembly.FullName.StartsWith("Microsoft")) return;
-                _set.Add(obj.GetType());
+                var instance = SystemBootstrapper.GetInstance(injectable.PropertyType);
 
-                // public and private fields
-                var fields = obj.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-
-                // public and private porperties
-                var properties = obj.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-
-                // annotated properties with @ImportAttribute
-                var injectables = properties.Where(x => x.GetCustomAttributes(typeof(ImportAttribute), true).Any());
-
-                foreach (var injectable in injectables)
-                {
-                    var instance = SystemBootstrapper.GetInstance(injectable.PropertyType);
-
+                if (instance != null)
                     injectable.SetValue(obj, instance);
-                }
+            }
+
+            if (recursive)
+            {
+                var fields = GetFields(type);
+                var properties = GetProperties(type);
 
                 // Recursively inject instances of child properties to all properties
-                foreach (var property in properties.Where(x => !x.PropertyType.IsSealed))
+                foreach (var property in properties)
                 {
-                    InjectInternal(property.GetValue(obj));
+                    InjectInternal(property.GetValue(obj), recursive);
                 }
 
                 // Recursively inject instances of child properties to all fields
-                foreach (var field in fields.Where(x => !x.FieldType.IsSealed))
+                foreach (var field in fields)
                 {
-                    InjectInternal(field.GetValue(obj));
+                    InjectInternal(field.GetValue(obj), recursive);
                 }
             }
-            catch
+        }
+
+        /// <summary>
+        /// Get type injectables
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private PropertyInfo[] GetInjectables(Type type)
+        {
+            if (!_injectables.ContainsKey(type))
             {
-                //TODO: this exception should not go silent
+                var injectables = type
+                    .GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => x.GetCustomAttributes(typeof(ImportAttribute), true).Any())
+                    .ToArray();
+
+                _injectables.Add(type, injectables);
             }
+
+            return _injectables[type];
+        }
+
+        /// <summary>
+        /// Get type proerties
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private PropertyInfo[] GetProperties(Type type)
+        {
+            if (!_properties.ContainsKey(type))
+            {
+                var properties = type
+                    .GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => !x.PropertyType.IsSealed)
+                    .ToArray();
+
+                _properties.Add(type, properties);
+            }
+
+            return _properties[type];
+        }
+
+        /// <summary>
+        /// Get type fields
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private FieldInfo[] GetFields(Type type)
+        {
+            if (!_fields.ContainsKey(type))
+            {
+                var fields = type
+                    .GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => !x.FieldType.IsSealed)
+                    .ToArray();
+
+                _fields.Add(type, fields);
+            }
+
+            return _fields[type];
         }
     }
 }

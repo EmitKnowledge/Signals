@@ -23,8 +23,7 @@ namespace Signals.Core.Processes
         public static TResponse With<TResponse>(this IBaseProcess<TResponse> process)
             where TResponse : VoidResult, new()
         {
-            var mediator = SystemBootstrapper.GetInstance<Mediator>();
-            return mediator.Dispatch<TResponse>(process);
+            return process.BaseContext.Mediator.Dispatch(process);
         }
 
         /// <summary>
@@ -38,8 +37,7 @@ namespace Signals.Core.Processes
         public static TResponse With<T1, TResponse>(this IBaseProcess<TResponse> process, T1 input1)
             where TResponse : VoidResult, new()
         {
-            var mediator = SystemBootstrapper.GetInstance<Mediator>();
-            return mediator.Dispatch<T1, TResponse>(process, input1);
+            return process.BaseContext.Mediator.Dispatch(process, input1);
         }
 
         /// <summary>
@@ -55,8 +53,7 @@ namespace Signals.Core.Processes
         public static TResponse With<T1, T2, TResponse>(this IBaseProcess<TResponse> process, T1 input1, T2 input2)
             where TResponse : VoidResult, new()
         {
-            var mediator = SystemBootstrapper.GetInstance<Mediator>();
-            return mediator.Dispatch<T1, T2, TResponse>(process, input1, input2);
+            return process.BaseContext.Mediator.Dispatch(process, input1, input2);
         }
 
         /// <summary>
@@ -74,23 +71,7 @@ namespace Signals.Core.Processes
         public static TResponse With<T1, T2, T3, TResponse>(this IBaseProcess<TResponse> process, T1 input1, T2 input2, T3 input3)
             where TResponse : VoidResult, new()
         {
-            var mediator = SystemBootstrapper.GetInstance<Mediator>();
-            return mediator.Dispatch<T1, T2, T3, TResponse>(process, input1, input2, input3);
-        }
-
-        /// <summary>
-        /// Specify process to invoke
-        /// </summary>
-        /// <typeparam name="TProcess"></typeparam>
-        /// <param name="mediator"></param>
-        /// <returns></returns>
-        public static TProcess For<TProcess>(this Mediator mediator)
-            where TProcess : class, IBaseProcess<VoidResult>, new()
-        {
-            var factory = SystemBootstrapper.GetInstance<IProcessFactory>();
-            var processType = typeof(TProcess);
-            var instance = factory.Create<VoidResult>(processType) as TProcess;
-            return instance;
+            return process.BaseContext.Mediator.Dispatch(process, input1, input2, input3);
         }
     }
 }

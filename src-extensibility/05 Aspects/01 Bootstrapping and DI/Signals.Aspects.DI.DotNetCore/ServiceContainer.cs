@@ -14,6 +14,11 @@ namespace Signals.Aspects.DI.DotNetCore
         public IServiceProvider Container { get; }
 
         /// <summary>
+        /// Property injector
+        /// </summary>
+        private PropertyInjector PropertyInjector => new PropertyInjector();
+
+        /// <summary>
         /// CTOR
         /// </summary>
         /// <param name="container"></param>
@@ -30,7 +35,7 @@ namespace Signals.Aspects.DI.DotNetCore
         public TService GetInstance<TService>() where TService : class
         {
             var instance = Container.GetService(typeof(TService)) as TService;
-            new PropertyInjector().Inject(instance);
+            PropertyInjector.Inject(instance, true);
             return instance;
         }
 
@@ -42,8 +47,17 @@ namespace Signals.Aspects.DI.DotNetCore
         public object GetInstance(Type serviceType)
         {
             var instance = Container.GetService(serviceType);
-            new PropertyInjector().Inject(instance);
+            PropertyInjector.Inject(instance, true);
             return instance;
+        }
+
+        /// <summary>
+        /// Inject all public properties annotated with <see cref="ImportAttribute"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        public void Bootstrap(object obj)
+        {
+            PropertyInjector.Inject(obj, true);
         }
     }
 }
