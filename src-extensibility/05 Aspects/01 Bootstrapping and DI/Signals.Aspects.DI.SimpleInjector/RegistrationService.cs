@@ -9,6 +9,8 @@ namespace Signals.Aspects.DI.SimpleInjector
     /// </summary>
     public class RegistrationService : IRegistrationService
     {
+        private readonly bool _verifyOnBuild;
+
         /// <summary>
         /// SimpleInjector container builder
         /// </summary>
@@ -21,14 +23,16 @@ namespace Signals.Aspects.DI.SimpleInjector
 
         /// <summary>
         /// CTOR
+        /// <param name="verifyOnBuild"></param>
         /// </summary>
-        public RegistrationService()
+        public RegistrationService(bool verifyOnBuild = true)
         {
             Builder = new Container();
             Builder.Options.AllowOverridingRegistrations = true;
             Builder.Options.DefaultLifestyle = Lifestyle.Transient;
             Builder.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
             Builder.Options.PropertySelectionBehavior = new ImportPropertySelectionBehavior();
+            this._verifyOnBuild = verifyOnBuild;
         }
 
         /// <summary>
@@ -38,7 +42,7 @@ namespace Signals.Aspects.DI.SimpleInjector
         public IServiceContainer Build()
         {
 	        if (ServiceContainer != null) return ServiceContainer;
-	        Builder.Verify();
+            if (_verifyOnBuild) Builder.Verify();
 	        ServiceContainer = new ServiceContainer(Builder);
 
 	        return ServiceContainer;
