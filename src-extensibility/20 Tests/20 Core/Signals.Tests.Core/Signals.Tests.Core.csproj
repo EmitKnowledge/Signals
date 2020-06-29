@@ -14,6 +14,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\10 Core\Signals.Core\Signals.Core.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.DotNetCore\Signals.Aspects.DI.DotNetCore.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.SimpleInjector\Signals.Aspects.DI.SimpleInjector.csproj" />
     <ProjectReference Include="..\..\..\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj" />
     <ProjectReference Include="..\..\..\05 Aspects\05 Caching\Signals.Aspects.Caching.InMemory\Signals.Aspects.Caching.InMemory.csproj" />
   </ItemGroup>

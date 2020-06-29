@@ -48,8 +48,8 @@ namespace Signals.Core.Web.Configuration.Bootstrapping
                 if (config.IsNull()) throw new Exception("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
             }
 
-            webBootstrapConfiguration.RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
             webBootstrapConfiguration.RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
+            webBootstrapConfiguration.RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
             webBootstrapConfiguration.RegistrationService.Register<WebMediator>();
             webBootstrapConfiguration.RegistrationService.Register(webBootstrapConfiguration.ResponseHeaders);
 

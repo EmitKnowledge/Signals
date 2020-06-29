@@ -29,7 +29,7 @@ namespace Signals.Aspects.Auth.NetCore
         }
 
         /// <summary>
-        /// Ctor
+        /// CTOR
         /// </summary>
         public AuthenticationManager()
         {

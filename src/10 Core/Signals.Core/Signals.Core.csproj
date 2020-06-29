@@ -10,12 +10,6 @@
     <EmbeddedResource Remove="Business\**" />
     <None Remove="Business\**" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.DotNetCore\Signals.Aspects.DI.DotNetCore.csproj" />
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.SimpleInjector\Signals.Aspects.DI.SimpleInjector.csproj" />
-  </ItemGroup>
   
   <Choose>    
     <When Condition=" '$(Configuration)'!='Debug' ">
