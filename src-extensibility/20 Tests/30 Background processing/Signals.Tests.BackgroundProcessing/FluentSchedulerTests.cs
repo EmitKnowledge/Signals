@@ -11,28 +11,49 @@ namespace Signals.Tests.BackgroundProcessing
     public class FluentSchedulerTests
     {
         public MyFluentTask MyTask { get; private set; }
-        public RecurrencePatternConfiguration MyTaskConfig { get; private set; }
 
         public FluentSchedulerTests()
         {
             MyTask = new MyFluentTask();
-            MyTaskConfig = new TimePartRecurrencePatternConfiguration(TimeSpan.FromSeconds(1));
         }
 
         [Fact]
-        public void CustomTask_ExecutedEveryMinute_IsExecutedMultipleTimes()
+        public void CustomTask_ExecutedEverySecond_IsExecutedMultipleTimes()
         {
             lock (MyFluentTask.LockObj)
             {
                 MyFluentTask.TimesExecuted = 0;
                 var registry = new FluentRegistry();
 
-                registry.ScheduleTask(MyTask, MyTaskConfig);
+                registry.ScheduleTask(MyTask, new TimePartRecurrencePatternConfiguration(TimeSpan.FromSeconds(1)));
 
                 registry.Start();
                 Thread.Sleep(2100);
 
                 Assert.Equal(2, MyFluentTask.TimesExecuted);
+
+                registry.Stop();
+            }
+        }
+
+        [Fact]
+        public void CustomTask_ExecutedWeekly_IsExecuted()
+        {
+            lock (MyFluentTask.LockObj)
+            {
+                MyFluentTask.TimesExecuted = 0;
+                var registry = new FluentRegistry();
+
+                var now = DateTime.Now;
+                var day = DateTime.Now.DayOfWeek;
+                var time = DateTime.Now.AddMinutes(1);
+
+                registry.ScheduleTask(MyTask, new WeeklyRecurrencePatternConfiguration(0).On(day).At(time.Hour, time.Minute, time.Second));
+
+                registry.Start();
+                Thread.Sleep(60100);
+
+                Assert.Equal(1, MyFluentTask.TimesExecuted);
 
                 registry.Stop();
             }

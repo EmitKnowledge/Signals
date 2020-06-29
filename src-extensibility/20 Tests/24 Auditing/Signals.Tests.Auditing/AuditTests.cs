@@ -30,6 +30,7 @@ namespace Signals.Tests.Auditing
             });
 
             var auditEntry = auditProvider.Entry();
+            auditEntry.Payload = "Payload";
             auditEntry.Originator = "Originator";
             auditEntry.Process = "RegisterUser";
             auditEntry.EventType = "Register user";
@@ -49,6 +50,7 @@ namespace Signals.Tests.Auditing
             var entry = JsonConvert.DeserializeObject<AuditEntry>(content);
 
             Assert.NotNull(entry);
+            Assert.Equal("Payload", entry.Payload);
             Assert.Equal("Originator", entry.Originator);
             Assert.Equal("RegisterUser", entry.Process);
             Assert.Equal("Register user", entry.EventType);
@@ -87,6 +89,7 @@ namespace Signals.Tests.Auditing
                                 [Id] INT IDENTITY(1,1) NOT NULL, 
                                 [Process] NVARCHAR(MAX),
                                 [ProcessInstanceId] NVARCHAR(MAX),
+                                [Payload] NVARCHAR(MAX),
                                 [EventType] NVARCHAR(MAX),
                                 [Originator] NVARCHAR(MAX),
                                 [StartDate] datetime2(7),
@@ -106,6 +109,7 @@ namespace Signals.Tests.Auditing
                 auditEntry.Originator = "Originator";
                 auditEntry.Process = "RegisterUser";
                 auditEntry.EventType = "Register user";
+                auditEntry.Payload = "Payload";
                 auditEntry.Data.Process["ProcessInfo"] = "Some process info";
                 auditEntry.Data.Source["SourceInfo"] = "Some source info";
 
@@ -128,6 +132,7 @@ namespace Signals.Tests.Auditing
 
                 while (reader.Read())
                 {
+                    Assert.Equal("Payload", reader["Payload"].ToString());
                     Assert.Equal("Originator", reader["Originator"].ToString());
                     Assert.Equal("RegisterUser", reader["Process"].ToString());
                     Assert.Equal("Register user", reader["EventType"].ToString());
@@ -181,6 +186,7 @@ namespace Signals.Tests.Auditing
                 var auditProvider = new AuditProvider(databaseConfiguration);
 
                 var auditEntry = auditProvider.Entry();
+                auditEntry.Payload = "Payload";
                 auditEntry.Originator = "Originator";
                 auditEntry.Process = "RegisterUser";
                 auditEntry.EventType = "Register user";
@@ -206,6 +212,7 @@ namespace Signals.Tests.Auditing
 
                 while (reader.Read())
                 {
+                    Assert.Equal("Payload", reader["Payload"].ToString());
                     Assert.Equal("Originator", reader["Originator"].ToString());
                     Assert.Equal("RegisterUser", reader["Process"].ToString());
                     Assert.Equal("Register user", reader["EventType"].ToString());
