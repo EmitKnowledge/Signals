@@ -1,4 +1,5 @@
-﻿using Signals.Core.Common.Serialization;
+﻿using Signals.Aspects.DI.Attributes;
+using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Input;
@@ -22,23 +23,21 @@ namespace Signals.Core.Processes.Distributed
         where TTransientData : ITransientData
     {
         /// <summary>
-        /// Business process context
+        /// Distributed process context
         /// </summary>
-        protected new virtual DistributedProcessContext Context { get; set; }
+        [Import]
+        protected new virtual IDistributedProcessContext Context
+        {
+            get => _context;
+            set { (value as DistributedProcessContext).SetProcess(this); _context = value; }
+        }
+        private IDistributedProcessContext _context;
 
         /// <summary>
         /// Base process context upcasted from Api process context
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public DistributedProcess()
-        {
-            Context = new DistributedProcessContext(this);
-        }
-
+        internal override IBaseProcessContext BaseContext => Context;
+        
         /// <summary>
         /// Execution layer
         /// </summary>
@@ -127,23 +126,21 @@ namespace Signals.Core.Processes.Distributed
         where TTransientData : ITransientData
     {
         /// <summary>
-        /// Business process context
+        /// Distributed process context
         /// </summary>
-        protected new virtual DistributedProcessContext Context { get; set; }
+        [Import]
+        protected new virtual IDistributedProcessContext Context
+        {
+            get => _context;
+            set { (value as DistributedProcessContext).SetProcess(this); _context = value; }
+        }
+        private IDistributedProcessContext _context;
 
         /// <summary>
         /// Base process context upcasted from Api process context
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public DistributedProcess()
-        {
-            Context = new DistributedProcessContext(this);
-        }
-
+        internal override IBaseProcessContext BaseContext => Context;
+        
         /// <summary>
         /// Execution layer
         /// </summary>

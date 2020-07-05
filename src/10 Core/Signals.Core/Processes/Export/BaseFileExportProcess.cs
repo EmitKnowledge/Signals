@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Signals.Aspects.DI.Attributes;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Import;
 using Signals.Core.Processing.Input;
@@ -20,12 +21,18 @@ namespace Signals.Core.Processes.Export
         /// <summary>
         /// File export process context
         /// </summary>
-        protected FileExportProcessContext Context { get; set; }
+        [Import]
+        protected  virtual IFileExportProcessContext Context
+        {
+            get => _context;
+            set { (value as FileExportProcessContext).SetProcess(this); _context = value; }
+        }
+        private IFileExportProcessContext _context;
 
         /// <summary>
         /// Base process context override
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
+        internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
         /// Represents the export configuration model
@@ -55,15 +62,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         /// <returns></returns>
         protected abstract List<TData> DataSource();
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected BaseFileExportProcess()
-        {
-            Context = new FileExportProcessContext(this);
-        }
-
+        
         /// <summary>
         /// Entry execution point
         /// </summary>
@@ -103,12 +102,18 @@ namespace Signals.Core.Processes.Export
         /// <summary>
         /// File export process context
         /// </summary>
-        protected FileExportProcessContext Context { get; set; }
+        [Import]
+        protected virtual IFileExportProcessContext Context
+        {
+            get => _context;
+            set { (value as FileExportProcessContext).SetProcess(this); _context = value; }
+        }
+        private IFileExportProcessContext _context;
 
         /// <summary>
         /// Base process context override
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
+        internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
         /// Represents the export configuration model
@@ -138,15 +143,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         /// <returns></returns>
         protected abstract List<TData> DataSource(T1 obj);
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected BaseFileExportProcess()
-        {
-            Context = new FileExportProcessContext(this);
-        }
-
+        
         /// <summary>
         /// Entry execution point
         /// </summary>
@@ -188,12 +185,18 @@ namespace Signals.Core.Processes.Export
         /// <summary>
         /// File export process context
         /// </summary>
-        protected FileExportProcessContext Context { get; set; }
+        [Import]
+        protected virtual IFileExportProcessContext Context
+        {
+            get => _context;
+            set { (value as FileExportProcessContext).SetProcess(this); _context = value; }
+        }
+        private IFileExportProcessContext _context;
 
         /// <summary>
         /// Base process context override
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
+        internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
         /// Represents the export configuration model
@@ -223,15 +226,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         /// <returns></returns>
         protected abstract List<TData> DataSource(T1 obj1, T2 obj2);
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected BaseFileExportProcess()
-        {
-            Context = new FileExportProcessContext(this);
-        }
-
+        
         /// <summary>
         /// Entry execution point
         /// </summary>
@@ -275,12 +270,18 @@ namespace Signals.Core.Processes.Export
         /// <summary>
         /// File export process context
         /// </summary>
-        protected FileExportProcessContext Context { get; set; }
+        [Import]
+        protected virtual IFileExportProcessContext Context
+        {
+            get => _context;
+            set { (value as FileExportProcessContext).SetProcess(this); _context = value; }
+        }
+        private IFileExportProcessContext _context;
 
         /// <summary>
         /// Base process context override
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
+        internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
         /// Represents the export configuration model
@@ -310,15 +311,7 @@ namespace Signals.Core.Processes.Export
         /// </summary>
         /// <returns></returns>
         protected abstract List<TData> DataSource(T1 obj1, T2 obj2, T3 obj3);
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected BaseFileExportProcess()
-        {
-            Context = new FileExportProcessContext(this);
-        }
-
+        
         /// <summary>
         /// Entry execution point
         /// </summary>

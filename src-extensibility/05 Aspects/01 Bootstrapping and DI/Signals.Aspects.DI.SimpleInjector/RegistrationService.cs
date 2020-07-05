@@ -31,7 +31,7 @@ namespace Signals.Aspects.DI.SimpleInjector
             Builder.Options.AllowOverridingRegistrations = true;
             Builder.Options.DefaultLifestyle = Lifestyle.Transient;
             Builder.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-            Builder.Options.PropertySelectionBehavior = new ImportPropertySelectionBehavior();
+            Builder.Options.PropertySelectionBehavior = new ImportPropertySelectionBehavior(Builder);
             this._verifyOnBuild = verifyOnBuild;
         }
 

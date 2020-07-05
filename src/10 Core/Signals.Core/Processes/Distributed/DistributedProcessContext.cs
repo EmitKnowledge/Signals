@@ -15,24 +15,33 @@ namespace Signals.Core.Processes.Distributed
     /// <summary>
     /// Distributed process context
     /// </summary>
-    public class DistributedProcessContext : BaseProcessContext
+    public interface IDistributedProcessContext : IBaseProcessContext
     {
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        /// <param name="process"></param>
-        public DistributedProcessContext(IBaseProcess<VoidResult> process) : base(process)
-        {
-        }
-
         /// <summary>
         /// Message channel
         /// </summary>
-        [Import] public IMessageChannel Channel { get; set; }
+        IMessageChannel Channel { get; }
 
         /// <summary>
         /// Http context
         /// </summary>
-        [Import] public IHttpContextWrapper HttpContext { get; set; }
+        IHttpContextWrapper HttpContext { get; }
+    }
+
+    /// <summary>
+    /// Distributed process context
+    /// </summary>
+    [Export(typeof(IDistributedProcessContext))]
+    public class DistributedProcessContext : BaseProcessContext, IDistributedProcessContext
+    {
+        /// <summary>
+        /// Message channel
+        /// </summary>
+        [Import] public IMessageChannel Channel { get; internal set; }
+
+        /// <summary>
+        /// Http context
+        /// </summary>
+        [Import] public IHttpContextWrapper HttpContext { get; internal set; }
     }
 }

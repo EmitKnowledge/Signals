@@ -9,16 +9,20 @@ namespace Signals.Core.Processes.Api
     /// <summary>
     /// Api process context
     /// </summary>
-    public class ApiProcessContext : BaseProcessContext
+    public interface IApiProcessContext : IBaseProcessContext
     {
         /// <summary>
-        /// CTOR
+        /// Http context
         /// </summary>
-        /// <param name="process"></param>
-        public ApiProcessContext(IBaseProcess<VoidResult> process) : base(process)
-        {
-        }
+        IHttpContextWrapper HttpContext { get; set; }
+    }
 
+    /// <summary>
+    /// Api process context
+    /// </summary>
+    [Export(typeof(IApiProcessContext))]
+    public class ApiProcessContext : BaseProcessContext, IApiProcessContext
+    {
         /// <summary>
         /// Http context
         /// </summary>

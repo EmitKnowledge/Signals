@@ -1,4 +1,5 @@
-﻿using Signals.Core.Processes.Base;
+﻿using Signals.Aspects.DI.Attributes;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Results;
 
 namespace Signals.Core.Processes.Business
@@ -18,20 +19,18 @@ namespace Signals.Core.Processes.Business
         /// <summary>
         /// Business process context
         /// </summary>
-        protected virtual BusinessProcessContext Context { get; set; }
+        [Import]
+        protected virtual IBusinessProcessContext Context
+        {
+            get => _context;
+            set { (value as BusinessProcessContext).SetProcess(this); _context = value; }
+        }
+        private IBusinessProcessContext _context;
 
         /// <summary>
         /// Base process context upcasted from Business process context
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected BusinessProcess()
-        {
-            Context = new BusinessProcessContext(this);
-        }
+        internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
         /// Authentication and authorization layer
@@ -88,20 +87,18 @@ namespace Signals.Core.Processes.Business
         /// <summary>
         /// Business process context
         /// </summary>
-        protected virtual BusinessProcessContext Context { get; set; }
+        [Import]
+        protected virtual IBusinessProcessContext Context
+        {
+            get => _context;
+            set { (value as BusinessProcessContext).SetProcess(this); _context = value; }
+        }
+        private IBusinessProcessContext _context;
 
         /// <summary>
         /// Base process context upcasted from Business process context
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected BusinessProcess()
-        {
-            Context = new BusinessProcessContext(this);
-        }
+        internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
         /// Authentication and authorization layer
@@ -163,21 +160,19 @@ namespace Signals.Core.Processes.Business
         /// <summary>
         /// Business process context
         /// </summary>
-        protected virtual BusinessProcessContext Context { get; set; }
+        [Import]
+        protected virtual IBusinessProcessContext Context
+        {
+            get => _context;
+            set { (value as BusinessProcessContext).SetProcess(this); _context = value; }
+        }
+        private IBusinessProcessContext _context;
 
         /// <summary>
         /// Base process context upcasted from Business process context
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected BusinessProcess()
-        {
-            Context = new BusinessProcessContext(this);
-        }
-
+        internal override IBaseProcessContext BaseContext => Context;
+        
         /// <summary>
         /// Authentication and authorization layer
         /// </summary>
@@ -243,21 +238,19 @@ namespace Signals.Core.Processes.Business
         /// <summary>
         /// Business process context
         /// </summary>
-        protected virtual BusinessProcessContext Context { get; set; }
+        [Import]
+        protected virtual IBusinessProcessContext Context
+        {
+            get => _context;
+            set { (value as BusinessProcessContext).SetProcess(this); _context = value; }
+        }
+        private IBusinessProcessContext _context;
 
         /// <summary>
         /// Base process context upcasted from Business process context
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected BusinessProcess()
-        {
-            Context = new BusinessProcessContext(this);
-        }
-
+        internal override IBaseProcessContext BaseContext => Context;
+        
         /// <summary>
         /// Authentication and authorization layer
         /// </summary>

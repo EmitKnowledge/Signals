@@ -21,6 +21,13 @@ using Newtonsoft.Json;
 using Signals.Core.Processing.Behaviour;
 using Signals.Aspects.Benchmarking;
 using Signals.Core.Common.Smtp;
+using Signals.Core.Processes.Business;
+using Signals.Core.Processes.Api;
+using Signals.Core.Processes.Distributed;
+using Signals.Core.Processes.Recurring;
+using Signals.Core.Processes.Export;
+using Signals.Core.Processes.Import;
+using Signals.Core.Processes.Base;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -147,6 +154,14 @@ namespace Signals.Core.Configuration.Bootstrapping
             resolver.Register<CriticalErrorCallbackManager>();
             resolver.Register<IProcessFactory, ProcessFactory>();
             resolver.Register<IProcessExecutor, ProcessExecutor>();
+
+            resolver.Register<IBusinessProcessContext, BusinessProcessContext>();
+            resolver.Register<IApiProcessContext, ApiProcessContext>();
+            resolver.Register<IDistributedProcessContext, DistributedProcessContext>();
+            resolver.Register<IFileExportProcessContext, FileExportProcessContext>();
+            resolver.Register<IFileImportProcessContext, FileImportProcessContext>();
+            resolver.Register<IRecurringProcessContext, RecurringProcessContext>();
+
             resolver.Register<Mediator>();
 
             RegisterProcesses(config, resolver, scanAssemblies);

@@ -1,4 +1,5 @@
-﻿using Signals.Core.Processes.Base;
+﻿using Signals.Aspects.DI.Attributes;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Results;
 
 namespace Signals.Core.Processes.Business
@@ -6,14 +7,15 @@ namespace Signals.Core.Processes.Business
     /// <summary>
     /// Business process context
     /// </summary>
-    public class BusinessProcessContext : BaseProcessContext
+    public interface IBusinessProcessContext : IBaseProcessContext
     {
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        /// <param name="process"></param>
-        public BusinessProcessContext(IBaseProcess<VoidResult> process) : base(process)
-        {
-        }
+    }
+
+    /// <summary>
+    /// Business process context
+    /// </summary>
+    [Export(typeof(IBusinessProcessContext))]
+    public class BusinessProcessContext : BaseProcessContext, IBusinessProcessContext
+    {
     }
 }

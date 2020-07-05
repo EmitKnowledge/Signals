@@ -19,11 +19,17 @@ namespace Signals.Aspects.DI.Autofac
         public ServiceContainer ServiceContainer { get; set; }
 
         /// <summary>
+        /// Property selection strategy
+        /// </summary>
+        private PropertySelector propertySelector;
+
+        /// <summary>
         /// CTOR
         /// </summary>
         public RegistrationService()
         {
             Builder = new ContainerBuilder();
+            propertySelector = new PropertySelector();
         }
 
         /// <summary>
@@ -51,7 +57,7 @@ namespace Signals.Aspects.DI.Autofac
             Builder
                 .RegisterType(implementationType)
                 .As(serviceType)
-                .PropertiesAutowired(new PropertySelector(), true);
+                .PropertiesAutowired(propertySelector, true);
         }
 
         /// <summary>
@@ -62,7 +68,7 @@ namespace Signals.Aspects.DI.Autofac
         {
             Builder
                 .RegisterType<TImplementation>()
-                .PropertiesAutowired(new PropertySelector(), true);
+                .PropertiesAutowired(propertySelector, true);
         }
 
         /// <summary>
@@ -73,7 +79,7 @@ namespace Signals.Aspects.DI.Autofac
         {
             Builder
                 .RegisterType(implementationType)
-                .PropertiesAutowired(new PropertySelector(), true);
+                .PropertiesAutowired(propertySelector, true);
         }
 
         /// <summary>
@@ -88,7 +94,7 @@ namespace Signals.Aspects.DI.Autofac
             Builder
                 .RegisterType<TImplementation>()
                 .As<TDefinition>()
-                .PropertiesAutowired(new PropertySelector(), true);
+                .PropertiesAutowired(propertySelector, true);
         }
 
         /// <summary>
@@ -101,7 +107,7 @@ namespace Signals.Aspects.DI.Autofac
             Builder
                 .RegisterInstance(instance)
                 .As(serviceType)
-                .PropertiesAutowired(new PropertySelector(), true);
+                .PropertiesAutowired(propertySelector, true);
         }
 
         /// <summary>
@@ -114,7 +120,7 @@ namespace Signals.Aspects.DI.Autofac
             Builder
                 .RegisterInstance(instance)
                 .As<TDefinition>()
-                .PropertiesAutowired(new PropertySelector(), true);
+                .PropertiesAutowired(propertySelector, true);
         }
 
 		/// <summary>
@@ -127,7 +133,7 @@ namespace Signals.Aspects.DI.Autofac
             Builder
                 .RegisterType(serviceType)
                 .Keyed(callback, serviceType)
-                .PropertiesAutowired(new PropertySelector(), true);
+                .PropertiesAutowired(propertySelector, true);
         }
 
 		/// <summary>
@@ -139,7 +145,7 @@ namespace Signals.Aspects.DI.Autofac
         {
             Builder
                 .Register<TDefinition>(ctx => callback())
-                .PropertiesAutowired(new PropertySelector(), true);
+                .PropertiesAutowired(propertySelector, true);
         }
     }
 }

@@ -19,14 +19,76 @@ namespace Signals.Core.Processes.Base
     /// <summary>
     /// Process context for all types of processes
     /// </summary>
-    public class BaseProcessContext
+    public interface IBaseProcessContext
     {
-        private readonly IBaseProcess<VoidResult> process;
+        /// <summary>
+        /// Logger
+        /// </summary>
+        ILogger Logger { get;}
+
+        /// <summary>
+        /// Auditing provider
+        /// </summary>
+        IAuditProvider AuditProvider { get; }
+
+        /// <summary>
+        /// Authentication manager
+        /// </summary>
+        IAuthenticationManager Authentication { get;}
+
+        /// <summary>
+        /// Authorization manager
+        /// </summary>
+        IAuthorizationManager Authorization { get; }
+
+        /// <summary>
+        /// Storage provider
+        /// </summary>
+        IStorageProvider Storage { get; }
+
+        /// <summary>
+        /// Cache
+        /// </summary>
+        ICache Cache { get; }
+
+        /// <summary>
+        /// Permission manager
+        /// </summary>
+        IPermissionManager PermissionManager { get; }
+
+        /// <summary>
+        /// Localization provider
+        /// </summary>
+        ILocalizationProvider LocalizationProvider { get; }
+
+        /// <summary>
+        /// Process benchmark engine
+        /// </summary>
+        ProcessBenchmarker Benchmarker { get; }
+
+        /// <summary>
+        /// Current user principal
+        /// </summary>
+        ClaimsPrincipal CurrentUserPrincipal { get; }
+
+        /// <summary>
+        /// Mediator
+        /// </summary>
+        Mediator Mediator { get; }
+    }
+
+    /// <summary>
+    /// Process context for all types of processes
+    /// </summary>
+    [Export(typeof(IBaseProcessContext))]
+    public class BaseProcessContext : IBaseProcessContext
+    {
+        private IBaseProcess<VoidResult> process;
 
         /// <summary>
         /// CTOR
         /// </summary>
-        public BaseProcessContext(IBaseProcess<VoidResult> process)
+        internal void SetProcess(IBaseProcess<VoidResult> process)
         {
             this.process = process;
         }
@@ -74,7 +136,7 @@ namespace Signals.Core.Processes.Base
         /// <summary>
         /// Mediator
         /// </summary>
-        [Import] internal Mediator Mediator { get; set; }
+        [Import] public Mediator Mediator { get; internal set; }
 
         /// <summary>
         /// Benchmarker

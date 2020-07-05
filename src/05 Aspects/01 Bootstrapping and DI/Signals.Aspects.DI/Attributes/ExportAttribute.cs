@@ -20,7 +20,8 @@ namespace Signals.Aspects.DI.Attributes
         public ExportAttribute(Type definitionType)
         {
             // if @definitionType is  not interface, throw
-            if (!definitionType.IsInterface) throw new InvalidCastException("Interface expected");
+            if (!definitionType.IsInterface)
+                throw new InvalidCastException("Interface expected");
 
             DefinitionType = definitionType;
         }

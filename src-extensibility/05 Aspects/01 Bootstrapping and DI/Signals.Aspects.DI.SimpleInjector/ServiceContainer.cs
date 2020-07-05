@@ -36,8 +36,15 @@ namespace Signals.Aspects.DI.SimpleInjector
         /// <returns></returns>
         public TService GetInstance<TService>() where TService : class
         {
-            if (Container.GetRegistration(typeof(TService)) == null) return null;
-            return Container.GetInstance<TService>();
+            try
+            {
+                if (Container.GetRegistration(typeof(TService)) == null) return null;
+                return Container.GetInstance<TService>();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -47,8 +54,15 @@ namespace Signals.Aspects.DI.SimpleInjector
         /// <returns></returns>
         public object GetInstance(Type serviceType)
         {
-            if (Container.GetRegistration(serviceType) == null) return null;
-            return Container.GetInstance(serviceType);
+            try
+            {
+                if (Container.GetRegistration(serviceType) == null) return null;
+                return Container.GetInstance(serviceType);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>

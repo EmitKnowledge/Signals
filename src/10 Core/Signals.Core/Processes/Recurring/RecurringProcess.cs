@@ -1,4 +1,5 @@
 ﻿using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
+using Signals.Aspects.DI.Attributes;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Results;
@@ -27,26 +28,24 @@ namespace Signals.Core.Processes.Recurring
         /// <summary>
         /// Recurring process context
         /// </summary>
-        protected virtual RecurringProcessContext Context { get; set; }
+        [Import]
+        protected virtual IRecurringProcessContext Context
+        {
+            get => _context;
+            set { (value as RecurringProcessContext).SetProcess(this); _context = value; }
+        }
+        private IRecurringProcessContext _context;
 
         /// <summary>
         /// Base process context upcasted from Business process context
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
+        internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
         /// Recurring profile
         /// </summary>
         public abstract RecurrencePatternConfiguration Profile { get; }
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected RecurringProcess()
-        {
-            Context = new RecurringProcessContext(this);
-        }
-
+        
         /// <summary>
         /// Background execution layer
         /// </summary>
@@ -105,26 +104,24 @@ namespace Signals.Core.Processes.Recurring
         /// <summary>
         /// Recurring process context
         /// </summary>
-        protected virtual RecurringProcessContext Context { get; set; }
+        [Import]
+        protected virtual IRecurringProcessContext Context
+        {
+            get => _context;
+            set { (value as RecurringProcessContext).SetProcess(this); _context = value; }
+        }
+        private IRecurringProcessContext _context;
 
         /// <summary>
         /// Base process context upcasted from Business process context
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
+        internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
         /// Recurring profile
         /// </summary>
         public abstract RecurrencePatternConfiguration Profile { get; }
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public NoOverlapRecurringProcess()
-        {
-            Context = new RecurringProcessContext(this);
-        }
-
+        
         /// <summary>
         /// Background execution layer
         /// </summary>

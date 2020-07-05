@@ -36,7 +36,7 @@ namespace Signals.Core.Processes.Base
         /// <summary>
         /// Base process context
         /// </summary>
-        BaseProcessContext BaseContext { get; }
+        IBaseProcessContext BaseContext { get; }
 
         /// <summary>
         /// Entry point executed by the factory
@@ -85,12 +85,12 @@ namespace Signals.Core.Processes.Base
         /// <summary>
         /// Base process context
         /// </summary>
-        internal abstract BaseProcessContext BaseContext { get; }
+        internal abstract IBaseProcessContext BaseContext { get; }
 
         /// <summary>
         /// Base process context
         /// </summary>
-        BaseProcessContext IBaseProcess<TResponse>.BaseContext => BaseContext;
+        IBaseProcessContext IBaseProcess<TResponse>.BaseContext => BaseContext;
 
         /// <summary>
         /// CTOR

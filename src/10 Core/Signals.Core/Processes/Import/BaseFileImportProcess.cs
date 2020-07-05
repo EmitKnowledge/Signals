@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Signals.Aspects.DI.Attributes;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Export;
 using Signals.Core.Processing.Results;
@@ -20,12 +21,18 @@ namespace Signals.Core.Processes.Import
         /// <summary>
         /// File import process context
         /// </summary>
-        protected FileImportProcessContext Context { get; set; }
+        [Import]
+        protected virtual IFileImportProcessContext Context
+        {
+            get => _context;
+            set { (value as FileImportProcessContext).SetProcess(this); _context = value; }
+        }
+        private IFileImportProcessContext _context;
 
         /// <summary>
         /// Base process context override
         /// </summary>
-        internal override BaseProcessContext BaseContext => Context;
+        internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
         /// Represents the import configuration model
@@ -49,15 +56,7 @@ namespace Signals.Core.Processes.Import
         /// </summary>
         /// <returns></returns>
         public abstract ListResult<TResponse> Validate(TInput stream);
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        protected BaseFileImportProcess()
-        {
-            Context = new FileImportProcessContext(this);
-        }
-
+        
         /// <summary>
         /// Entry execution point
         /// </summary>

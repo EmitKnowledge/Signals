@@ -2,6 +2,7 @@
 using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI;
 using Signals.Aspects.DI.Attributes;
+using Signals.Core.Common.Instance;
 using Signals.Core.Configuration;
 using Signals.Core.Configuration.Bootstrapping;
 using Signals.Core.Processes;
@@ -124,6 +125,8 @@ namespace Signals.Tests.Core
         private class IncrementProc : BusinessProcess<int, MethodResult<int>>
         {
             [Import] private IIncrement Increment { get; set; }
+            private IIncrement Increment2 { get; set; }
+            private IDouble Double { get; set; }
 
             public override MethodResult<int> Auth(int i) => Ok();
             public override MethodResult<int> Validate(int i) => Ok();
@@ -132,7 +135,9 @@ namespace Signals.Tests.Core
             {
                 Context.Cache.Set("result", i);
 
-                return Increment.Inc(i);
+                if (Increment2.IsNull() && Double.IsNull())
+                    return Increment.Inc(i);
+                return i;
             }
         }
 
@@ -411,7 +416,7 @@ namespace Signals.Tests.Core
             Benchmark();
         }
 
-        private void Benchmark(int requests = 10_000)
+        private void Benchmark(int requests = 100_000)
         {
             var startNumber = -1;
             var expectedNumber = -4;
