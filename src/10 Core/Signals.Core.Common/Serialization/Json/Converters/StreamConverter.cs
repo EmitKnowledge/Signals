@@ -34,6 +34,7 @@ namespace Signals.Core.Common.Serialization.Json.Converters
         {
             return null;
         }
+
         /// <summary>
         /// Writes the JSON representation of the object.
         /// </summary>

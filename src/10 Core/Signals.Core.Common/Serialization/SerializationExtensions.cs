@@ -60,7 +60,7 @@ namespace Signals.Core.Common.Serialization
 
             if(!input.IsNullOrEmpty())
             {
-                var trimmed = input.Trim('\n', '\t', ' ');
+                var trimmed = input.Trim('\n', '\t', '\r', ' ');
 
                 if (trimmed.StartsWith("<") && trimmed.EndsWith(">"))
                     return XmlSerializer;

@@ -2,6 +2,7 @@
 using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI;
 using Signals.Aspects.DI.Attributes;
+using Signals.Aspects.Localization;
 using Signals.Core.Common.Instance;
 using Signals.Core.Configuration;
 using Signals.Core.Configuration.Bootstrapping;

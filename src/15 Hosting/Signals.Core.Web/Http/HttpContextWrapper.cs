@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
@@ -10,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 
 namespace Signals.Core.Web.Http
 {
@@ -37,7 +38,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Request query
         /// </summary>
-        public IDictionary<string, IEnumerable<string>> Query { get; set; }
+        public IDictionary<string, object> Query { get; set; }
 
         /// <summary>
         /// Request body
@@ -84,6 +85,149 @@ namespace Signals.Core.Web.Http
             }
         }
 
+        /// <summary>
+        /// Extracts query string data
+        /// </summary>
+        /// <param name="queryString"></param>
+        /// <returns></returns>
+        private IDictionary<string, object> ExtractQuery(string queryString)
+        {
+            var result = new Dictionary<string, object>();
+            if (queryString.IsNullOrEmpty()) return result;
+
+            var arrayOrObjectRegex = new Regex("\\[[^\\[\\]]*\\]");
+
+            var decodedQuery = WebUtility.UrlDecode(queryString).TrimStart('?');
+            var querySegments = decodedQuery.Split('&');
+
+            // process each key value pair from query string
+            foreach (var segment in querySegments)
+            {
+                var segmentParts = segment.Split('=');
+
+                var segmentKey = segmentParts.FirstOrDefault();
+                var segmentValue = segmentParts.LastOrDefault();
+
+                // is the key array or object
+                var isArrayOrObjectMatches = arrayOrObjectRegex.Matches(segmentKey) as IEnumerable<Match>;
+
+                if (isArrayOrObjectMatches.Any())
+                {
+                    var lastDictContainer = result;
+
+                    // get array or object first sub key
+                    var lastSubSegmentKey = segmentKey
+                        .Split('[')
+                        .FirstOrDefault();
+
+                    foreach (var objMatch in isArrayOrObjectMatches)
+                    {
+                        // get array or object next sub key
+                        var subSegmentkey = objMatch.Value.TrimStart('[').TrimEnd(']');
+
+                        // create tree structure from dictionaries
+                        if (!lastDictContainer.ContainsKey(lastSubSegmentKey))
+                            lastDictContainer.Add(lastSubSegmentKey, new Dictionary<string, object>());
+
+                        lastDictContainer = lastDictContainer[lastSubSegmentKey] as Dictionary<string, object>;
+                        lastSubSegmentKey = subSegmentkey;
+                    }
+
+                    // get last array or object sub key
+                    var lastDictKey = isArrayOrObjectMatches
+                        .LastOrDefault()?
+                        .Value?
+                        .TrimStart('[')
+                        .TrimEnd(']');
+
+                    // edge case for arrays without key []
+                    // cases for arrays with key [0] are not affected
+                    if (lastDictKey.IsNullOrEmpty())
+                    {
+                        if (lastDictContainer.Any())
+                            lastDictKey = (int.Parse(lastDictContainer.Keys.Last()) + 1).ToString();
+                        else
+                            lastDictKey = "0";
+                    }
+
+                    // add value into result
+                    lastDictContainer[lastDictKey] = segmentValue;
+                }
+                else
+                {
+                    // add value into result
+                    if (!result.ContainsKey(segmentKey))
+                        result.Add(segmentKey, segmentValue);
+                }
+            }
+
+            // restructure dictionaries into arrays an ddictionaries
+            Queue<object> tree = new Queue<object>();
+            tree.Enqueue(result);
+
+            while (tree.Any())
+            {
+                var item = tree.Dequeue();
+
+                // process enqueued dictionaries
+                if (item is Dictionary<string, object> dictionary)
+                {
+                    Dictionary<string, object> newDict = new Dictionary<string, object>();
+
+                    // process subdictionaries
+                    // cannot habe sublists because sub items are still not processed
+                    // unprocessed items are all either dictionaty or value
+                    foreach (var pair in dictionary)
+                    {
+                        if (pair.Value is Dictionary<string, object> subDictionary)
+                        {
+                            var isRealDict = subDictionary.Any(x => !int.TryParse(x.Key, out _));
+
+                            if (isRealDict)
+                                // pass values as dictionary
+                                newDict[pair.Key] = pair.Value;
+                            else
+                                // repack values into list
+                                newDict[pair.Key] = subDictionary.Values.ToList();
+
+                            tree.Enqueue(pair.Value);
+                        }
+                    }
+
+                    // add result into existing dictionary
+                    // cannot change existing dictionary into upper foreach
+                    // enumerables cannot be changed while iterated
+                    foreach (var pair in newDict)
+                    {
+                        dictionary[pair.Key] = pair.Value;
+                    }
+                }
+
+                // process enqueued lists
+                if (item is List<object> list)
+                {
+                    // process subdictionaries
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (list[i] is Dictionary<string, object> subDictionary)
+                        {
+                            var isRealDict = subDictionary.Any(x => !int.TryParse(x.Key, out _));
+
+                            if (!isRealDict)
+                            {
+                                // repack values into list
+                                list[i] = subDictionary.Values.ToList();
+                            }
+
+                            tree.Enqueue(list[i]);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
 #if (NET461)
 
         /// <summary>
@@ -103,9 +247,7 @@ namespace Signals.Core.Web.Http
             if (!context.Items.Contains("body"))
                 context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.InputStream)));
 
-            Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
-                .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()))?
-                .ToDictionary(x => x.Key, x => x.Value);
+            Query = ExtractQuery(context?.Request?.QueryString?.ToString());
 
             Body = context.Items["body"] as Lazy<string>;
 
@@ -150,12 +292,15 @@ namespace Signals.Core.Web.Http
 
 #else
 
+        private IHttpContextAccessor _httpContextAccessor;
+
         /// <summary>
         /// CTOR
         /// </summary>
         public HttpContextWrapper(IHttpContextAccessor httpContextAccessor)
         {
-            var context = httpContextAccessor.HttpContext;
+            _httpContextAccessor = httpContextAccessor;
+            var context = _httpContextAccessor.HttpContext;
             if (context == null) return;
 
             Headers = new HeaderCollection(context);
@@ -167,9 +312,7 @@ namespace Signals.Core.Web.Http
             if (!context.Items.ContainsKey("body"))
                 context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.Body)));
 
-            Query = QueryHelpers.ParseNullableQuery(context.Request.QueryString.ToString())?
-                .Select(x => new KeyValuePair<string, IEnumerable<string>>(x.Key, x.Value.ToArray()))?
-                .ToDictionary(x => x.Key, x => x.Value);
+            Query = ExtractQuery(context?.Request?.QueryString.ToString());
 
             Body = context.Items["body"] as Lazy<string>;
             HttpMethod = context.Request.Method.ToUpperInvariant();
@@ -197,8 +340,8 @@ namespace Signals.Core.Web.Http
         /// <returns></returns>
         public void PutResponse(HttpResponseMessage httpResponse)
         {
-            var httpContextAccessor = SystemBootstrapper.GetInstance<IHttpContextAccessor>();
-            var context = httpContextAccessor.HttpContext;
+            var contextAccessor = _httpContextAccessor ?? SystemBootstrapper.GetInstance<IHttpContextAccessor>();
+            var context = _httpContextAccessor.HttpContext;
 
             if (httpResponse?.Headers?.Any() == true)
                 foreach (var header in httpResponse?.Headers)

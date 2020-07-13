@@ -16,18 +16,7 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
 		/// <returns></returns>
 		public override object Bind(IHttpContextWrapper httpContext)
 		{
-			var query = httpContext?.Query;
-			if (query.IsNull()) return null;
-
-			var obj = new Dictionary<string, string>();
-			foreach (var key in query.Keys)
-			{
-				query.TryGetValue(key, out var value);
-				obj[key] = value?.FirstOrDefault();
-			}
-
-			var dto = obj.SerializeJson();
-			return dto;
+			return httpContext?.Query?.SerializeJson();
 		}
 	}
 }

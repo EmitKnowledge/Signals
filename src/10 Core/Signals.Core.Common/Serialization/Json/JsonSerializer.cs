@@ -21,8 +21,7 @@ namespace Signals.Core.Common.Serialization.Json
         /// <returns></returns>
         public T Deserialize<T>(string json)
         {
-            json = json.Trim('\n', '\t', ' ');
-            return JsonConvert.DeserializeObject<T>(json);
+            return (T)DeserializeObject(json, typeof(T));
         }
 
         /// <summary>
@@ -33,8 +32,7 @@ namespace Signals.Core.Common.Serialization.Json
         /// <returns></returns>
         public object Deserialize(string json, Type type)
         {
-            json = json.Trim('\n', '\t', ' ');
-            return JsonConvert.DeserializeObject(json, type);
+            return DeserializeObject(json, type);
         }
 
         /// <summary>
@@ -47,8 +45,8 @@ namespace Signals.Core.Common.Serialization.Json
             if (instance == null) return null;
             var serializer = new Newtonsoft.Json.JsonSerializer();
 
-            var settings = JsonConvert.DefaultSettings();
-            if (!settings.IsNull()) serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
+            var settings = JsonConvert.DefaultSettings;
+            if (!settings.IsNull() && !settings().IsNull()) serializer = Newtonsoft.Json.JsonSerializer.Create(settings());
 
             serializer.Converters.Add(new IsoDateTimeConverter());
             serializer.Converters.Add(new StreamConverter());
@@ -69,6 +67,21 @@ namespace Signals.Core.Common.Serialization.Json
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Deserialize object to string
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        private object DeserializeObject(string json, Type type)
+        {
+            json = json?.Trim('\n', '\t', ' ');
+            if (json.IsNullOrEmpty()) return json;
+            
+            var settings = JsonConvert.DefaultSettings?.Invoke() ?? new Newtonsoft.Json.JsonSerializerSettings();
+
+            return JsonConvert.DeserializeObject(json, type, settings);                
         }
     }
 }

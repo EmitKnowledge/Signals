@@ -29,7 +29,7 @@ namespace Signals.Core.Processing.Input.Http
         /// <summary>
         /// Request query
         /// </summary>
-        IDictionary<string, IEnumerable<string>> Query { get; set; }
+        IDictionary<string, object> Query { get; set; }
 
         /// <summary>
         /// Request body
