@@ -28,7 +28,5 @@ namespace Signals.Aspects.ErrorHandling
         /// </summary>
         /// <returns></returns>
         IStrategyHandler Build();
-
-
     }
 }

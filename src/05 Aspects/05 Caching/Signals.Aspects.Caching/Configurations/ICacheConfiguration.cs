@@ -9,7 +9,7 @@ namespace Signals.Aspects.Caching.Configurations
     public interface ICacheConfiguration
     {
         /// <summary>
-        /// Provider that sets and get values
+        /// Provider that sets and gets values
         /// </summary>
         IDataProvider DataProvider { get; set; }
 

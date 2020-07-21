@@ -11,16 +11,16 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
     <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.2.0" />
-    <PackageReference Include="Signals.Aspects.Auth.NetCore" Version="1.0.4" />
-    <PackageReference Include="Signals.Aspects.Caching.InMemory" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.CommunicationChannels.ServiceBus" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Configuration.File" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Localization.File" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Logging.NLog" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.Security.Database" Version="1.0.1" />
-    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="1.0.2" />
-    <PackageReference Include="Signals.Core.Web" Version="1.0.10" />
+    <PackageReference Include="Signals.Aspects.Auth.NetCore" Version="1.0.5" />
+    <PackageReference Include="Signals.Aspects.Caching.InMemory" Version="1.0.2" />
+    <PackageReference Include="Signals.Aspects.CommunicationChannels.ServiceBus" Version="1.0.2" />
+    <PackageReference Include="Signals.Aspects.Configuration.File" Version="1.0.2" />
+    <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="1.0.2" />
+    <PackageReference Include="Signals.Aspects.Localization.File" Version="1.0.2" />
+    <PackageReference Include="Signals.Aspects.Logging.NLog" Version="1.0.2" />
+    <PackageReference Include="Signals.Aspects.Security.Database" Version="1.0.2" />
+    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="1.0.3" />
+    <PackageReference Include="Signals.Core.Web" Version="1.0.11" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 

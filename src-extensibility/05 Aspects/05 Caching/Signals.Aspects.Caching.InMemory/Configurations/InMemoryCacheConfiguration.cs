@@ -10,7 +10,7 @@ namespace Signals.Aspects.Caching.InMemory.Configurations
     public class InMemoryCacheConfiguration : ICacheConfiguration
     {
         /// <summary>
-        /// Provider that sets and get values
+        /// Provider that sets and gets values
         /// </summary>
         public IDataProvider DataProvider { get; set; }
 
