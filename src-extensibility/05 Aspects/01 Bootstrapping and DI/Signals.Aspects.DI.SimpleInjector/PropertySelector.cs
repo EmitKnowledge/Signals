@@ -45,7 +45,7 @@ namespace Signals.Aspects.DI.SimpleInjector
                 var registration = container.GetRegistration(prop.PropertyType);
                 hasRegistration = registration != null;
             }
-            catch(Exception ex)
+            catch
             {
                 hasRegistration = false;
             }
