@@ -8,7 +8,7 @@
   <Choose>
     <When Condition=" '$(Configuration)'!='Debug' ">
       <ItemGroup>
-        <PackageReference Include="Signals.Core" Version="1.0.11" />
+        <PackageReference Include="Signals.Core" Version="1.0.12" />
       </ItemGroup>
     </When>
 

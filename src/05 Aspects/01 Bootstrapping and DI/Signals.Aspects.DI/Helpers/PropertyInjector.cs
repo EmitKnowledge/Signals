@@ -1,6 +1,7 @@
 ﻿using Signals.Aspects.DI.Attributes;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,9 +13,9 @@ namespace Signals.Aspects.DI.Helpers
     /// </summary>
     public class PropertyInjector
     {
-        private static Dictionary<Type, PropertyInfo[]> _injectables { get; } = new Dictionary<Type, PropertyInfo[]>();
-        private static Dictionary<Type, PropertyInfo[]> _properties { get; } = new Dictionary<Type, PropertyInfo[]>();
-        private static Dictionary<Type, FieldInfo[]> _fields { get; } = new Dictionary<Type, FieldInfo[]>();
+        private static ConcurrentDictionary<Type, PropertyInfo[]> _injectables { get; } = new ConcurrentDictionary<Type, PropertyInfo[]>();
+        private static ConcurrentDictionary<Type, PropertyInfo[]> _properties { get; } = new ConcurrentDictionary<Type, PropertyInfo[]>();
+        private static ConcurrentDictionary<Type, FieldInfo[]> _fields { get; } = new ConcurrentDictionary<Type, FieldInfo[]>();
 
         /// <summary>
         /// Inject all properties and fields annotated with <see cref="ImportAttribute"/> 
@@ -86,7 +87,7 @@ namespace Signals.Aspects.DI.Helpers
                     .Where(x => x.GetCustomAttributes(typeof(ImportAttribute), true).Any())
                     .ToArray();
 
-                _injectables.Add(type, injectables);
+                return _injectables.GetOrAdd(type, injectables);
             }
 
             return _injectables[type];
@@ -106,7 +107,7 @@ namespace Signals.Aspects.DI.Helpers
                     .Where(x => !x.PropertyType.IsSealed)
                     .ToArray();
 
-                _properties.Add(type, properties);
+                return _properties.GetOrAdd(type, properties);
             }
 
             return _properties[type];
@@ -126,7 +127,7 @@ namespace Signals.Aspects.DI.Helpers
                     .Where(x => !x.FieldType.IsSealed)
                     .ToArray();
 
-                _fields.Add(type, fields);
+                return _fields.GetOrAdd(type, fields);
             }
 
             return _fields[type];

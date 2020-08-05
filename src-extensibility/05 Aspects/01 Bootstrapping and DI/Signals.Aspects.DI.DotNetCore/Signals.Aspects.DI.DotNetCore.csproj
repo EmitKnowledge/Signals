@@ -12,7 +12,7 @@
   <Choose>
     <When Condition=" '$(Configuration)'!='Debug' ">
       <ItemGroup>
-        <PackageReference Include="Signals.Aspects.DI" Version="1.0.3" />
+        <PackageReference Include="Signals.Aspects.DI" Version="1.0.4" />
       </ItemGroup>
     </When>
 

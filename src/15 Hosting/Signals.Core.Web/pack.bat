@@ -1,6 +1,6 @@
 ﻿
 REM !important
-SET Version=1.0.11
+SET Version=1.0.12
 
 
 SET NugetUrl=https://api.nuget.org/v3/index.json
