@@ -33,6 +33,23 @@ namespace Signals.Tests.Logging
         }
 
         [Fact]
+        public void FileLoggerMinLevelWarn_LogsInfo_FileDoesntExist()
+        {
+            var message = "Some entry";
+            var config = new FileLoggingConfiguration();
+            config.MinimumLevel = LogLevel.Warn;
+
+            Aspects.Logging.ILogger logger = new NLogger(config);
+
+            logger.Info(message);
+
+            var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
+            var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
+
+            Assert.False(File.Exists(filePath));
+        }
+
+        [Fact]
         public void FileLogger_LogsInfo_FileExists()
         {
             var message = "Some entry";

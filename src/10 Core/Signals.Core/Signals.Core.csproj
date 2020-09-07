@@ -25,7 +25,7 @@
         <PackageReference Include="Signals.Aspects.DI" Version="1.0.4" />
         <PackageReference Include="Signals.Aspects.ErrorHandling" Version="1.0.2" />
         <PackageReference Include="Signals.Aspects.Localization" Version="1.0.2" />
-        <PackageReference Include="Signals.Aspects.Logging" Version="1.0.2" />
+        <PackageReference Include="Signals.Aspects.Logging" Version="1.0.3" />
         <PackageReference Include="Signals.Aspects.Security" Version="1.0.2" />
         <PackageReference Include="Signals.Aspects.Storage" Version="1.0.2" />
       </ItemGroup>

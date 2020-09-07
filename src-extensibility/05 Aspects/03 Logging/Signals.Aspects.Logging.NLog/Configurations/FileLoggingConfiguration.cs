@@ -1,4 +1,5 @@
 ﻿using Signals.Aspects.Logging.Configurations;
+using Signals.Aspects.Logging.Enums;
 
 namespace Signals.Aspects.Logging.NLog.Configurations
 {
@@ -34,5 +35,10 @@ namespace Signals.Aspects.Logging.NLog.Configurations
         /// Default value: ${basedir}
         /// </summary>
         public string LogFileDirectory { get; set; }
+
+        /// <summary>
+        /// Minimum required log level to be logged
+        /// </summary>
+        public LogLevel MinimumLevel { get; set; }
     }
 }

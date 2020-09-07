@@ -2,6 +2,7 @@
 using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
+using Signals.Aspects.Logging.Configurations;
 using Signals.Aspects.Logging.NLog.Configurations;
 using Signals.Aspects.Logging.NLog.Helpers;
 using System;
@@ -16,13 +17,17 @@ namespace Signals.Aspects.Logging.NLog
     /// </summary>
     public class NLogger : ILogger
     {
-	    /// <summary>
-	    /// Initiate logging in file
-	    /// </summary>
-	    /// <param name="configuration"></param>
-	    /// <param name="levels"></param>
-	    public NLogger(FileLoggingConfiguration configuration = null, params LogLevel[] levels)
+        private ILoggingConfiguration LoggingConfiguration { get; set; }
+
+        /// <summary>
+        /// Initiate logging in file
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="levels"></param>
+        public NLogger(FileLoggingConfiguration configuration, params LogLevel[] levels)
         {
+            LoggingConfiguration = configuration;
+
             InitTarget(new FileTarget("file")
             {
                 CreateDirs = true,
@@ -37,13 +42,15 @@ namespace Signals.Aspects.Logging.NLog
         }
 
 
-	    /// <summary>
-	    /// Initiate logging in console
-	    /// </summary>
-	    /// <param name="configuration"></param>
-	    /// <param name="levels"></param>
-	    public NLogger(ConsoleLoggingConfiguration configuration, params LogLevel[] levels)
+        /// <summary>
+        /// Initiate logging in console
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="levels"></param>
+        public NLogger(ConsoleLoggingConfiguration configuration, params LogLevel[] levels)
         {
+            LoggingConfiguration = configuration;
+
             InitTarget(new ConsoleTarget("console")
             {
                 DetectConsoleAvailable = true,
@@ -51,13 +58,15 @@ namespace Signals.Aspects.Logging.NLog
             }, levels?.ToList());
         }
 
-	    /// <summary>
-	    /// Initiate logging in database
-	    /// </summary>
-	    /// <param name="configuration"></param>
-	    /// <param name="levels"></param>
-	    public NLogger(DatabaseLoggingConfiguration configuration, params LogLevel[] levels)
+        /// <summary>
+        /// Initiate logging in database
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="levels"></param>
+        public NLogger(DatabaseLoggingConfiguration configuration, params LogLevel[] levels)
         {
+            LoggingConfiguration = configuration;
+
             using (var connection = new SqlConnection(configuration.ConnectionString))
             {
                 connection.Open();
@@ -159,21 +168,21 @@ namespace Signals.Aspects.Logging.NLog
         }
 
 
-	    /// <summary>
-	    /// Initiate logging from file configuration
-	    /// </summary>
-	    /// <param name="filePath"></param>
-	    public NLogger(string filePath)
+        /// <summary>
+        /// Initiate logging from file configuration
+        /// </summary>
+        /// <param name="filePath"></param>
+        public NLogger(string filePath)
         {
             LogManager.Configuration = new XmlLoggingConfiguration(filePath, false);
         }
 
-	    /// <summary>
-	    /// Initiate logging target
-	    /// </summary>
-	    /// <param name="target"></param>
-	    /// <param name="levels"></param>
-	    private void InitTarget(Target target, List<LogLevel> levels)
+        /// <summary>
+        /// Initiate logging target
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="levels"></param>
+        private void InitTarget(Target target, List<LogLevel> levels)
         {
             // Step 1. Create configuration object 
             var config = new LoggingConfiguration();
@@ -197,13 +206,25 @@ namespace Signals.Aspects.Logging.NLog
             LogManager.Configuration = config;
         }
 
+
+        /// <summary>
+        /// Log an message consisting of args with log level trace
+        /// </summary>
+        /// <param name="logEntry"></param>
+        public void Trace(LogEntry logEntry)
+        {
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Trace.AsInternal())
+                InternalLog(logEntry, LogLevel.Trace);
+        }
+
         /// <summary>
         /// Log an message consisting of args with log level debug
         /// </summary>
         /// <param name="logEntry"></param>
         public void Debug(LogEntry logEntry)
         {
-            InternalLog(logEntry, LogLevel.Debug);
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Debug.AsInternal())
+                InternalLog(logEntry, LogLevel.Debug);
         }
 
         /// <summary>
@@ -212,47 +233,8 @@ namespace Signals.Aspects.Logging.NLog
         /// <param name="message"></param>
         public void Debug(string message)
         {
-            InternalLog(new LogEntry { Message = message }, LogLevel.Debug);
-        }
-
-        /// <summary>
-        /// Log an message consisting of args with log level error
-        /// </summary>
-        /// <param name="logEntry"></param>
-        public void Error(LogEntry logEntry)
-        {
-            InternalLog(logEntry, LogLevel.Error);
-        }
-
-        /// <summary>
-        /// Log an exception
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="exception"></param>
-        public void Exception(string message, Exception exception)
-        {
-            var logEntry = LogEntry.Exception(exception, message);
-            InternalLog(logEntry, LogLevel.Fatal);
-        }
-
-
-        /// <summary>
-        /// Log an message consisting of args with log level Error
-        /// </summary>
-        /// <param name="args"></param>
-        public void Error(params object[] args)
-        {
-            InternalLog(new LogEntry { Payload = args?.Serialize() }, LogLevel.Error);
-        }
-
-
-        /// <summary>
-        /// Log an message consisting of args with log level fatal
-        /// </summary>
-        /// <param name="logEntry"></param>
-        public void Fatal(LogEntry logEntry)
-        {
-            InternalLog(logEntry, LogLevel.Fatal);
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Debug.AsInternal())
+                InternalLog(new LogEntry { Message = message }, LogLevel.Debug);
         }
 
         /// <summary>
@@ -261,7 +243,8 @@ namespace Signals.Aspects.Logging.NLog
         /// <param name="logEntry"></param>
         public void Info(LogEntry logEntry)
         {
-            InternalLog(logEntry, LogLevel.Info);
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Info.AsInternal())
+                InternalLog(logEntry, LogLevel.Info);
         }
 
 
@@ -271,17 +254,8 @@ namespace Signals.Aspects.Logging.NLog
         /// <param name="args"></param>
         public void Info(params object[] args)
         {
-            InternalLog(new LogEntry { Payload = args?.Serialize() }, LogLevel.Info);
-        }
-
-
-        /// <summary>
-        /// Log an message consisting of args with log level trace
-        /// </summary>
-        /// <param name="logEntry"></param>
-        public void Trace(LogEntry logEntry)
-        {
-            InternalLog(logEntry, LogLevel.Trace);
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Info.AsInternal())
+                InternalLog(new LogEntry { Payload = args?.Serialize() }, LogLevel.Info);
         }
 
         /// <summary>
@@ -290,7 +264,51 @@ namespace Signals.Aspects.Logging.NLog
         /// <param name="logEntry"></param>
         public void Warn(LogEntry logEntry)
         {
-            InternalLog(logEntry, LogLevel.Warn);
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Warn.AsInternal())
+                InternalLog(logEntry, LogLevel.Warn);
+        }
+
+        /// <summary>
+        /// Log an message consisting of args with log level error
+        /// </summary>
+        /// <param name="logEntry"></param>
+        public void Error(LogEntry logEntry)
+        {
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Error.AsInternal())
+                InternalLog(logEntry, LogLevel.Error);
+        }
+
+
+        /// <summary>
+        /// Log an message consisting of args with log level Error
+        /// </summary>
+        /// <param name="args"></param>
+        public void Error(params object[] args)
+        {
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Error.AsInternal())
+                InternalLog(new LogEntry { Payload = args?.Serialize() }, LogLevel.Error);
+        }
+
+        /// <summary>
+        /// Log an exception
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="exception"></param>
+        public void Exception(string message, Exception exception)
+        {
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Fatal.AsInternal())
+                InternalLog(LogEntry.Exception(exception, message), LogLevel.Fatal);
+        }
+
+
+        /// <summary>
+        /// Log an message consisting of args with log level fatal
+        /// </summary>
+        /// <param name="logEntry"></param>
+        public void Fatal(LogEntry logEntry)
+        {
+            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Error.AsInternal())
+                InternalLog(logEntry, LogLevel.Fatal);
         }
 
         /// <summary>
@@ -315,7 +333,7 @@ namespace Signals.Aspects.Logging.NLog
         {
             if (logEntry == null) return;
 
-            logEntry.Level = level.ToString();
+            logEntry.Level = level.AsInternal().ToString();
             BeautifyActionData(logEntry);
             var message = CreateMessage(logEntry);
 
@@ -336,13 +354,13 @@ namespace Signals.Aspects.Logging.NLog
             logEvent.Properties[nameof(logEntry.ExceptionMessage)] = logEntry.ExceptionMessage;
             logEvent.Properties[nameof(logEntry.UserIdentifier)] = logEntry.UserIdentifier;
             logEvent.Properties[nameof(logEntry.Payload)] = logEntry.Payload;
-            
+
 
             logger.Log(logEvent);
         }
 
         /// <summary>
-        /// Return default value for a propertu
+        /// Return default value for a property
         /// </summary>
         /// <param name="value"></param>
         /// <param name="defaultValue"></param>
@@ -359,7 +377,7 @@ namespace Signals.Aspects.Logging.NLog
         /// <returns></returns>
         private string GetExceptionMessage(LogEntry logEntry)
         {
-	        if (string.IsNullOrEmpty(logEntry.ExceptionObject?.Message)) return null;
+            if (string.IsNullOrEmpty(logEntry.ExceptionObject?.Message)) return null;
 
             logEntry.Message = logEntry.Message ?? string.Empty;
             string exceptionMessages = logEntry.ExceptionObject.ExtractMessages();
@@ -402,8 +420,8 @@ namespace Signals.Aspects.Logging.NLog
         {
             var exceptionMessage = GetExceptionMessage(logEntry);
             var payloadMessage = GetPayloadMessage(logEntry);
-            var message = string.Format(@"{0:yyyy-MM-dd HH:mm:ss} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}", 
-										logEntry.CreatedOn,
+            var message = string.Format(@"{0:yyyy-MM-dd HH:mm:ss} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}",
+                                        logEntry.CreatedOn,
                                         GetValue(logEntry.Level),
                                         GetValue(logEntry.ErrorCode),
                                         GetValue(logEntry.ErrorGroup),

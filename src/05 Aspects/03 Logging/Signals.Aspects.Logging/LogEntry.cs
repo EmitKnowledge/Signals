@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Signals.Aspects.Logging.Enums;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Signals.Aspects.Logging
@@ -92,37 +93,6 @@ namespace Signals.Aspects.Logging
         }
 
         /// <summary>
-        /// Create log entry
-        /// </summary>
-        /// <param name="ex"></param>
-        /// <param name="message"></param>
-        /// <param name="payload"></param>
-        /// <param name="serializationFunction"></param>
-        /// <param name="memberName"></param>
-        /// <param name="sourceFilePath"></param>
-        /// <param name="sourceLineNumber"></param>
-        /// <returns></returns>
-        private static LogEntry CreateLogEntry(Exception ex,
-                                                  string message,
-                                                  dynamic payload,
-                                                  Func<dynamic, string> serializationFunction,
-                                                  string memberName,
-                                                  string sourceFilePath,
-                                                  int sourceLineNumber)
-        {
-            var logEntry = new LogEntry();
-            logEntry.ExceptionObject = ex;
-            logEntry.ExceptionMessage = ex?.ToString();
-            if (message != null) logEntry.Message = message.ToUpper();
-            logEntry.Action = memberName;
-            logEntry.ActionFilePath = sourceFilePath;
-            logEntry.ActionSourceLineNumber = sourceLineNumber.ToString();
-            logEntry.SetPayload(payload, serializationFunction);
-
-            return logEntry;
-        }
-
-        /// <summary>
         /// Reset captured source details. 
         /// Used when incorect information is captured to override with manual values
         /// </summary>
@@ -165,7 +135,7 @@ namespace Signals.Aspects.Logging
                                      [CallerLineNumber] int sourceLineNumber = 0)
         {
             var log = CreateLogEntry(ex, message, payload, serializationFunction, memberName, sourceFilePath, sourceLineNumber);
-            log.Level = @"EXCEPTION";
+            log.Level = LogLevel.Fatal.ToString();
             return log;
         }
 
@@ -189,7 +159,7 @@ namespace Signals.Aspects.Logging
                                      [CallerLineNumber] int sourceLineNumber = 0)
         {
             var log = CreateLogEntry(ex, message, payload, serializationFunction, memberName, sourceFilePath, sourceLineNumber);
-            log.Level = @"INFO";
+            log.Level = LogLevel.Info.ToString();
             return log;
         }
 
@@ -213,7 +183,7 @@ namespace Signals.Aspects.Logging
                                      [CallerLineNumber] int sourceLineNumber = 0)
         {
             var log = CreateLogEntry(ex, message, payload, serializationFunction, memberName, sourceFilePath, sourceLineNumber);
-            log.Level = @"DEBUG";
+            log.Level = LogLevel.Debug.ToString();
             return log;
         }
 
@@ -237,7 +207,7 @@ namespace Signals.Aspects.Logging
                                      [CallerLineNumber] int sourceLineNumber = 0)
         {
             var log = CreateLogEntry(ex, message, payload, serializationFunction, memberName, sourceFilePath, sourceLineNumber);
-            log.Level = @"TRACE";
+            log.Level = LogLevel.Trace.ToString();
             return log;
         }
 
@@ -261,8 +231,39 @@ namespace Signals.Aspects.Logging
                                      [CallerLineNumber] int sourceLineNumber = 0)
         {
             var log = CreateLogEntry(ex, message, payload, serializationFunction, memberName, sourceFilePath, sourceLineNumber);
-            log.Level = @"WARN";
+            log.Level = LogLevel.Warn.ToString();
             return log;
+        }
+
+        /// <summary>
+        /// Create log entry
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="message"></param>
+        /// <param name="payload"></param>
+        /// <param name="serializationFunction"></param>
+        /// <param name="memberName"></param>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="sourceLineNumber"></param>
+        /// <returns></returns>
+        private static LogEntry CreateLogEntry(Exception ex,
+                                                  string message,
+                                                  dynamic payload,
+                                                  Func<dynamic, string> serializationFunction,
+                                                  string memberName,
+                                                  string sourceFilePath,
+                                                  int sourceLineNumber)
+        {
+            var logEntry = new LogEntry();
+            logEntry.ExceptionObject = ex;
+            logEntry.ExceptionMessage = ex?.ToString();
+            logEntry.Message = message?.ToUpper();
+            logEntry.Action = memberName;
+            logEntry.ActionFilePath = sourceFilePath;
+            logEntry.ActionSourceLineNumber = sourceLineNumber.ToString();
+            logEntry.SetPayload(payload, serializationFunction);
+
+            return logEntry;
         }
     }
 }

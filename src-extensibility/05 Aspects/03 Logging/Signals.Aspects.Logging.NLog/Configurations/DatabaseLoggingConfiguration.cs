@@ -49,6 +49,11 @@ namespace Signals.Aspects.Logging.NLog.Configurations
         public DataProvider DataProvider { get; set; }
 
         /// <summary>
+        /// Minimum required log level to be logged
+        /// </summary>
+        public LogLevel MinimumLevel { get; set; }
+
+        /// <summary>
         /// Connection stirng builder
         /// </summary>
         internal string ConnectionString => $"Server={Host};Database={Database};User Id={Username};Password={Password};";
