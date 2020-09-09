@@ -6,19 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\00 Base\Signals.Features.Base\Signals.Features.Base.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 
   <Choose>
     <When Condition=" '$(Configuration)'!='Debug' ">
       <ItemGroup>
-        <PackageReference Include="Signals.Core.Common" Version="1.0.8" />
+        <PackageReference Include="Signals.Features.Base" Version="1.0.0" />
       </ItemGroup>
     </When>
 
     <When Condition=" '$(Configuration)'=='Debug' ">
       <ItemGroup>
-        <ProjectReference Include="..\..\..\..\src\10 Core\Signals.Core.Common\Signals.Core.Common.csproj" />
+        <ProjectReference Include="..\..\00 Base\Signals.Features.Base\Signals.Features.Base.csproj" />
       </ItemGroup>
     </When>
   </Choose>

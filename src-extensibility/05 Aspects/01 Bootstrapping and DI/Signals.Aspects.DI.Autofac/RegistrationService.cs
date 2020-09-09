@@ -131,8 +131,8 @@ namespace Signals.Aspects.DI.Autofac
 		public void Register(Type serviceType, Func<object> callback)
         {
             Builder
-                .RegisterType(serviceType)
-                .Keyed(callback, serviceType)
+                .Register(ctx => callback())
+                .As(serviceType)
                 .PropertiesAutowired(propertySelector, true);
         }
 

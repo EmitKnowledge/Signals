@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Reflection;
@@ -9,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
 
 namespace Signals.Features.Hosting
@@ -18,7 +21,7 @@ namespace Signals.Features.Hosting
     /// </summary>
     internal class Mediator
     {
-        private readonly IFeatureConfiguration _configuration;
+        private readonly BaseFeatureConfiguration _configuration;
         private readonly IFeature _server;
         private readonly Dictionary<string, MethodInfo> _serverMethods;
 
@@ -26,7 +29,7 @@ namespace Signals.Features.Hosting
         /// CTOR
         /// </summary>
         /// <param name="configuration"></param>
-        internal Mediator(IFeatureConfiguration configuration)
+        public Mediator(BaseFeatureConfiguration configuration)
         {
             if (configuration.IsNull() || configuration.MicroServiceConfiguration.IsNull())
                 throw new ArgumentNullException(nameof(configuration.MicroServiceConfiguration));
@@ -55,6 +58,7 @@ namespace Signals.Features.Hosting
         /// </summary>
         /// <param name="contentType"></param>
         /// <param name="inputStream"></param>
+        /// <param name="form"></param>
         /// <returns></returns>
         private string ExtractBody(string contentType, Stream inputStream, Dictionary<string, string> form)
         {
@@ -78,25 +82,23 @@ namespace Signals.Features.Hosting
         /// <param name="method"></param>
         /// <param name="headers"></param>
         /// <returns></returns>
-        private bool ProcessRequest(string url, Lazy<string> body, string method, Dictionary<string, string> headers)
+        private (bool isSuccess, object response) ProcessRequest(string url, Lazy<string> body, string method, Dictionary<string, string> headers)
         {
-            var uri = new Uri(url);
-            url = url.ToLowerInvariant();
+            var uri = new Uri($"{_configuration.MicroServiceConfiguration.Url}{url}");
             method = method.ToLowerInvariant();
-
-            if (!url.StartsWith(_configuration.MicroServiceConfiguration.Url.ToLowerInvariant())) return false;
-
+            
             if (!headers.ContainsKey(nameof(_configuration.MicroServiceConfiguration.ApiKey))
              || !headers.ContainsKey(nameof(_configuration.MicroServiceConfiguration.ApiSecret)))
-                return false;
+                return (false, null);
 
             if (headers[nameof(_configuration.MicroServiceConfiguration.ApiKey)] != _configuration.MicroServiceConfiguration.ApiKey
              || headers[nameof(_configuration.MicroServiceConfiguration.ApiSecret)] != _configuration.MicroServiceConfiguration.ApiSecret)
-                return false;
+                return (false, null);
 
-            var relativePath = url.Substring(0, _configuration.MicroServiceConfiguration.Url.Length);
-            var serverMethod = _serverMethods.ContainsKey(relativePath) ? _serverMethods[relativePath] : null;
-            if (serverMethod.IsNull()) return false;
+            var path = uri.AbsolutePath.Trim('/');
+            var serverMethod = _serverMethods.ContainsKey(path) ? _serverMethods[path] : null;
+            if (serverMethod.IsNull())
+                return (false, null);
 
             var queryValues = uri.Query.IsNullOrEmpty() ? null : QueryHelpers.ParseQuery(uri.Query);
             var bodyValue = body.Value.IsNullOrEmpty() ? null : JObject.Parse(body.Value);
@@ -105,7 +107,7 @@ namespace Signals.Features.Hosting
 
             foreach (var parameter in serverMethod.GetParameters())
             {
-                if (queryValues.ContainsKey(parameter.Name))
+                if (queryValues?.ContainsKey(parameter.Name) == true)
                 {
                     var parsedParameter = string.Join(", ", queryValues[parameter.Name]).Deserialize(parameter.ParameterType);
                     parameters.Add(parsedParameter);
@@ -118,9 +120,12 @@ namespace Signals.Features.Hosting
                 }
             }
 
-            serverMethod.Invoke(_server, parameters.ToArray());
+            var result = serverMethod.Invoke(_server, parameters.ToArray());
 
-            return true;
+            if (!serverMethod.ReturnType.IsNull() && serverMethod.ReturnType != typeof(void))
+                return (true, result);
+
+            return (true, null);
         }
 
 #if (NET461)
@@ -130,7 +135,7 @@ namespace Signals.Features.Hosting
         /// </summary>
         /// <param name="httpContext"></param>
         /// <returns></returns>
-        internal bool Dispatch(System.Web.HttpContext httpContext)
+        public bool Dispatch(System.Web.HttpContext httpContext)
         {
             var headers = new Dictionary<string, string>(httpContext.Request.Headers.Count);
 
@@ -153,17 +158,54 @@ namespace Signals.Features.Hosting
 
             var body = new Lazy<string>(() => ExtractBody(httpContext.Request.ContentType, httpContext.Request.InputStream, form));
 
-            return ProcessRequest(httpContext.Request.Url.AbsolutePath, body, httpContext.Request.HttpMethod, headers);
+            var (isSuccess, response) = ProcessRequest(httpContext.Request.Url.AbsolutePath, body, httpContext.Request.HttpMethod, headers);
+
+            if (isSuccess && !response.IsNull())
+                PutResponse(httpContext, new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(response.SerializeJson(), System.Text.Encoding.UTF8, "application/json")
+                });
+
+            return isSuccess;
+        }
+
+        /// <summary>
+        /// Write response
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="httpResponse"></param>
+        /// <returns></returns>
+        public void PutResponse(System.Web.HttpContext httpContext, HttpResponseMessage httpResponse)
+        {
+            var context = System.Web.HttpContext.Current;
+
+            if (httpResponse?.Headers?.Any() == true)
+                foreach (var header in httpResponse?.Headers)
+                    context.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
+
+
+            if (httpResponse?.Content?.Headers?.Any() == true)
+                foreach (var header in httpResponse?.Content?.Headers)
+                    context.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
+
+            context.Response.StatusCode = (int)httpResponse.StatusCode;
+
+            if (!httpResponse.Content.IsNull())
+            {
+                var body = httpResponse.Content.ReadAsStreamAsync().Result;
+                body.CopyTo(context.Response.OutputStream);
+                body.Close();
+            }
         }
 
 #else
-        
+
         /// <summary>
         /// Dispatch http request
         /// </summary>
         /// <param name="httpContext"></param>
         /// <returns></returns>
-        internal bool Dispatch(Microsoft.AspNetCore.Http.HttpContext httpContext)
+        public bool Dispatch(Microsoft.AspNetCore.Http.HttpContext httpContext)
         {
             var headers = new Dictionary<string, string>(httpContext.Request.Headers.Count);
 
@@ -191,8 +233,42 @@ namespace Signals.Features.Hosting
             }
 
             var body = new Lazy<string>(() => ExtractBody(httpContext.Request.ContentType, httpContext.Request.Body, form));
+            
+            var (isSuccess, response) = ProcessRequest(httpContext.Request.Path.Value, body, httpContext.Request.Method, headers);
 
-            return ProcessRequest(httpContext.Request.Path.Value, body, httpContext.Request.Method, headers);
+            if (isSuccess && !response.IsNull())
+                PutResponse(httpContext, new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(response.SerializeJson(), System.Text.Encoding.UTF8, "application/json")
+                });
+
+            return isSuccess;
+        }
+
+        /// <summary>
+        /// Write response
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="httpResponse"></param>
+        /// <returns></returns>
+        public void PutResponse(Microsoft.AspNetCore.Http.HttpContext httpContext, HttpResponseMessage httpResponse)
+        {
+            if (httpResponse?.Headers?.Any() == true)
+                foreach (var header in httpResponse?.Headers)
+                    httpContext.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
+
+            if (httpResponse?.Content?.Headers?.Any() == true)
+                foreach (var header in httpResponse?.Content?.Headers)
+                    httpContext.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
+
+            httpContext.Response.StatusCode = (int)httpResponse.StatusCode;
+
+            if (!httpResponse.Content.IsNull())
+            {
+                var body = httpResponse.Content.ReadAsStreamAsync().Result;
+                body.CopyToAsync(httpContext.Response.Body).Wait();
+                body.Close();
+            }
         }
 
 #endif

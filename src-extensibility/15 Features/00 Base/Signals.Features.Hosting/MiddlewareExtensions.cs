@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using Signals.Features.Base.Configurations.Feature;
+using Signals.Features.Base.Configurations.MicroService;
 
 #if (NET461)
 using Microsoft.Owin;
@@ -23,11 +24,13 @@ namespace Signals.Features.Hosting
         /// OWIN middleware registration extension
         /// </summary>
         /// <param name="app"></param>
-        /// <param name="configuration"></param>
+        /// <param name="featureConfiguration"></param>
+        /// <param name="microServiceConfiguration"></param>
         /// <returns></returns>
-        public static IAppBuilder MapFeature(this IAppBuilder app, IFeatureConfiguration configuration)
+        public static IAppBuilder MapFeature(this IAppBuilder app, BaseFeatureConfiguration featureConfiguration, MicroServiceConfiguration microServiceConfiguration)
         {
-            var mediator = new Mediator(configuration);
+            featureConfiguration.MicroServiceConfiguration = microServiceConfiguration;
+            var mediator = new Mediator(featureConfiguration);
 
             return app.Use(async (IOwinContext context, Func<Task> next) =>
             {
@@ -41,11 +44,13 @@ namespace Signals.Features.Hosting
         /// .Net core middleware registration extension
         /// </summary>
         /// <param name="app"></param>
-        /// <param name="configuration"></param>
+        /// <param name="featureConfiguration"></param>
+        /// <param name="microServiceConfiguration"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseFeature(this IApplicationBuilder app, IFeatureConfiguration configuration)
+        public static IApplicationBuilder UseFeature(this IApplicationBuilder app, BaseFeatureConfiguration featureConfiguration, MicroServiceConfiguration microServiceConfiguration)
         {
-            var mediator = new Mediator(configuration);
+            featureConfiguration.MicroServiceConfiguration = microServiceConfiguration;
+            var mediator = new Mediator(featureConfiguration);
 
             return app.Use(async (httpContext, next) =>
             {

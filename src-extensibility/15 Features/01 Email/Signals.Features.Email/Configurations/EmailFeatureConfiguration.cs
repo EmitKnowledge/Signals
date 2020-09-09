@@ -9,7 +9,7 @@ namespace Signals.Features.Email.Configurations
     /// <summary>
     /// Email feature configuratiion
     /// </summary>
-    public class EmailFeatureConfiguration : IFeatureConfiguration
+    public class EmailFeatureConfiguration : BaseFeatureConfiguration
     {
         /// <summary>
         /// CTOR
@@ -17,9 +17,12 @@ namespace Signals.Features.Email.Configurations
         public EmailFeatureConfiguration()
         {
             SmtpConfiguration = new SmtpConfigurationElement();
+            TableName = "Emails";
         }
         
-
+        /// <summary>
+        /// Email SMTP configuration
+        /// </summary>
         public class SmtpConfigurationElement
         {
             /// <summary>
@@ -61,10 +64,19 @@ namespace Signals.Features.Email.Configurations
             public List<string> WhitelistedEmails { get; set; }
         }
 
+        /// <summary>
+        /// Email SMTP configuration
+        /// </summary>
         public SmtpConfigurationElement SmtpConfiguration { get; set; }
 
+        /// <summary>
+        /// Database connection string
+        /// </summary>
         public string ConnectionString { get; set; }
 
-        public MicroServiceConfiguration MicroServiceConfiguration { get; set; }
+        /// <summary>
+        /// Database table name, default "Emails"
+        /// </summary>
+        public string TableName { get; set; }
     }
 }

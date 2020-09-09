@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Signals.Features.Base
 {
+    /// <summary>
+    /// Feature contract
+    /// </summary>
     public interface IFeature
     {
     }

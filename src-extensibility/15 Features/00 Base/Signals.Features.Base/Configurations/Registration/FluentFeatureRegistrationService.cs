@@ -10,7 +10,7 @@ using System.Reflection;
 namespace Signals.Features.Base.Configurations.Registration
 {
     /// <summary>
-    /// 
+    /// Fluent feature registrator
     /// </summary>
     public class FluentFeatureRegistrationService
     {
@@ -37,45 +37,26 @@ namespace Signals.Features.Base.Configurations.Registration
         /// Initialize feature configuration
         /// </summary>
         /// <param name="featureConfiguration"></param>
-        /// <param name="fluentConfiguration"></param>
         /// <returns></returns>
-        public FluentFeatureConfigurationForService UseFeature(IFeatureConfiguration featureConfiguration)
+        public FluentFeatureConfigurationForService UseFeature(BaseFeatureConfiguration featureConfiguration)
         {
-            var featureType = featureConfiguration.GetType();
-
-            var serviceType = _assemblyTypes
-                .Where(x => x
-                    .GetConstructors()
-                    .Any(ctor => ctor
-                            .GetParameters()
-                            .Any() && 
-                        ctor
-                            .GetParameters()
-                            .All(param => param.ParameterType == featureType)))
-                .Distinct()
-                .SingleOrDefault();
-
-            var instance = Activator.CreateInstance(serviceType, featureConfiguration);
-
-            foreach (var interfaceType in serviceType.GetInterfaces())
-            {
-                var proxy = FeatureClient.CreateProxy(instance, interfaceType, featureConfiguration);
-                _registrationCallback(interfaceType, () => proxy);
-            }
-
             return new FluentFeatureConfigurationForService(featureConfiguration, this);
         }
 
+        /// <summary>
+        /// Fluent configuration builder
+        /// </summary>
         public class FluentFeatureConfigurationForService
         {
-            private readonly IFeatureConfiguration _featureConfiguration;
+            private readonly BaseFeatureConfiguration _featureConfiguration;
             private readonly FluentFeatureRegistrationService _fluentConfiguration;
 
             /// <summary>
             /// CTOR
             /// </summary>
             /// <param name="featureConfiguration"></param>
-            public FluentFeatureConfigurationForService(IFeatureConfiguration featureConfiguration, FluentFeatureRegistrationService fluentConfiguration)
+            /// <param name="fluentConfiguration"></param>
+            public FluentFeatureConfigurationForService(BaseFeatureConfiguration featureConfiguration, FluentFeatureRegistrationService fluentConfiguration)
             {
                 _featureConfiguration = featureConfiguration;
                 _fluentConfiguration = fluentConfiguration;
@@ -86,6 +67,10 @@ namespace Signals.Features.Base.Configurations.Registration
             /// </summary>
             public FluentFeatureRegistrationService AsLibrary()
             {
+                _featureConfiguration.MicroServiceConfiguration = null;
+
+                Register(createProxy: false);
+
                 return _fluentConfiguration;
             }
 
@@ -95,7 +80,40 @@ namespace Signals.Features.Base.Configurations.Registration
             public FluentFeatureRegistrationService AsMicroService(MicroServiceConfiguration microServiceConfiguration)
             {
                 _featureConfiguration.MicroServiceConfiguration = microServiceConfiguration;
+
+                Register(createProxy: true);
+
                 return _fluentConfiguration;
+            }
+
+            /// <summary>
+            /// Register the feature
+            /// </summary>
+            /// <param name="createProxy"></param>
+            private void Register(bool createProxy)
+            {
+                var featureType = _featureConfiguration.GetType();
+
+                var serviceType = _fluentConfiguration._assemblyTypes
+                    .Where(x => x
+                        .GetConstructors()
+                        .Any(ctor => ctor
+                                .GetParameters()
+                                .Any() &&
+                            ctor
+                                .GetParameters()
+                                .All(param => param.ParameterType == featureType)))
+                    .Distinct()
+                    .SingleOrDefault();
+
+                var interfaceType = serviceType.GetInterfaces().FirstOrDefault();
+
+                object service = Activator.CreateInstance(serviceType, _featureConfiguration);
+
+                if (createProxy)
+                    service = FeatureClient.CreateProxy(service, interfaceType, _featureConfiguration);
+
+                _fluentConfiguration._registrationCallback(interfaceType, () => service);
             }
         }
     }

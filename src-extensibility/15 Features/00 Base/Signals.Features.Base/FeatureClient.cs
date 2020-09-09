@@ -10,14 +10,23 @@ using System.Text;
 
 namespace Signals.Features.Base
 {
+    /// <summary>
+    /// Feature client proxy
+    /// </summary>
     public class FeatureClient : DispatchProxy, IFeature
     {
-        private IFeatureConfiguration _featureConfiguration;
+        private BaseFeatureConfiguration _featureConfiguration;
         private object _feature;
 
         private object objectEmpty = new object();
         private Dictionary<string, List<string>> methodParamNames = new Dictionary<string, List<string>>();
 
+        /// <summary>
+        /// Invoke proxy creation
+        /// </summary>
+        /// <param name="targetMethod"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
             if (_featureConfiguration?.MicroServiceConfiguration?.SendRequestsToMicroService == true)
@@ -43,7 +52,7 @@ namespace Signals.Features.Base
             }
         }
 
-        internal static object CreateProxy(object decorated, Type interfaceType, IFeatureConfiguration featureConfiguration)
+        internal static object CreateProxy(object decorated, Type interfaceType, BaseFeatureConfiguration featureConfiguration)
         {
             var type = typeof(FeatureClient);
             object proxy = type
@@ -62,7 +71,7 @@ namespace Signals.Features.Base
             _feature = feature;
         }
 
-        private void SetConfioguration(IFeatureConfiguration featureConfiguration)
+        private void SetConfioguration(BaseFeatureConfiguration featureConfiguration)
         {
             _featureConfiguration = featureConfiguration;
         }
@@ -76,8 +85,13 @@ namespace Signals.Features.Base
 
             var body = new StringContent(parameters?.SerializeJson(), Encoding.UTF8, "application/json");
             var response = httpClient.PostAsync(methodName, body).GetAwaiter().GetResult();
+            
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
 
-            if (returnType.IsNull())
+            if (returnType.IsNull() || returnType == typeof(void))
             {
                 return objectEmpty;
             }
