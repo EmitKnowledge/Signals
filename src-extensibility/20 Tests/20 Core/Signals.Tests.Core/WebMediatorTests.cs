@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace Signals.Tests.Core
@@ -40,19 +41,19 @@ namespace Signals.Tests.Core
     }
 
     [ApiProcess(HttpMethod = ApiProcessMethod.GET)]
-    public class GetWebProcess : ApiProcess<Input, VoidResult>
+    public class GetWebProcess : ApiProcess<Input, MethodResult<int>>
     {
-        public override VoidResult Auth(Input request)
+        public override MethodResult<int> Auth(Input request)
         {
             return Ok();
         }
 
-        public override VoidResult Validate(Input request)
+        public override MethodResult<int> Validate(Input request)
         {
             return Ok();
         }
 
-        public override VoidResult Handle(Input request)
+        public override MethodResult<int> Handle(Input request)
         {
             if (request.Input1.IsNull()
                 || request.Input2 == 0
@@ -61,24 +62,24 @@ namespace Signals.Tests.Core
                 || request.Input4?.Input6.IsNullOrEmpty() != false)
                 return Fail();
 
-            return Ok();
+            return 1;
         }
     }
 
     [ApiProcess(HttpMethod = ApiProcessMethod.POST)]
-    public class PostWebProcess : ApiProcess<Input, VoidResult>
+    public class PostWebProcess : ApiProcess<Input, MethodResult<int>>
     {
-        public override VoidResult Auth(Input request)
+        public override MethodResult<int> Auth(Input request)
         {
             return Ok();
         }
 
-        public override VoidResult Validate(Input request)
+        public override MethodResult<int> Validate(Input request)
         {
             return Ok();
         }
 
-        public override VoidResult Handle(Input request)
+        public override MethodResult<int> Handle(Input request)
         {
             if (request.Input1.IsNull()
                 || request.Input2 == 0
@@ -87,7 +88,7 @@ namespace Signals.Tests.Core
                 || request.Input4?.Input6.IsNullOrEmpty() != false)
                 return Fail();
 
-            return Ok();
+            return 1;
         }
     }
 
@@ -100,6 +101,9 @@ namespace Signals.Tests.Core
 
         public class Config : WebApplicationBootstrapConfiguration { }
 
+        /// <summary>
+        /// CTOR
+        /// </summary>
         public WebMediatorTests()
         {
             ApplicationConfiguration.UseProvider(new FileConfigurationProvider
@@ -119,40 +123,65 @@ namespace Signals.Tests.Core
             config.Bootstrap(typeof(MediatorTests).Assembly);
         }
 
+        /// <summary>
+        /// Mock and send web request to api process
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="path"></param>
+        /// <param name="method"></param>
+        /// <param name="queryString"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        private T MockRequest<T>(string path, ApiProcessMethod method, string queryString = null, object body = null)
+            where T : VoidResult
+        {
+            // build http context
+            var context = new DefaultHttpContext();
+            context.Response.Body = new MemoryStream();
+            context.Request.Path = path;
+            context.Request.Method = method.ToString();
+
+            if (!queryString.IsNullOrEmpty())
+                context.Request.QueryString = QueryString.FromUriComponent(queryString);
+
+            if (!body.IsNull())
+                context.Request.Body = new MemoryStream(Encoding.Default.GetBytes(body.SerializeJson()));
+
+            // mock context accessor
+            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context);
+            var request = new HttpContextWrapper(mockHttpContextAccessor.Object);
+            
+            // dispatch mock web request
+            WebMediator.Dispatch(request);
+
+            // read response
+            context.Response.Body.Position = 0;
+            return new StreamReader(context.Response.Body).ReadToEnd().Deserialize<T>();
+        }
+
         [Fact]
         public void WebMediator_GetRequest_NotFaulted()
         {
             // Arrange
-            var context = new DefaultHttpContext();
-            context.Response.Body = new MemoryStream();
-            context.Request.Path = "/api/GetWebProcess";
-            context.Request.Method = "GET";
-            context.Request.QueryString = QueryString.FromUriComponent("?Input1=Input1&Input2=2&Input3[]=Input3&Input4[Input6]=Input6");
-
-            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            var request = new HttpContextWrapper(mockHttpContextAccessor.Object);
+            var path = "/api/GetWebProcess";
+            var method = ApiProcessMethod.GET;
+            var queryString = "?Input1=Input1&Input2=2&Input3[]=Input3&Input4[Input6]=Input6";
 
             // Act
-            var result = WebMediator.Dispatch(request);
+            var response = MockRequest<MethodResult<int>>(path, method, queryString: queryString);
 
             // Asset
-            var body = context.Response.Body;
-            body.Position = 0;
-            var bodyStr = new StreamReader(body).ReadToEnd();
-
-            Assert.Contains("\"IsFaulted\":false", bodyStr);
+            Assert.False(response.IsFaulted);
+            Assert.Equal(1, response.Result);
         }
 
         [Fact]
         public void WebMediator_PostRequest_NotFaulted()
         {
             // Arrange
-            var context = new DefaultHttpContext();
-            context.Response.Body = new MemoryStream();
-            context.Request.Path = "/api/PostWebProcess";
-            context.Request.Method = "POST";
-            context.Request.Body = new MemoryStream();
+            var path = "/api/PostWebProcess";
+            var method = ApiProcessMethod.POST;
 
             var input = new Input
             {
@@ -162,24 +191,12 @@ namespace Signals.Tests.Core
                 Input4 = new Input.Input5 { Input6 = "Input6" }
             };
 
-            var requestWriter = new StreamWriter(context.Request.Body);
-            requestWriter.WriteLine(input.SerializeJson());
-            requestWriter.Flush();
-            context.Request.Body.Position = 0;
-
-            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            var request = new HttpContextWrapper(mockHttpContextAccessor.Object);
-
             // Act
-            var result = WebMediator.Dispatch(request);
-
+            var response = MockRequest<MethodResult<int>>(path, method, body: input);
+            
             // Asset
-            var body = context.Response.Body;
-            body.Position = 0;
-            var bodyStr = new StreamReader(body).ReadToEnd();
-
-            Assert.Contains("\"IsFaulted\":false", bodyStr);
+            Assert.False(response.IsFaulted);
+            Assert.Equal(1, response.Result);
         }
     }
 }
