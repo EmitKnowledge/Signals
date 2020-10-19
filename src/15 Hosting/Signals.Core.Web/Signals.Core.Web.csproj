@@ -9,7 +9,7 @@
     <PackageReference Include="HtmlSanitizer" Version="4.0.205" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Microsoft.OpenApi" Version="1.1.2" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
   </ItemGroup>
 
   <Choose>
