@@ -157,7 +157,8 @@ namespace Signals.Tests.Core
 
             // read response
             context.Response.Body.Position = 0;
-            return new StreamReader(context.Response.Body).ReadToEnd().Deserialize<T>();
+            var response = new StreamReader(context.Response.Body).ReadToEnd();
+            return response.Deserialize<T>();
         }
 
         [Fact]

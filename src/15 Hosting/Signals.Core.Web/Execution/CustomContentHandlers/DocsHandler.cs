@@ -160,18 +160,34 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     }
                     else
                     {
-                        operationItem.Parameters.Add(new OpenApiParameter
+                        foreach (var pair in requestSchema)
                         {
-                            In = ParameterLocation.Query,
-                            Name = "query",
-                            Reference = processGenerics.Count() > 1 ? new OpenApiReference
+                            if (pair.Value.Properties.Any())
                             {
-                                Id = $"definitions/{type.Name}RequestDto",
-                                Type = ReferenceType.RequestBody,
-                                ExternalResource = ""
-                            } : null,
-                            Schema = new OpenApiSchema { Properties = responseSchema }
-                        });
+                                operationItem.Parameters.Add(new OpenApiParameter
+                                {
+                                    In = ParameterLocation.Query,
+                                    Name = pair.Key,
+                                    Reference = processGenerics.Count() > 1 ? new OpenApiReference
+                                    {
+                                        Id = $"definitions/{type.Name}RequestDto.{pair.Key}",
+                                        Type = ReferenceType.RequestBody,
+                                        ExternalResource = ""
+                                    } : null,
+                                    Schema = pair.Value
+                                });
+                                document.Components.Schemas.Add($"{type.Name}ResponseDto.{pair.Key}", new OpenApiSchema { Properties = pair.Value.Properties });
+                            }
+                            else
+                            {
+                                operationItem.Parameters.Add(new OpenApiParameter
+                                {
+                                    In = ParameterLocation.Query,
+                                    Name = pair.Key,
+                                    Schema = pair.Value
+                                });
+                            }
+                        }
                     }
 
                     operationItem.Responses = new OpenApiResponses
