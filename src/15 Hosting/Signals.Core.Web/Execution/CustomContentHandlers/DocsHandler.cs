@@ -343,8 +343,9 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 }
                 else if (property.PropertyType.IsEnum)
                 {
-                    var enumDescription = string.Join(" | ", Enum.GetNames(property.PropertyType));
-                    schema.Enum = new List<IOpenApiAny> { new OpenApiString(enumDescription) };
+                    var enums = Enum.GetNames(property.PropertyType);
+                    var enumDescription = string.Join(" | ", enums);
+                    schema.Enum = enums.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
                 }
 
                 switch (Type.GetTypeCode(property.PropertyType))
