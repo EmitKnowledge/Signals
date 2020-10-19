@@ -130,8 +130,10 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     var request = processGenerics.Count() > 1 ? processGenerics.First() : null;
                     var response = processGenerics.Last();
 
-                    var requestSchema = Deserialize(request);
-                    var responseSchema = Deserialize(response);
+                    List<Type> enumTypes = new List<Type>();
+
+                    var requestSchema = Deserialize(request, ref enumTypes);
+                    var responseSchema = Deserialize(response, ref enumTypes);
 
                     if (httpMethod == ApiProcessMethod.POST)
                     {
@@ -148,7 +150,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                             Reference = processGenerics.Count() > 1 ? new OpenApiReference
                                             {
                                                 Id = $"definitions/{type.Name}RequestDto",
-                                                Type = ReferenceType.RequestBody,
+                                                Type = ReferenceType.Schema,
                                                 ExternalResource = ""
                                             } : null,
                                             Properties = requestSchema
@@ -173,12 +175,21 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                         Reference = processGenerics.Count() > 1 ? new OpenApiReference
                                         {
                                             Id = $"definitions/{type.Name}RequestDto.{pair.Key}",
-                                            Type = ReferenceType.RequestBody,
+                                            Type = ReferenceType.Schema,
                                             ExternalResource = ""
                                         } : null,
                                         Schema = pair.Value
                                     });
-                                    document.Components.Schemas.Add($"{type.Name}ResponseDto.{pair.Key}", new OpenApiSchema { Properties = pair.Value.Properties });
+                                    document.Components.Schemas.Add($"{type.Name}RequestDto.{pair.Key}", new OpenApiSchema { Properties = pair.Value.Properties });
+                                }
+                                else if (pair.Value.Enum.Any())
+                                {
+                                    operationItem.Parameters.Add(new OpenApiParameter
+                                    {
+                                        In = ParameterLocation.Query,
+                                        Name = pair.Key,
+                                        Schema = pair.Value,
+                                    });
                                 }
                                 else
                                 {
@@ -208,7 +219,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                             Reference = new OpenApiReference
                                             {
                                                 Id = $"definitions/{type.Name}ResponseDto",
-                                                Type = ReferenceType.RequestBody,
+                                                Type = ReferenceType.Schema,
                                                 ExternalResource = ""
                                             },
                                             Properties = responseSchema
@@ -223,6 +234,15 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     document.Components.Schemas.Add($"{type.Name}RequestDto", new OpenApiSchema { Properties = requestSchema });
                     document.Components.Schemas.Add($"{type.Name}ResponseDto", new OpenApiSchema { Properties = responseSchema });
 
+                    foreach (var enumType in enumTypes)
+                    {
+                        if (!document.Components.Schemas.ContainsKey(enumType.Name))
+                        {
+                            var enums = Enum.GetNames(enumType).Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
+                            document.Components.Schemas.Add(enumType.Name, new OpenApiSchema { Enum = enums, Type = "string" });
+                        }
+                    }
+
                     pathItem.Operations = new Dictionary<OperationType, OpenApiOperation>();
 
                     foreach (var method in Map(httpMethod))
@@ -236,7 +256,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
             return document;
 
-            Dictionary<string, OpenApiSchema> Deserialize(Type type)
+            Dictionary<string, OpenApiSchema> Deserialize(Type type, ref List<Type> enumTypes)
             {
                 if (type == null) return null;
 
@@ -252,7 +272,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 while (toProcess.Count > 0)
                 {
                     var propertyNode = toProcess.Pop();
-                    var schema = GetOpenApiSchema(propertyNode.Property);
+                    var schema = GetOpenApiSchema(propertyNode.Property, ref enumTypes);
                     var parentSchema = parentSchemas.Count == 0 ? null : parentSchemas.Pop();
                     if (propertyNode.Depth == MAX_DEPTH) continue;
 
@@ -329,7 +349,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     return null;
             }
 
-            OpenApiSchema GetOpenApiSchema(PropertyInfo property)
+            OpenApiSchema GetOpenApiSchema(PropertyInfo property, ref List<Type> enumTypes)
             {
                 var schema = new OpenApiSchema();
                 schema.Title = property.Name;
@@ -339,13 +359,24 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     typeof(string) != property.PropertyType)
                 {
                     schema.Type = "array";
-
+                    return schema;
                 }
                 else if (property.PropertyType.IsEnum)
                 {
-                    var enums = Enum.GetNames(property.PropertyType);
-                    var enumDescription = string.Join(" | ", enums);
-                    schema.Enum = enums.Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
+                    var enums = Enum.GetNames(property.PropertyType).Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
+                    schema.Enum = enums;
+                    schema.Type = property.PropertyType.Name;
+                    schema.Format = "int32";
+                    schema.Example = enums.FirstOrDefault();
+                    schema.Reference = new OpenApiReference
+                    {
+                        Id = $"definitions/{property.PropertyType.Name}",
+                        Type = ReferenceType.Schema,
+                        ExternalResource = ""
+                    };
+
+                    enumTypes.Add(property.PropertyType);
+                    return schema;
                 }
 
                 switch (Type.GetTypeCode(property.PropertyType))
