@@ -160,32 +160,35 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     }
                     else
                     {
-                        foreach (var pair in requestSchema)
+                        if (!requestSchema.IsNullOrHasZeroElements())
                         {
-                            if (pair.Value.Properties.Any())
+                            foreach (var pair in requestSchema)
                             {
-                                operationItem.Parameters.Add(new OpenApiParameter
+                                if (pair.Value.Properties.Any())
                                 {
-                                    In = ParameterLocation.Query,
-                                    Name = pair.Key,
-                                    Reference = processGenerics.Count() > 1 ? new OpenApiReference
+                                    operationItem.Parameters.Add(new OpenApiParameter
                                     {
-                                        Id = $"definitions/{type.Name}RequestDto.{pair.Key}",
-                                        Type = ReferenceType.RequestBody,
-                                        ExternalResource = ""
-                                    } : null,
-                                    Schema = pair.Value
-                                });
-                                document.Components.Schemas.Add($"{type.Name}ResponseDto.{pair.Key}", new OpenApiSchema { Properties = pair.Value.Properties });
-                            }
-                            else
-                            {
-                                operationItem.Parameters.Add(new OpenApiParameter
+                                        In = ParameterLocation.Query,
+                                        Name = pair.Key,
+                                        Reference = processGenerics.Count() > 1 ? new OpenApiReference
+                                        {
+                                            Id = $"definitions/{type.Name}RequestDto.{pair.Key}",
+                                            Type = ReferenceType.RequestBody,
+                                            ExternalResource = ""
+                                        } : null,
+                                        Schema = pair.Value
+                                    });
+                                    document.Components.Schemas.Add($"{type.Name}ResponseDto.{pair.Key}", new OpenApiSchema { Properties = pair.Value.Properties });
+                                }
+                                else
                                 {
-                                    In = ParameterLocation.Query,
-                                    Name = pair.Key,
-                                    Schema = pair.Value
-                                });
+                                    operationItem.Parameters.Add(new OpenApiParameter
+                                    {
+                                        In = ParameterLocation.Query,
+                                        Name = pair.Key,
+                                        Schema = pair.Value
+                                    });
+                                }
                             }
                         }
                     }
