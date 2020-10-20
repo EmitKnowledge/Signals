@@ -136,11 +136,13 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     var requestSchema = Deserialize(request, ref enumTypes);
                     var responseSchema = Deserialize(response, ref enumTypes);
 
-                    if (httpMethod == ApiProcessMethod.POST)
+                    if (!requestSchema.IsNullOrHasZeroElements())
                     {
-                        operationItem.RequestBody = new OpenApiRequestBody
+                        if (httpMethod == ApiProcessMethod.POST)
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>
+                            operationItem.RequestBody = new OpenApiRequestBody
+                            {
+                                Content = new Dictionary<string, OpenApiMediaType>
                             {
                                 {
                                     contentType,
@@ -159,11 +161,9 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                     }
                                 }
                             }
-                        };
-                    }
-                    else
-                    {
-                        if (!requestSchema.IsNullOrHasZeroElements())
+                            };
+                        }
+                        else
                         {
                             foreach (var pair in requestSchema)
                             {
