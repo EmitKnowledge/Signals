@@ -126,6 +126,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     });
                     operationItem.Summary = instance.Description.IsNullOrEmpty() ? instance.Name : instance.Description;
                     operationItem.Description = instance.Name;
+                    operationItem.OperationId = type.Name;
 
                     var request = processGenerics.Count() > 1 ? processGenerics.First() : null;
                     var response = processGenerics.Last();
