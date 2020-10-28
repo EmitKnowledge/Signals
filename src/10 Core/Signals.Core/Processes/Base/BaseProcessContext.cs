@@ -141,7 +141,7 @@ namespace Signals.Core.Processes.Base
         /// <summary>
         /// Benchmarker
         /// </summary>
-        [Import] private IBenchmarker InternalBenchmarker { get; set; }
+        [Import] public IBenchmarker InternalBenchmarker { get; set; }
 
         /// <summary>
         /// Process benchmark engine
