@@ -23,6 +23,14 @@ namespace Signals.Core.Processes.Distributed
         where TTransientData : ITransientData
     {
         /// <summary>
+        /// CTOR
+        /// </summary>
+        public DistributedProcess()
+        {
+            _cancelDistributedExecution = false;
+        }
+
+        /// <summary>
         /// Distributed process context
         /// </summary>
         [Import]
@@ -32,12 +40,13 @@ namespace Signals.Core.Processes.Distributed
             set { (value as DistributedProcessContext).SetProcess(this); _context = value; }
         }
         private IDistributedProcessContext _context;
+        private bool _cancelDistributedExecution;
 
         /// <summary>
         /// Base process context upcasted from Api process context
         /// </summary>
         internal override IBaseProcessContext BaseContext => Context;
-        
+
         /// <summary>
         /// Execution layer
         /// </summary>
@@ -51,6 +60,14 @@ namespace Signals.Core.Processes.Distributed
         public abstract TTransientData Map(TResponse response);
 
         /// <summary>
+        /// Don't publish request to the distributed background method @Work()
+        /// </summary>
+        protected void CancelDistributedExecution()
+        {
+            _cancelDistributedExecution = true;
+        }
+
+        /// <summary>
         /// Execution using base strategy
         /// </summary>
         /// <returns></returns>
@@ -59,7 +76,8 @@ namespace Signals.Core.Processes.Distributed
             var result = base.Execute();
             if (result.IsFaulted) return result;
 
-            PublishNotificaiton(Name, Map(result));
+            if (!_cancelDistributedExecution)
+                PublishNotificaiton(Name, Map(result));
 
             return result;
         }
@@ -126,6 +144,14 @@ namespace Signals.Core.Processes.Distributed
         where TTransientData : ITransientData
     {
         /// <summary>
+        /// CTOR
+        /// </summary>
+        public DistributedProcess()
+        {
+            _cancelDistributedExecution = false;
+        }
+
+        /// <summary>
         /// Distributed process context
         /// </summary>
         [Import]
@@ -135,12 +161,13 @@ namespace Signals.Core.Processes.Distributed
             set { (value as DistributedProcessContext).SetProcess(this); _context = value; }
         }
         private IDistributedProcessContext _context;
+        private bool _cancelDistributedExecution;
 
         /// <summary>
         /// Base process context upcasted from Api process context
         /// </summary>
         internal override IBaseProcessContext BaseContext => Context;
-        
+
         /// <summary>
         /// Execution layer
         /// </summary>
@@ -154,6 +181,14 @@ namespace Signals.Core.Processes.Distributed
         public abstract TTransientData Map(TRequest request, TResponse response);
 
         /// <summary>
+        /// Don't publish request to the distributed background method @Work()
+        /// </summary>
+        protected void CancelDistributedExecution()
+        {
+            _cancelDistributedExecution = true;
+        }
+
+        /// <summary>
         /// Execution using base strategy
         /// </summary>
         /// <returns></returns>
@@ -162,7 +197,9 @@ namespace Signals.Core.Processes.Distributed
             var result = base.Execute(request);
             if (result.IsFaulted) return result;
 
-            PublishNotificaiton(Name, Map(request, result));
+            if (!_cancelDistributedExecution)
+                PublishNotificaiton(Name, Map(request, result));
+
             return result;
         }
 
