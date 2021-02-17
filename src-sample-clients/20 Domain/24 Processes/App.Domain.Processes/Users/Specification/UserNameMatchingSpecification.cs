@@ -1,5 +1,4 @@
-﻿using App.Domain.Entities.Users;
-using Signals.Core.Common.Regexes;
+﻿using Signals.Core.Common.Regexes;
 using Signals.Core.Processing.Specifications;
 using System.Text.RegularExpressions;
 
@@ -8,20 +7,21 @@ namespace App.Domain.Processes.Users.Specification
     /// <summary>
     /// Validate user's username
     /// </summary>
-    public class UsernameMatchingSpecification : BaseSpecification<User>
+    public class UsernameMatchingSpecification : BaseSpecification<string>
     {
-        #region Implementation of IValidationRule<User>
+        #region Implementation of IValidationRule<string>
 
         /// <summary>
         /// Validation expression that must be fullfilled
         /// </summary>
         /// <returns></returns>
 
-        public override bool Validate(User input)
+        public override bool Validate(string input)
         {
-            return input.Username.IsMatch(@"^[a-zA-Z0-9]+$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var usernameValidity = string.Format(@"^(?=.*?[A-Za-z0-9])(?=.*?[#?!@$%^&*-]*).*$");
+            return input.IsMatch(usernameValidity, RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
-        #endregion Implementation of IValidationRule<User>
+        #endregion Implementation of IValidationRule<string>
     }
 }

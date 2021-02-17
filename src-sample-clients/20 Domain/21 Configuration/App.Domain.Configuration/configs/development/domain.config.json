@@ -5,10 +5,10 @@
     "Enviroment": "Development"
   },
   "SecurityConfiguration": {
-    "SaltLenght": 32,
-    "AutoPasswordLenght": 12,
-    "MinPasswordLenght": 12,
-    "TokenLenght": 128,
+    "SaltLength": 32,
+    "AutoPasswordLength": 12,
+    "MinPasswordLength": 12,
+    "TokenLength": 128,
     "TokenValidityInDays": 1,
     "Fish": "KTVRaRB4AcSkL9ryvYPAEXmU"
   },
@@ -23,7 +23,9 @@
     "ConnectionString": null
   },
   "WebConfiguration": {
-    "Url": "http://localhost/",
+    "Url": {
+      "RawUrl": "https://localhost:44392/"
+    },
     "MaxPageSize": 100
   },
   "DatabaseConfiguration": {

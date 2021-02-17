@@ -17,7 +17,7 @@ namespace App.Domain.Processes.Validation.RuleSpecifications.Tokens
         /// <returns></returns>
         public override bool Validate(string input)
         {
-            return input.IsNullOrEmpty() && input.Length == DomainConfiguration.Instance.SecurityConfiguration.TokenLenght;
+            return input.IsNullOrEmpty() && input.Length == DomainConfiguration.Instance.SecurityConfiguration.TokenLength;
         }
 
         #endregion Overrides of BaseSpecification<ObjectId>

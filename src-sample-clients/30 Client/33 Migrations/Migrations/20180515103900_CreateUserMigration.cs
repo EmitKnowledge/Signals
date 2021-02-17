@@ -3,7 +3,7 @@ using SimpleMigrations;
 
 namespace App.Client.Migrations.Migrations
 {
-    [Migration(20180515103900, "Create user")]
+    [Migration(20180515103900)]
     public class CreateUserMigration : BaseMigration
     {
         public override void Up()

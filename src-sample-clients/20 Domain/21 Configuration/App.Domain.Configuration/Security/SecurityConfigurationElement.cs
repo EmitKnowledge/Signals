@@ -5,31 +5,31 @@ namespace App.Domain.Configuration.Security
     public sealed class SecurityConfigurationElement
     {
         /// <summary>
-        /// Lenght of the generated salt
+        /// length of the generated salt
         /// </summary>
         [Required]
-        public int SaltLenght { get; set; }
+        public int SaltLength { get; set; }
 
         /// <summary>
-        /// Password lenght of the automatic generated password
+        /// Password length of the automatic generated password
         /// </summary>
         [Required]
-        public int AutoPasswordLenght { get; set; }
+        public int AutoPasswordLength { get; set; }
 
         /// <summary>
-        /// Minimum lenght of the password
+        /// Minimum length of the password
         /// </summary>
         [Required]
-        public int MinPasswordLenght { get; set; }
+        public int MinPasswordLength { get; set; }
 
         /// <summary>
-        /// Lenght of the generated token
+        /// length of the generated token
         /// </summary>
         [Required]
-        public int TokenLenght { get; set; }
+        public int TokenLength { get; set; }
 
         /// <summary>
-        /// Lenght of the generated token
+        /// length of the generated token
         /// </summary>
         [Required]
         public int TokenValidityInDays { get; set; }

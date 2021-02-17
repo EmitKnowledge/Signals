@@ -31,6 +31,12 @@ namespace App.Domain.Entities.Users
         public string PasswordSalt { get; set; }
 
         /// <summary>
+        /// Is reset password required before user can log in
+        /// </summary>
+        [DataMember]
+        public bool PasswordResetRequired { get; set; }
+
+        /// <summary>
         /// Email of the user
         /// </summary>
         [DataMember]
@@ -47,5 +53,29 @@ namespace App.Domain.Entities.Users
         /// </summary>
         [DataMember]
         public UserType Type { get; set; }
+
+        /// <summary>
+        /// Represents user login token
+        /// </summary>
+        [DataMember]
+        public string Token { get; set; }
+
+        /// <summary>
+        /// Represents when the user last accessed the app
+        /// </summary>
+        [DataMember]
+        public DateTime? LastAccessDate { get; set; }
+
+        /// <summary>
+        /// Has the user checked remember me
+        /// </summary>
+        [DataMember]
+        public bool RememberMe { get; set; }
+
+        /// <summary>
+        /// How many times the estimator tried to log in with wrong password
+        /// </summary>
+        [DataMember]
+        public int LoginAttempts { get; set; }
     }
 }
