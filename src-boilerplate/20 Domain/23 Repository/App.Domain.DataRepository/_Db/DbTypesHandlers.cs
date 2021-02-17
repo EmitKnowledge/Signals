@@ -16,6 +16,7 @@ namespace App.Domain.DataRepository._Db
         {
             if (value == null) return Instant.MinValue;
             var dateTime = Convert.ToDateTime(value);
+            dateTime = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
             return Instant.FromDateTimeUtc(dateTime);
         }
     }

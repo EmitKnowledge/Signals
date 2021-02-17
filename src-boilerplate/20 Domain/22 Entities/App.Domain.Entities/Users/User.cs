@@ -1,6 +1,5 @@
 ﻿using App.Domain.Entities.Base;
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace App.Domain.Entities.Users
@@ -48,26 +47,5 @@ namespace App.Domain.Entities.Users
         /// </summary>
         [DataMember]
         public UserType Type { get; set; }
-
-        /// <summary>
-        /// Hold user settings
-        /// </summary>
-        [IgnoreDataMember]
-        public UserSettings Settings { get; set; }
-
-        /// <summary>
-        /// Represents external data from connected third party apis
-        /// </summary>
-        [DataMember]
-        public List<ExternalConnection> ExternalConnections { get; set; }
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public User()
-        {
-            Settings = new DefaultUserSettings();
-            ExternalConnections = new List<ExternalConnection>();
-        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿{
   "StartupNotificationConfiguration": {
     "Emails": [],
-    "Body": "Background service is up and running on dev",
-    "Subject": "Background service has started on dev"
+    "Body": "Background service is up and running on production",
+    "Subject": "Background service has started on production"
   }
 }

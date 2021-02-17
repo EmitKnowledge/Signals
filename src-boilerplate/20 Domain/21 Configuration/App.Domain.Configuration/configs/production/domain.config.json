@@ -2,7 +2,7 @@
   "ApplicationConfiguration": {
     "ProjectName": "App",
     "ApplicationName": "App.Client.Web",
-    "Enviroment": "Dev"
+    "Enviroment": "Production"
   },
   "SecurityConfiguration": {
     "SaltLenght": 32,
