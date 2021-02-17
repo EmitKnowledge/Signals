@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>App.Common.Helpers</name>
+    </assembly>
+    <members>
+        <member name="T:App.Common.Helpers.Localizaiton.LocalizationExtensions">
+            <summary>
+            Extensions for localizaiton profider
+            </summary>
+        </member>
+        <member name="M:App.Common.Helpers.Localizaiton.LocalizationExtensions.RenderTemplate``1(Signals.Aspects.Localization.Entries.LocalizationEntry,``0)">
+            <summary>
+            Render razor template using model
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="entry"></param>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.Common.Helpers.Localizaiton.LocalizationExtensions.Translate(Signals.Aspects.Localization.ILocalizationProvider,System.String)">
+            <summary>
+            Translate key in all colections
+            </summary>
+            <param name="localizationProvider"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
