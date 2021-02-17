@@ -6,14 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.50.5" />
-    <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.2.0" />
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
     <PackageReference Include="Signals.Aspects.Configuration.File" Version="1.0.2" />
-    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="1.0.3" />
+    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="1.0.6" />
     <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="1.0.2" />
-    <PackageReference Include="Signals.Core" Version="1.0.11" />
-    <PackageReference Include="Simple.Migrations" Version="0.9.19" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="Signals.Core" Version="1.0.15" />
+    <PackageReference Include="Simple.Migrations" Version="0.9.21" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
   <ItemGroup>
