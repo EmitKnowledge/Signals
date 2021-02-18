@@ -133,5 +133,10 @@ namespace App.Domain.DataRepositoryContracts
         /// </summary>
         /// <param name="id"></param>
         void DeleteById(int id);
+
+        /// <summary>
+        /// Get all inactive users
+        /// </summary>
+        List<User> GetAllInactive();
     }
 }

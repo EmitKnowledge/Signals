@@ -36,12 +36,7 @@ namespace App.Domain.Processes.Users
             /// <returns></returns>
             public override VoidResult Handle(LogoutUserRequestDto logoutUserRequestDto)
             {
-                //var user = UserRepository.GetByToken(logoutUserRequestDto.Token);
-                //if (user.IsNull())
-                //    return Fail(new GeneralErrorInfo("LoginUser_UserNotFound"));
-
-                //var token = string.Empty;
-                //UserRepository.UpdateUserToken(user.Id, token);
+                Context.Authentication.Logout();
 
                 return Ok();
             }

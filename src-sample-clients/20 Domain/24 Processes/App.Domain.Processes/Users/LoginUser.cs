@@ -9,6 +9,7 @@ using Signals.Core.Common.Instance;
 using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Results;
+using System.Security.Claims;
 
 namespace App.Domain.Processes.Users
 {
@@ -68,6 +69,8 @@ namespace App.Domain.Processes.Users
 
                 UserRepository.UpdateLoginAttempts(user.Id, 0);
                 UserRepository.UpdateLastAccessDateAndRememberMe(user.Token, loginUserDto.RememberMe);
+
+                Context.Authentication.Login(new ClaimsPrincipal(new ClaimsIdentity("Cookies")), user);
 
                 return LoginUserResponseDto.FromEntity(user);
             }

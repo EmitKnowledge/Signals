@@ -5,6 +5,7 @@ using App.Domain.Entities.Common;
 using App.Domain.Entities.Users;
 using Dapper;
 using Signals.Aspects.DI.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -384,6 +385,21 @@ namespace App.Domain.DataRepository.Users
                     {
                         Id = id
                     });
+            });
+        }
+
+        /// <summary>
+        /// Get all inactive users
+        /// </summary>
+        public List<User> GetAllInactive()
+        {
+            return Using(connection =>
+            {
+                return connection.Query<User>(@"SELECT * FROM [User] WHERE LastAccessDate IS NOT NULL AND LastAccessDate < @Date",
+                    new
+                    {
+                        Date = DateTime.Today.AddYears(-1)
+                    }).ToList();
             });
         }
     }

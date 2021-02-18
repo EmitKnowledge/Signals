@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
+using Signals.Aspects.BackgroundProcessing.FluentScheduler;
 using Signals.Aspects.Caching.Enums;
 using Signals.Aspects.Caching.InMemory;
 using Signals.Aspects.Caching.InMemory.Configurations;
@@ -96,6 +97,7 @@ namespace App.Client.Background.Service
             var config = new BackgroundApplicationBootstrapConfiguration
             {
                 RegistrationService = new RegistrationService(),
+                TaskRegistry = new FluentRegistry(),
                 CacheConfiguration = new InMemoryCacheConfiguration
                 {
                     DataProvider = new InMemoryDataProvider(),
