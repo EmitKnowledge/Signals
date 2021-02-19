@@ -54,6 +54,9 @@ namespace App.Domain.Processes.Emails
             /// <returns></returns>
             public override VoidResult Handle(SendEmailRequestDto dto)
             {
+                Context.Benchmarker.StartEpic("SendingEmail");
+                Context.Benchmarker.Bench("Start point");
+
                 var from = dto.From ?? ApplicationConfiguration.Instance.ApplicationEmail;
 
                 var message = new MailMessage();
@@ -88,10 +91,9 @@ namespace App.Domain.Processes.Emails
                 {
                     lock (@lock)
                     {
-                        var oldSecurityProtocol = ServicePointManager.SecurityProtocol;
-                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                        Context.Benchmarker.Bench("Email sending start");
                         SmtpClient.Send(message);
-                        ServicePointManager.SecurityProtocol = oldSecurityProtocol;
+                        Context.Benchmarker.Bench("Email sending end");
                     }
                 }
                 catch (Exception ex)
@@ -105,6 +107,7 @@ namespace App.Domain.Processes.Emails
                     else
                     {
                         // throw;
+                        Context.Benchmarker.FlushEpic();
                         return Fail(exception);
                     }
                 }
@@ -121,7 +124,10 @@ namespace App.Domain.Processes.Emails
                     log.SendingReason = dto.SendingReason.ToString();
 
                     EmailRepository.Log(log);
+                    Context.Benchmarker.Bench("Email logged");
                 }
+
+                Context.Benchmarker.FlushEpic();
 
                 if (!exception.IsNull())
                     return Fail(exception);

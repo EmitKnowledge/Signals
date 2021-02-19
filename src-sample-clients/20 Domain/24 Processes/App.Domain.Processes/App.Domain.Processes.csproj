@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="NodaTime" Version="3.0.5" />
+    <PackageReference Include="Signals.Aspects.Caching.InMemory" Version="1.0.2" />
     <PackageReference Include="Signals.Core" Version="1.0.15" />
     <PackageReference Include="Signals.Core.Extensions.Export" Version="1.0.15" />
     <PackageReference Include="Signals.Core.Extensions.Import" Version="1.0.15" />

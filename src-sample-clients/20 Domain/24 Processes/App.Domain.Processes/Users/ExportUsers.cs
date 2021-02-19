@@ -1,10 +1,15 @@
 ﻿using App.Domain.DataRepositoryContracts;
 using App.Domain.Entities.Users;
+using Signals.Aspects.Caching.Entries;
+using Signals.Aspects.Caching.Enums;
+using Signals.Aspects.Caching.InMemory.Entries;
 using Signals.Aspects.DI.Attributes;
+using Signals.Core.Common.Instance;
 using Signals.Core.Extensions.Export.Configuration;
 using Signals.Core.Extensions.Export.Export.Excel;
 using Signals.Core.Processes.Export;
 using Signals.Core.Processing.Results;
+using System;
 using System.Collections.Generic;
 
 namespace App.Domain.Processes.Users
@@ -55,7 +60,20 @@ namespace App.Domain.Processes.Users
             /// <returns></returns>
             protected override List<User> DataSource()
             {
-                return UserRepository.GetAll();
+                var cacheKey = "all-users";
+                var allUsers = Context.Cache.Get<List<User>>(cacheKey);
+
+                if (allUsers.IsNull())
+                {
+                    var cacheEntry = new ReloadableCacheEntry(cacheKey, () => UserRepository.GetAll());
+                    cacheEntry.ExpirationPolicy = CacheExpirationPolicy.Absolute;
+                    cacheEntry.ExpirationTime = TimeSpan.FromMinutes(1);
+                    Context.Cache.Set(cacheEntry);
+
+                    allUsers = Context.Cache.Get<List<User>>(cacheKey);
+                }
+                
+                return allUsers;
             }
         }
     }

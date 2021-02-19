@@ -7,6 +7,9 @@
     "Subject": null,
     "Body": null
   },
+  "WhitelistedEmails": [
+    "developer@example.com"
+  ],
   "SmtpConfiguration": {
     "Server": null,
     "Port": 0,
