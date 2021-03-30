@@ -1,0 +1,14 @@
+{
+  // Required by Signals
+  "ApplicationName": "SignalsDemo",
+  "ApplicationVersion": "0.0.1",
+  "ApplicationEmail": "no-reply@out.tiktak.mk",
+  "ContactEmails": ["contact@emitknowledge.com"],
+  "SmtpConfiguration": {
+    "Server": "smtp.sparkpostmail.com",
+    "Port": 587,
+    "Username": "SMTP_Injection",
+    "Password": "ae4dde2dbfd7bc3e911198018a98aae463e7f66b",
+    "UseSsl": true
+  }
+}
