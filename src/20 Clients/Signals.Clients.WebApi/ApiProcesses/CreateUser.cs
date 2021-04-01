@@ -1,16 +1,17 @@
 ﻿using Signals.Clients.WebApi.BusinessProcesses.Dtos.In;
 using Signals.Clients.WebApi.BusinessProcesses.Dtos.Out;
 using Signals.Core.Processes.Api;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Guards;
 using Signals.Core.Processing.Results;
 using System.Net;
-using Signals.Core.Processes.Base;
 
 namespace Signals.Clients.WebApi.ApiProcesses
 {
     [ApiProcess(HttpMethod = ApiProcessMethod.POST)]
-    [SignalsGuards(typeof(SubscriptionGuard))]
+    [SignalsGuard(typeof(SubscriptionGuard), "Success")]
+    [SignalsGuard(typeof(SubscriptionGuard), "Fail")]
     public class CreateUser : ApiBusinessProcess<BusinessProcesses.CreateUser, CreateUserDto, MethodResult<UserDto>>
     {
 
@@ -22,17 +23,18 @@ namespace Signals.Clients.WebApi.ApiProcesses
         /// Checks if the guard is passed
         /// </summary>
         /// <returns></returns>
-        public bool Check(IBaseProcessContext processContext)
+        public bool Check(IBaseProcessContext processContext, object[] args)
         {
-            return false;
+            var arg = args[0].ToString();
+            return arg == "Success";
         }
 
         /// <summary>
         /// Represents the error generated if the guard check fails
         /// </summary>
-        public CodeSpecificErrorInfo GetCodeSpecificErrorInfo()
+        public CodeSpecificErrorInfo GetCodeSpecificErrorInfo(object[] args)
         {
-            return new CodeSpecificErrorInfo("Error", HttpStatusCode.PaymentRequired);
+            return new CodeSpecificErrorInfo("Error, oh error", HttpStatusCode.Forbidden);
         }
     }
 }

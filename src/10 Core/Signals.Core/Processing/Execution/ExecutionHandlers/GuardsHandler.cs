@@ -27,18 +27,21 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
             // Get guard attribute
-            var guardAttribute = processType.GetCustomAttributes(typeof(SignalsGuardsAttribute), false).Cast<SignalsGuardsAttribute>().FirstOrDefault();
+            var guardAttributes = processType.GetCustomAttributes(typeof(SignalsGuardAttribute), false).Cast<SignalsGuardAttribute>().ToList();
 
-            // If no such attribute is present, the request is valid
-            if (guardAttribute == null)
+            // If no such attributes are present, the request is valid
+            if (!guardAttributes.Any())
             {
                 return Next.Execute(process, processType, args);
             }
 
-            var guardError = guardAttribute.Guard(process.BaseContext);
-            if (guardError != null)
+            foreach (var guardAttribute in guardAttributes)
             {
-                return VoidResult.FaultedResult<TResult>(guardError);
+                var guardResult = guardAttribute.Check(process.BaseContext);
+                if (guardResult != null)
+                {
+                    return VoidResult.FaultedResult<TResult>(guardResult);
+                }
             }
 
             return Next.Execute(process, processType, args);

@@ -1,46 +1,38 @@
 ﻿using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Signals.Core.Processing.Guards
 {
     /// <summary>
     /// Process guard attribute
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class SignalsGuardsAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
+    public class SignalsGuardAttribute : Attribute
     {
-        private List<ISignalsGuard> Guards { get; }
+        private ISignalsGuard Guard { get; }
+        private object[] Args { get; }
 
         /// <summary>
         /// CTOR
         /// </summary>
-        public SignalsGuardsAttribute(params Type[] guardTypes)
+        public SignalsGuardAttribute(Type guardType, params object[] args)
         {
-            Guards = new List<ISignalsGuard>();
-
-            foreach (var guardType in guardTypes)
+            if (!(Activator.CreateInstance(guardType) is ISignalsGuard guard))
             {
-                if (!(Activator.CreateInstance(guardType) is ISignalsGuard guard))
-                {
-                    throw new ArgumentException("All guards must implement the ISignalsGuard interface.");
-                }
-
-                Guards.Add(guard);
+                throw new ArgumentException("The guard must implement the ISignalsGuard interface.");
             }
+
+            Guard = guard;
+            Args = args;
         }
 
         /// <summary>
         /// Authorization callback
         /// </summary>
         /// <returns></returns>
-        internal CodeSpecificErrorInfo Guard(IBaseProcessContext processContext)
-        {
-            var failedGuard = Guards.FirstOrDefault(x => !x.Check(processContext));
-            return failedGuard?.GetCodeSpecificErrorInfo();
-        }
+        internal CodeSpecificErrorInfo Check(IBaseProcessContext processContext)
+            => Guard.Check(processContext, Args) ? null : Guard.GetCodeSpecificErrorInfo(Args);
     }
 
     /// <summary>
@@ -52,11 +44,11 @@ namespace Signals.Core.Processing.Guards
         /// Checks if the guard is passed
         /// </summary>
         /// <returns></returns>
-        bool Check(IBaseProcessContext processContext);
+        bool Check(IBaseProcessContext processContext, object[] args);
 
         /// <summary>
         /// Represents the error generated if the guard check fails
         /// </summary>
-        CodeSpecificErrorInfo GetCodeSpecificErrorInfo();
+        CodeSpecificErrorInfo GetCodeSpecificErrorInfo(object[] args);
     }
 }
