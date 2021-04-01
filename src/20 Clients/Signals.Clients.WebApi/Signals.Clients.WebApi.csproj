@@ -37,4 +37,8 @@
     <ProjectReference Include="..\..\15 Hosting\Signals.Core.Web\Signals.Core.Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DistributedProcesses\Dtos\Out\" />
+  </ItemGroup>
+
 </Project>

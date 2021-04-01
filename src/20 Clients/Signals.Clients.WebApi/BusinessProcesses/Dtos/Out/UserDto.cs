@@ -1,6 +1,6 @@
-﻿namespace Signals.Clients.WebApi.BusinessProcesses.Entities
+﻿namespace Signals.Clients.WebApi.BusinessProcesses.Dtos.Out
 {
-    public class User
+    public class UserDto
     {
         public int Id { get; set; }
 

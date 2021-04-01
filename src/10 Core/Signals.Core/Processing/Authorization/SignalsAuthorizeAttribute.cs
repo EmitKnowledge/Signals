@@ -8,16 +8,16 @@ namespace Signals.Core.Processing.Authorization
     /// <summary>
     /// Process authorizaiton attribute
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    public class SignalsAuthorizeProcessAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public class SignalsAuthorizeAttribute : Attribute
     {
         private object[] Roles { get; }
-        
+
         /// <summary>
         /// CTOR
         /// </summary>
         /// <param name="roles"></param>
-        public SignalsAuthorizeProcessAttribute(params object[] roles)
+        public SignalsAuthorizeAttribute(params object[] roles)
         {
             if (roles.Any(x => !(x is Enum)))
                 throw new ArgumentException("Enum types must be provided for the roles arguments.");

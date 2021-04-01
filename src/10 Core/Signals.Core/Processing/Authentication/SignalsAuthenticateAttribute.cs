@@ -8,7 +8,7 @@ namespace Signals.Core.Processing.Authentication
     /// Process authentication attribute
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class SignalsAuthenticateProcessAttribute : Attribute
+    public class SignalsAuthenticateAttribute : Attribute
     {
         /// <summary>
         /// Authentication callback

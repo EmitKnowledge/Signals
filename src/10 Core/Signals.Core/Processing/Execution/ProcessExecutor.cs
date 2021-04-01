@@ -1,5 +1,4 @@
 ﻿using Signals.Core.Processes.Base;
-using Signals.Core.Processes.Distributed;
 using Signals.Core.Processing.Execution.ExecutionHandlers;
 using Signals.Core.Processing.Results;
 using System.Collections.Generic;
@@ -45,6 +44,7 @@ namespace Signals.Core.Processing.Execution
             {
                 new AuthenticationHandler(),
                 new AuthorizingHandler(),
+                new GuardsHandler(),
                 new ErrorLoggingHandler(),
                 new AuditingHandler(),
                 new ErrorManagingHandler(),

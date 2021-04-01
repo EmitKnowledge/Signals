@@ -1,24 +1,25 @@
-﻿using Signals.Clients.WebApi.BusinessProcesses.Entities;
+﻿using Signals.Clients.WebApi.BusinessProcesses.Dtos.In;
+using Signals.Clients.WebApi.BusinessProcesses.Dtos.Out;
 using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Results;
 
 namespace Signals.Clients.WebApi.BusinessProcesses
 {
-    public class CreateUser : BusinessProcess<User, MethodResult<User>>
+    public class CreateUser : BusinessProcess<CreateUserDto, MethodResult<UserDto>>
     {
-        public override MethodResult<User> Auth(User user)
+        public override MethodResult<UserDto> Auth(CreateUserDto user)
         {
             return Ok();
         }
 
-        public override MethodResult<User> Validate(User user)
+        public override MethodResult<UserDto> Validate(CreateUserDto user)
         {
             return Ok();
         }
 
-        public override MethodResult<User> Handle(User user)
+        public override MethodResult<UserDto> Handle(CreateUserDto user)
         {
-            return user;
+            return new MethodResult<UserDto>();
         }
     }
 }

@@ -1,15 +1,20 @@
 ﻿using Ganss.XSS;
 using Signals.Core.Processing.Input;
 
-namespace Signals.Clients.WebApi.ApiProcesses.Dtos.In
+namespace Signals.Clients.WebApi.BusinessProcesses.Dtos.In
 {
-    public class CreateUserDto : IDtoData
+    public class CreateUserDto : DtoData<CreateUserDto>, IDtoData
     {
         public string Email { get; set; }
 
         public void Sanitize(HtmlSanitizer sanitizer)
         {
             Email = sanitizer.Sanitize(Email);
+        }
+
+        public override CreateUserDto Map()
+        {
+            return this;
         }
     }
 }
