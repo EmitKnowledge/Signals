@@ -1,4 +1,5 @@
 ﻿using Signals.Clients.WebApi.ApiProcesses.Dtos.Out;
+using Signals.Clients.WebApi.BusinessProcesses.Dtos.In;
 using Signals.Clients.WebApi.Entities;
 using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Results;
@@ -6,7 +7,7 @@ using Signals.Core.Processing.Results;
 namespace Signals.Clients.WebApi.ApiProcesses
 {
     [ApiProcess(HttpMethod = ApiProcessMethod.POST)]
-    public class CreateUser1 : ProxyApiProcess<BusinessProcesses.CreateUser, BusinessProcesses.Dtos.In.CreateUserDto, MethodResult<User>, Dtos.In.CreateUserDto, MethodResult<UserDto>>
+    public class CreateUser1 : ProxyApiProcess<BusinessProcesses.CreateUser, CreateUserDto, MethodResult<User>, Dtos.In.CreateUserDto, MethodResult<UserDto>>
     {
         public override MethodResult<UserDto> MapResponse(MethodResult<User> response)
         {
@@ -32,13 +33,19 @@ namespace Signals.Clients.WebApi.ApiProcesses
     }
 
     [ApiProcess(HttpMethod = ApiProcessMethod.POST)]
-    public class CreateUser3 : AutoApiProcess<BusinessProcesses.CreateUser, BusinessProcesses.Dtos.In.CreateUserDto, Dtos.In.CreateUserDto>
+    public class CreateUser3 : AutoApiProcess<BusinessProcesses.CreateUser, CreateUserDto, Dtos.In.CreateUserDto>
     {
 
     }
 
     [ApiProcess(HttpMethod = ApiProcessMethod.POST)]
-    public class CreateUser4 : AutoApiProcess<BusinessProcesses.CreateUser>
+    public class CreateUser4 : AutoApiProcess<BusinessProcesses.CreateUser, CreateUserDto>
+    {
+
+    }
+
+    [ApiProcess(HttpMethod = ApiProcessMethod.POST)]
+    public class CreateUser5 : AutoApiProcess<BusinessProcesses.DoNothing>
     {
 
     }

@@ -223,6 +223,72 @@ namespace Signals.Core.Processes.Api
     /// <summary>
     /// Represents API process with an underlying business process
     /// </summary>
+    public abstract class AutoApiProcess<TProcess, TProcessRequest> : BaseProcess<VoidResult>, IApiProcess
+        where TProcess : IBusinessProcess, new()
+        where TProcessRequest : IDtoData, new()
+    {
+        /// <summary>
+        /// Execution using base strategy
+        /// </summary>
+        /// <returns></returns>
+        internal virtual VoidResult Execute(TProcessRequest request)
+            => Context.Mediator.Dispatch<TProcessRequest, VoidResult>(typeof(TProcess), request);
+
+        /// <summary>
+        /// Entry point executed by the factory
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        internal override VoidResult ExecuteProcess(params object[] args)
+        {
+            TProcessRequest request;
+            if (args[0] is string strReq)
+            {
+                request = strReq.Deserialize<TProcessRequest>();
+            }
+            else if (args[0] is TProcessRequest objReq)
+            {
+                request = objReq;
+            }
+            else
+            {
+                throw new ArgumentException("Input is empty");
+            }
+
+            request?.Sanitize(new HtmlSanitizer());
+
+            var processResponse = Execute(request);
+
+            return processResponse;
+        }
+
+        /// <summary>
+        /// Api process context
+        /// </summary>
+        [Import]
+        protected virtual IApiProcessContext Context
+        {
+            get => _context;
+            set
+            {
+                if (value is ApiProcessContext context)
+                {
+                    context.SetProcess(this);
+                    _context = context;
+                }
+            }
+        }
+        private IApiProcessContext _context;
+
+        /// <summary>
+        /// Base process context upcasted from Api process context
+        /// </summary>
+        internal override IBaseProcessContext BaseContext => Context;
+    }
+
+    /// <summary>
+    /// Represents API process with an underlying business process
+    /// </summary>
     public abstract class AutoApiProcess<TProcess> : BaseProcess<VoidResult>, IApiProcess
         where TProcess : IBusinessProcess, new()
     {
