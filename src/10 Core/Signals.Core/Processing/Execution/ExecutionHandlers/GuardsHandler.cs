@@ -28,13 +28,6 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         {
             // Get guard attribute
             var guardAttributes = processType.GetCustomAttributes(typeof(SignalsGuardAttribute), false).Cast<SignalsGuardAttribute>().ToList();
-
-            // If no such attributes are present, the request is valid
-            if (!guardAttributes.Any())
-            {
-                return Next.Execute(process, processType, args);
-            }
-
             foreach (var guardAttribute in guardAttributes)
             {
                 var guardResult = guardAttribute.Check(process.BaseContext);
