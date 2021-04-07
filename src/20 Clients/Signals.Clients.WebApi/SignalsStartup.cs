@@ -9,12 +9,9 @@ using Signals.Aspects.Auth.NetCore.Extensions;
 using Signals.Aspects.Caching.Enums;
 using Signals.Aspects.Caching.InMemory;
 using Signals.Aspects.Caching.InMemory.Configurations;
-using Signals.Aspects.CommunicationChannels.MsSql.Configurations;
 using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI.Autofac;
 using Signals.Aspects.Localization.File.Configurations;
-using Signals.Aspects.Logging.Enums;
-using Signals.Aspects.Logging.NLog.Configurations;
 using Signals.Core.Configuration;
 using Signals.Core.Web.Configuration;
 using Signals.Core.Web.Extensions;
@@ -47,9 +44,8 @@ namespace Signals.Clients.WebApi
             // Authentication
             services.AddAuthentication("Cookies").AddSignalsAuth(opts =>
             {
-                opts.ExpireTimeSpan = TimeSpan.FromDays(365);
                 opts.Cookie.SameSite = SameSiteMode.None;
-                opts.Cookie.Expiration = TimeSpan.FromDays(365);
+                opts.ExpireTimeSpan = TimeSpan.FromDays(365);
                 opts.Cookie.MaxAge = TimeSpan.FromDays(365);
                 opts.Events = new CookieAuthenticationEvents
                 {
@@ -93,7 +89,7 @@ namespace Signals.Clients.WebApi
                     FileExtension = "app",
                     LocalizationSources = new List<LocalizationSource>
                     {
-                        new LocalizationSource
+                        new()
                         {
                             Name = "default",
                             SourcePath = "Translations"
@@ -116,7 +112,7 @@ namespace Signals.Clients.WebApi
             services.AddDataProtection()
                 // This helps surviving a restart: a same app will find back its keys. Just ensure to create the folder.
                 .PersistKeysToFileSystem(new DirectoryInfo(
-                    Path.Combine(Directory.GetParent(Environment.CurrentDirectory).ToString(), @"persisted_keys")))
+                    Path.Combine(Directory.GetParent(Environment.CurrentDirectory)?.ToString() ?? string.Empty, @"persisted_keys")))
                 // This helps surviving a site update: each app has its own store, building the site creates a new app
                 .SetApplicationName(ApplicationConfiguration.Instance.ApplicationName)
                 .SetDefaultKeyLifetime(TimeSpan.FromDays(365));
@@ -132,7 +128,7 @@ namespace Signals.Clients.WebApi
         private static void AddConfiguration()
         {
             FileConfigurationProvider ConfigurationProviderForFile(string name) =>
-                new FileConfigurationProvider
+                new()
                 {
                     File = name,
                     Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "configs"),

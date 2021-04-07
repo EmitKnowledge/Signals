@@ -1,13 +1,12 @@
-﻿using System;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Signals.Aspects.Auth.NetCore.Extensions;
 using Signals.Core.Web.Extensions;
+using System;
 
 namespace Signals.Clients.WebApi
 {
@@ -24,15 +23,7 @@ namespace Signals.Clients.WebApi
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-            services
-                .Configure<CookiePolicyOptions>(opt =>
-                {
-                    opt.CheckConsentNeeded = context => true;
-                    opt.MinimumSameSitePolicy = SameSiteMode.None;
-                })
-                .AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            services.AddMvc(opts => opts.EnableEndpointRouting = false);
             services.AddCors();
 
             // Allow large forms data
@@ -41,11 +32,17 @@ namespace Signals.Clients.WebApi
                 options.ValueCountLimit = int.MaxValue;
             });
 
+            // Configure IIS
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
             return services.AddSignals();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
