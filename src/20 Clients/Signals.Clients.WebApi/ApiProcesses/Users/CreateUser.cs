@@ -4,9 +4,9 @@ using Signals.Clients.WebApi.Entities;
 using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Results;
 
-namespace Signals.Clients.WebApi.ApiProcesses
+namespace Signals.Clients.WebApi.ApiProcesses.Users
 {
-    [ApiProcess(HttpMethod = ApiProcessMethod.POST)]
+    [ApiProcess(HttpMethod = ApiProcessMethod.GET)]
     public class CreateUser1 : ProxyApiProcess<BusinessProcesses.CreateUser, CreateUserDto, MethodResult<User>, Dtos.In.CreateUserDto, MethodResult<UserDto>>
     {
         public override MethodResult<UserDto> MapResponse(MethodResult<User> response)
