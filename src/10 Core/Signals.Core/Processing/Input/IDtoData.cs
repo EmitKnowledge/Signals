@@ -13,4 +13,16 @@ namespace Signals.Core.Processing.Input
         /// <param name="sanitizer"></param>
         void Sanitize(HtmlSanitizer sanitizer);
     }
+
+    /// <summary>
+    /// Dto data constraint
+    /// </summary>
+    public abstract class DtoData<T>
+    {
+        /// <summary>
+        /// Maps the current instance to an object of type T
+        /// </summary>
+        /// <returns></returns>
+        public abstract T Map();
+    }
 }

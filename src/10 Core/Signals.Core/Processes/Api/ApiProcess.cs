@@ -28,7 +28,11 @@ namespace Signals.Core.Processes.Api
         protected new virtual IApiProcessContext Context
         {
             get => _context;
-            set { (value as ApiProcessContext).SetProcess(this); _context = value; }
+            set
+            {
+                (value as ApiProcessContext)?.SetProcess(this);
+                _context = value;
+            }
         }
         private IApiProcessContext _context;
 
@@ -41,8 +45,7 @@ namespace Signals.Core.Processes.Api
     /// <summary>
     /// Represents an api process
     /// </summary>
-    public abstract class ApiProcess<TRequest, TResponse> : BusinessProcess<TRequest, TResponse>,
-        IApiProcess
+    public abstract class ApiProcess<TRequest, TResponse> : BusinessProcess<TRequest, TResponse>, IApiProcess
         where TRequest : IDtoData
         where TResponse : VoidResult, new()
     {
@@ -53,7 +56,11 @@ namespace Signals.Core.Processes.Api
         protected new virtual IApiProcessContext Context
         {
             get => _context;
-            set { (value as ApiProcessContext).SetProcess(this); _context = value; }
+            set
+            {
+                (value as ApiProcessContext)?.SetProcess(this);
+                _context = value;
+            }
         }
         private IApiProcessContext _context;
 
@@ -77,7 +84,7 @@ namespace Signals.Core.Processes.Api
             }
             else if (args[0] is TRequest obj)
             {
-                obj?.Sanitize(new HtmlSanitizer());
+                obj.Sanitize(new HtmlSanitizer());
                 return Execute(obj);
             }
 

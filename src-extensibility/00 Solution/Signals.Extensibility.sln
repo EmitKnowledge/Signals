@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10 Core Extensions", "10 Core Extensions", "{A01FC58F-F6EE-45BA-B783-A3D2E7F2F108}"
 EndProject
@@ -77,19 +77,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Storage.Azu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Storage.Database", "..\05 Aspects\07 Storage\Signals.Aspects.Storage.Database\Signals.Aspects.Storage.Database.csproj", "{8AC65E8F-37DF-4AF7-BF24-BCDEA0DF0800}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.CommunicationChannels.Msmq", "..\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.Msmq\Signals.Aspects.CommunicationChannels.Msmq.csproj", "{39F4EA2C-6816-4F59-AC1D-6017AD492D49}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "28 Communication channels", "28 Communication channels", "{BADD3487-4090-4CAD-A7FB-5C9D8C43D33A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Tests.CommunicaitonChannels", "..\20 Tests\28 Communication channels\Signals.Tests.CommunicaitonChannels\Signals.Tests.CommunicaitonChannels.csproj", "{CB7B04E3-838B-4D70-B66E-3C615629B702}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Tests.CommunicaitonChannels.Msmq", "..\20 Tests\28 Communication channels\Signals.Tests.CommunicaitonChannels.Msmq\Signals.Tests.CommunicaitonChannels.Msmq.csproj", "{1C2B8CE0-5745-4518-8FD2-5713262E2B60}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.CommunicationChannels.ServiceBus", "..\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.ServiceBus\Signals.Aspects.CommunicationChannels.ServiceBus.csproj", "{B3B199E8-7939-4952-B8DA-88B456D6DF8E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Auth.NetCore", "..\05 Aspects\09 Authentication and authorization\Signals.Aspects.Auth.NetCore\Signals.Aspects.Auth.NetCore.csproj", "{C8806DAD-ADAB-4117-A502-AB216B54C3A4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Auth.Mvc5", "..\05 Aspects\09 Authentication and authorization\Signals.Aspects.Auth.Mvc5\Signals.Aspects.Auth.Mvc5.csproj", "{D720F33E-8ACE-4A56-A87A-C3039891330B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "30 Background processing", "30 Background processing", "{BD3E9EB5-7671-40BF-B3CF-08BDDD3B6AAD}"
 EndProject
@@ -261,18 +255,10 @@ Global
 		{8AC65E8F-37DF-4AF7-BF24-BCDEA0DF0800}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AC65E8F-37DF-4AF7-BF24-BCDEA0DF0800}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AC65E8F-37DF-4AF7-BF24-BCDEA0DF0800}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39F4EA2C-6816-4F59-AC1D-6017AD492D49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39F4EA2C-6816-4F59-AC1D-6017AD492D49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39F4EA2C-6816-4F59-AC1D-6017AD492D49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39F4EA2C-6816-4F59-AC1D-6017AD492D49}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB7B04E3-838B-4D70-B66E-3C615629B702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB7B04E3-838B-4D70-B66E-3C615629B702}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB7B04E3-838B-4D70-B66E-3C615629B702}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB7B04E3-838B-4D70-B66E-3C615629B702}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C2B8CE0-5745-4518-8FD2-5713262E2B60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C2B8CE0-5745-4518-8FD2-5713262E2B60}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C2B8CE0-5745-4518-8FD2-5713262E2B60}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C2B8CE0-5745-4518-8FD2-5713262E2B60}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B3B199E8-7939-4952-B8DA-88B456D6DF8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B3B199E8-7939-4952-B8DA-88B456D6DF8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3B199E8-7939-4952-B8DA-88B456D6DF8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -281,10 +267,6 @@ Global
 		{C8806DAD-ADAB-4117-A502-AB216B54C3A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8806DAD-ADAB-4117-A502-AB216B54C3A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8806DAD-ADAB-4117-A502-AB216B54C3A4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D720F33E-8ACE-4A56-A87A-C3039891330B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D720F33E-8ACE-4A56-A87A-C3039891330B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D720F33E-8ACE-4A56-A87A-C3039891330B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D720F33E-8ACE-4A56-A87A-C3039891330B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{38CFAE47-DDED-4A0A-B62F-C946F17EDFB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{38CFAE47-DDED-4A0A-B62F-C946F17EDFB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38CFAE47-DDED-4A0A-B62F-C946F17EDFB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -464,13 +446,10 @@ Global
 		{672EEC93-C60A-431E-9491-7D83A6E15818} = {9CDA6E7F-AD83-4402-A93C-7BFF3FE29638}
 		{17740C15-9C48-498E-9A7D-D1FEC689B4F3} = {FAF8FED8-ACF0-490E-9EF6-6E0AF1FE4A71}
 		{8AC65E8F-37DF-4AF7-BF24-BCDEA0DF0800} = {FAF8FED8-ACF0-490E-9EF6-6E0AF1FE4A71}
-		{39F4EA2C-6816-4F59-AC1D-6017AD492D49} = {042925DB-A412-4CA2-AD80-5ABFD6BA0F6F}
 		{BADD3487-4090-4CAD-A7FB-5C9D8C43D33A} = {D3151AC8-B3DD-496D-A5E9-0C6BE93F4055}
 		{CB7B04E3-838B-4D70-B66E-3C615629B702} = {BADD3487-4090-4CAD-A7FB-5C9D8C43D33A}
-		{1C2B8CE0-5745-4518-8FD2-5713262E2B60} = {BADD3487-4090-4CAD-A7FB-5C9D8C43D33A}
 		{B3B199E8-7939-4952-B8DA-88B456D6DF8E} = {042925DB-A412-4CA2-AD80-5ABFD6BA0F6F}
 		{C8806DAD-ADAB-4117-A502-AB216B54C3A4} = {D9F94638-FFA2-490D-95E8-A284E5810784}
-		{D720F33E-8ACE-4A56-A87A-C3039891330B} = {D9F94638-FFA2-490D-95E8-A284E5810784}
 		{BD3E9EB5-7671-40BF-B3CF-08BDDD3B6AAD} = {D3151AC8-B3DD-496D-A5E9-0C6BE93F4055}
 		{38CFAE47-DDED-4A0A-B62F-C946F17EDFB2} = {5671F844-AFE2-41D2-ABF6-8A71BCC30784}
 		{D46FAFF0-195F-49D9-95A1-8A4622430300} = {BD3E9EB5-7671-40BF-B3CF-08BDDD3B6AAD}

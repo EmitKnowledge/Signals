@@ -119,22 +119,87 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                         }
                     }
 
-                    operationItem.Tags = new List<OpenApiTag>();
-                    operationItem.Tags.Add(new OpenApiTag
+                    operationItem.Tags = new List<OpenApiTag>
                     {
-                        Name = type.Namespace.Split('.').Last()
-                    });
+                        new OpenApiTag
+                        {
+                            Name = type.Namespace.Split('.').Last()
+                        }
+                    };
                     operationItem.Summary = instance.Description.IsNullOrEmpty() ? instance.Name : instance.Description;
                     operationItem.Description = instance.Name;
                     operationItem.OperationId = type.Name;
 
-                    var request = processGenerics.Count() > 1 ? processGenerics.First() : null;
-                    var response = processGenerics.Last();
+                    // Determine the request based on the process type
+                    Type request = null;
+                    Type response;
+                    var processType = type.BaseType.Name;
+                    switch (processType)
+                    {
+                        case "ProxyApiProcess`5":
+                            request = processGenerics[3];
+                            break;
+                        case "ProxyApiProcess`4":
+                            request = processGenerics[1];
+                            break;
+                        case "ProxyApiProcess`3":
+                            break;
+                        case "AutoApiProcess`3":
+                            request = processGenerics[2];
+                            break;
+                        case "AutoApiProcess`2":
+                            request = processGenerics[1];
+                            break;
+                        case "AutoApiProcess`1":
+                            break;
+                        default:
+                            request = processGenerics.Length > 1 ? processGenerics.First() : null;
+                            break;
+                    }
 
-                    List<Type> enumTypes = new List<Type>();
+                    // Determine the response based on the process type
+                    if (processType.StartsWith("ProxyApiProcess") ||
+                        processType.StartsWith("AutoApiProcess"))
+                    {
+                        var underlyingProcessType = processGenerics.First();
+                        var underlyingProcessGenerics = underlyingProcessType.BaseType.GetGenericArguments();
+                        response = underlyingProcessGenerics.Any() ? underlyingProcessGenerics.Last() : null;
+                    }
+                    else
+                    {
+                        response = processGenerics.Last();
+                    }
+
+                    // Determine the payload response
+                    if (response != null)
+                    {
+                        if (response.Name.StartsWith("MethodResult") ||
+                            response.Name.StartsWith("ListResult"))
+                        {
+                            response = response.GetGenericArguments().First();
+                        }
+                        else if (response.Name.StartsWith("VoidResult"))
+                        {
+                            response = null;
+                        }
+                    }
+
+                    var enumTypes = new List<Type>();
 
                     var requestSchema = Deserialize(request, ref enumTypes);
                     var responseSchema = Deserialize(response, ref enumTypes);
+
+                    var requestPath = string.Empty;
+                    if (request != null)
+                    {
+                        requestPath = $"{request.Namespace.Replace($"{assemblyNamespace}.", string.Empty)}.{request.Name}";
+                    }
+
+                    var responsePath = string.Empty;
+                    if (response != null)
+                    {
+                        responsePath = $"{response.Namespace.Replace($"{assemblyNamespace}.", string.Empty)}.{response.Name}";
+                    }
 
                     if (!requestSchema.IsNullOrHasZeroElements())
                     {
@@ -143,24 +208,26 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                             operationItem.RequestBody = new OpenApiRequestBody
                             {
                                 Content = new Dictionary<string, OpenApiMediaType>
-                            {
                                 {
-                                    contentType,
-                                    new OpenApiMediaType
                                     {
-                                        Schema = new OpenApiSchema
+                                        contentType,
+                                        new OpenApiMediaType
                                         {
-                                            Reference = processGenerics.Count() > 1 ? new OpenApiReference
+                                            Schema = new OpenApiSchema
                                             {
-                                                Id = $"definitions/{type.Name}RequestDto",
-                                                Type = ReferenceType.Schema,
-                                                ExternalResource = ""
-                                            } : null,
-                                            Properties = requestSchema
+                                                Reference = request != null
+                                                    ? new OpenApiReference
+                                                    {
+                                                        Id = $"definitions/{requestPath}",
+                                                        Type = ReferenceType.Schema,
+                                                        ExternalResource = ""
+                                                    }
+                                                    : null,
+                                                Properties = requestSchema
+                                            }
                                         }
                                     }
                                 }
-                            }
                             };
                         }
                         else
@@ -173,24 +240,21 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                     {
                                         In = ParameterLocation.Query,
                                         Name = pair.Key,
-                                        Reference = processGenerics.Count() > 1 ? new OpenApiReference
-                                        {
-                                            Id = $"definitions/{type.Name}RequestDto.{pair.Key}",
-                                            Type = ReferenceType.Schema,
-                                            ExternalResource = ""
-                                        } : null,
+                                        Reference = request != null
+                                            ? new OpenApiReference
+                                            {
+                                                Id = $"definitions/{requestPath}",
+                                                Type = ReferenceType.Schema,
+                                                ExternalResource = ""
+                                            }
+                                            : null,
                                         Schema = pair.Value
                                     });
-                                    document.Components.Schemas.Add($"{type.Name}RequestDto.{pair.Key}", new OpenApiSchema { Properties = pair.Value.Properties });
-                                }
-                                else if (pair.Value.Enum.Any())
-                                {
-                                    operationItem.Parameters.Add(new OpenApiParameter
+
+                                    if (!document.Components.Schemas.ContainsKey(requestPath))
                                     {
-                                        In = ParameterLocation.Query,
-                                        Name = pair.Key,
-                                        Schema = pair.Value,
-                                    });
+                                        document.Components.Schemas.Add($"{requestPath}", new OpenApiSchema { Properties = pair.Value.Properties });
+                                    }
                                 }
                                 else
                                 {
@@ -219,7 +283,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                         {
                                             Reference = new OpenApiReference
                                             {
-                                                Id = $"definitions/{type.Name}ResponseDto",
+                                                Id = $"definitions/{responsePath}",
                                                 Type = ReferenceType.Schema,
                                                 ExternalResource = ""
                                             },
@@ -232,8 +296,21 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                         }
                     };
 
-                    document.Components.Schemas.Add($"{type.Name}RequestDto", new OpenApiSchema { Properties = requestSchema });
-                    document.Components.Schemas.Add($"{type.Name}ResponseDto", new OpenApiSchema { Properties = responseSchema });
+                    if (request != null)
+                    {
+                        if (!document.Components.Schemas.ContainsKey(requestPath))
+                        {
+                            document.Components.Schemas.Add(requestPath, new OpenApiSchema { Properties = requestSchema });
+                        }
+                    }
+
+                    if (response != null)
+                    {
+                        if (!document.Components.Schemas.ContainsKey(responsePath))
+                        {
+                            document.Components.Schemas.Add(responsePath, new OpenApiSchema { Properties = responseSchema });
+                        }
+                    }
 
                     foreach (var enumType in enumTypes)
                     {
@@ -262,7 +339,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 if (type == null) return null;
 
                 var result = new Dictionary<string, OpenApiSchema>();
-                // set shema props of the parent property
+                // Set schema props of the parent property
                 var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
                 Stack<OpenApiSchemaNode> toProcess = new Stack<OpenApiSchemaNode>(properties.Select(x => new OpenApiSchemaNode { Property = x }));
                 Stack<OpenApiSchema> parentSchemas = new Stack<OpenApiSchema>();
@@ -352,8 +429,10 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
             OpenApiSchema GetOpenApiSchema(PropertyInfo property, ref List<Type> enumTypes)
             {
-                var schema = new OpenApiSchema();
-                schema.Title = property.Name;
+                var schema = new OpenApiSchema
+                {
+                    Title = property.Name
+                };
 
                 // set the property name
                 if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType) &&
@@ -468,7 +547,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                             schema.Type = "integer";
                             schema.Format = "int64";
                             break;
-                        };
+                        }
                 }
 
                 return schema;
@@ -515,7 +594,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
             var cache = SystemBootstrapper.GetInstance<ICache>();
             var cacheKey = "cache:api/spec";
 
-            OpenApiDocument docs = null;
+            OpenApiDocument docs;
             var cachedDocs = cache.Get<OpenApiDocument>(cacheKey);
 
             if (cachedDocs.IsNull())
@@ -533,8 +612,8 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 docs = cachedDocs;
             }
 
-            string docsString = string.Empty;
-            string contentType = string.Empty;
+            string docsString;
+            string contentType;
 
             if (context.RawUrl.ToLowerInvariant().EndsWith(".yaml"))
             {

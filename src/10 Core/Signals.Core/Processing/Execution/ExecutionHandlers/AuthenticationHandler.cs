@@ -29,8 +29,8 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         {
             // Get authenticate attribute
             var attributes = processType
-                .GetCustomAttributes(typeof(SignalsAuthenticateProcessAttribute), false)
-                .Cast<SignalsAuthenticateProcessAttribute>()
+                .GetCustomAttributes(typeof(SignalsAuthenticateAttribute), false)
+                .Cast<SignalsAuthenticateAttribute>()
                 .ToList();
 
             // If no attribute is present the request is valid

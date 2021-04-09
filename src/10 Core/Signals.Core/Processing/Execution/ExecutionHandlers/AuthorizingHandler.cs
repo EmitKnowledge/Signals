@@ -30,7 +30,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
             // get authorize attrigute
-            var attributes = processType.GetCustomAttributes(typeof(SignalsAuthorizeProcessAttribute), false).Cast<SignalsAuthorizeProcessAttribute>().ToList();
+            var attributes = processType.GetCustomAttributes(typeof(SignalsAuthorizeAttribute), false).Cast<SignalsAuthorizeAttribute>().ToList();
 
             // if no attribute is present the request is valid
             if (!attributes.Any()) return Next.Execute(process, processType, args);

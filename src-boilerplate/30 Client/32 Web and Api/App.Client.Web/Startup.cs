@@ -2,11 +2,8 @@ using App.Domain.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NodaTime;
-using NodaTime.Serialization.JsonNet;
 using Signals.Aspects.Auth.NetCore.Extensions;
 using Signals.Core.Web.Extensions;
 using System;
@@ -42,14 +39,7 @@ namespace App.Client.Web
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddMvc()
-                .AddJsonOptions(o =>
-                {
-                    o.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            services.AddMvc();
             return services.AddSignals();
         }
 

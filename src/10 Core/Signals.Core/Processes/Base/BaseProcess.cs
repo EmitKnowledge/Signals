@@ -1,5 +1,4 @@
-﻿using Signals.Aspects.DI;
-using Signals.Core.Processing.Exceptions;
+﻿using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Results;
 using Signals.Core.Processing.Specifications;
 using System;
