@@ -36,12 +36,17 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
             Configuration = configuration;
             CreateDbTableIfDoesntExist();
 
-            if (Configuration.MessageListeningStrategy == MessageListeningStrategy.Broker)
-                Processor = new BrokerProcessor(this);
-            else if (Configuration.MessageListeningStrategy == MessageListeningStrategy.LongPolling)
-                Processor = new LongPollingProcessor(this);
+            switch (Configuration.MessageListeningStrategy)
+            {
+	            case MessageListeningStrategy.Broker:
+		            Processor = new BrokerProcessor(this);
+		            break;
+	            case MessageListeningStrategy.LongPolling:
+		            Processor = new LongPollingProcessor(this);
+		            break;
+            }
 
-            Processor?.Init();
+            Processor.Init();
         }
 
         /// <summary>
@@ -50,7 +55,7 @@ namespace Signals.Aspects.CommunicationChannels.MsSql
         /// <returns></returns>
         public Task Close()
         {
-            Processor?.Dispose();
+            Processor.Dispose();
             Subscriptions.Clear();
 
             return Task.CompletedTask;

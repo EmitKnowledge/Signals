@@ -6,13 +6,7 @@ namespace Signals.Aspects.CommunicationChannels.MsSql.Configurations
     [DataContract, Serializable]
     public enum MessageListeningStrategy
     {
-        /// <summary>
-        /// Represents strategy where the client doesn't listen for events
-        /// </summary>
-        [EnumMember]
-        None,
-
-        /// <summary>
+	    /// <summary>
         /// Represents long polling listening strategy
         /// </summary>
         [EnumMember]
