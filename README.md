@@ -5,7 +5,7 @@ Signals is a framework which focuses on increasing the quality and productivity 
 
 Overview can be found on [https://signals.emitknowledge.com/](https://signals.emitknowledge.com/) 
 
-Docs can be found on [Wiki](https://github.com/EmitKnowledge/Signals/wiki)
+Docs can be found on the project [Wiki](https://github.com/EmitKnowledge/Signals/wiki) page
 
 ## Kickstart
 Checkout [boilerplate](https://github.com/EmitKnowledge/Signals-Boilerplate) to get started with Signals preconfigured.
