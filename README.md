@@ -3,7 +3,8 @@
 ## Signals
 Signals is a framework which focuses on increasing the quality and productivity within development teams by providing them with tools, aspects and processes.
 
-Overview can be found on [https://signals.emitknowledge.com/](https://signals.emitknowledge.com/)
+Overview can be found on [https://signals.emitknowledge.com/](https://signals.emitknowledge.com/) 
+Docs can be found on [Wiki](https://github.com/EmitKnowledge/Signals/wiki)
 
 ## High-level aspects
 When developing an application, certain aspects are mandatory in the project setup phase that are consuming development teams time and focus.
