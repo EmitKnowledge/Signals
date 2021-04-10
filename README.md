@@ -7,6 +7,9 @@ Overview can be found on [https://signals.emitknowledge.com/](https://signals.em
 
 Docs can be found on [Wiki](https://github.com/EmitKnowledge/Signals/wiki)
 
+## Kickstart
+Checkout [boilerplate](https://github.com/EmitKnowledge/Signals-Boilerplate) to get started with Signals preconfigured.
+
 ## High-level aspects
 When developing an application, certain aspects are mandatory in the project setup phase that are consuming development teams time and focus.
 
