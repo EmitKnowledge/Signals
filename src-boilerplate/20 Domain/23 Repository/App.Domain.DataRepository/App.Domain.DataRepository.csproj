@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="DapperExtensions.NETStandard" Version="1.0.1" />
+    <PackageReference Include="NodaTime" Version="3.0.5" />
+    <PackageReference Include="Signals.Core" Version="2.0.0" />
+    <PackageReference Include="SQLinq.Dapper.NETStandard" Version="1.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\21 Configuration\App.Domain.Configuration\App.Domain.Configuration.csproj" />
+    <ProjectReference Include="..\..\22 Entities\App.Domain.Entities\App.Domain.Entities.csproj" />
+    <ProjectReference Include="..\App.Domain.DataRepositoryContracts\App.Domain.DataRepositoryContracts.csproj" />
+  </ItemGroup>
+  
+</Project>

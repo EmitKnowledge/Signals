@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Audit.NET" Version="14.0.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Aspects.Auditing" Version="1.0.2" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\05 Aspects\04 Auditing\Signals.Aspects.Auditing\Signals.Aspects.Auditing.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
+
+</Project>

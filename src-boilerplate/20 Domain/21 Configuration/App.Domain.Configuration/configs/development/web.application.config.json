@@ -1,0 +1,12 @@
+﻿{
+	"WebUrl": "http://localhost/",
+	"Analytics": {
+		"enableAnalytics": false
+	},
+  "staticResources": {
+    "cdnUrl": "http://localhost/"
+  },
+	"sslConfiguration": {
+		"port": 443
+	}
+}

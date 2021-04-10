@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
+    <PackageReference Include="Signals.Aspects.Configuration.File" Version="2.0.0" />
+    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="2.0.0" />
+    <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="2.0.0" />
+    <PackageReference Include="Signals.Core" Version="2.0.0" />
+    <PackageReference Include="Simple.Migrations" Version="0.9.21" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\20 Domain\21 Configuration\App.Domain.Configuration\App.Domain.Configuration.csproj" />
+  </ItemGroup>
+  
+</Project>

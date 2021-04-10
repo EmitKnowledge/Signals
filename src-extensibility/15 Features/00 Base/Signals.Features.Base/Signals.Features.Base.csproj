@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Core.Common" Version="1.0.8" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\10 Core\Signals.Core.Common\Signals.Core.Common.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
+    
+</Project>

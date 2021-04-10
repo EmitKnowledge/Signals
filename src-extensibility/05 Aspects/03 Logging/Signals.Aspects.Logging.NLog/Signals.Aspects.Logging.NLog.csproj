@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Aspects.Logging" Version="1.0.3" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\..\src\05 Aspects\03 Logging\Signals.Aspects.Logging\Signals.Aspects.Logging.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
+
+</Project>

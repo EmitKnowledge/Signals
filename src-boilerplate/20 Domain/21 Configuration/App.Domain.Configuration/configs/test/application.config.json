@@ -1,0 +1,17 @@
+﻿{
+  "ApplicationName": "Boilerplate",
+  "ApplicationVersion": "1.0.0",
+  "ApplicationEmail": "boilerplate@gmail.com",
+  "CriticalConfiguration": {
+    "OwnerEmail": null,
+    "Subject": null,
+    "Body": null
+  },
+  "SmtpConfiguration": {
+    "Server": null,
+    "Port": 0,
+    "Username": null,
+    "Password": null,
+    "UseSsl": false
+  }
+}

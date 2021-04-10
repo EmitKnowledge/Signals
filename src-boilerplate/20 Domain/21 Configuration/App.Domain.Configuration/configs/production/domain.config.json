@@ -1,0 +1,45 @@
+﻿{
+  "ApplicationConfiguration": {
+    "ProjectName": "App",
+    "ApplicationName": "App.Client.Web",
+    "Enviroment": "Production"
+  },
+  "SecurityConfiguration": {
+    "SaltLenght": 32,
+    "AutoPasswordLenght": 12,
+    "MinPasswordLenght": 12,
+    "TokenLenght": 128,
+    "TokenValidityInDays": 1,
+    "Fish": "KTVRaRB4AcSkL9ryvYPAEXmU"
+  },
+  "NotificationConfiguration": {
+    "Namespace": null,
+    "Issuer": null,
+    "IssuerKey": null,
+    "IsEnabled": true
+  },
+  "StorageConfiguration": {
+    "Name": null,
+    "ConnectionString": null
+  },
+  "WebConfiguration": {
+    "Url": "http://localhost/",
+    "MaxPageSize": 100
+  },
+  "DatabaseConfiguration": {
+    "DatabaseConnections": [
+      {
+        "Name": "Development",
+        "IpAddress": "localhost",
+        "Database": "boilerplate.db",
+        "Uid": "boilerplate.usr",
+        "Pwd": "boilerplate.pass"
+      }
+    ],
+    "ActiveEnvironment": "Development"
+  },
+  "LocalizationConfiguration": {
+    "CookieKey": "_cultureInfo",
+    "DefaultCulture": "en-US"
+  }
+}

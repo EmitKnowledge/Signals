@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="4.5.3" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)'!='Debug' ">
+      <ItemGroup>
+        <PackageReference Include="Signals.Core" Version="1.0.15" />
+      </ItemGroup>
+    </When>
+
+    <When Condition=" '$(Configuration)'=='Debug' ">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\src\10 Core\Signals.Core\Signals.Core.csproj" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  
+</Project>

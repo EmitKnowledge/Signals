@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
+    <PackageReference Include="Signals.Aspects.Auth.NetCore" Version="2.0.0" />
+    <PackageReference Include="Signals.Aspects.Caching.InMemory" Version="2.0.0" />
+    <PackageReference Include="Signals.Aspects.Configuration.File" Version="2.0.0" />
+    <PackageReference Include="Signals.Aspects.ErrorHandling.Polly" Version="2.0.0" />
+    <PackageReference Include="Signals.Aspects.Localization.File" Version="2.0.0" />
+    <PackageReference Include="Signals.Aspects.Logging.NLog" Version="2.0.0" />
+    <PackageReference Include="Signals.Aspects.Security.Database" Version="2.0.0" />
+    <PackageReference Include="Signals.Aspects.DI.Autofac" Version="2.0.0" />
+    <PackageReference Include="Signals.Core" Version="2.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\20 Domain\21 Configuration\App.Domain.Configuration\App.Domain.Configuration.csproj" />
+    <ProjectReference Include="..\..\20 Domain\22 Entities\App.Domain.Entities\App.Domain.Entities.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Moq" Version="4.14.4" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\15 Hosting\Signals.Core.Web\Signals.Core.Web.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.DotNetCore\Signals.Aspects.DI.DotNetCore.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.SimpleInjector\Signals.Aspects.DI.SimpleInjector.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\05 Caching\Signals.Aspects.Caching.InMemory\Signals.Aspects.Caching.InMemory.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config\webapp.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\app.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
