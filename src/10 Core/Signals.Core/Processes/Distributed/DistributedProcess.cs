@@ -139,7 +139,6 @@ namespace Signals.Core.Processes.Distributed
     /// </summary>
     public abstract class DistributedProcess<TTransientData, TRequest, TResponse> : BusinessProcess<TRequest, TResponse>,
         IDistributedProcess
-        where TRequest : IDtoData
         where TResponse : VoidResult, new()
         where TTransientData : ITransientData
     {
