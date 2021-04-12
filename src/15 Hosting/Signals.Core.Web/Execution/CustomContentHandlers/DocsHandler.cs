@@ -78,7 +78,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 foreach (var type in allApiProcesses)
                 {
                     var instance = SystemBootstrapper.GetInstance(type) as IBaseProcess<VoidResult>;
-                    var attribute = type.GetCustomAttributes(typeof(ApiProcessAttribute), false).Cast<ApiProcessAttribute>().SingleOrDefault();
+                    var attribute = type.GetCustomAttributes(typeof(SignalsApiAttribute), false).Cast<SignalsApiAttribute>().SingleOrDefault();
                     var headerAttributes = type
                         .GetCustomAttributes(typeof(ResponseHeaderAttribute), false)
                         .Cast<ResponseHeaderAttribute>()
@@ -87,7 +87,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                         .ToList();
 
                     var contentType = EnumExtensions.GetDescription(SerializationFormat.Json);
-                    var httpMethod = ApiProcessMethod.ANY;
+                    var httpMethod = SignalsApiMethod.ANY;
 
                     if (!attribute.IsNull())
                     {
@@ -203,7 +203,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
                     if (!requestSchema.IsNullOrHasZeroElements())
                     {
-                        if (httpMethod == ApiProcessMethod.POST)
+                        if (httpMethod == SignalsApiMethod.POST)
                         {
                             operationItem.RequestBody = new OpenApiRequestBody
                             {
@@ -554,25 +554,25 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
             }
 
             // map http method to open api method
-            List<OperationType> Map(ApiProcessMethod method)
+            List<OperationType> Map(SignalsApiMethod method)
             {
-                if (method == ApiProcessMethod.ANY)
+                if (method == SignalsApiMethod.ANY)
                     return new List<OperationType>
                     {
                         OperationType.Get,
                         OperationType.Post
                     };
-                else if (method == ApiProcessMethod.DELETE)
+                else if (method == SignalsApiMethod.DELETE)
                     return new List<OperationType> { OperationType.Delete, };
-                else if (method == ApiProcessMethod.GET)
+                else if (method == SignalsApiMethod.GET)
                     return new List<OperationType> { OperationType.Get, };
-                else if (method == ApiProcessMethod.OPTIONS)
+                else if (method == SignalsApiMethod.OPTIONS)
                     return new List<OperationType> { OperationType.Options, };
-                else if (method == ApiProcessMethod.PATCH)
+                else if (method == SignalsApiMethod.PATCH)
                     return new List<OperationType> { OperationType.Patch, };
-                else if (method == ApiProcessMethod.POST)
+                else if (method == SignalsApiMethod.POST)
                     return new List<OperationType> { OperationType.Post, };
-                else if (method == ApiProcessMethod.PUT)
+                else if (method == SignalsApiMethod.PUT)
                     return new List<OperationType> { OperationType.Put, };
 
                 return new List<OperationType>();

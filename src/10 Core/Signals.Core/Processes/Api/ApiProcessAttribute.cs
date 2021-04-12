@@ -1,12 +1,13 @@
 ﻿using Signals.Core.Common.Serialization;
 using System;
+using System.Net.Http;
 
 namespace Signals.Core.Processes.Api
 {
     /// <summary>
     /// Process HTTP method
     /// </summary>
-    public enum ApiProcessMethod
+    public enum SignalsApiMethod
     {
         /// <summary>
         /// Http method ANY
@@ -53,14 +54,14 @@ namespace Signals.Core.Processes.Api
     /// Api process attribute
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    public class ApiProcessAttribute : Attribute
+    public class SignalsApiAttribute : Attribute
     {
         /// <summary>
         /// CTOR
         /// </summary>
-        public ApiProcessAttribute()
+        public SignalsApiAttribute()
         {
-            HttpMethod = ApiProcessMethod.ANY;
+            HttpMethod = SignalsApiMethod.ANY;
             ExposeApiDocs = true;
             ResponseType = SerializationFormat.Json;
         }
@@ -68,7 +69,7 @@ namespace Signals.Core.Processes.Api
         /// <summary>
         /// Expected HTTP method
         /// </summary>
-        public ApiProcessMethod HttpMethod { get; set; }
+        public SignalsApiMethod HttpMethod { get; set; }
 
         /// <summary>
         /// Expose api docs

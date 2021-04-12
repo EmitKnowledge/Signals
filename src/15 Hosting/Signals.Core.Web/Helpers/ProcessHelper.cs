@@ -20,7 +20,7 @@ namespace Signals.Core.Web.Helpers
         /// <returns></returns>
         public static StringContent ToHttpContent(this Type processType, VoidResult response)
         {
-            var attributes = processType.GetCustomAttributes(typeof(ApiProcessAttribute), false).Cast<ApiProcessAttribute>().ToList();
+            var attributes = processType.GetCustomAttributes(typeof(SignalsApiAttribute), false).Cast<SignalsApiAttribute>().ToList();
 
             foreach (var attribute in attributes)
             {

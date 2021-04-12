@@ -22,13 +22,13 @@ namespace Signals.Core.Web.Execution.Filters
         /// <returns></returns>
         public bool IsCorrectProcessType(Type type, IHttpContextWrapper context)
         {
-            var attributes = type.GetCustomAttributes(typeof(ApiProcessAttribute), false).Cast<ApiProcessAttribute>().ToList();
+            var attributes = type.GetCustomAttributes(typeof(SignalsApiAttribute), false).Cast<SignalsApiAttribute>().ToList();
             if (!attributes.Any()) return true;
 
             var correctMethod = false;
             foreach (var attribute in attributes)
             {
-                correctMethod |= attribute.HttpMethod == ApiProcessMethod.ANY || attribute.HttpMethod.ToString().ToUpperInvariant() == context.HttpMethod.ToUpperInvariant();
+                correctMethod |= attribute.HttpMethod == SignalsApiMethod.ANY || attribute.HttpMethod.ToString().ToUpperInvariant() == context.HttpMethod.ToUpperInvariant();
             }
 
             return correctMethod;

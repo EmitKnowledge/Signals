@@ -39,7 +39,7 @@ namespace Signals.Core.Web.Execution
 		/// <summary>
 		/// Default model binders
 		/// </summary>
-		internal Dictionary<ApiProcessMethod, BaseModelBinder> DefaultModelBinders { get; set; }
+		internal Dictionary<SignalsApiMethod, BaseModelBinder> DefaultModelBinders { get; set; }
 
         /// <summary>
         /// Result handler
@@ -85,14 +85,14 @@ namespace Signals.Core.Web.Execution
                 new IsCachedFactoryFilter()
             };
 
-	        DefaultModelBinders = new Dictionary<ApiProcessMethod, BaseModelBinder>
+	        DefaultModelBinders = new Dictionary<SignalsApiMethod, BaseModelBinder>
 	        {
-				{ ApiProcessMethod.OPTIONS,  new FromQuery() },
-		        { ApiProcessMethod.GET,  new FromQuery() },
-		        { ApiProcessMethod.HEAD,  new FromHeader() },
-		        { ApiProcessMethod.POST,  new FromBody() },
-		        { ApiProcessMethod.PUT,  new FromBody() },
-		        { ApiProcessMethod.DELETE, new FromQuery() }
+				{ SignalsApiMethod.OPTIONS,  new FromQuery() },
+		        { SignalsApiMethod.GET,  new FromQuery() },
+		        { SignalsApiMethod.HEAD,  new FromHeader() },
+		        { SignalsApiMethod.POST,  new FromBody() },
+		        { SignalsApiMethod.PUT,  new FromBody() },
+		        { SignalsApiMethod.DELETE, new FromQuery() }
 			};
 
 			// order is important, JsonResult is default fallback
@@ -155,7 +155,7 @@ namespace Signals.Core.Web.Execution
                 }
             }
 
-            var method = EnumExtensions.FromString<ApiProcessMethod>(httpContext.HttpMethod?.ToUpper());
+            var method = EnumExtensions.FromString<SignalsApiMethod>(httpContext.HttpMethod?.ToUpper());
 
             // determine the parameter binding method
             var parameterBindingAttribute = validType?
@@ -179,8 +179,8 @@ namespace Signals.Core.Web.Execution
 	        switch (method)
 	        {
 
-				case ApiProcessMethod.OPTIONS:
-				case ApiProcessMethod.HEAD:
+				case SignalsApiMethod.OPTIONS:
+				case SignalsApiMethod.HEAD:
 					break;
 				default:
 					response = ProcessExecutor.Execute(process, requestInput);
