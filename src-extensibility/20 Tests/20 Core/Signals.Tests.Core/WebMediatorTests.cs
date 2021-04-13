@@ -40,7 +40,7 @@ namespace Signals.Tests.Core
         }
     }
 
-    [ApiProcess(HttpMethod = ApiProcessMethod.GET)]
+    [SignalsApi(HttpMethod = SignalsApiMethod.GET)]
     public class GetWebProcess : ApiProcess<Input, MethodResult<int>>
     {
         public override MethodResult<int> Auth(Input request)
@@ -66,7 +66,7 @@ namespace Signals.Tests.Core
         }
     }
 
-    [ApiProcess(HttpMethod = ApiProcessMethod.POST)]
+    [SignalsApi(HttpMethod = SignalsApiMethod.POST)]
     public class PostWebProcess : ApiProcess<Input, MethodResult<int>>
     {
         public override MethodResult<int> Auth(Input request)
@@ -132,7 +132,7 @@ namespace Signals.Tests.Core
         /// <param name="queryString"></param>
         /// <param name="body"></param>
         /// <returns></returns>
-        private T MockRequest<T>(string path, ApiProcessMethod method, string queryString = null, object body = null)
+        private T MockRequest<T>(string path, SignalsApiMethod method, string queryString = null, object body = null)
             where T : VoidResult
         {
             // build http context
@@ -166,7 +166,7 @@ namespace Signals.Tests.Core
         {
             // Arrange
             var path = "/api/GetWebProcess";
-            var method = ApiProcessMethod.GET;
+            var method = SignalsApiMethod.GET;
             var queryString = "?Input1=Input1&Input2=2&Input3[]=Input3&Input4[Input6]=Input6";
 
             // Act
@@ -182,7 +182,7 @@ namespace Signals.Tests.Core
         {
             // Arrange
             var path = "/api/PostWebProcess";
-            var method = ApiProcessMethod.POST;
+            var method = SignalsApiMethod.POST;
 
             var input = new Input
             {

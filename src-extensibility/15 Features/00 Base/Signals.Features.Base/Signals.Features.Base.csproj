@@ -3,12 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>2.0.0</Version>
   </PropertyGroup>
 
   <Choose>
     <When Condition=" '$(Configuration)'!='Debug' ">
       <ItemGroup>
-        <PackageReference Include="Signals.Core.Common" Version="1.0.8" />
+        <PackageReference Include="Signals.Core.Common" Version="2.0.*" />
       </ItemGroup>
     </When>
 
