@@ -1,7 +1,7 @@
 ![SIGNALS](https://signals.emitknowledge.com/assets/temp-logo.png)
 
 ## Signals
-Signals is a framework which focuses on increasing the quality and productivity within development teams by providing them with tools, aspects and processes.
+Signals is a .NET5 based framework which focuses on increasing the quality and productivity within development teams by providing them with tools, aspects and processes.
 
 Overview can be found on [https://signals.emitknowledge.com/](https://signals.emitknowledge.com/) 
 
