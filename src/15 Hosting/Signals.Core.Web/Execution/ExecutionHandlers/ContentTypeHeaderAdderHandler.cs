@@ -1,23 +1,17 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Signals.Core.Processes.Base;
-using Signals.Core.Common.Serialization;
+﻿using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
-using Signals.Core.Web.Http;
 using Signals.Core.Web.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers
 {
     /// <summary>
-    /// Json result handler
+    /// Result handler that adds http response headers based on response content tpye
     /// </summary>
-    public class JsonResultHandler : IResultHandler
+    public class ContentTypeHeaderAdderHandler : IResultHandler
     {
         /// <summary>
         /// Handle process result
@@ -30,15 +24,10 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            var statusCode = response.ToStatusCode();
+            var contentType = type.HttpContentType(response);
+            context.Headers.AddToResponse("Content-Type", contentType);
 
-            context.PutResponse(new HttpResponseMessage(statusCode)
-            {
-                Content = type.ToHttpContent(response)
-            });
-
-            // result is always handled, this is result fallback
-            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
+            return MiddlewareResult.DoNothing;
         }
     }
 }

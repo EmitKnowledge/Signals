@@ -128,78 +128,6 @@ namespace Signals.Features.Hosting
             return (true, null);
         }
 
-#if (NET461)
-
-        /// <summary>
-        /// Dispatch http request
-        /// </summary>
-        /// <param name="httpContext"></param>
-        /// <returns></returns>
-        public bool Dispatch(System.Web.HttpContext httpContext)
-        {
-            var headers = new Dictionary<string, string>(httpContext.Request.Headers.Count);
-
-            foreach (var header in httpContext.Request.Headers.AllKeys)
-            {
-                headers.Add(header, httpContext.Request.Headers[header]);
-            }
-
-            var form = new Dictionary<string, string>();
-            var requestForm = httpContext.Request?.Form;
-
-            if (!requestForm.IsNull())
-            {
-                foreach (var key in requestForm.AllKeys)
-                {
-                    var value = form[key];
-                    form.Add(key, value);
-                }
-            }
-
-            var body = new Lazy<string>(() => ExtractBody(httpContext.Request.ContentType, httpContext.Request.InputStream, form));
-
-            var (isSuccess, response) = ProcessRequest(httpContext.Request.Url.AbsolutePath, body, httpContext.Request.HttpMethod, headers);
-
-            if (isSuccess && !response.IsNull())
-                PutResponse(httpContext, new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(response.SerializeJson(), System.Text.Encoding.UTF8, "application/json")
-                });
-
-            return isSuccess;
-        }
-
-        /// <summary>
-        /// Write response
-        /// </summary>
-        /// <param name="httpContext"></param>
-        /// <param name="httpResponse"></param>
-        /// <returns></returns>
-        public void PutResponse(System.Web.HttpContext httpContext, HttpResponseMessage httpResponse)
-        {
-            var context = System.Web.HttpContext.Current;
-
-            if (httpResponse?.Headers?.Any() == true)
-                foreach (var header in httpResponse?.Headers)
-                    context.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
-
-
-            if (httpResponse?.Content?.Headers?.Any() == true)
-                foreach (var header in httpResponse?.Content?.Headers)
-                    context.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
-
-            context.Response.StatusCode = (int)httpResponse.StatusCode;
-
-            if (!httpResponse.Content.IsNull())
-            {
-                var body = httpResponse.Content.ReadAsStreamAsync().Result;
-                body.CopyTo(context.Response.OutputStream);
-                body.Close();
-            }
-        }
-
-#else
-
         /// <summary>
         /// Dispatch http request
         /// </summary>
@@ -270,8 +198,6 @@ namespace Signals.Features.Hosting
                 body.Close();
             }
         }
-
-#endif
 
     }
 }

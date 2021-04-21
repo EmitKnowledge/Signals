@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Signals.Core.Common.Reflection;
 using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Input.Http;
-using Signals.Core.Web.Http;
 
 namespace Signals.Core.Web.Execution.Filters
 {
@@ -22,13 +19,15 @@ namespace Signals.Core.Web.Execution.Filters
         /// <returns></returns>
         public bool IsCorrectProcessType(Type type, IHttpContextWrapper context)
         {
-            var attributes = type.GetCustomAttributes(typeof(SignalsApiAttribute), false).Cast<SignalsApiAttribute>().ToList();
+            if (context.HttpMethod == SignalsApiMethod.OPTIONS || context.HttpMethod == SignalsApiMethod.HEAD) return true;
+
+            var attributes = type.GetCachedAttributes<SignalsApiAttribute>();
             if (!attributes.Any()) return true;
 
             var correctMethod = false;
             foreach (var attribute in attributes)
             {
-                correctMethod |= attribute.HttpMethod == SignalsApiMethod.ANY || attribute.HttpMethod.ToString().ToUpperInvariant() == context.HttpMethod.ToUpperInvariant();
+                correctMethod |= attribute.HttpMethod == SignalsApiMethod.ANY || attribute.HttpMethod == context.HttpMethod;
             }
 
             return correctMethod;

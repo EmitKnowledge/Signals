@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Signals.Core.Common.Reflection;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Authorization;
 using Signals.Core.Processing.Exceptions;
@@ -30,7 +31,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
             // get authorize attrigute
-            var attributes = processType.GetCustomAttributes(typeof(SignalsAuthorizeAttribute), false).Cast<SignalsAuthorizeAttribute>().ToList();
+            var attributes = processType.GetCachedAttributes<SignalsAuthorizeAttribute>();
 
             // if no attribute is present the request is valid
             if (!attributes.Any()) return Next.Execute(process, processType, args);

@@ -9,7 +9,7 @@ namespace Signals.Aspects.DI.DotNetCore
     public class ServiceContainer : IServiceContainer
     {
         /// <summary>
-        /// DotNet Core  container
+        /// DotNet Core container
         /// </summary>
         public IServiceProvider Container { get; }
 

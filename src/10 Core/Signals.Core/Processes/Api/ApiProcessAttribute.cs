@@ -85,5 +85,14 @@ namespace Signals.Core.Processes.Api
         /// Indicates if the api process should return a native response
         /// </summary>
         public bool NativeResponse { get; set; }
+
+        internal static string ANY = SignalsApiMethod.ANY.ToString();
+        internal static string GET = SignalsApiMethod.GET.ToString();
+        internal static string POST = SignalsApiMethod.POST.ToString();
+        internal static string PUT = SignalsApiMethod.PUT.ToString();
+        internal static string PATCH = SignalsApiMethod.PATCH.ToString();
+        internal static string DELETE = SignalsApiMethod.DELETE.ToString();
+        internal static string OPTIONS = SignalsApiMethod.OPTIONS.ToString();
+        internal static string HEAD = SignalsApiMethod.HEAD.ToString();
     }
 }

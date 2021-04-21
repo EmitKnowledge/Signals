@@ -9,6 +9,8 @@ using Signals.Core.Web.Behaviour;
 using Signals.Core.Web.Http;
 using System;
 using System.Linq;
+using Signals.Core.Common.Reflection;
+using Signals.Aspects.DI.Attributes;
 
 namespace Signals.Core.Web.Execution.FactoryFilters
 {
@@ -17,6 +19,7 @@ namespace Signals.Core.Web.Execution.FactoryFilters
     /// </summary>
     public class IsCachedFactoryFilter : IFactoryFilter
     {
+
         /// <summary>
         /// Validates instance
         /// </summary>
@@ -27,12 +30,12 @@ namespace Signals.Core.Web.Execution.FactoryFilters
         /// <returns>Is instance valid</returns>
         public MiddlewareResult IsValidInstance<TProcess>(TProcess instance, Type type, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            var cacheAttribute = type.GetCustomAttributes(typeof(OutputCacheAttribute), true).Cast<OutputCacheAttribute>().SingleOrDefault();
+            var cacheAttribute = type.GetCachedAttributes<OutputCacheAttribute>().SingleOrDefault();
 
-            if (cacheAttribute != null && (cacheAttribute.Location == CacheLocation.Server || cacheAttribute.Location == CacheLocation.ClientAndServer))
+            if (!cacheAttribute.IsNull() && (cacheAttribute.Location == CacheLocation.Server || cacheAttribute.Location == CacheLocation.ClientAndServer))
             {
                 var cache = SystemBootstrapper.GetInstance<ICache>();
-                if (cache != null)
+                if (!cache.IsNull())
                 {
                     var key = type.FullName;
 

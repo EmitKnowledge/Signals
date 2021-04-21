@@ -14,12 +14,12 @@ namespace Signals.Core.Processing.Behaviour
         /// <summary>
         /// Registered callbacks
         /// </summary>
-        private static List<Action<IBaseProcess<VoidResult>, Type, object[], Exception>> Callbacks { get; set; }
+        private List<Action<IBaseProcess<VoidResult>, Type, object[], Exception>> Callbacks { get; set; }
 
         /// <summary>
         /// CTOR
         /// </summary>
-        static CriticalErrorCallbackManager()
+        public CriticalErrorCallbackManager()
         {
             Callbacks = new List<Action<IBaseProcess<VoidResult>, Type, object[], Exception>>();
         }

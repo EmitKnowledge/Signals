@@ -17,7 +17,7 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
     /// <summary>
     /// Json result handler
     /// </summary>
-    public class JsonResultHandler : IResultHandler
+    public class EmptyResultHandler : IResultHandler
     {
         /// <summary>
         /// Handle process result
@@ -32,10 +32,7 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         {
             var statusCode = response.ToStatusCode();
 
-            context.PutResponse(new HttpResponseMessage(statusCode)
-            {
-                Content = type.ToHttpContent(response)
-            });
+            context.PutResponse(new HttpResponseMessage(statusCode));
 
             // result is always handled, this is result fallback
             return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;

@@ -30,7 +30,7 @@ namespace Signals.Core.Processing.Execution
         /// <param name="candidateType">The type to check.</param>
         /// <param name="openGenericInterfaceType">The open generic type which it may impelement</param>
         /// <returns>Whether the candidate type implements the open interface.</returns>
-        private static bool ImplementsOpenGenericInterface(Type candidateType, Type openGenericInterfaceType)
+        private bool ImplementsOpenGenericInterface(Type candidateType, Type openGenericInterfaceType)
         {
             return
                 candidateType == openGenericInterfaceType ||
@@ -97,6 +97,17 @@ namespace Signals.Core.Processing.Execution
         {
             filter = filter ?? new Func<Type, bool>(x => true);
             return ProcessTypes.Where(filter).ToList();
+        }
+
+        /// <summary>
+        /// Get process type by name and interface
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public Type First(Func<Type, bool> filter = null)
+        {
+            filter = filter ?? new Func<Type, bool>(x => true);
+            return ProcessTypes.FirstOrDefault(filter);
         }
     }
 }

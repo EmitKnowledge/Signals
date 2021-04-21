@@ -98,6 +98,60 @@ namespace Signals.Aspects.DI.Autofac
         }
 
         /// <summary>
+        /// Register interface with implementation as singleton
+        /// </summary>
+        /// <param name="serviceType"></param>
+        /// <param name="implementationType"></param>
+        public void RegisterSingleton(Type serviceType, Type implementationType)
+        {
+            Builder
+                .RegisterType(implementationType)
+                .As(serviceType)
+                .SingleInstance()
+                .PropertiesAutowired(propertySelector, true);
+        }
+
+        /// <summary>
+        /// Register type without interface as singleton
+        /// </summary>
+        /// <typeparam name="TImplementation"></typeparam>
+        public void RegisterSingleton<TImplementation>() where TImplementation : class
+        {
+            Builder
+                .RegisterType<TImplementation>()
+                .SingleInstance()
+                .PropertiesAutowired(propertySelector, true);
+        }
+
+        /// <summary>
+        /// Register type without interface as singleton
+        /// </summary>
+        /// <param name="implementationType"></param>
+        public void RegisterSingleton(Type implementationType)
+        {
+            Builder
+                .RegisterType(implementationType)
+                .SingleInstance()
+                .PropertiesAutowired(propertySelector, true);
+        }
+
+        /// <summary>
+        /// Register interface with implementation as singleton
+        /// </summary>
+        /// <typeparam name="TDefinition"></typeparam>
+        /// <typeparam name="TImplementation"></typeparam>
+        public void RegisterSingleton<TDefinition, TImplementation>()
+            where TDefinition : class
+            where TImplementation : class, TDefinition
+        {
+            Builder
+                .RegisterType<TImplementation>()
+                .As<TDefinition>()
+                .SingleInstance()
+                .PropertiesAutowired(propertySelector, true);
+        }
+
+        /// <summary>
         /// Register interface with implementation instance
         /// </summary>
         /// <param name="serviceType"></param>

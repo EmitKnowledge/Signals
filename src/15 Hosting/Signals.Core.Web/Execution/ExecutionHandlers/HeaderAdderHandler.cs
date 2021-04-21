@@ -1,4 +1,6 @@
 ﻿using Signals.Aspects.DI;
+using Signals.Aspects.DI.Attributes;
+using Signals.Core.Common.Reflection;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
@@ -27,27 +29,24 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
             var headers = SystemBootstrapper.GetInstance<List<ResponseHeaderAttribute>>();
-            headers.ForEach(header =>
-            {
-	            foreach (var responseHeader in header.Headers)
-	            {
-					context.Headers.AddToResponse(responseHeader.Key, responseHeader.Value);
-				}
-            });
 
-            var headerAttribute = type
-                .GetCustomAttributes(true)
-                .Where(x => x.GetType() == typeof(ResponseHeaderAttribute) || x.GetType().IsSubclassOf(typeof(ResponseHeaderAttribute)))
-                .Cast<ResponseHeaderAttribute>()
-                .ToList();
-
-            headerAttribute.ForEach(header =>
+            foreach (var header in headers)
             {
-	            foreach (var responseHeader in header.Headers)
-	            {
-		            context.Headers.AddToResponse(responseHeader.Key, responseHeader.Value);
-	            }
-            });
+                foreach (var responseHeader in header.Headers)
+                {
+                    context.Headers.AddToResponse(responseHeader.Key, responseHeader.Value);
+                }
+            }
+
+            var headerAttribute = type.GetCachedAttributes<ResponseHeaderAttribute>();
+
+            foreach (var header in headerAttribute)
+            {
+                foreach (var responseHeader in header.Headers)
+                {
+                    context.Headers.AddToResponse(responseHeader.Key, responseHeader.Value);
+                }
+            }
 
             return MiddlewareResult.DoNothing;
         }

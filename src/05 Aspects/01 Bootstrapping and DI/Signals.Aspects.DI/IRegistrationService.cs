@@ -43,6 +43,35 @@ namespace Signals.Aspects.DI
         void Register(Type implementationType);
 
         /// <summary>
+        /// Register interface with implementation as singleton
+        /// </summary>
+        /// <typeparam name="TDefinition"></typeparam>
+        /// <typeparam name="TImplementation"></typeparam>
+        void RegisterSingleton<TDefinition, TImplementation>()
+            where TDefinition : class
+            where TImplementation : class, TDefinition;
+
+        /// <summary>
+        /// Register interface with implementation as singleton
+        /// </summary>
+        /// <param name="serviceType"></param>
+        /// <param name="implementationType"></param>
+        void RegisterSingleton(Type serviceType, Type implementationType);
+
+        /// <summary>
+        /// Register type without interface as singleton
+        /// </summary>
+        /// <typeparam name="TImplementation"></typeparam>
+        void RegisterSingleton<TImplementation>()
+            where TImplementation : class;
+
+        /// <summary>
+        /// Register type without interface as singleton
+        /// </summary>
+        /// <param name="implementationType"></param>
+        void RegisterSingleton(Type implementationType);
+
+        /// <summary>
         /// Register interface with implementation instance
         /// </summary>
         /// <param name="serviceType"></param>

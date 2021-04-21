@@ -3,6 +3,7 @@ using Microsoft.Extensions.Primitives;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization;
+using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Input.Http.Models;
 using System;
@@ -23,7 +24,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Http method: GET, POST, DELETE..
         /// </summary>
-        public string HttpMethod { get; set; }
+        public SignalsApiMethod HttpMethod { get; set; }
 
         /// <summary>
         /// Url path: /api/process...
@@ -228,70 +229,6 @@ namespace Signals.Core.Web.Http
             return result;
         }
 
-#if (NET461)
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public HttpContextWrapper()
-        {
-            var context = System.Web.HttpContext.Current;
-            if (context == null) return;
-
-            Headers = new HeaderCollection(context);
-            Cookies = new CookieCollection(context);
-            Form = new FormCollection(context);
-            Session = new SessionProvider(context);
-            
-            // single lazy per http context
-            if (!context.Items.Contains("body"))
-                context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.InputStream)));
-
-            Query = ExtractQuery(context?.Request?.QueryString?.ToString());
-
-            Body = context.Items["body"] as Lazy<string>;
-
-            HttpMethod = context.Request.HttpMethod.ToUpperInvariant();
-            Files = context.Request.Files.AllKeys.Select(x => new InputFile
-            {
-                File = context.Request.Files[x]?.InputStream,
-                MimeType = context.Request.Files[x]?.ContentType,
-                FormInputName = x,
-                FileName = context.Request.Files[x]?.FileName
-            });
-            RawUrl = context.Request.Url.AbsolutePath;
-        }
-
-        /// <summary>
-        /// Write response
-        /// </summary>
-        /// <param name="httpResponse"></param>
-        /// <returns></returns>
-        public void PutResponse(HttpResponseMessage httpResponse)
-        {
-            var context = System.Web.HttpContext.Current;
-
-            if (httpResponse?.Headers?.Any() == true)
-                foreach (var header in httpResponse?.Headers)
-                    context.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
-
-
-            if (httpResponse?.Content?.Headers?.Any() == true)
-                foreach (var header in httpResponse?.Content?.Headers)
-                    context.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
-
-            context.Response.StatusCode = (int)httpResponse.StatusCode;
-
-            if (!httpResponse.Content.IsNull())
-            {
-                var body = httpResponse.Content.ReadAsStreamAsync().Result;
-                body.CopyTo(context.Response.OutputStream);
-                body.Close();
-            }
-        }
-
-#else
-
         private IHttpContextAccessor _httpContextAccessor;
 
         /// <summary>
@@ -315,7 +252,19 @@ namespace Signals.Core.Web.Http
             Query = ExtractQuery(context?.Request?.QueryString.ToString());
 
             Body = context.Items["body"] as Lazy<string>;
-            HttpMethod = context.Request.Method.ToUpperInvariant();
+            var method = context.Request.Method.ToUpperInvariant();
+
+            HttpMethod = method switch
+            {
+                "GET" => SignalsApiMethod.GET,
+                "POST" => SignalsApiMethod.POST,
+                "PUT" => SignalsApiMethod.PUT,
+                "PATCH" => SignalsApiMethod.PATCH,
+                "DELETE" => SignalsApiMethod.DELETE,
+                "OPTIONS" => SignalsApiMethod.OPTIONS,
+                "HEAD" => SignalsApiMethod.HEAD,
+                _ => SignalsApiMethod.ANY
+            };
 
             if (context.Request.HasFormContentType)
             {
@@ -327,7 +276,7 @@ namespace Signals.Core.Web.Http
                                     FormInputName = x.Name,
                                     MimeType = x.ContentType
                                 })
-                            ?? new List<InputFile>();
+                            ?? Enumerable.Empty<InputFile>();
             }
 
             RawUrl = context.Request.Path.Value;
@@ -340,8 +289,8 @@ namespace Signals.Core.Web.Http
         /// <returns></returns>
         public void PutResponse(HttpResponseMessage httpResponse)
         {
-            var contextAccessor = _httpContextAccessor ?? SystemBootstrapper.GetInstance<IHttpContextAccessor>();
             var context = _httpContextAccessor.HttpContext;
+            if (context.Response.HasStarted) return;
 
             if (httpResponse?.Headers?.Any() == true)
                 foreach (var header in httpResponse?.Headers)
@@ -352,16 +301,8 @@ namespace Signals.Core.Web.Http
                     context.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
 
             context.Response.StatusCode = (int)httpResponse.StatusCode;
-
-            if (!httpResponse.Content.IsNull())
-            {
-                var body = httpResponse.Content.ReadAsStreamAsync().Result;
-                body.CopyToAsync(context.Response.Body).Wait();
-                body.Close();
-            }
+            httpResponse.Content?.CopyToAsync(context.Response.Body).Wait();
         }
-
-#endif
 
     }
 }

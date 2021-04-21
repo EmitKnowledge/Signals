@@ -13,6 +13,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Input.Http.ModelBinding;
+using Signals.Core.Processes.Base;
+using System.Collections.Concurrent;
+using Signals.Core.Common.Reflection;
+using Signals.Aspects.DI.Attributes;
 
 namespace Signals.Core.Web.Execution
 {
@@ -36,10 +40,20 @@ namespace Signals.Core.Web.Execution
         /// </summary>
         internal List<IFactoryFilter> FactoryFilters { get; set; }
 
-		/// <summary>
-		/// Default model binders
-		/// </summary>
-		internal Dictionary<SignalsApiMethod, BaseModelBinder> DefaultModelBinders { get; set; }
+        /// <summary>
+        /// Default model binders
+        /// </summary>
+        internal Dictionary<SignalsApiMethod, BaseModelBinder> DefaultModelBinders { get; set; }
+
+        /// <summary>
+        /// Result handler
+        /// </summary>
+        internal List<IResultHandler> HeadResultHandlers { get; set; }
+
+        /// <summary>
+        /// Result handler
+        /// </summary>
+        internal List<IResultHandler> OptionsResultHandlers { get; set; }
 
         /// <summary>
         /// Result handler
@@ -49,17 +63,22 @@ namespace Signals.Core.Web.Execution
         /// <summary>
         /// Process repository
         /// </summary>
-        internal ProcessRepository ProcessRepository { get; set; }
+        [Import] internal ProcessRepository ProcessRepository { get; set; }
 
         /// <summary>
         /// Process factory
         /// </summary>
-        internal IProcessFactory ProcessFactory { get; set; }
+        [Import] internal IProcessFactory ProcessFactory { get; set; }
 
         /// <summary>
         /// Process executor
         /// </summary>
-        internal IProcessExecutor ProcessExecutor { get; set; }
+        [Import] internal IProcessExecutor ProcessExecutor { get; set; }
+
+        /// <summary>
+        /// Url process type cache
+        /// </summary>
+        private static ConcurrentDictionary<string, Type> UrlTypeCache = new ConcurrentDictionary<string, Type>(8, 10_000);
 
         /// <summary>
         /// CTOR
@@ -85,18 +104,17 @@ namespace Signals.Core.Web.Execution
                 new IsCachedFactoryFilter()
             };
 
-	        DefaultModelBinders = new Dictionary<SignalsApiMethod, BaseModelBinder>
-	        {
-				{ SignalsApiMethod.OPTIONS,  new FromQuery() },
-		        { SignalsApiMethod.GET,  new FromQuery() },
-		        { SignalsApiMethod.HEAD,  new FromHeader() },
-		        { SignalsApiMethod.POST,  new FromBody() },
-		        { SignalsApiMethod.PUT,  new FromBody() },
-		        { SignalsApiMethod.DELETE, new FromQuery() }
-			};
+            DefaultModelBinders = new Dictionary<SignalsApiMethod, BaseModelBinder>
+            {
+                { SignalsApiMethod.GET, new FromQuery() },
+                { SignalsApiMethod.POST, new FromBody() },
+                { SignalsApiMethod.PUT, new FromBody() },
+                { SignalsApiMethod.DELETE, new FromQuery() }
+            };
 
-			// order is important, JsonResult is default fallback
-			ResultHandlers = new List<IResultHandler> {
+            // order is important, JsonResult is default fallback
+            ResultHandlers = new List<IResultHandler>
+            {
                 new HeaderAdderHandler(),
                 new AuthenticationFailResultFilter(),
                 new AuthorizationFailResultFilter(),
@@ -110,11 +128,19 @@ namespace Signals.Core.Web.Execution
                 new NativeResultHandler(),
                 new JsonResultHandler()
             };
-            
-            // get process repo instance
-            ProcessRepository = SystemBootstrapper.GetInstance<ProcessRepository>();
-            ProcessFactory = SystemBootstrapper.GetInstance<IProcessFactory>();
-            ProcessExecutor = SystemBootstrapper.GetInstance<IProcessExecutor>();
+
+            HeadResultHandlers = new List<IResultHandler>
+            {
+                new HeaderAdderHandler(),
+                new ContentTypeHeaderAdderHandler(),
+                new EmptyResultHandler()
+            };
+
+            OptionsResultHandlers = new List<IResultHandler>
+            {
+                new AllowHeaderAdderHandler(),
+                new EmptyResultHandler()
+            };
         }
 
         /// <summary>
@@ -126,8 +152,8 @@ namespace Signals.Core.Web.Execution
         {
             var httpContext = context ?? SystemBootstrapper.GetInstance<IHttpContextWrapper>();
 
-			// execute custom url handlers
-			foreach (var handler in CustomUrlHandlers)
+            // execute custom url handlers
+            foreach (var handler in CustomUrlHandlers)
             {
                 var result = handler.RenderContent(httpContext);
                 // check if url maches
@@ -138,59 +164,70 @@ namespace Signals.Core.Web.Execution
             }
 
             // get valid process type
-            var validType = ProcessRepository.All(type => Filters.All(filter => filter.IsCorrectProcessType(type, httpContext))).FirstOrDefault();
+            var validType = UrlTypeCache.GetOrAdd(httpContext.RawUrl, (rawUrl) => ProcessRepository.First(type => Filters.All(filter => filter.IsCorrectProcessType(type, httpContext))));
             if (validType.IsNull()) return MiddlewareResult.StopExecutionAndInvokeNextMiddleware;
-            
+
+
+            // execute head method
+            if (httpContext.HttpMethod == SignalsApiMethod.HEAD)
+            {
+                foreach (var resultHandler in HeadResultHandlers)
+                {
+                    var result = resultHandler.HandleAfterExecution<IBaseProcess<VoidResult>>(null, validType, VoidResult.Empty, httpContext);
+                    if (result != MiddlewareResult.DoNothing)
+                    {
+                        // flag to stop pipe execution
+                        return result;
+                    }
+                }
+            }
+
+            // execute options method
+            if (httpContext.HttpMethod == SignalsApiMethod.OPTIONS)
+            {
+                foreach (var resultHandler in OptionsResultHandlers)
+                {
+                    var result = resultHandler.HandleAfterExecution<IBaseProcess<VoidResult>>(null, validType, VoidResult.Empty, httpContext);
+                    if (result != MiddlewareResult.DoNothing)
+                    {
+                        // flag to stop pipe execution
+                        return result;
+                    }
+                }
+            }
+
             // create instance
             var process = ProcessFactory.Create<VoidResult>(validType);
             if (process.IsNull()) return MiddlewareResult.StopExecutionAndInvokeNextMiddleware;
 
             // execute factory filters
-            foreach (var createEvent in FactoryFilters)
+            foreach (var factoryFilter in FactoryFilters)
             {
-                var result = createEvent.IsValidInstance(process, validType, httpContext);
+                var result = factoryFilter.IsValidInstance(process, validType, httpContext);
                 if (result != MiddlewareResult.DoNothing)
                 {
                     return result;
                 }
             }
 
-            var method = EnumExtensions.FromString<SignalsApiMethod>(httpContext.HttpMethod?.ToUpper());
-
             // determine the parameter binding method
-            var parameterBindingAttribute = validType?
-				.GetCustomAttributes(typeof(SignalsParameterBindingAttribute), false)
-				.Cast<SignalsParameterBindingAttribute>()
-				.FirstOrDefault();
+            var parameterBindingAttribute = validType.GetCachedAttributes<BaseModelBinder>().FirstOrDefault();
 
-			// resolve default if not provided
-			if (parameterBindingAttribute.IsNull())
-			{
-				DefaultModelBinders.TryGetValue(method, out var modelBinder);
-				parameterBindingAttribute = new SignalsParameterBindingAttribute(modelBinder);
-			}
-	        
-			var requestInput = parameterBindingAttribute.Binder.Bind(httpContext);
+            // resolve default if not provided
+            if (parameterBindingAttribute.IsNull())
+            {
+                parameterBindingAttribute = DefaultModelBinders.GetValueOrDefault(httpContext.HttpMethod);
+            }
 
-			// execute process
-			var response = new VoidResult();
+            var requestInput = parameterBindingAttribute.Bind(httpContext);
 
-			// decide if we need to execute
-	        switch (method)
-	        {
-
-				case SignalsApiMethod.OPTIONS:
-				case SignalsApiMethod.HEAD:
-					break;
-				default:
-					response = ProcessExecutor.Execute(process, requestInput);
-					break;
-			}
+            // execute process
+            var response = ProcessExecutor.Execute(process, requestInput);
 
             // post execution events
-            foreach (var executeEvent in ResultHandlers)
+            foreach (var resultHandler in ResultHandlers)
             {
-                var result = executeEvent.HandleAfterExecution(process, validType, response, httpContext);
+                var result = resultHandler.HandleAfterExecution(process, validType, response, httpContext);
                 if (result != MiddlewareResult.DoNothing)
                 {
                     // flag to stop pipe execution
