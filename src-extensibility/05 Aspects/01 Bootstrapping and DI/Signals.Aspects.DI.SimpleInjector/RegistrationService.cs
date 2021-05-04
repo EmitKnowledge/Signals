@@ -28,6 +28,7 @@ namespace Signals.Aspects.DI.SimpleInjector
         public RegistrationService(bool verifyOnBuild = true)
         {
             Builder = new Container();
+            Builder.Options.ConstructorResolutionBehavior = new MostResolvableConstructorBehavior(Builder);
             Builder.Options.AllowOverridingRegistrations = true;
             Builder.Options.DefaultLifestyle = Lifestyle.Transient;
             Builder.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();

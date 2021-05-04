@@ -1,0 +1,12 @@
+﻿{
+  "DatabaseConnections": [
+    {
+      "Name": "Development",
+      "IpAddress": "localhost",
+      "Database": "webtest",
+      "Uid": "sa",
+      "Pwd": "adminadmin123"
+    }
+  ],
+  "ActiveEnvironment": "Development"
+}
