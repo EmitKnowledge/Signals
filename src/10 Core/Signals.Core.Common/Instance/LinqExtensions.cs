@@ -10,7 +10,7 @@ namespace Signals.Core.Common.Instance
     public static class LinqExtensions
     {
         /// <summary>
-        /// Distinc by
+        /// Distinct by
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <typeparam name="TKey"></typeparam>
@@ -72,6 +72,33 @@ namespace Signals.Core.Common.Instance
             where TSource : class
         {
             return FromHierarchy(source, nextItem, s => s != null);
+        }
+
+        /// <summary>
+        /// Shuffle
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> Shuffle<TSource>(this IEnumerable<TSource> source)
+        {
+            if (source.IsNull() || source.Count() == 0)
+                yield break;
+
+            var rand = new Random();
+            var indexes = Enumerable.Range(0, source.Count()).ToArray();
+            for (int i = source.Count() - 1; i > 0; i--)
+            {
+                var r = rand.Next(i);
+                var temp = indexes[i];
+                indexes[i] = indexes[r];
+                indexes[r] = temp;
+            }
+
+            foreach (var index in indexes)
+            {
+                yield return source.ElementAt(index);
+            }
         }
     }
 }
