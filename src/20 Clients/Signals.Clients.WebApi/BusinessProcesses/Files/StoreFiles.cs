@@ -24,7 +24,7 @@ namespace Signals.Clients.WebApi.BusinessProcesses.Files
 
         public override ListResult<InputFile> Handle()
         {
-            var files = HttpContextWrapper.Files?.ToList();
+            var files = HttpContextWrapper.Files?.ToList() ?? new List<InputFile>();
 
             return files;
         }
