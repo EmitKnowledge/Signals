@@ -23,6 +23,11 @@ namespace Signals.Core.Processing.Input.Http.Models
         public string FormInputName { get; set; }
 
         /// <summary>
+        /// File content length
+        /// </summary>
+        public long ContentLength { get; set; }
+
+        /// <summary>
         /// File stream
         /// </summary>
         public Stream File { get; set; }
