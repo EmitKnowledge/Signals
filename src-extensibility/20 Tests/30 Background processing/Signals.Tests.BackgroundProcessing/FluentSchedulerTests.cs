@@ -37,6 +37,25 @@ namespace Signals.Tests.BackgroundProcessing
         }
 
         [Fact]
+        public void ProviderTask_ExecutedEverySecond_IsExecutedMultipleTimes()
+        {
+            lock (MyFluentTask.LockObj)
+            {
+                MyFluentTask.TimesExecuted = 0;
+                var registry = new FluentRegistry();
+
+                registry.ScheduleTask(MyTask, new ConfigurableRecurrencePatternConfiguration(() => new TimePartRecurrencePatternConfiguration(TimeSpan.FromSeconds(1))));
+
+                registry.Start();
+                Thread.Sleep(2100);
+
+                Assert.Equal(2, MyFluentTask.TimesExecuted);
+
+                registry.Stop();
+            }
+        }
+
+        [Fact]
         public void CustomTask_ExecutedWeekly_IsExecuted()
         {
             lock (MyFluentTask.LockObj)
