@@ -1,5 +1,8 @@
-﻿using Signals.Core.Processes.Business;
+﻿using Signals.Clients.WebApi.BusinessProcesses.Dtos.In;
+using Signals.Core.Processes;
+using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Results;
+using System;
 
 namespace Signals.Clients.WebApi.BusinessProcesses
 {
@@ -17,7 +20,12 @@ namespace Signals.Clients.WebApi.BusinessProcesses
 
         public override VoidResult Handle()
         {
-            return Ok();
+            return Fail();
+            //Continue<ProcessA>().With(new InputDto
+            //{
+            //    Data = Guid.NewGuid().ToString()
+            //});
+            //return Ok();
         }
     }
 }

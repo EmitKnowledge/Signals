@@ -79,6 +79,7 @@ namespace Signals.Core.Processing.Execution
         {
             var processType = process.GetType();
             var result = _foregroundPipe[0].Execute(process, processType, args);
+            process.ExecutionStack.Pop();
             return result;
         }
 
