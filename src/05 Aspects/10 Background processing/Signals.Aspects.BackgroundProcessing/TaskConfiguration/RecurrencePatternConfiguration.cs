@@ -9,29 +9,38 @@ namespace Signals.Aspects.BackgroundProcessing.TaskConfiguration
     public abstract class RecurrencePatternConfiguration
     {
         /// <summary>
+        /// Value of the pattern
+        /// </summary>
+        public int Value { get; set; }
+
+        /// <summary>
         /// Type of pattern
         /// </summary>
         public PatternType Type { get; private set; }
-
-        /// <summary>
-        /// Value of the pattern
-        /// </summary>
-        public int Value { get; protected set; }
 
         /// <summary>
         /// Represents the timepart
         /// </summary>
         public TimeSpan TimePart { get; protected set; }
 
-		/// <summary>
-		/// Indicates if the process should run now and then follow the recurrence pattern
-		/// </summary>
-	    public bool RunNow { get; set; }
+        /// <summary>
+        /// Indicates if the process should run now and then follow the recurrence pattern
+        /// </summary>
+        public bool RunNow { get; set; }
 
-		/// <summary>
-		/// CTOR
-		/// </summary>
-		internal RecurrencePatternConfiguration()
+        /// <summary>
+        /// Get configuration
+        /// </summary>
+        /// <returns></returns>
+        public virtual RecurrencePatternConfiguration GetInstance()
+        {
+            return this;
+        }
+
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        internal RecurrencePatternConfiguration()
         {
             TimePart = new TimeSpan();
         }
@@ -76,7 +85,7 @@ namespace Signals.Aspects.BackgroundProcessing.TaskConfiguration
             /// </summary>
             [EnumMember]
             Day,
-            
+
             /// <summary>
             /// Week
             /// </summary>
