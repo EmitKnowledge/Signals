@@ -1,16 +1,19 @@
-﻿using Signals.Core.Processing.Exceptions;
+﻿using Signals.Core.Common.Serialization;
+using Signals.Core.Processing.Exceptions;
+using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using Signals.Core.Processing.Specifications;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Signals.Core.Processes.Base
 {
     /// <summary>
     /// Represents a base process
     /// </summary>
-    public interface IBaseProcess<out TResponse>
-        where TResponse : VoidResult
+    public interface IBaseProcess
     {
         /// <summary>
         /// Process name
@@ -33,10 +36,22 @@ namespace Signals.Core.Processes.Base
         string CallerProcessName { get; set; }
 
         /// <summary>
+        /// Represents the stack of processes being excecuted
+        /// </summary>
+        Stack ExecutionStack { get; set; }
+
+        /// <summary>
         /// Base process context
         /// </summary>
         IBaseProcessContext BaseContext { get; }
+    }
 
+    /// <summary>
+    /// Represents a base process
+    /// </summary>
+    public interface IBaseProcess<out TResponse> : IBaseProcess
+        where TResponse : VoidResult
+    {
         /// <summary>
         /// Entry point executed by the factory
         /// </summary>
@@ -54,7 +69,7 @@ namespace Signals.Core.Processes.Base
         /// <summary>
         /// Locks container
         /// </summary>
-        private readonly static ConcurrentDictionary<string, object> _locksDictionary = new ConcurrentDictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, object> _locksDictionary = new ConcurrentDictionary<string, object>();
 
         /// <summary>
         /// Statically locks all instances of current process
@@ -82,6 +97,11 @@ namespace Signals.Core.Processes.Base
         public string CallerProcessName { get; set; }
 
         /// <summary>
+        /// Represents the stack of processes being excecuted
+        /// </summary>
+        public Stack ExecutionStack { get; set; }
+
+        /// <summary>
         /// Base process context
         /// </summary>
         internal abstract IBaseProcessContext BaseContext { get; }
@@ -89,7 +109,7 @@ namespace Signals.Core.Processes.Base
         /// <summary>
         /// Base process context
         /// </summary>
-        IBaseProcessContext IBaseProcess<TResponse>.BaseContext => BaseContext;
+        IBaseProcessContext IBaseProcess.BaseContext => BaseContext;
 
         /// <summary>
         /// CTOR
@@ -98,6 +118,7 @@ namespace Signals.Core.Processes.Base
         {
             Name = GetType().Name;
             EpicId = Guid.NewGuid();
+            ExecutionStack = new Stack();
         }
 
         /// <summary>
@@ -114,6 +135,12 @@ namespace Signals.Core.Processes.Base
         /// <returns></returns>
         TResponse IBaseProcess<TResponse>.ExecuteProcess(params object[] args)
         {
+            var stackEntry = new ProcessExecutionStackEntry
+            {
+                Process = this,
+                Payload = args
+            };
+            ExecutionStack.Push(stackEntry);
             return ExecuteProcess(args);
         }
 
@@ -251,6 +278,7 @@ namespace Signals.Core.Processes.Base
 
             process.EpicId = EpicId;
             process.CallerProcessName = Name;
+            process.ExecutionStack = ExecutionStack;
 
             return process as TProcess;
         }
@@ -267,6 +295,8 @@ namespace Signals.Core.Processes.Base
 
             process.EpicId = EpicId;
             process.CallerProcessName = Name;
+
+            process.ExecutionStack = ExecutionStack;
 
             return BaseContext.Mediator.ProcessExecutor.Execute((BaseProcess<TNewResponse>)process, args);
         }
