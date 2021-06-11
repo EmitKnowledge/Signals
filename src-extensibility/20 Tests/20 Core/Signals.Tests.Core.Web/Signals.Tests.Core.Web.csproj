@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <OutputType>Exe</OutputType>
+
+    <StartupObject>Signals.Tests.Core.Web.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Web\config\**" />
+    <EmbeddedResource Remove="Web\config\**" />
+    <None Remove="Web\config\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Web\config\DatabaseConfiguration.cs" />
+    <Compile Include="Web\config\DatabaseConfigurationItem.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Web\config\database.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Web\config\app.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Web\config\webapp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Moq" Version="4.14.4" />
+    <PackageReference Include="SimpleInjector.Integration.AspNetCore" Version="5.3.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\15 Hosting\Signals.Core.Web\Signals.Core.Web.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.DotNetCore\Signals.Aspects.DI.DotNetCore.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.SimpleInjector\Signals.Aspects.DI.SimpleInjector.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\02 Configuration\Signals.Aspects.Configuration.MsSql\Signals.Aspects.Configuration.MsSql.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\03 Logging\Signals.Aspects.Logging.NLog\Signals.Aspects.Logging.NLog.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\04 Auditing\Signals.Aspects.Auditing.AuditNET\Signals.Aspects.Auditing.AuditNET.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\05 Caching\Signals.Aspects.Caching.InMemory\Signals.Aspects.Caching.InMemory.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\06 Localization\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\07 Storage\Signals.Aspects.Storage.File\Signals.Aspects.Storage.File.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.MsSql\Signals.Aspects.CommunicationChannels.MsSql.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\09 Authentication and authorization\Signals.Aspects.Auth.NetCore\Signals.Aspects.Auth.NetCore.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\11 Error handling\Signals.Aspects.ErrorHandling.Polly\Signals.Aspects.ErrorHandling.Polly.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\13 Benchmarking\Signals.Aspects.Benchmarking.Database\Signals.Aspects.Benchmarking.Database.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="system.resources\processes\translation.app">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

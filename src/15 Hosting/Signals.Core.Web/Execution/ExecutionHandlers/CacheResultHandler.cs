@@ -14,6 +14,8 @@ using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Behaviour;
 using Signals.Core.Web.Http;
+using Signals.Core.Common.Reflection;
+using Signals.Aspects.DI.Attributes;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers
 {
@@ -35,12 +37,12 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         {
             if (!response.IsFaulted)
             {
-                var cacheAttribute = type.GetCustomAttributes(typeof(OutputCacheAttribute), true).Cast<OutputCacheAttribute>().SingleOrDefault();
+                var cacheAttribute = type.GetCachedAttributes<OutputCacheAttribute>().SingleOrDefault();
 
-                if (cacheAttribute != null && (cacheAttribute.Location == CacheLocation.Server || cacheAttribute.Location == CacheLocation.ClientAndServer))
+                if (!cacheAttribute.IsNull() && (cacheAttribute.Location == CacheLocation.Server || cacheAttribute.Location == CacheLocation.ClientAndServer))
                 {
                     var cache = SystemBootstrapper.GetInstance<ICache>();
-                    if (cache != null)
+                    if (!cache.IsNull())
                     {
                         var key = type.FullName;
 

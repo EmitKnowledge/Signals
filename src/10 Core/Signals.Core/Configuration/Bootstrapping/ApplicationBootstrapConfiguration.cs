@@ -188,7 +188,7 @@ namespace Signals.Core.Configuration.Bootstrapping
         {
             return Resolve(scanAssemblies: scanAssemblies);
         }
-        
+
         /// <summary>
         /// Internal resolver
         /// </summary>
@@ -284,6 +284,7 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// <returns></returns>
         private TDefinition GetInstance<TDefinition>(List<Type> implementationTypes, params object[] args) where TDefinition : class
         {
+            args = args.Where(x => !x.IsNull()).ToArray();
             foreach (var type in implementationTypes)
             {
                 try

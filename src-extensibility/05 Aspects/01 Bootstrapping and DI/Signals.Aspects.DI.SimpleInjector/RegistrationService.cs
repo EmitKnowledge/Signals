@@ -28,6 +28,7 @@ namespace Signals.Aspects.DI.SimpleInjector
         public RegistrationService(bool verifyOnBuild = true)
         {
             Builder = new Container();
+            Builder.Options.ConstructorResolutionBehavior = new MostResolvableConstructorBehavior(Builder);
             Builder.Options.AllowOverridingRegistrations = true;
             Builder.Options.DefaultLifestyle = Lifestyle.Transient;
             Builder.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
@@ -47,7 +48,7 @@ namespace Signals.Aspects.DI.SimpleInjector
 
 	        return ServiceContainer;
         }
-        
+
         /// <summary>
         /// Register interface with implementation
         /// </summary>
@@ -89,7 +90,47 @@ namespace Signals.Aspects.DI.SimpleInjector
         }
 
         /// <summary>
-        /// Register interface with implementation instance
+        /// Register interface with implementation
+        /// </summary>
+        /// <typeparam name="TDefinition"></typeparam>
+        /// <typeparam name="TImplementation"></typeparam>
+        public void RegisterSingleton<TDefinition, TImplementation>()
+            where TDefinition : class
+            where TImplementation : class, TDefinition
+        {
+            Builder.RegisterSingleton<TDefinition, TImplementation>();
+        }
+
+        /// <summary>
+        /// Register interface with implementation as singleton
+        /// </summary>
+        /// <param name="serviceType"></param>
+        /// <param name="implementationType"></param>
+        public void RegisterSingleton(Type serviceType, Type implementationType)
+        {
+            Builder.RegisterSingleton(serviceType, implementationType);
+        }
+
+        /// <summary>
+        /// Register type without interface as singleton
+        /// </summary>
+        /// <typeparam name="TImplementation"></typeparam>
+        public void RegisterSingleton<TImplementation>() where TImplementation : class
+        {
+            Builder.RegisterSingleton<TImplementation>();
+        }
+
+        /// <summary>
+        /// Register type without interface as singleton
+        /// </summary>
+        /// <param name="implementationType"></param>
+        public void RegisterSingleton(Type implementationType)
+        {
+            Builder.RegisterSingleton(implementationType);
+        }
+
+        /// <summary>
+        /// Register interface with implementation instance as singleton
         /// </summary>
         /// <param name="serviceType"></param>
         /// <param name="instance"></param>

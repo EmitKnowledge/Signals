@@ -70,25 +70,26 @@ namespace Signals.Core.Processes.Api
         internal override IBaseProcessContext BaseContext => Context;
 
         /// <summary>
+        /// Html sanitizer
+        /// </summary>
+        private static HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
+
+        /// <summary>
         /// Entry point executed by the factory
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
         internal override TResponse ExecuteProcess(params object[] args)
         {
-            if (args[0] is string request)
+            if (args[0] is TRequest obj1)
             {
-                var obj = request.Deserialize<TRequest>();
-                obj?.Sanitize(new HtmlSanitizer());
-                return Execute(obj);
-            }
-            else if (args[0] is TRequest obj)
-            {
-                obj.Sanitize(new HtmlSanitizer());
-                return Execute(obj);
+                obj1?.Sanitize(htmlSanitizer);
+                return Execute(obj1);
             }
 
-            throw new ArgumentException("Input is empty");
+            var request = args[0].ToString().Deserialize<TRequest>();
+            request?.Sanitize(htmlSanitizer);
+            return Execute(request);
         }
     }
 }

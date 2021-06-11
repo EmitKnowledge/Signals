@@ -1,5 +1,6 @@
 ﻿using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
+using Signals.Core.Common.Reflection;
 using Signals.Core.Common.Serialization;
 using Signals.Core.Common.Smtp;
 using Signals.Core.Configuration;
@@ -41,7 +42,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             }
             catch (Exception ex)
             {
-                var criticalAttributes = processType.GetCustomAttributes(typeof(CriticalAttribute), true).Cast<CriticalAttribute>().ToList();
+                var criticalAttributes = processType.GetCachedAttributes<CriticalAttribute>();
 
                 if (criticalAttributes.Any())
                 {

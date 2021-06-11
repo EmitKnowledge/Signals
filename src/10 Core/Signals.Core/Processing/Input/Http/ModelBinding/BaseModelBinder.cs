@@ -5,7 +5,8 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
 	/// <summary>
 	/// Represents base model binder
 	/// </summary>
-	public abstract class BaseModelBinder
+	[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+	public abstract class BaseModelBinder : Attribute
 	{
 		/// <summary>
 		/// Bind the HTTP Context Request data to an object

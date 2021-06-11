@@ -395,56 +395,5 @@ namespace Signals.Tests.Core
             Assert.Equal(expectedNumber, increment1.Result);
             Assert.Equal(expectedNumber, increment2.Result);
         }
-
-        [Fact]
-        public void SimpleInjectorBenchmark()
-        {
-            InitSimpleInjectorConfig();
-            Benchmark();
-        }
-
-        [Fact]
-        public void DotNetBenchmark()
-        {
-            InitDotNetConfig();
-            Benchmark();
-        }
-
-        [Fact]
-        public void AutofacBenchmark()
-        {
-            InitAutofacConfig();
-            Benchmark();
-        }
-
-        private void Benchmark(int requests = 100_000)
-        {
-            var startNumber = -1;
-            var expectedNumber = -4;
-
-            var warmup1 = Mediator.Dispatch<DecrementAndDoubleProc, int, MethodResult<int>>(startNumber);
-            var warmup2 = Mediator.For<DecrementAndDoubleProc>().With(startNumber);
-
-            var start = DateTime.Now;
-
-            for (int i = 0; i < requests; i++)
-            {
-                var increment1 = Mediator.Dispatch<DecrementAndDoubleProc, int, MethodResult<int>>(startNumber);
-                Assert.Equal(expectedNumber, increment1.Result);
-            }
-
-            var end1 = DateTime.Now;
-
-            for (int i = 0; i < requests; i++)
-            {
-                var increment2 = Mediator.For<DecrementAndDoubleProc>().With(startNumber);
-                Assert.Equal(expectedNumber, increment2.Result);
-            }
-
-            var end2 = DateTime.Now;
-
-            var way1RPS = requests / (end1 - start).TotalSeconds;
-            var way2RPS = requests / (end2 - end1).TotalSeconds;
-        }
     }
 }

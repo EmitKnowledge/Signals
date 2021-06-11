@@ -2,7 +2,6 @@
 using Signals.Aspects.DI.Attributes;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -13,7 +12,7 @@ namespace Signals.Aspects.DI.Autofac
     /// </summary>
     public class PropertySelector : IPropertySelector
     {
-        private static ConcurrentDictionary<(Type, PropertyInfo), bool> ShouldInject = new ConcurrentDictionary<(Type, PropertyInfo), bool>();
+        private static ConcurrentDictionary<PropertyInfo, bool> ShouldInject = new ConcurrentDictionary<PropertyInfo, bool>();
 
         /// <summary>
         /// Define rule to inject all properties with @ImportAttribute
@@ -23,12 +22,10 @@ namespace Signals.Aspects.DI.Autofac
         /// <returns></returns>
         public bool InjectProperty(PropertyInfo propertyInfo, object instance)
         {
-            var key = (propertyInfo.DeclaringType, propertyInfo);
-
-            if (ShouldInject.ContainsKey(key)) return ShouldInject[key];
+            if (ShouldInject.ContainsKey(propertyInfo)) return ShouldInject[propertyInfo];
 
             var shouldInject = propertyInfo.GetCustomAttributes<ImportAttribute>().Any();
-            ShouldInject.TryAdd(key, shouldInject);
+            ShouldInject.TryAdd(propertyInfo, shouldInject);
             return shouldInject;
         }
     }

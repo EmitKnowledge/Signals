@@ -151,9 +151,9 @@ namespace Signals.Core.Configuration.Bootstrapping
             if (!Benchmarker.IsNull() && !Benchmarker().IsNull()) resolver.Register(typeof(IBenchmarker), Benchmarker());
             if (!PermissionManager.IsNull() && !PermissionManager().IsNull()) resolver.Register(typeof(IPermissionManager), PermissionManager());
             
-            resolver.Register<CriticalErrorCallbackManager>();
-            resolver.Register<IProcessFactory, ProcessFactory>();
-            resolver.Register<IProcessExecutor, ProcessExecutor>();
+            resolver.RegisterSingleton<CriticalErrorCallbackManager>();
+            resolver.RegisterSingleton<IProcessFactory, ProcessFactory>();
+            resolver.RegisterSingleton<IProcessExecutor, ProcessExecutor>();
 
             resolver.Register<IBusinessProcessContext, BusinessProcessContext>();
             resolver.Register<IApiProcessContext, ApiProcessContext>();
@@ -162,7 +162,7 @@ namespace Signals.Core.Configuration.Bootstrapping
             resolver.Register<IFileImportProcessContext, FileImportProcessContext>();
             resolver.Register<IRecurringProcessContext, RecurringProcessContext>();
 
-            resolver.Register<Mediator>();
+            resolver.RegisterSingleton<Mediator>();
 
             RegisterProcesses(config, resolver, scanAssemblies);
             RegisterErrorHendling(config, resolver);

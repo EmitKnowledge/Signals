@@ -34,7 +34,7 @@ namespace Signals.Aspects.DI.DotNetCore
         {
 	        if (ServiceContainer != null) return ServiceContainer;
 	        IServiceProvider provider = Builder.BuildServiceProvider();
-	        ServiceContainer = new ServiceContainer(provider);
+            ServiceContainer = new ServiceContainer(provider);
 
 	        return ServiceContainer;
         }
@@ -80,13 +80,53 @@ namespace Signals.Aspects.DI.DotNetCore
         }
 
         /// <summary>
+        /// Register interface with implementation as singleton
+        /// </summary>
+        /// <param name="serviceType"></param>
+        /// <param name="implementationType"></param>
+        public void RegisterSingleton(Type serviceType, Type implementationType)
+        {
+            Builder.AddSingleton(serviceType, implementationType);
+        }
+
+        /// <summary>
+        /// Register type without interface as singleton
+        /// </summary>
+        /// <typeparam name="TImplementation"></typeparam>
+        public void RegisterSingleton<TImplementation>() where TImplementation : class
+        {
+            Builder.AddSingleton<TImplementation>();
+        }
+
+        /// <summary>
+        /// Register type without interface as singleton
+        /// </summary>
+        /// <param name="implementationType"></param>
+        public void RegisterSingleton(Type implementationType)
+        {
+            Builder.AddSingleton(implementationType);
+        }
+
+        /// <summary>
+        /// Register interface with implementation as singleton
+        /// </summary>
+        /// <typeparam name="TDefinition"></typeparam>
+        /// <typeparam name="TImplementation"></typeparam>
+        public void RegisterSingleton<TDefinition, TImplementation>()
+            where TDefinition : class
+            where TImplementation : class, TDefinition
+        {
+            Builder.AddSingleton<TDefinition, TImplementation>();
+        }
+
+        /// <summary>
         /// Register interface with implementation instance
         /// </summary>
         /// <param name="serviceType"></param>
         /// <param name="instance"></param>
         public void Register(Type serviceType, object instance)
         {
-            Builder.AddTransient(serviceType, provider => instance);
+            Builder.AddSingleton(serviceType, instance);
         }
 
         /// <summary>
@@ -96,7 +136,7 @@ namespace Signals.Aspects.DI.DotNetCore
         /// <param name="instance"></param>
         public void Register<TDefinition>(TDefinition instance) where TDefinition : class
         {
-            Builder.AddTransient(provider => instance);
+            Builder.AddSingleton(instance);
         }
 
 		/// <summary>

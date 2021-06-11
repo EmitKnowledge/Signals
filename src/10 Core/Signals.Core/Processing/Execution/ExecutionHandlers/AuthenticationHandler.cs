@@ -1,4 +1,5 @@
-﻿using Signals.Core.Processes.Base;
+﻿using Signals.Core.Common.Reflection;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Authentication;
 using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Results;
@@ -28,10 +29,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
             // Get authenticate attribute
-            var attributes = processType
-                .GetCustomAttributes(typeof(SignalsAuthenticateAttribute), false)
-                .Cast<SignalsAuthenticateAttribute>()
-                .ToList();
+            var attributes = processType.GetCachedAttributes<SignalsAuthenticateAttribute>();
 
             // If no attribute is present the request is valid
             if (!attributes.Any()) return Next.Execute(process, processType, args);

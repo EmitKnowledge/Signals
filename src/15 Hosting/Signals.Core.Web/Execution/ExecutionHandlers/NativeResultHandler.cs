@@ -4,6 +4,7 @@ using Signals.Core.Processes.Api;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
+using Signals.Core.Web.Helpers;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -27,9 +28,7 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            var attributes = type.GetCustomAttributes(typeof(SignalsApiAttribute), false)
-                .Cast<SignalsApiAttribute>()
-                .ToList();
+            var attributes = type.GetCachedAttributes<SignalsApiAttribute>();
 
             if (!attributes.Any())
             {
@@ -44,8 +43,7 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
 
             if (correctMethod)
             {
-                var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
-                    response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+                var statusCode = response.ToStatusCode();
 
                 if (!response.IsFaulted)
                 {

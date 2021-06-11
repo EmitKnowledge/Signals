@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using Signals.Core.Common.Reflection;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Common.Instance;
+using Signals.Core.Web.Helpers;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers
 {
@@ -30,8 +31,7 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         {
             if (response is FileResult fileResponse)
             {
-            var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
-                             response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+                var statusCode = response.ToStatusCode();
 
                 // create response
                 var httpRespose = new HttpResponseMessage(statusCode)

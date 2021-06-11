@@ -10,6 +10,7 @@ using Signals.Core.Configuration;
 using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;
+using Signals.Core.Web.Behaviour;
 using Signals.Core.Web.Configuration;
 using Signals.Core.Web.Configuration.Bootstrapping;
 using Signals.Core.Web.Execution;
@@ -41,7 +42,35 @@ namespace Signals.Tests.Core
     }
 
     [SignalsApi(HttpMethod = SignalsApiMethod.GET)]
+    [ResponseHeader("custom-header", "custom-value")]
     public class GetWebProcess : ApiProcess<Input, MethodResult<int>>
+    {
+        public override MethodResult<int> Auth(Input request)
+        {
+            return Ok();
+        }
+
+        public override MethodResult<int> Validate(Input request)
+        {
+            return Ok();
+        }
+
+        public override MethodResult<int> Handle(Input request)
+        {
+            if (request.Input1.IsNull()
+                || request.Input2 == 0
+                || request.Input3.IsNullOrHasZeroElements()
+                || request.Input3.FirstOrDefault().IsNullOrEmpty()
+                || request.Input4?.Input6.IsNullOrEmpty() != false)
+                return Fail();
+
+            return 1;
+        }
+    }
+
+    [SignalsApi(HttpMethod = SignalsApiMethod.GET)]
+    [Cors("custom-origin")]
+    public class GetCorsWebProcess : ApiProcess<Input, MethodResult<int>>
     {
         public override MethodResult<int> Auth(Input request)
         {
@@ -118,7 +147,7 @@ namespace Signals.Tests.Core
             });
 
             var config = new Config();
-            config.RegistrationService = new Aspects.DI.Autofac.RegistrationService();
+            config.RegistrationService = new Aspects.DI.SimpleInjector.RegistrationService();
             config.CacheConfiguration = new InMemoryCacheConfiguration();
             config.Bootstrap(typeof(MediatorTests).Assembly);
         }
@@ -132,11 +161,11 @@ namespace Signals.Tests.Core
         /// <param name="queryString"></param>
         /// <param name="body"></param>
         /// <returns></returns>
-        private T MockRequest<T>(string path, SignalsApiMethod method, string queryString = null, object body = null)
+        private T MockRequest<T>(string path, SignalsApiMethod method, out DefaultHttpContext context, string queryString = null, object body = null)
             where T : VoidResult
         {
             // build http context
-            var context = new DefaultHttpContext();
+            context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
             context.Request.Path = path;
             context.Request.Method = method.ToString();
@@ -162,6 +191,59 @@ namespace Signals.Tests.Core
         }
 
         [Fact]
+        public void WebMediator_CorsOptionsRequest_NotFaulted()
+        {
+            // Arrange
+            var path = "/api/GetCorsWebProcess";
+            var method = SignalsApiMethod.OPTIONS;
+            var queryString = "?Input1=Input1&Input2=2&Input3[]=Input3&Input4[Input6]=Input6";
+
+            // Act
+            var response = MockRequest<MethodResult<int>>(path, method, out DefaultHttpContext context, queryString: queryString);
+
+            // Asset
+            Assert.Equal(3, context.Response.Headers.Count);
+            Assert.Equal("Access-Control-Allow-Origin", context.Response.Headers.FirstOrDefault().Key);
+            Assert.Equal("custom-origin", context.Response.Headers.FirstOrDefault().Value);
+        }
+
+        [Fact]
+        public void WebMediator_OptionsRequest_NotFaulted()
+        {
+            // Arrange
+            var path = "/api/GetWebProcess";
+            var method = SignalsApiMethod.OPTIONS;
+            var queryString = "?Input1=Input1&Input2=2&Input3[]=Input3&Input4[Input6]=Input6";
+
+            // Act
+            var response = MockRequest<MethodResult<int>>(path, method, out DefaultHttpContext context, queryString: queryString);
+
+            // Asset
+            Assert.Equal(1, context.Response.Headers.Count);
+            Assert.Equal("Allow", context.Response.Headers.FirstOrDefault().Key);
+            Assert.Equal("GET", context.Response.Headers.FirstOrDefault().Value);
+        }
+
+        [Fact]
+        public void WebMediator_HeadRequest_NotFaulted()
+        {
+            // Arrange
+            var path = "/api/GetWebProcess";
+            var method = SignalsApiMethod.HEAD;
+            var queryString = "?Input1=Input1&Input2=2&Input3[]=Input3&Input4[Input6]=Input6";
+
+            // Act
+            var response = MockRequest<MethodResult<int>>(path, method, out DefaultHttpContext context, queryString: queryString);
+
+            // Asset
+            Assert.Equal(2, context.Response.Headers.Count);
+            Assert.Equal("custom-header", context.Response.Headers.FirstOrDefault().Key);
+            Assert.Equal("custom-value", context.Response.Headers.FirstOrDefault().Value);
+            Assert.Equal("Content-Type", context.Response.Headers.LastOrDefault().Key);
+            Assert.Equal("application/json", context.Response.Headers.LastOrDefault().Value);
+        }
+
+        [Fact]
         public void WebMediator_GetRequest_NotFaulted()
         {
             // Arrange
@@ -170,7 +252,7 @@ namespace Signals.Tests.Core
             var queryString = "?Input1=Input1&Input2=2&Input3[]=Input3&Input4[Input6]=Input6";
 
             // Act
-            var response = MockRequest<MethodResult<int>>(path, method, queryString: queryString);
+            var response = MockRequest<MethodResult<int>>(path, method, out DefaultHttpContext context, queryString: queryString);
 
             // Asset
             Assert.False(response.IsFaulted);
@@ -193,7 +275,7 @@ namespace Signals.Tests.Core
             };
 
             // Act
-            var response = MockRequest<MethodResult<int>>(path, method, body: input);
+            var response = MockRequest<MethodResult<int>>(path, method, out DefaultHttpContext context, body: input);
             
             // Asset
             Assert.False(response.IsFaulted);

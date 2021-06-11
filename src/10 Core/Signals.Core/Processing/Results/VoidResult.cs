@@ -33,6 +33,11 @@ namespace Signals.Core.Processing.Results
         public List<IErrorInfo> ErrorMessages { get; set; }
 
         /// <summary>
+        /// Empty successful void result
+        /// </summary>
+        public static VoidResult Empty = new VoidResult();
+
+        /// <summary>
         /// CTOR
         /// </summary>
         [DebuggerStepThrough]

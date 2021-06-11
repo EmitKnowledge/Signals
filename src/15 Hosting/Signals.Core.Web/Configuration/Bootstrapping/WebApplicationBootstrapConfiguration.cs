@@ -50,7 +50,7 @@ namespace Signals.Core.Web.Configuration.Bootstrapping
 
             webBootstrapConfiguration.RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
             webBootstrapConfiguration.RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
-            webBootstrapConfiguration.RegistrationService.Register<WebMediator>();
+            webBootstrapConfiguration.RegistrationService.RegisterSingleton<WebMediator>();
             webBootstrapConfiguration.RegistrationService.Register(webBootstrapConfiguration.ResponseHeaders);
 
             return webBootstrapConfiguration.Resolve(scanAssemblies: scanAssemblies);

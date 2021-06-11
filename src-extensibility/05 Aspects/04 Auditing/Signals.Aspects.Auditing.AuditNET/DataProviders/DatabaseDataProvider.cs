@@ -136,7 +136,7 @@ namespace Signals.Aspects.Auditing.AuditNET.DataProviders
 
                 // set the process instance payload
                 command.Parameters.Add("Payload", SqlDbType.NVarChar);
-                if (customAuditEvent.Data != null)
+                if (customAuditEvent.Payload != null)
                 {
                     command.Parameters["Payload"].Value = customAuditEvent.Payload;
                 }

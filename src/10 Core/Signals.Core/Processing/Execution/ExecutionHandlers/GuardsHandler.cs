@@ -1,4 +1,5 @@
-﻿using Signals.Core.Processes.Base;
+﻿using Signals.Core.Common.Reflection;
+using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Guards;
 using Signals.Core.Processing.Results;
 using System;
@@ -27,7 +28,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
             // Get guard attribute
-            var guardAttributes = processType.GetCustomAttributes(typeof(SignalsGuardAttribute), false).Cast<SignalsGuardAttribute>().ToList();
+            var guardAttributes = processType.GetCachedAttributes<SignalsGuardAttribute>();
             foreach (var guardAttribute in guardAttributes)
             {
                 var guardResult = guardAttribute.Check(process.BaseContext);
