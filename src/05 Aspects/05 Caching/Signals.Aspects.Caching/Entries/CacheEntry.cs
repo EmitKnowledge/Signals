@@ -59,22 +59,6 @@ namespace Signals.Aspects.Caching.Entries
         public CacheExpirationPolicy? ExpirationPolicy { get; set; }
 
         /// <summary>
-        /// Cache collection
-        /// </summary>
-        private ICache _cache;
-
-        /// <summary>
-        /// Cache collecton
-        /// </summary>
-        public ICache Cache { get => _cache; set { _cache = value; PopulateEmptyPropertiesFromConfig(); } }
-
-        private void PopulateEmptyPropertiesFromConfig()
-        {
-            ExpirationTime = ExpirationTime ?? Cache.Configuration.ExpirationTime;
-            ExpirationPolicy = ExpirationPolicy ?? Cache.Configuration.ExpirationPolicy;
-        }
-
-        /// <summary>
         /// Callback when entry is accesed
         /// </summary>
         public virtual void InvokeGet()
@@ -89,23 +73,6 @@ namespace Signals.Aspects.Caching.Entries
         {
             CreatedOn = DateTime.UtcNow;
             LastAccessedOn = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Callback when entry is invalidated
-        /// </summary>
-        public virtual void InvokeInvalidate()
-        {
-            Cache.Configuration.DataProvider.Remove(Key);
-        }
-
-        /// <summary>
-        /// Callback when entry expired
-        /// </summary>
-        public virtual void InvokeExpire()
-        {
-            Cache.InvokeExpireCallbacks(Key);
-            Cache.Configuration.DataProvider.Remove(Key);
         }
 
         /// <summary>

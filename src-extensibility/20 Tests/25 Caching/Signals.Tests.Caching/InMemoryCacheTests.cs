@@ -26,12 +26,11 @@ namespace Signals.Tests.Caching
             var config = InitConfig();
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
+            var key = "test_value_1";
             var value = new CachedModel();
             _cache.Set(key, value);
 
             var cachedValue = _cache.Get<CachedModel>(key);
-            Assert.Equal(value, cachedValue);
             Assert.Equal(value.Value, cachedValue.Value);
         }
 
@@ -41,7 +40,7 @@ namespace Signals.Tests.Caching
             var config = InitConfig();
             var _cache = new InMemoryCache(config);
 
-            var key = "test_key";
+            var key = "test_value_2";
 
             var value = new CachedModel { Value = 1 };
             _cache.Set(key, value, TimeSpan.FromHours(1));
@@ -62,7 +61,7 @@ namespace Signals.Tests.Caching
 
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
+            var key = "test_value_3";
             var value = new CachedModel();
             _cache.Set(key, value);
 
@@ -81,7 +80,7 @@ namespace Signals.Tests.Caching
 
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
+            var key = "test_value_4";
             var value = new CachedModel();
             _cache.Set(key, value);
 
@@ -94,7 +93,7 @@ namespace Signals.Tests.Caching
 
             cachedValue = _cache.Get<CachedModel>(key);
             Assert.NotNull(cachedValue);
-            Assert.Equal(value, cachedValue);
+            Assert.Equal(value.Value, cachedValue.Value);
         }
 
         [Fact]
@@ -103,7 +102,7 @@ namespace Signals.Tests.Caching
             var config = InitConfig();
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
+            var key = "test_value_5";
             var value = new CachedModel();
             _cache.Set(key, value);
 
@@ -119,8 +118,8 @@ namespace Signals.Tests.Caching
             var config = InitConfig();
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
-            var unexistantKey = "test_value_2";
+            var key = "test_value_6";
+            var unexistantKey = "test_value_7";
             var value = new CachedModel();
             _cache.Set(key, value);
 
@@ -130,22 +129,6 @@ namespace Signals.Tests.Caching
             Assert.NotNull(cachedValue);
         }
 
-        [Fact]
-        public void CachingEntry_InvalidatedAll_DoesntExist()
-        {
-            var config = InitConfig();
-            var _cache = new InMemoryCache(config);
-
-            var key = "test_value";
-            var value = new CachedModel();
-            _cache.Set(key, value);
-
-            _cache.Invalidate();
-
-            var cachedValue = _cache.Get<CachedModel>(key);
-            Assert.Null(cachedValue);
-        }
-
 
         [Fact]
         public void CachingReloadableEntry_Cached_Exists()
@@ -153,13 +136,13 @@ namespace Signals.Tests.Caching
             var config = InitConfig();
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
+            var key = "test_value_8";
             var value = new CachedModel();
             var entry = new ReloadableCacheEntry(key, () => { value.Value++; return value; });
             _cache.Set(entry);
 
             var cachedValue = _cache.Get<CachedModel>(key);
-            Assert.Equal(value, cachedValue);
+            Assert.Equal(value.Value, cachedValue.Value);
         }
 
         [Fact]
@@ -173,7 +156,7 @@ namespace Signals.Tests.Caching
 
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
+            var key = "test_value_9";
             var value = new CachedModel();
             var entry = new ReloadableCacheEntry(key, () =>
             {
@@ -186,7 +169,7 @@ namespace Signals.Tests.Caching
 
             var cachedValue = _cache.Get<CachedModel>(key);
             Assert.NotNull(cachedValue);
-            Assert.Equal(value, cachedValue);
+            Assert.Equal(value.Value, cachedValue.Value);
             Assert.Equal(2, value.Value);
         }
 
@@ -201,7 +184,7 @@ namespace Signals.Tests.Caching
 
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
+            var key = "test_value_10";
             var value = new CachedModel();
             var entry = new ReloadableCacheEntry(key, () => { value.Value++; return value; });
             _cache.Set(entry);
@@ -222,7 +205,7 @@ namespace Signals.Tests.Caching
             var config = InitConfig();
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
+            var key = "test_value_11";
             var value = new CachedModel();
             var entry = new ReloadableCacheEntry(key, () => { value.Value++; return value; });
             _cache.Set(entry);
@@ -239,8 +222,8 @@ namespace Signals.Tests.Caching
             var config = InitConfig();
             var _cache = new InMemoryCache(config);
 
-            var key = "test_value";
-            var unexistantKey = "test_value_2";
+            var key = "test_value_12";
+            var unexistantKey = "test_value_13";
             var value = new CachedModel();
             var entry = new ReloadableCacheEntry(key, () => { value.Value++; return value; });
             _cache.Set(entry);
@@ -249,90 +232,6 @@ namespace Signals.Tests.Caching
 
             var cachedValue = _cache.Get<CachedModel>(key);
             Assert.NotNull(cachedValue);
-        }
-
-        [Fact]
-        public void CachingReloadableEntry_InvalidatedAll_DoesntExist()
-        {
-            var config = InitConfig();
-            var _cache = new InMemoryCache(config);
-
-            var key = "test_value";
-            var value = new CachedModel();
-            var entry = new ReloadableCacheEntry(key, () => { value.Value++; return value; });
-            _cache.Set(entry);
-
-            _cache.Invalidate();
-
-            var cachedValue = _cache.Get<CachedModel>(key);
-            Assert.Null(cachedValue);
-        }
-
-
-        [Fact]
-        public void CachingEntry_Expiring_CallsCallbacks()
-        {
-            var config = InitConfig();
-            config.ExpirationTime = TimeSpan.FromMilliseconds(0);
-            var _cache = new InMemoryCache(config);
-
-            var key = "test_value";
-            var key2 = "test_value2";
-            var value = new CachedModel();
-            _cache.Set(key, value);
-
-            _cache.OnExpire(entry =>
-            {
-                Assert.NotNull(entry);
-                Assert.Equal(value, entry.Value);
-            });
-
-            _cache.OnExpire(key, entry =>
-            {
-                Assert.NotNull(entry);
-                Assert.Equal(value, entry.Value);
-            });
-
-            // this @key2 does not exist so the callback should never be fired
-            // Assert.True(false) is force failing the test
-            _cache.OnExpire(key2, entry =>
-            {
-                Assert.True(false);
-            });
-        }
-
-
-        [Fact]
-        public void CachingReloadableEntry_Expiring_CallsCallbacks()
-        {
-            var config = InitConfig();
-            config.ExpirationTime = TimeSpan.FromMilliseconds(0);
-            var _cache = new InMemoryCache(config);
-
-            var key = "test_value";
-            var key2 = "test_value2";
-            var value = new CachedModel();
-            var reloadableEntry = new ReloadableCacheEntry(key, () => value);
-            _cache.Set(reloadableEntry);
-
-            _cache.OnExpire(entry =>
-            {
-                Assert.NotNull(entry);
-                Assert.Equal(value, entry.Value);
-            });
-
-            _cache.OnExpire(key, entry =>
-            {
-                Assert.NotNull(entry);
-                Assert.Equal(value, entry.Value);
-            });
-
-            // this @key2 does not exist so the callback should never be fired
-            // Assert.True(false) is force failing the test
-            _cache.OnExpire(key2, entry =>
-            {
-                Assert.True(false);
-            });
         }
     }
 }

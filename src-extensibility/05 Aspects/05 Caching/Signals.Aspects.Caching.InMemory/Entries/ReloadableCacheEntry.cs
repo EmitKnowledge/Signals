@@ -43,25 +43,8 @@ namespace Signals.Aspects.Caching.InMemory.Entries
             {
                 Value = Provider();
             }
+
             base.InvokeGet();
-        }
-
-        /// <summary>
-        /// Callback when entry expired
-        /// </summary>
-        public override void InvokeExpire()
-        {
-            Cache.InvokeExpireCallbacks(Key);
-            Reload();
-        }
-
-        /// <summary>
-        /// Reloads value from the provider function
-        /// </summary>
-        public void Reload()
-        {
-            Value = Provider();
-            Cache.Set(this);
         }
     }
 }
