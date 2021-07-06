@@ -10,11 +10,6 @@ namespace Signals.Aspects.Caching
     public interface ICache
     {
         /// <summary>
-        /// Cache configuration
-        /// </summary>
-        ICacheConfiguration Configuration { get; set; }
-
-        /// <summary>
         /// Cache value
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -57,29 +52,5 @@ namespace Signals.Aspects.Caching
         /// </summary>
         /// <param name="key"></param>
         void Invalidate(string key);
-
-        /// <summary>
-        /// Invalidate all cache entries
-        /// </summary>
-        void Invalidate();
-
-        /// <summary>
-        /// Invokes callbacks on expiration
-        /// </summary>
-        /// <param name="key"></param>
-        void InvokeExpireCallbacks(string key);
-
-        /// <summary>
-        /// Registers global callback when any entry expires
-        /// </summary>
-        /// <param name="action"></param>
-        void OnExpire(Action<CacheEntry> action);
-
-	    /// <summary>
-	    /// Registers callback when an entry with corresponding key expires
-	    /// </summary>
-	    /// <param name="key"></param>
-	    /// <param name="action"></param>
-	    void OnExpire(string key, Action<CacheEntry> action);
     }
 }
