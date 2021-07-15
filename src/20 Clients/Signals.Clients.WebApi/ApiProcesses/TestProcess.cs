@@ -1,4 +1,4 @@
-﻿using Signals.Clients.Processes;
+﻿using App.Clients.Processes;
 using Signals.Core.Processes;
 using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Results;
