@@ -1,33 +1,40 @@
-﻿using Signals.Aspects.Caching.Entries;
-using Signals.Aspects.Caching.InMemory.Configurations;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Signals.Aspects.Caching.Entries;
+using Signals.Aspects.Caching.Redis.Configurations;
+using StackExchange.Redis;
 using System;
 using System.Collections.Concurrent;
 
-namespace Signals.Aspects.Caching.InMemory
+namespace Signals.Aspects.Caching.Redis
 {
     /// <summary>
     /// In memory cache implementation
     /// </summary>
-    public class InMemoryCache : ICache
+    public class RedisCache : ICache
     {
-        /// <summary>
-        /// All entries
-        /// </summary>
-        private readonly ConcurrentDictionary<string, CacheEntry> Entries;
-
         /// <summary>
         /// Cache configuration
         /// </summary>
-        private readonly InMemoryCacheConfiguration Configuration;
+        private readonly RedisCacheConfiguration Configuration;
+
+        private readonly ConnectionMultiplexer Client;
 
         /// <summary>
         /// CTOR
         /// </summary>
         /// <param name="configuration"></param>
-        public InMemoryCache(InMemoryCacheConfiguration configuration)
+        public RedisCache(RedisCacheConfiguration configuration)
         {
-            Entries = new ConcurrentDictionary<string, CacheEntry>();
             Configuration = configuration;
+            if (Configuration.ConfigurationOptions != null)
+            {
+                Client = ConnectionMultiplexer.Connect(Configuration.ConfigurationOptions);
+            }
+            else
+            {
+                Client = ConnectionMultiplexer.Connect(Configuration.ConnectionEndpoint);
+            }
         }
 
         /// <summary>
@@ -67,8 +74,15 @@ namespace Signals.Aspects.Caching.InMemory
             entry.ExpirationTime = entry.ExpirationTime ?? Configuration.ExpirationTime;
             entry.ExpirationPolicy = entry.ExpirationPolicy ?? Configuration.ExpirationPolicy;
 
-            if (!Entries.TryAdd(entry.Key, entry))
-                Entries[entry.Key] = entry;
+            var expirationTime = entry.ExpirationDate() - DateTime.UtcNow;
+
+            if (expirationTime.TotalSeconds > 0)
+            {
+                ForDatabase(database =>
+                {
+                    database.StringSet(new RedisKey(entry.Key), new RedisValue(JsonConvert.SerializeObject(entry)), expirationTime, When.Always, CommandFlags.None);
+                });
+            }
         }
 
         /// <summary>
@@ -79,7 +93,19 @@ namespace Signals.Aspects.Caching.InMemory
         /// <returns></returns>
         public T Get<T>(string key) where T : class
         {
-            return (T)Get(key)?.Value;
+            var entry = Get(key);
+            if (entry == null) return null;
+
+            if (entry.Value is T value)
+            {
+                return value;
+            }
+            else if (entry.Value is JObject jObject)
+            {
+                return jObject.ToObject<T>();
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -89,12 +115,21 @@ namespace Signals.Aspects.Caching.InMemory
         /// <returns></returns>
         public CacheEntry Get(string key)
         {
-            var entry = Entries.TryGetValue(key, out var value) ? value : null;
+            var value = ForDatabase(database =>
+            {
+                return database.StringGet(key);
+            });
 
-            if (entry == null) return null;
+            if (!value.HasValue) return null;
+
+            var entry = JsonConvert.DeserializeObject<CacheEntry>(value);
 
             entry.InvokeGet();
-            if (!entry.IsExpired()) return entry;
+            if (!entry.IsExpired())
+            {
+                Set(entry);
+                return entry;
+            }
             Invalidate(key);
 
             return null;
@@ -108,7 +143,23 @@ namespace Signals.Aspects.Caching.InMemory
         {
             var entry = Get(key);
             if (entry == null) return;
-            Entries.TryRemove(key, out var _);
+
+            ForDatabase(database =>
+            {
+                database.KeyDelete(new RedisKey(key));
+            });
+        }
+
+        private void ForDatabase(Action<IDatabase> action)
+        {
+            var database = Client.GetDatabase();
+            action(database);
+        }
+
+        private T ForDatabase<T>(Func<IDatabase, T> action)
+        {
+            var database = Client.GetDatabase();
+            return action(database);
         }
     }
 }

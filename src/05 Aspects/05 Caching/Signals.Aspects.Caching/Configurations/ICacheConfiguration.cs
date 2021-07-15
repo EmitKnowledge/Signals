@@ -9,11 +9,6 @@ namespace Signals.Aspects.Caching.Configurations
     public interface ICacheConfiguration
     {
         /// <summary>
-        /// Provider that sets and gets values
-        /// </summary>
-        IDataProvider DataProvider { get; set; }
-
-        /// <summary>
         /// Expiration time
         /// </summary>
         TimeSpan ExpirationTime { get; set; }

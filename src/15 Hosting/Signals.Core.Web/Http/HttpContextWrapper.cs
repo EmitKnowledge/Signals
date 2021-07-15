@@ -325,7 +325,8 @@ namespace Signals.Core.Web.Http
                                     File = x.OpenReadStream(),
                                     FileName = x.FileName,
                                     FormInputName = x.Name,
-                                    MimeType = x.ContentType
+                                    MimeType = x.ContentType,
+                                    ContentLength = x.Length
                                 })
                             ?? new List<InputFile>();
             }

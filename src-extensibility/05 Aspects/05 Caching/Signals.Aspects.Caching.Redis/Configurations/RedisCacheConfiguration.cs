@@ -1,14 +1,19 @@
 ﻿using Signals.Aspects.Caching.Configurations;
 using Signals.Aspects.Caching.Enums;
+using StackExchange.Redis;
 using System;
 
-namespace Signals.Aspects.Caching.InMemory.Configurations
+namespace Signals.Aspects.Caching.Redis.Configurations
 {
     /// <summary>
     /// In memory cache configuration
     /// </summary>
-    public class InMemoryCacheConfiguration : ICacheConfiguration
+    public class RedisCacheConfiguration : ICacheConfiguration
     {
+        public ConfigurationOptions ConfigurationOptions { get; set; }
+
+        public string ConnectionEndpoint { get; set; }
+
         /// <summary>
         /// Expiration time
         /// </summary>
@@ -23,7 +28,7 @@ namespace Signals.Aspects.Caching.InMemory.Configurations
 	    /// <summary>
 	    /// CTOR
 	    /// </summary>
-	    public InMemoryCacheConfiguration()
+	    public RedisCacheConfiguration()
 	    {
 		    ExpirationTime = TimeSpan.FromMinutes(5);
 		    ExpirationPolicy = CacheExpirationPolicy.Sliding;

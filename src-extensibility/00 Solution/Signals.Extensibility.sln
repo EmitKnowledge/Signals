@@ -181,6 +181,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Core.Web", "..\..\s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Core.Background", "..\..\src\15 Hosting\Signals.Core.Background\Signals.Core.Background.csproj", "{E235D9D2-7647-4428-BDBC-F88D4CEA4AA5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signals.Aspects.Caching.Redis", "..\05 Aspects\05 Caching\Signals.Aspects.Caching.Redis\Signals.Aspects.Caching.Redis.csproj", "{D52C88BE-5734-411B-AAFF-6E45A245DEBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -407,6 +409,10 @@ Global
 		{E235D9D2-7647-4428-BDBC-F88D4CEA4AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E235D9D2-7647-4428-BDBC-F88D4CEA4AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E235D9D2-7647-4428-BDBC-F88D4CEA4AA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D52C88BE-5734-411B-AAFF-6E45A245DEBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D52C88BE-5734-411B-AAFF-6E45A245DEBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D52C88BE-5734-411B-AAFF-6E45A245DEBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D52C88BE-5734-411B-AAFF-6E45A245DEBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -496,6 +502,7 @@ Global
 		{289E3FCF-0863-4927-96C0-02FEC1EF8690} = {678D9485-CC72-4123-AFC4-313C4E7BA13D}
 		{AA9AA1B9-1950-4A1A-8D72-69F40859051D} = {0BB4CE56-88AC-4218-BBCC-B7679C305261}
 		{E235D9D2-7647-4428-BDBC-F88D4CEA4AA5} = {0BB4CE56-88AC-4218-BBCC-B7679C305261}
+		{D52C88BE-5734-411B-AAFF-6E45A245DEBA} = {B5EF943A-C667-4CAE-A1F1-B8937999FE7F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54E67EA7-D94E-47A1-9CD6-B48453B04539}
