@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10 Core", "10 Core", "{A01FC58F-F6EE-45BA-B783-A3D2E7F2F108}"
 EndProject
@@ -88,6 +88,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Configuration.File", "..\..\src-extensibility\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj", "{80797595-8405-407C-8B83-CB24B251D938}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.CommunicationChannels.MsSql", "..\..\src-extensibility\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.MsSql\Signals.Aspects.CommunicationChannels.MsSql.csproj", "{E23CBE45-6F06-4E64-BCD6-34CE52572F3D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.BackgroundProcessing.FluentScheduler", "..\..\src-extensibility\05 Aspects\10 Background processing\Signals.Aspects.BackgroundProcessing.FluentScheduler\Signals.Aspects.BackgroundProcessing.FluentScheduler.csproj", "{27B6068F-64A3-436A-8251-7633D1D8D736}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +197,10 @@ Global
 		{E23CBE45-6F06-4E64-BCD6-34CE52572F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E23CBE45-6F06-4E64-BCD6-34CE52572F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E23CBE45-6F06-4E64-BCD6-34CE52572F3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27B6068F-64A3-436A-8251-7633D1D8D736}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27B6068F-64A3-436A-8251-7633D1D8D736}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27B6068F-64A3-436A-8251-7633D1D8D736}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27B6068F-64A3-436A-8251-7633D1D8D736}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -239,6 +245,7 @@ Global
 		{683ECDE5-FB59-45F8-942A-B623CA321B50} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
 		{80797595-8405-407C-8B83-CB24B251D938} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
 		{E23CBE45-6F06-4E64-BCD6-34CE52572F3D} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
+		{27B6068F-64A3-436A-8251-7633D1D8D736} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54E67EA7-D94E-47A1-9CD6-B48453B04539}
