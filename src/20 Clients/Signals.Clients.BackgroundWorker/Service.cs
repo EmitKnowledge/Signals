@@ -81,8 +81,6 @@ namespace App.Clients.BackgroundWorker
             };
             // config.JsonSerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
 
-            var test = new TransientData();
-
             var assemblies = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "App.*.dll").Select(Assembly.LoadFrom).ToArray();
             config.Bootstrap(assemblies);
             
