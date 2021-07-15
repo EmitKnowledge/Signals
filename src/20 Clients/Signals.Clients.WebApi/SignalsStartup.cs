@@ -7,8 +7,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Signals.Aspects.Auth.NetCore.Extensions;
 using Signals.Aspects.Caching.Enums;
-using Signals.Aspects.Caching.InMemory;
 using Signals.Aspects.Caching.InMemory.Configurations;
+using Signals.Aspects.CommunicationChannels.ServiceBus.Configurations;
 using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI.Autofac;
 using Signals.Aspects.Localization.File.Configurations;
@@ -70,7 +70,6 @@ namespace Signals.Clients.WebApi
                 config.RegistrationService = registrationService;
                 config.CacheConfiguration = new InMemoryCacheConfiguration
                 {
-                    DataProvider = new InMemoryDataProvider(),
                     ExpirationPolicy = CacheExpirationPolicy.Sliding,
                     ExpirationTime = TimeSpan.FromMinutes(1)
                 };
@@ -96,12 +95,12 @@ namespace Signals.Clients.WebApi
                         }
                     }
                 };
-                //config.ChannelConfiguration = new MsSqlChannelConfiguration
-                //{
-                //    ConnectionString = DomainConfiguration.Instance.DatabaseConfiguration.Database.ToString(),
-                //    DbTableName = DomainConfiguration.Instance.MessageChannelConfiguration.DbTableName,
-                //    MessageListeningStrategy = MessageListeningStrategy.None
-                //};
+                config.ChannelConfiguration = new ServiceBusChannelConfiguration
+                {
+                    ConnectionString = "Endpoint=sb://reipurth-dental.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=qjXNy0Ed7D6E0PY+mfEGxXF4+gJSOXBaVzYD454IDps=",
+                    ChannelPrefix = "temp_",
+                    MaxConcurrentCalls = 10
+                };
                 config.JsonSerializerSettings = new JsonSerializerSettings
                 {
                     NullValueHandling = NullValueHandling.Include,
