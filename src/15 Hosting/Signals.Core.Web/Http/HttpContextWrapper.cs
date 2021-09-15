@@ -248,7 +248,9 @@ namespace Signals.Core.Web.Http
 
             // single lazy per http context
             if (!context.Items.ContainsKey("body"))
-                context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.Body)));
+            {
+                context.Items.Add("body", ExtractBody(context.Request.ContentType, context.Request.Body));
+            }
 
             Query = ExtractQuery(context?.Request?.QueryString.ToString());
 
