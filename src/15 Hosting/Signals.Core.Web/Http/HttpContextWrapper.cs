@@ -238,37 +238,38 @@ namespace Signals.Core.Web.Http
         public HttpContextWrapper(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            _context = _httpContextAccessor.HttpContext;
-            if (_context == null) return;
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return;
 
-            RawUrl = _context.Request.Path.Value;
-            HttpMethod = _context.Request.Method.ToUpperInvariant();
+            Headers = new HeaderCollection(context);
+            Cookies = new CookieCollection(context);
+            Form = new FormCollection(context);
+            Session = new SessionProvider(context);
 
-            Form = new FormCollection(_context);
-            Session = new SessionProvider(_context);
+            // single lazy per http context
+            if (!context.Items.ContainsKey("body"))
+                context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.Body)));
 
-            if (!_context.Items.ContainsKey("body"))
+            Query = ExtractQuery(context?.Request?.QueryString.ToString());
+
+            Body = context.Items["body"] as string;
+            HttpMethod = context.Request.Method.ToUpperInvariant();
+
+            if (context.Request.HasFormContentType)
             {
-                _context.Items.Add("body", ExtractBody(_context.Request.ContentType, _context.Request.Body));
+                Files = context.Request?.Form?.Files?
+                            .Select(x => new InputFile
+                            {
+                                File = x.OpenReadStream(),
+                                FileName = x.FileName,
+                                FormInputName = x.Name,
+                                MimeType = x.ContentType,
+                                ContentLength = x.Length
+                            })
+                        ?? new List<InputFile>();
             }
 
-            Query = ExtractQuery(_context?.Request?.QueryString.ToString());
-
-            Body = _context.Items["body"] as string;
-
-            if (_context.Request.HasFormContentType)
-            {
-                Files = _context.Request?.Form?.Files?
-                                .Select(x => new InputFile
-                                {
-                                    File = x.OpenReadStream(),
-                                    FileName = x.FileName,
-                                    FormInputName = x.Name,
-                                    MimeType = x.ContentType,
-                                    ContentLength = x.Length
-                                })
-                            ?? new List<InputFile>();
-            }
+            RawUrl = context.Request.Path.Value;
         }
 
         /// <summary>
