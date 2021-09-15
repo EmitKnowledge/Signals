@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Input.Http.ModelBinding;
+using System.Threading.Tasks;
 
 namespace Signals.Core.Web.Execution
 {
@@ -122,84 +123,86 @@ namespace Signals.Core.Web.Execution
         /// </summary>
         /// <param name="context">For testing</param>
         /// <returns></returns>
-        public MiddlewareResult Dispatch(IHttpContextWrapper context = null)
+        public async Task<MiddlewareResult> Dispatch(IHttpContextWrapper context = null)
         {
-            var httpContext = context ?? SystemBootstrapper.GetInstance<IHttpContextWrapper>();
+            return await Task.Run(() => {
+                var httpContext = context ?? SystemBootstrapper.GetInstance<IHttpContextWrapper>();
 
-			// execute custom url handlers
-			foreach (var handler in CustomUrlHandlers)
-            {
-                var result = handler.RenderContent(httpContext);
-                // check if url maches
-                if (result != MiddlewareResult.DoNothing)
+                // execute custom url handlers
+                foreach (var handler in CustomUrlHandlers)
                 {
-                    return result;
+                    var result = handler.RenderContent(httpContext);
+                    // check if url maches
+                    if (result != MiddlewareResult.DoNothing)
+                    {
+                        return result;
+                    }
                 }
-            }
 
-            // get valid process type
-            var validType = ProcessRepository.All(type => Filters.All(filter => filter.IsCorrectProcessType(type, httpContext))).FirstOrDefault();
-            if (validType.IsNull()) return MiddlewareResult.StopExecutionAndInvokeNextMiddleware;
-            
-            // create instance
-            var process = ProcessFactory.Create<VoidResult>(validType);
-            if (process.IsNull()) return MiddlewareResult.StopExecutionAndInvokeNextMiddleware;
+                // get valid process type
+                var validType = ProcessRepository.All(type => Filters.All(filter => filter.IsCorrectProcessType(type, httpContext))).FirstOrDefault();
+                if (validType.IsNull()) return MiddlewareResult.StopExecutionAndInvokeNextMiddleware;
 
-            // execute factory filters
-            foreach (var createEvent in FactoryFilters)
-            {
-                var result = createEvent.IsValidInstance(process, validType, httpContext);
-                if (result != MiddlewareResult.DoNothing)
+                // create instance
+                var process = ProcessFactory.Create<VoidResult>(validType);
+                if (process.IsNull()) return MiddlewareResult.StopExecutionAndInvokeNextMiddleware;
+
+                // execute factory filters
+                foreach (var createEvent in FactoryFilters)
                 {
-                    return result;
+                    var result = createEvent.IsValidInstance(process, validType, httpContext);
+                    if (result != MiddlewareResult.DoNothing)
+                    {
+                        return result;
+                    }
                 }
-            }
 
-            var method = EnumExtensions.FromString<SignalsApiMethod>(httpContext.HttpMethod?.ToUpper());
+                var method = EnumExtensions.FromString<SignalsApiMethod>(httpContext.HttpMethod?.ToUpper());
 
-            // determine the parameter binding method
-            var parameterBindingAttribute = validType?
-				.GetCustomAttributes(typeof(SignalsParameterBindingAttribute), false)
-				.Cast<SignalsParameterBindingAttribute>()
-				.FirstOrDefault();
+                // determine the parameter binding method
+                var parameterBindingAttribute = validType?
+                    .GetCustomAttributes(typeof(SignalsParameterBindingAttribute), false)
+                    .Cast<SignalsParameterBindingAttribute>()
+                    .FirstOrDefault();
 
-			// resolve default if not provided
-			if (parameterBindingAttribute.IsNull())
-			{
-				DefaultModelBinders.TryGetValue(method, out var modelBinder);
-				parameterBindingAttribute = new SignalsParameterBindingAttribute(modelBinder);
-			}
-	        
-			var requestInput = parameterBindingAttribute.Binder.Bind(httpContext);
-
-			// execute process
-			var response = new VoidResult();
-
-			// decide if we need to execute
-	        switch (method)
-	        {
-
-				case SignalsApiMethod.OPTIONS:
-				case SignalsApiMethod.HEAD:
-					break;
-				default:
-					response = ProcessExecutor.Execute(process, requestInput);
-					break;
-			}
-
-            // post execution events
-            foreach (var executeEvent in ResultHandlers)
-            {
-                var result = executeEvent.HandleAfterExecution(process, validType, response, httpContext);
-                if (result != MiddlewareResult.DoNothing)
+                // resolve default if not provided
+                if (parameterBindingAttribute.IsNull())
                 {
-                    // flag to stop pipe execution
-                    return result;
+                    DefaultModelBinders.TryGetValue(method, out var modelBinder);
+                    parameterBindingAttribute = new SignalsParameterBindingAttribute(modelBinder);
                 }
-            }
 
-            // flag to stop pipe execution
-            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
+                var requestInput = parameterBindingAttribute.Binder.Bind(httpContext);
+
+                // execute process
+                var response = new VoidResult();
+
+                // decide if we need to execute
+                switch (method)
+                {
+
+                    case SignalsApiMethod.OPTIONS:
+                    case SignalsApiMethod.HEAD:
+                        break;
+                    default:
+                        response = ProcessExecutor.Execute(process, requestInput);
+                        break;
+                }
+
+                // post execution events
+                foreach (var executeEvent in ResultHandlers)
+                {
+                    var result = executeEvent.HandleAfterExecution(process, validType, response, httpContext);
+                    if (result != MiddlewareResult.DoNothing)
+                    {
+                        // flag to stop pipe execution
+                        return result;
+                    }
+                }
+
+                // flag to stop pipe execution
+                return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
+            });
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Signals.Core.Processing.Input.Http
         /// <summary>
         /// Request body
         /// </summary>
-        Lazy<string> Body { get; set; }
+        string Body { get; set; }
 
         /// <summary>
         /// Form collection manager
