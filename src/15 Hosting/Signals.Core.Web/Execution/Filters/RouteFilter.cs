@@ -1,6 +1,7 @@
 ﻿using Signals.Core.Processing.Input.Http;
 using Signals.Core.Web.Http;
 using System;
+using System.Collections.Concurrent;
 
 namespace Signals.Core.Web.Execution.Filters
 {
@@ -9,6 +10,12 @@ namespace Signals.Core.Web.Execution.Filters
     /// </summary>
     public class RouteFilter : IFilter
     {
+	    /// <summary>
+	    /// Cache all existing paths
+	    /// If this filter return true, cache the path
+	    /// </summary>
+	    private static readonly ConcurrentDictionary<string, string> TypePathRegistry = new ConcurrentDictionary<string, string>();
+	    
         /// <summary>
         /// Check if the process type is correct based on the request
         /// </summary>
@@ -17,23 +24,15 @@ namespace Signals.Core.Web.Execution.Filters
         /// <returns></returns>
         public bool IsCorrectProcessType(Type type, IHttpContextWrapper context)
         {
-            var assemblyNamespace = type.Assembly.FullName.Split(',')[0];
+	        var path = TypePathRegistry.GetOrAdd(type.FullName, _ =>
+	        {
+		        var assemblyNamespace = type.Assembly.FullName.Split(',')[0];
+		        var typeName = type?.FullName?.Replace(assemblyNamespace, "").Replace('.', '/');
+                return $"/api/{typeName}".Replace("//", "/").Trim('/');
+            });
 
-            var path = ("/api/" +
-                type
-                .FullName
-                .Replace(assemblyNamespace, "")
-                .Replace('.', '/'))
-                .Replace("//", "/")
-                .Trim('/')
-                .ToLowerInvariant();
-
-            var url = context
-                .RawUrl
-                .Trim('/')
-                .ToLowerInvariant();
-
-            return path == url;
+	        var areEqual = string.Compare(path, context?.RawUrl?.Trim('/'), StringComparison.InvariantCultureIgnoreCase) == 0;
+	        return areEqual;
         }
     }
 }
