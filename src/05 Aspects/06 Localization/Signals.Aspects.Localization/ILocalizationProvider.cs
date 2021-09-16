@@ -144,5 +144,10 @@ namespace Signals.Aspects.Localization
         /// </summary>
         /// <returns></returns>
         TranslationsGrid RenderTranslationsGrid();
+
+        /// <summary>
+        /// Refreshes the localization entries cache
+        /// </summary>
+        void Reload();
     }
 }
