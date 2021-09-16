@@ -32,7 +32,11 @@ namespace Signals.Core.Processes.Recurring
         protected virtual IRecurringProcessContext Context
         {
             get => _context;
-            set { (value as RecurringProcessContext).SetProcess(this); _context = value; }
+            set
+            {
+                (value as RecurringProcessContext)?.SetProcess(this); 
+                _context = value;
+            }
         }
         private IRecurringProcessContext _context;
 
@@ -45,7 +49,13 @@ namespace Signals.Core.Processes.Recurring
         /// Recurring profile
         /// </summary>
         public abstract RecurrencePatternConfiguration Profile { get; }
-        
+
+        /// <summary>
+        /// Checks if the recurring process should execute
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool ShouldExecute() => true;
+
         /// <summary>
         /// Background execution layer
         /// </summary>
@@ -58,9 +68,12 @@ namespace Signals.Core.Processes.Recurring
         /// <returns></returns>
         internal TResponse Execute()
         {
-            RecurringTaskLog log = new RecurringTaskLog();
-            log.StartTime = DateTime.UtcNow;
-            log.ProcessType = this.GetType();
+            var log = new RecurringTaskLog
+            {
+                StartTime = DateTime.UtcNow,
+                ProcessType = GetType()
+            };
+
             Context.CreateLog(log);
 
             TResponse result = null;
@@ -69,7 +82,7 @@ namespace Signals.Core.Processes.Recurring
                 result = Sync();
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result = VoidResult.FaultedResult<TResponse>(ex);
                 throw;
@@ -78,7 +91,10 @@ namespace Signals.Core.Processes.Recurring
             {
                 log.EndTime = DateTime.UtcNow;
                 log.Result = result;
-                log.IsFaulted = result.IsFaulted || result.IsSystemFault;
+                if (result != null)
+                {
+                    log.IsFaulted = result.IsFaulted || result.IsSystemFault;
+                }
                 Context.UpdateLog(log);
             }
         }
@@ -90,6 +106,10 @@ namespace Signals.Core.Processes.Recurring
         /// <returns></returns>
         internal override TResponse ExecuteProcess(params object[] args)
         {
+            if (!ShouldExecute())
+            {
+                return Ok();
+            }
             return Execute();
         }
     }
@@ -108,8 +128,13 @@ namespace Signals.Core.Processes.Recurring
         protected virtual IRecurringProcessContext Context
         {
             get => _context;
-            set { (value as RecurringProcessContext).SetProcess(this); _context = value; }
+            set
+            {
+                (value as RecurringProcessContext)?.SetProcess(this); 
+                _context = value;
+            }
         }
+
         private IRecurringProcessContext _context;
 
         /// <summary>
@@ -121,7 +146,13 @@ namespace Signals.Core.Processes.Recurring
         /// Recurring profile
         /// </summary>
         public abstract RecurrencePatternConfiguration Profile { get; }
-        
+
+        /// <summary>
+        /// Checks if the recurring process should execute
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool ShouldExecute() => true;
+
         /// <summary>
         /// Background execution layer
         /// </summary>
@@ -134,14 +165,19 @@ namespace Signals.Core.Processes.Recurring
         /// <returns></returns>
         internal TResponse Execute()
         {
-            var thisType = this.GetType();
+            var thisType = GetType();
             var currentExecuting = Context.Current(thisType);
 
-            if (!currentExecuting.IsNull()) return Ok();
+            if (!currentExecuting.IsNull())
+            {
+                return Ok();
+            }
 
-            RecurringTaskLog log = new RecurringTaskLog();
-            log.StartTime = DateTime.UtcNow;
-            log.ProcessType = thisType;
+            var log = new RecurringTaskLog
+            {
+                StartTime = DateTime.UtcNow,
+                ProcessType = thisType
+            };
             Context.CreateLog(log);
 
             TResponse result = null;
@@ -159,7 +195,10 @@ namespace Signals.Core.Processes.Recurring
             {
                 log.EndTime = DateTime.UtcNow;
                 log.Result = result;
-                log.IsFaulted = result.IsFaulted || result.IsSystemFault;
+                if (result != null)
+                {
+                    log.IsFaulted = result.IsFaulted || result.IsSystemFault;
+                }
                 Context.UpdateLog(log);
             }
         }
@@ -171,6 +210,10 @@ namespace Signals.Core.Processes.Recurring
         /// <returns></returns>
         internal override TResponse ExecuteProcess(params object[] args)
         {
+            if (!ShouldExecute())
+            {
+                return Ok();
+            }
             return Execute();
         }
     }

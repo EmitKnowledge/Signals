@@ -32,7 +32,6 @@ namespace App.Clients.BackgroundWorker
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // Setup configuration
-            var activeEnvironment = "temp";
             ApplicationConfiguration.UseProvider(new FileConfigurationProvider());
             BackgroundApplicationConfiguration.UseProvider(new FileConfigurationProvider());
 
@@ -40,15 +39,6 @@ namespace App.Clients.BackgroundWorker
             {
                 RegistrationService = new RegistrationService(),
                 TaskRegistry = new FluentRegistry(),
-                //LoggerConfiguration = new DatabaseLoggingConfiguration
-                //{
-                //    Database = InfrastructureConfiguration.Instance.Database.Name,
-                //    Host = InfrastructureConfiguration.Instance.Database.Server,
-                //    Username = InfrastructureConfiguration.Instance.Database.User,
-                //    Password = InfrastructureConfiguration.Instance.Database.Password,
-                //    DataProvider = DataProvider.SqlClient,
-                //    TableName = "LogEntry"
-                //},
                 CacheConfiguration = new InMemoryCacheConfiguration
                 {
                     ExpirationPolicy = CacheExpirationPolicy.Sliding,
@@ -66,12 +56,6 @@ namespace App.Clients.BackgroundWorker
                             SourcePath = "Translations"
                         }
                     }
-                },
-                ChannelConfiguration = new ServiceBusChannelConfiguration
-                {
-                    ConnectionString = "Endpoint=sb://reipurth-dental.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=qjXNy0Ed7D6E0PY+mfEGxXF4+gJSOXBaVzYD454IDps=",
-                    ChannelPrefix = $"{activeEnvironment}_",
-                    MaxConcurrentCalls = 10
                 },
                 JsonSerializerSettings = new JsonSerializerSettings
                 {

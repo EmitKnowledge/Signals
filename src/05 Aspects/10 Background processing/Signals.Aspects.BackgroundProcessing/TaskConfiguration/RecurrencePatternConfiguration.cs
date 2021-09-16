@@ -16,7 +16,7 @@ namespace Signals.Aspects.BackgroundProcessing.TaskConfiguration
         /// <summary>
         /// Type of pattern
         /// </summary>
-        public PatternType Type { get; private set; }
+        public PatternType Type { get; }
 
         /// <summary>
         /// Represents the timepart
@@ -27,6 +27,11 @@ namespace Signals.Aspects.BackgroundProcessing.TaskConfiguration
         /// Indicates if the process should run now and then follow the recurrence pattern
         /// </summary>
         public bool RunNow { get; set; }
+
+        /// <summary>
+        /// Represents the hour and minute the process should run once and then follow he recurrence pattern
+        /// </summary>
+        public (int, int)? RunOnceAt { get; set; }
 
         /// <summary>
         /// Get configuration
