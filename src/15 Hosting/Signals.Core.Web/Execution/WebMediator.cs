@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using Signals.Aspects.DI;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Execution;
@@ -41,6 +42,11 @@ namespace Signals.Core.Web.Execution
 		/// Default model binders
 		/// </summary>
 		internal Dictionary<SignalsApiMethod, BaseModelBinder> DefaultModelBinders { get; set; }
+
+		/// <summary>
+		/// Cache all process types that match
+		/// </summary>
+		private static readonly ConcurrentDictionary<string, BaseModelBinder> TypeDefaultModelBindersRegistry = new ConcurrentDictionary<string, BaseModelBinder>();
 
         /// <summary>
         /// Result handler
@@ -132,7 +138,7 @@ namespace Signals.Core.Web.Execution
                 foreach (var handler in CustomUrlHandlers)
                 {
                     var result = handler.RenderContent(httpContext);
-                    // check if url maches
+                    // check if url matches
                     if (result != MiddlewareResult.DoNothing)
                     {
                         return result;
@@ -159,32 +165,36 @@ namespace Signals.Core.Web.Execution
 
                 var method = EnumExtensions.FromString<SignalsApiMethod>(httpContext.HttpMethod?.ToUpper());
 
-                // determine the parameter binding method
-                var parameterBindingAttribute = validType?
-                    .GetCustomAttributes(typeof(SignalsParameterBindingAttribute), false)
-                    .Cast<SignalsParameterBindingAttribute>()
-                    .FirstOrDefault();
-
-                // resolve default if not provided
-                if (parameterBindingAttribute.IsNull())
-                {
-                    DefaultModelBinders.TryGetValue(method, out var modelBinder);
-                    parameterBindingAttribute = new SignalsParameterBindingAttribute(modelBinder);
-                }
-
-                var requestInput = parameterBindingAttribute.Binder.Bind(httpContext);
-
                 // execute process
                 var response = new VoidResult();
 
                 // decide if we need to execute
                 switch (method)
                 {
-
-                    case SignalsApiMethod.OPTIONS:
+	                case SignalsApiMethod.OPTIONS:
                     case SignalsApiMethod.HEAD:
                         break;
                     default:
+	                    // if cached true, return it right away
+	                    var parameterBinding = TypeDefaultModelBindersRegistry.GetOrAdd(validType.FullName, _ =>
+	                    {
+		                    // determine the parameter binding method
+		                    var parameterBindingAttribute = validType?
+			                    .GetCustomAttributes(typeof(SignalsParameterBindingAttribute), false)
+			                    .Cast<SignalsParameterBindingAttribute>()
+			                    .FirstOrDefault();
+
+		                    // resolve default if not provided
+		                    if (parameterBindingAttribute.IsNull())
+		                    {
+			                    DefaultModelBinders.TryGetValue(method, out var modelBinder);
+			                    return modelBinder;
+		                    }
+
+		                    return parameterBindingAttribute.Binder;
+                        });
+
+                        var requestInput = parameterBinding.Bind(httpContext);
                         response = ProcessExecutor.Execute(process, requestInput);
                         break;
                 }
