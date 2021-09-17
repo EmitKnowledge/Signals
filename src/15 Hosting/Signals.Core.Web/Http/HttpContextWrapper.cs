@@ -238,40 +238,43 @@ namespace Signals.Core.Web.Http
         public HttpContextWrapper(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            var context = _httpContextAccessor.HttpContext;
-            if (context == null) return;
+            _context = _httpContextAccessor.HttpContext;
+            if (_context == null) return;
 
-            Headers = new HeaderCollection(context);
-            Cookies = new CookieCollection(context);
-            Form = new FormCollection(context);
-            Session = new SessionProvider(context);
+            RawUrl = _context.Request.Path.Value;
+            HttpMethod = _context.Request.Method.ToUpperInvariant();
+            Headers = new HeaderCollection(_context);
+            Cookies = new CookieCollection(_context);
+            Form = new FormCollection(_context);
+            Session = new SessionProvider(_context);
+            Query = ExtractQuery(_context?.Request?.QueryString.ToString());
+        }
 
-            // single lazy per http context
-            if (!context.Items.ContainsKey("body"))
-            {
-                context.Items.Add("body", ExtractBody(context.Request.ContentType, context.Request.Body));
-            }
-
-            Query = ExtractQuery(context?.Request?.QueryString.ToString());
-
-            Body = context.Items["body"] as string;
-            HttpMethod = context.Request.Method.ToUpperInvariant();
-
-            if (context.Request.HasFormContentType)
-            {
-                Files = context.Request?.Form?.Files?
-                            .Select(x => new InputFile
-                            {
-                                File = x.OpenReadStream(),
-                                FileName = x.FileName,
-                                FormInputName = x.Name,
-                                MimeType = x.ContentType,
-                                ContentLength = x.Length
-                            })
-                        ?? new List<InputFile>();
-            }
-
-            RawUrl = context.Request.Path.Value;
+        /// <summary>
+        /// Execute the wrapping to process the request
+        /// </summary>
+        public void Wrap()
+        {
+	        if (_context == null) return;
+	        // single lazy per http context
+	        if (!_context.Items.ContainsKey("body"))
+	        {
+		        _context.Items.Add("body", ExtractBody(_context.Request.ContentType, _context.Request.Body));
+	        }
+	        Body = _context.Items["body"] as string;
+	        if (_context.Request.HasFormContentType)
+	        {
+		        Files = _context.Request?.Form?.Files?
+			                .Select(x => new InputFile
+			                {
+				                File = x.OpenReadStream(),
+				                FileName = x.FileName,
+				                FormInputName = x.Name,
+				                MimeType = x.ContentType,
+				                ContentLength = x.Length
+			                })
+		                ?? new List<InputFile>();
+	        }
         }
 
         /// <summary>

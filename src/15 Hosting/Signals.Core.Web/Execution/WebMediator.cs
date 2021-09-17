@@ -153,6 +153,9 @@ namespace Signals.Core.Web.Execution
                 var process = ProcessFactory.Create<VoidResult>(validType);
                 if (process.IsNull()) return MiddlewareResult.StopExecutionAndInvokeNextMiddleware;
 
+                // execute request parsing and mapping to Signals HTTP context
+                httpContext.Wrap();
+
                 // execute factory filters
                 foreach (var createEvent in FactoryFilters)
                 {

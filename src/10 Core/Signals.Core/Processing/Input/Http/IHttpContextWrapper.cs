@@ -57,6 +57,11 @@ namespace Signals.Core.Processing.Input.Http
         ISessionProvider Session { get; set; }
 
         /// <summary>
+        /// Execute the wrapping to process the request
+        /// </summary>
+        void Wrap();
+
+        /// <summary>
         /// Write response
         /// </summary>
         /// <param name="httpResponse"></param>
