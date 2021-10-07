@@ -4,6 +4,7 @@ using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Results;
 using System;
 using System.Linq;
+using Signals.Core.Common.Reflection;
 
 namespace Signals.Core.Processing.Execution.ExecutionHandlers
 {
@@ -28,10 +29,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
             // Get authenticate attribute
-            var attributes = processType
-                .GetCustomAttributes(typeof(SignalsAuthenticateAttribute), false)
-                .Cast<SignalsAuthenticateAttribute>()
-                .ToList();
+            var attributes = processType.GetCachedAttributes<SignalsAuthenticateAttribute>();
 
             // If no attribute is present the request is valid
             if (!attributes.Any()) return Next.Execute(process, processType, args);
@@ -48,7 +46,9 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                 return VoidResult.FaultedResult<TResult>(new AuthenticationErrorInfo());
             }
 
-            return Next.Execute(process, processType, args);
+            var result = Next.Execute(process, processType, args);
+            this.D($"Executed -> Authentication Handler for process type: {processType?.FullName}.");
+            return result;
         }
     }
 }

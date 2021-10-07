@@ -27,10 +27,11 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         /// <returns></returns>
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
-            if(process is IDistributedProcess distributedProcess)
-                return distributedProcess.ExecuteBackgroundProcess(args) as TResult;
+	        if (!(process is IDistributedProcess distributedProcess)) return null;
+	        var result = distributedProcess.ExecuteBackgroundProcess(args) as TResult;
+	        this.D($"Executed -> Background Process Execution Handler for process type: {processType?.FullName}.");
+	        return result;
 
-            return null;
         }
     }
 }

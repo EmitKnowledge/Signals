@@ -1,9 +1,10 @@
-﻿using Signals.Core.Processes.Base;
+﻿using System;
+using Signals.Core.Processes.Base;
 
 namespace Signals.Core.Processing.Execution
 {
     /// <summary>
-    /// Represents the process exection stack necessary data
+    /// Represents the process execution stack necessary data
     /// </summary>
     internal class ProcessExecutionStackEntry
     {
@@ -22,7 +23,7 @@ namespace Signals.Core.Processing.Execution
         /// </summary>
         public ProcessExecutionStackEntry()
         {
-            Payload = new object[0];
+            Payload = Array.Empty<object>();
         }
     }
 }

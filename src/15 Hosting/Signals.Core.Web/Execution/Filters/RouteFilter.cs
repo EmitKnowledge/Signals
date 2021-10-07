@@ -32,6 +32,11 @@ namespace Signals.Core.Web.Execution.Filters
             });
 
 	        var areEqual = string.Compare(path, context?.RawUrl?.Trim('/'), StringComparison.InvariantCultureIgnoreCase) == 0;
+	        if (areEqual)
+	        {
+                this.D($"Route: {path} match. Exit filter.");
+	        }
+
 	        return areEqual;
         }
     }

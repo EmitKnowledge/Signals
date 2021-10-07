@@ -26,7 +26,9 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         /// <returns></returns>
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
-            return process.ExecuteProcess(args);
+            var result = process.ExecuteProcess(args);
+            this.D($"Executed -> Common Process Execution Handler for process type: {processType?.FullName}.");
+            return result;
         }
     }
 }

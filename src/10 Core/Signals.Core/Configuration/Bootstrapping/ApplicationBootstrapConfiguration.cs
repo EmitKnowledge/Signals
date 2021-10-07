@@ -16,8 +16,6 @@ using Signals.Aspects.Security;
 using Signals.Aspects.Security.Configurations;
 using Signals.Aspects.Storage;
 using Signals.Aspects.Storage.Configurations;
-using Signals.Core.Processes.Recurring;
-using Signals.Core.Processes.Recurring.Logging;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Reflection;
 using System;
@@ -27,6 +25,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Signals.Aspects.Benchmarking;
 using Signals.Aspects.Benchmarking.Configurations;
+using Signals.Core.Common.Serialization;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -186,7 +185,10 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// <returns></returns>
         public virtual IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
         {
-            return Resolve(scanAssemblies: scanAssemblies);
+            this.D("Begin bootstrapping.");
+            var serviceContainer = Resolve(scanAssemblies: scanAssemblies);
+            this.D("Bootstrapping completed.");
+            return serviceContainer;
         }
         
         /// <summary>
@@ -206,42 +208,100 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// <returns></returns>
         internal virtual IServiceContainer Resolve(ConfigurationBootstrapper configurationBootstrapper = null, params Assembly[] scanAssemblies)
         {
-            var config = configurationBootstrapper ?? new ConfigurationBootstrapper();
+	        ConfigurationBootstrapper config;
+	        if (configurationBootstrapper == null)
+	        {
+		        this.D("Creating default bootstrapper configuration.");
+		        config = new ConfigurationBootstrapper();
+            }
+	        else
+	        {
+		        this.D("Assigning an existing bootstrapper configuration.");
+		        config = configurationBootstrapper;
+	        }
 
-            scanAssemblies = scanAssemblies ?? new Assembly[0];
-            _allTypes = scanAssemblies.SelectMany(assembly => assembly.LoadAllTypesFromAssembly().Where(type => type.FullName.StartsWith("Signals"))).ToList();
+	        if (scanAssemblies == null)
+	        {
+		        this.D("No assemblies have been provided. Assigning the caller assembly.");
+		        scanAssemblies = new Assembly[0];
+	        }
+	        else
+	        {
+		        this.D($"Total {scanAssemblies.Length} assemblies have been provided.");
+	        }
+
+	        this.D("Loading all types under Signals.* namespace.");
+            _allTypes = scanAssemblies.SelectMany(
+	            assembly => assembly.LoadAllTypesFromAssembly()
+					.Where(type => type != null && 
+					               !string.IsNullOrEmpty(type.FullName) && 
+					               type.FullName.StartsWith("Signals")))
+	            .ToList();
+            this.D($"Total {_allTypes.Count} types under Signals has been loaded.");
 
             config.JsonSerializerSettings = () => JsonSerializerSettings;
-            //config.RecurringTaskLogProvider = () => RecurringTaskLogProvider;
-            config.DependencyResolver = () => RegistrationService;
-            config.Logging = () => GetInstance<ILogger>(LoggerConfiguration);
-            config.Auditing = () => GetInstance<IAuditProvider>(AuditingConfiguration);
-            config.Cache = () => GetInstance<ICache>(CacheConfiguration);
-            config.Storage = () => GetInstance<IStorageProvider>(StorageConfiguration);
-            config.MessageChannel = () => GetInstance<IMessageChannel>(ChannelConfiguration);
-            config.PermissionProvider = () => GetInstance<IPermissionProvider>(SecurityConfiguration);
-            config.Benchmarker = () => GetInstance<IBenchmarker>(BenchmarkingConfiguration);
-            config.AuthenticationManager = () => GetImplementationTypes<IAuthenticationManager>().SingleOrDefault();
-            config.AuthorizationManager = () => GetImplementationTypes<IAuthorizationManager>().SingleOrDefault();
-            config.TaskRegistry = () => TaskRegistry;
-            config.ErrorHandling = () => StrategyBuilder;
+            this.D("Set default JsonSerializerSettings.");
 
-            var localizaitonProvider = GetInstance<ILocalizationDataProvider>(LocalizationConfiguration);
-            config.Localization = () => !localizaitonProvider.IsNull() ? new LocalizationProvider(localizaitonProvider) : null;
+            //config.RecurringTaskLogProvider = () => RecurringTaskLogProvider;
+            //this.D("Set default RecurringTaskLogProvider.");
+
+            config.DependencyResolver = () => RegistrationService;
+            this.D($"Set DependencyResolver -> {RegistrationService?.GetType().FullName ?? "N/A"}.");
+
+            config.Logging = () => GetInstance<ILogger>(LoggerConfiguration);
+            this.D($"Set Logging -> {config.Logging()?.GetType().FullName ?? "N/A"} with configuration: {LoggerConfiguration?.SerializeJson() ?? "N/A"}.");
+
+            config.Auditing = () => GetInstance<IAuditProvider>(AuditingConfiguration);
+            this.D($"Set Auditing -> {config.Auditing()?.GetType().FullName ?? "N/A"} with configuration: {AuditingConfiguration?.SerializeJson() ?? "N/A"}.");
+
+            config.Cache = () => GetInstance<ICache>(CacheConfiguration);
+            this.D($"Set Cache -> {config.Cache()?.GetType().FullName ?? "N/A"} with configuration: {CacheConfiguration?.SerializeJson() ?? "N/A"}.");
+
+            config.Storage = () => GetInstance<IStorageProvider>(StorageConfiguration);
+            this.D($"Set Storage -> {config.Storage()?.GetType().FullName ?? "N/A"} with configuration: {StorageConfiguration?.SerializeJson() ?? "N/A"}.");
+
+            config.MessageChannel = () => GetInstance<IMessageChannel>(ChannelConfiguration);
+            this.D($"Set MessageChannel -> {config.MessageChannel()?.GetType().FullName ?? "N/A"} with configuration: {ChannelConfiguration?.SerializeJson() ?? "N/A"}.");
+
+            config.PermissionProvider = () => GetInstance<IPermissionProvider>(SecurityConfiguration);
+            this.D($"Set PermissionProvider -> {config.PermissionProvider()?.GetType().FullName ?? "N/A"} with configuration: {SecurityConfiguration?.SerializeJson() ?? "N/A"}.");
+
+            config.Benchmarker = () => GetInstance<IBenchmarker>(BenchmarkingConfiguration);
+            this.D($"Set Benchmarker -> {config.Benchmarker()?.GetType().FullName ?? "N/A"} with configuration: {BenchmarkingConfiguration?.SerializeJson() ?? "N/A"}.");
+
+            config.AuthenticationManager = () => GetImplementationTypes<IAuthenticationManager>().SingleOrDefault();
+            this.D($"Set AuthenticationManager -> {config.AuthenticationManager()?.GetType().FullName ?? "N/A"}.");
+
+            config.AuthorizationManager = () => GetImplementationTypes<IAuthorizationManager>().SingleOrDefault();
+            this.D($"Set AuthorizationManager -> {config.AuthorizationManager()?.GetType().FullName ?? "N/A"}.");
+
+            config.TaskRegistry = () => TaskRegistry;
+            this.D($"Set TaskRegistry -> {config.TaskRegistry()?.GetType().FullName ?? "N/A"}.");
+
+            config.ErrorHandling = () => StrategyBuilder;
+            this.D($"Set ErrorHandling -> {config.ErrorHandling()?.GetType().FullName ?? "N/A"}.");
+
+            var localizationProvider = GetInstance<ILocalizationDataProvider>(LocalizationConfiguration);
+            config.Localization = () => !localizationProvider.IsNull() ? new LocalizationProvider(localizationProvider) : null;
+            this.D($"Set Localization -> {config.Localization()?.GetType().FullName ?? "N/A"} with configuration: {LocalizationConfiguration?.SerializeJson() ?? "N/A"}.");
 
             if (SecurityConfiguration.IsNull())
             {
+	            this.D($"No security configuration has been provided.");
                 if (config.AuthenticationManager()?.IsNull() == false)
                 {
-                    config.PermissionManager = () =>
-                        GetImplementationTypes<IPermissionManager>()
-                            .SingleOrDefault(x => !x.IsAssignableFrom(typeof(Processing.Authorization.PermissionManager)));
+	                this.D($"AuthenticationManager exists.");
+	                config.PermissionManager = () =>
+		                GetImplementationTypes<IPermissionManager>()
+			                .SingleOrDefault(x =>
+				                !x.IsAssignableFrom(typeof(Processing.Authorization.PermissionManager)));
                 }
             }
             else
             {
                 config.PermissionManager = () => typeof(Processing.Authorization.PermissionManager);
             }
+            this.D($"Set PermissionManager -> {config.PermissionManager()?.GetType().FullName ?? "N/A"}.");
 
             return config.Bootstrap(scanAssemblies);
         }
@@ -291,8 +351,9 @@ namespace Signals.Core.Configuration.Bootstrapping
                     var instance = Activator.CreateInstance(type, args) as TDefinition;
                     return instance;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    this.D($"Exception has occurred while getting an instance for: {type.FullName}. Exception: {ex?.Message}.");
                 }
             }
 

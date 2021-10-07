@@ -35,34 +35,43 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         {
             var innerResult = Next.Execute(process, processType, args);
             var logger = SystemBootstrapper.GetInstance<ILogger>();
-            if (logger.IsNull()) return innerResult;
-
-            if (innerResult.IsFaulted)
+            if (logger.IsNull())
             {
-                // Create the log entry based on the fault type
-                var errorInfo = innerResult.ErrorMessages.OfType<UnmanagedExceptionErrorInfo>().FirstOrDefault();
-                var entry = innerResult.IsSystemFault
-                    ? LogEntry.Exception(errorInfo?.Exception, innerResult.GetFaultMessage())
-                    : LogEntry.Trace(message: innerResult.GetFaultMessage(), payload: args);
-
-                // Provide entry info
-                entry.ProcessName = process.Name;
-                entry.Action = DisplayExecutionStack(process.ExecutionStack);
-                entry.Origin = ApplicationConfiguration.Instance?.ApplicationName ?? Environment.MachineName;
-                entry.Payload = GetExecutionStackPayload(process.ExecutionStack)?.SerializeJson();
-                entry.UserIdentifier = process.BaseContext?.CurrentUserPrincipal?.Identity?.Name;
-
-                // Log
-                if (innerResult.IsSystemFault)
-                {
-                    logger.Fatal(entry);
-                }
-                else
-                {
-                    logger.Info(entry);
-                }
+                this.D("No logger has been found. Exit handler.");
+	            return innerResult;
             }
 
+            if (!innerResult.IsFaulted)
+            {
+	            return innerResult;
+            }
+
+            // Create the log entry based on the fault type
+            var errorInfo = innerResult.ErrorMessages.OfType<UnmanagedExceptionErrorInfo>().FirstOrDefault();
+            var entry = innerResult.IsSystemFault
+	            ? LogEntry.Exception(errorInfo?.Exception, innerResult.GetFaultMessage())
+	            : LogEntry.Trace(message: innerResult.GetFaultMessage(), payload: args);
+
+            // Provide entry info
+            entry.ProcessName = process.Name;
+            entry.Action = DisplayExecutionStack(process.ExecutionStack);
+            entry.Origin = ApplicationConfiguration.Instance?.ApplicationName ?? Environment.MachineName;
+            entry.Payload = GetExecutionStackPayload(process.ExecutionStack)?.SerializeJson();
+            entry.UserIdentifier = process.BaseContext?.CurrentUserPrincipal?.Identity?.Name;
+
+            // Log
+            if (innerResult.IsSystemFault)
+            {
+	            this.D($"Executed -> Log -> Fatal -> {entry?.SerializeJson()}");
+                logger.Fatal(entry);
+            }
+            else
+            {
+	            this.D($"Executed -> Log -> Info -> {entry?.SerializeJson()}");
+                logger.Info(entry);
+            }
+
+            this.D($"Executed -> Error Logging Handler for process type: {processType?.FullName}.");
             return innerResult;
         }
 

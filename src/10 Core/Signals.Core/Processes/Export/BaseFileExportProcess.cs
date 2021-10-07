@@ -25,7 +25,7 @@ namespace Signals.Core.Processes.Export
         protected  virtual IFileExportProcessContext Context
         {
             get => _context;
-            set { (value as FileExportProcessContext).SetProcess(this); _context = value; }
+            set { (value as FileExportProcessContext)?.SetProcess(this); _context = value; }
         }
         private IFileExportProcessContext _context;
 
@@ -80,14 +80,28 @@ namespace Signals.Core.Processes.Export
         internal FileResult Execute()
         {
             var result = Auth();
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Auth.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Auth -> Failed.");
+                return result;
+            }
 
             result = Validate();
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Validate.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Validation -> Failed.");
+                return result;
+            }
 
             // Map data to memory stream
             var fileExporter = ResolveFileExporter();
+            this.D($"File exporter of type {fileExporter.MimeType} resolved.");
+
             var stream = fileExporter.Export(ExportConfiguration, DataSource());
+            this.D($"File of type: {fileExporter.MimeType} exported to stream.");
+
             return new FileResult(stream, ExportConfiguration.FileName, fileExporter.MimeType);
         }
     }
@@ -106,7 +120,7 @@ namespace Signals.Core.Processes.Export
         protected virtual IFileExportProcessContext Context
         {
             get => _context;
-            set { (value as FileExportProcessContext).SetProcess(this); _context = value; }
+            set { (value as FileExportProcessContext)?.SetProcess(this); _context = value; }
         }
         private IFileExportProcessContext _context;
 
@@ -162,14 +176,24 @@ namespace Signals.Core.Processes.Export
         internal FileResult Execute(T1 obj)
         {
             var result = Auth(obj);
-            if (result.IsFaulted) return result;
+            if (result.IsFaulted)
+            {
+	            return result;
+            }
 
             result = Validate(obj);
-            if (result.IsFaulted) return result;
+            if (result.IsFaulted)
+            {
+	            return result;
+            }
 
             // Map data to memory stream
             var fileExporter = ResolveFileExporter();
+            this.D($"File exporter of type {fileExporter.MimeType} resolved.");
+
             var stream = fileExporter.Export(ExportConfiguration, DataSource(obj));
+            this.D($"File of type: {fileExporter.MimeType} exported to stream.");
+
             return new FileResult(stream, ExportConfiguration.FileName, fileExporter.MimeType);
         }
     }
@@ -189,7 +213,7 @@ namespace Signals.Core.Processes.Export
         protected virtual IFileExportProcessContext Context
         {
             get => _context;
-            set { (value as FileExportProcessContext).SetProcess(this); _context = value; }
+            set { (value as FileExportProcessContext)?.SetProcess(this); _context = value; }
         }
         private IFileExportProcessContext _context;
 
@@ -246,14 +270,24 @@ namespace Signals.Core.Processes.Export
         internal FileResult Execute(T1 obj1, T2 obj2)
         {
             var result = Auth(obj1, obj2);
-            if (result.IsFaulted) return result;
+            if (result.IsFaulted)
+            {
+	            return result;
+            }
 
             result = Validate(obj1, obj2);
-            if (result.IsFaulted) return result;
+            if (result.IsFaulted)
+            {
+	            return result;
+            }
 
             // Map data to memory stream
             var fileExporter = ResolveFileExporter();
+            this.D($"File exporter of type {fileExporter.MimeType} resolved.");
+
             var stream = fileExporter.Export(ExportConfiguration, DataSource(obj1, obj2));
+            this.D($"File of type: {fileExporter.MimeType} exported to stream.");
+
             return new FileResult(stream, ExportConfiguration.FileName, fileExporter.MimeType);
         }
     }
@@ -274,7 +308,7 @@ namespace Signals.Core.Processes.Export
         protected virtual IFileExportProcessContext Context
         {
             get => _context;
-            set { (value as FileExportProcessContext).SetProcess(this); _context = value; }
+            set { (value as FileExportProcessContext)?.SetProcess(this); _context = value; }
         }
         private IFileExportProcessContext _context;
 
@@ -332,14 +366,24 @@ namespace Signals.Core.Processes.Export
         internal FileResult Execute(T1 obj1, T2 obj2, T3 obj3)
         {
             var result = Auth(obj1, obj2, obj3);
-            if (result.IsFaulted) return result;
+            if (result.IsFaulted)
+            {
+	            return result;
+            }
 
             result = Validate(obj1, obj2, obj3);
-            if (result.IsFaulted) return result;
+            if (result.IsFaulted)
+            {
+	            return result;
+            }
 
             // Map data to memory stream
             var fileExporter = ResolveFileExporter();
+            this.D($"File exporter of type {fileExporter.MimeType} resolved.");
+
             var stream = fileExporter.Export(ExportConfiguration, DataSource(obj1, obj2, obj3));
+            this.D($"File of type: {fileExporter.MimeType} exported to stream.");
+
             return new FileResult(stream, ExportConfiguration.FileName, fileExporter.MimeType);
         }
     }

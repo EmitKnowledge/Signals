@@ -38,15 +38,18 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                 }
                 catch (Exception ex)
                 {
+                    this.D($"Executed Error Managing Handler for process type: {processType?.FullName} -> Exception: {ex?.Message}.");
                     return VoidResult.FaultedResult<TResult>(ex);
                 }
             }
 
             var strategyResult = strategyHandler.Execute(() => Next.Execute(process, processType, args));
+            this.D($"Executed Error Managing Handler -> Strategy: {strategyHandler?.GetType().FullName} -> AutoHandleErrorProcesses: {strategyHandler.AutoHandleErrorProcesses} for process type: {processType?.FullName}.");
 
             if (strategyResult.Exception != null)
             {
-                return VoidResult.FaultedResult<TResult>(strategyResult.Exception);
+	            this.D($"Executed Error Managing Handler failed -> Strategy: {strategyHandler?.GetType().FullName} -> AutoHandleErrorProcesses: {strategyHandler.AutoHandleErrorProcesses} for process type: {processType?.FullName}. Exception: {strategyResult?.Exception?.Message}.");
+	            return VoidResult.FaultedResult<TResult>(strategyResult.Exception);
             }
 
             return strategyResult.Result;

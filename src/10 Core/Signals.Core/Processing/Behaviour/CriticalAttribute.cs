@@ -21,11 +21,22 @@ namespace Signals.Core.Processing.Behaviour
         /// </summary>
         public CriticalAttribute()
         {
-            if (!NotificaitonEmails.IsNullOrEmpty()) return;
+	        if (!NotificaitonEmails.IsNullOrEmpty())
+	        {
+		        this.D("No notification email has been found.");
+                return;
+	        }
 
             var emails = ApplicationConfiguration.Instance?.CriticalConfiguration?.Emails;
-            if (!emails.IsNullOrHasZeroElements())
-                NotificaitonEmails = string.Join(",", emails);
+            if (emails.IsNullOrHasZeroElements())
+            {
+	            this.D("No notification email has been found.");
+	            return;
+            }
+
+            var emailList = string.Join(",", emails);
+            NotificaitonEmails = emailList;
+            this.D($"Notification emails: {emailList} configured.");
         }
     }
 }

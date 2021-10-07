@@ -16,6 +16,7 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
         {
             if (httpContext?.Query == null)
             {
+	            this.D("Query is null. Exit Model Binder.");
                 return null;
             }
 
@@ -38,7 +39,10 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
                 }
             }
 
-            return query.SerializeJson();
+            var dto = query.SerializeJson();
+            this.D($"Query -> Value: {dto}. Exit Model Binder.");
+
+            return dto;
         }
 
         private object DeserializeList(List<object> values)

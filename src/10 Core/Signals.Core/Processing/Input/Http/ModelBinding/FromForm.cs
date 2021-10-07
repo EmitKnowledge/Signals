@@ -16,7 +16,11 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
 		public override object Bind(IHttpContextWrapper httpContext)
 		{
 			var form = httpContext?.Form;
-			if (form.IsNull()) return null;
+			if (form.IsNull())
+			{
+				this.D("Form is null. Exit Model Binder.");
+				return null;
+			}
 
 			var obj = new Dictionary<string, string>();
 			foreach (var key in form.Keys)
@@ -26,6 +30,8 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
 			}
 
             var dto = obj.SerializeJson();
+            this.D($"Form -> Value: {dto}. Exit Model Binder.");
+
 			return dto;
 		}
 	}

@@ -1,12 +1,8 @@
 ﻿using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Results;
-using Signals.Core.Web.Http;
 using System;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Signals.Core.Common.Reflection;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Common.Instance;
 
@@ -28,27 +24,27 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            if (response is FileResult fileResponse)
+	        if (!(response is FileResult fileResponse))
+	        {
+		        return MiddlewareResult.DoNothing;
+	        }
+
+	        var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
+	            response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+
+            // create response
+            var httpRespose = new HttpResponseMessage(statusCode)
             {
-            var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
-                             response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+	            Content = fileResponse.IsNull() ? null : new StreamContent(fileResponse.Result),
+            };
 
-                // create response
-                var httpRespose = new HttpResponseMessage(statusCode)
-                {
-                    Content = fileResponse.IsNull() ? null : new StreamContent(fileResponse.Result),
-                };
+            httpRespose.Content.Headers.ContentType = new MediaTypeHeaderValue(fileResponse.MimeType);
+            httpRespose.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = fileResponse.FileName };
+            context.PutResponse(httpRespose);
 
-                httpRespose.Content.Headers.ContentType = new MediaTypeHeaderValue(fileResponse.MimeType);
-                httpRespose.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = fileResponse.FileName };
-                context.PutResponse(httpRespose);
-
-                // stop handling pipe
-                return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
-            }
-
-            // result is not handled, continue
-            return MiddlewareResult.DoNothing;
+            this.D($"File result with -> Mime Type: {fileResponse?.MimeType} -> Filename: {fileResponse?.FileName} has been set to response. Status code: {statusCode}. Exit Handler.");
+            // stop handling pipe
+            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
         }
     }
 }

@@ -80,10 +80,12 @@ namespace Signals.Core.Processes.Recurring
             try
             {
                 result = Sync();
+                this.D("Executed -> Sync.");
                 return result;
             }
             catch (Exception ex)
             {
+	            this.D($"Exception has occurred while executing sync. Exception: {ex.Message}");
                 result = VoidResult.FaultedResult<TResponse>(ex);
                 throw;
             }
@@ -184,11 +186,13 @@ namespace Signals.Core.Processes.Recurring
             try
             {
                 result = Sync();
+                this.D("Executed -> Sync.");
                 return result;
             }
             catch (Exception ex)
             {
-                result = VoidResult.FaultedResult<TResponse>(ex);
+	            this.D($"Exception has occurred while executing sync. Exception: {ex.Message}");
+	            result = VoidResult.FaultedResult<TResponse>(ex);
                 throw;
             }
             finally
@@ -212,6 +216,7 @@ namespace Signals.Core.Processes.Recurring
         {
             if (!ShouldExecute())
             {
+	            this.D("Process not allowed to be executed. Cancelling now.");
                 return Ok();
             }
             return Execute();

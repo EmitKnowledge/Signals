@@ -25,7 +25,7 @@ namespace Signals.Core.Processes.Import
         protected virtual IFileImportProcessContext Context
         {
             get => _context;
-            set { (value as FileImportProcessContext).SetProcess(this); _context = value; }
+            set { (value as FileImportProcessContext)?.SetProcess(this); _context = value; }
         }
         private IFileImportProcessContext _context;
 
@@ -75,13 +75,26 @@ namespace Signals.Core.Processes.Import
         internal ListResult<TResponse> Execute(TInput stream)
         {
             var result = Auth(stream);
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Auth.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Auth -> Failed.");
+                return result;
+            }
 
             result = Validate(stream);
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Validate.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Validation -> Failed.");
+                return result;
+            }
 
             var fileImporter = ResolveFileImporter();
+            this.D($"File importer resolved.");
+
             var importedData = fileImporter.Import(ImportConfiguration, stream);
+            this.D($"Imported: {importedData.Count} data records from the provided stream.");
 
             return new ListResult<TResponse>(importedData);
         }

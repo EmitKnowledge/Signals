@@ -1,4 +1,4 @@
-﻿using Ganss.XSS;
+﻿ using Ganss.XSS;
 using Signals.Aspects.DI.Attributes;
 using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;

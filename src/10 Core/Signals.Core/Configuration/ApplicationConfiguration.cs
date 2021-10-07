@@ -28,7 +28,7 @@ namespace Signals.Core.Configuration
         public string ApplicationVersion { get; set; }
 
         /// <summary>
-        /// Applicaiton email
+        /// Application email
         /// </summary>
         [EmailAddress]
         [Required]
@@ -53,5 +53,22 @@ namespace Signals.Core.Configuration
         /// Smtp configuration
         /// </summary>
         public SmtpConfiguration SmtpConfiguration { get; set; }
+
+        private bool _enableVerbose = false;
+
+        /// <summary>
+        /// Indicates if Signals VERBOSE should be enabled
+        /// This will result in usage of: System.Diagnostics.Trace.WriteLine through the framework
+        /// Verbose output can be configured via the web and app config files.
+        /// </summary>
+        public bool EnableVerbose
+        {
+	        get => _enableVerbose;
+	        set
+	        {
+		        _enableVerbose = value;
+		        Debugging.TracingEnabled = _enableVerbose;
+	        }
+        }
     }
 }

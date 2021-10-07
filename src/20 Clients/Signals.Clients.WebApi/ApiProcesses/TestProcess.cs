@@ -1,4 +1,5 @@
-﻿using Ganss.XSS;
+﻿using AngleSharp.Network;
+using Ganss.XSS;
 using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;
@@ -6,6 +7,7 @@ using Signals.Core.Web.Behaviour;
 
 namespace Signals.Clients.WebApi.ApiProcesses
 {
+    [SignalsApi(HttpMethod = SignalsApiMethod.POST)]
 	public class TestProcess : ApiProcess<CustomerDto, MethodResult<CustomerDto>>
     {
         public override MethodResult<CustomerDto> Auth(CustomerDto dto)

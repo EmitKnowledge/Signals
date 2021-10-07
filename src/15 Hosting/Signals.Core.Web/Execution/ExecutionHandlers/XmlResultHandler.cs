@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Signals.Core.Common.Reflection;
 using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Input.Http;
@@ -30,7 +31,7 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            var attributes = type.GetCustomAttributes(typeof(SignalsApiAttribute), false).Cast<SignalsApiAttribute>().ToList();
+            var attributes = type.GetCachedAttributes<SignalsApiAttribute>();
             if (!attributes.Any()) return MiddlewareResult.DoNothing;
 
             var correctMethod = false;
@@ -39,21 +40,19 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
                 correctMethod |= attribute.ResponseType == SerializationFormat.Xml;
             }
 
-            if (correctMethod)
+            if (!correctMethod) return MiddlewareResult.DoNothing;
+
+            var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
+	            response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+
+            context.PutResponse(new HttpResponseMessage(statusCode)
             {
-                var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
-                                 response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+	            Content = type.ToHttpContent(response)
+            });
 
-                context.PutResponse(new HttpResponseMessage(statusCode)
-                {
-                    Content = type.ToHttpContent(response)
-                });
+            this.D($"Returning XML result -> Status code: {statusCode}. Exit Handler.");
 
-                return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
-            }
-
-            // result is not handled, continue
-            return MiddlewareResult.DoNothing;
+            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
         }
     }
 }

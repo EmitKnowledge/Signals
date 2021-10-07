@@ -17,7 +17,11 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
 		public override object Bind(IHttpContextWrapper httpContext)
 		{
 			var headers = httpContext?.Headers.GetFromRequest();
-			if (headers.IsNull()) return null;
+			if (headers.IsNull())
+			{
+				this.D("Headers are null. Exit Model Binder.");
+				return null;
+			}
 
 			var obj = new Dictionary<string, string>();
 			foreach (var key in headers.Keys)
@@ -27,6 +31,8 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
 			}
 
 			var dto = obj.SerializeJson();
+			this.D($"Headers -> Value: {dto}. Exit Model Binder.");
+
 			return dto;
 		}
 	}

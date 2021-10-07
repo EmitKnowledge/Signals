@@ -38,12 +38,18 @@ namespace Signals.Core.Common.Serialization
         /// <summary>
         /// Json serializer
         /// </summary>
-        public static ISerializer JsonSerializer = new JsonSerializer();
+        public static readonly ISerializer JsonSerializer;
 
         /// <summary>
         /// Xml serializer
         /// </summary>
-        public static ISerializer XmlSerializer = new XmlSerializer();
+        public static readonly ISerializer XmlSerializer;
+
+        static SerializationExtensions()
+        {
+	        JsonSerializer = new JsonSerializer();
+	        XmlSerializer = new XmlSerializer();
+        }
 
         /// <summary>
         /// Resolve serializer by content or option

@@ -27,9 +27,7 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            var attributes = type.GetCustomAttributes(typeof(SignalsApiAttribute), false)
-                .Cast<SignalsApiAttribute>()
-                .ToList();
+            var attributes = type.GetCachedAttributes<SignalsApiAttribute>();
 
             if (!attributes.Any())
             {
@@ -42,42 +40,50 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
                 correctMethod |= attribute.NativeResponse;
             }
 
-            if (correctMethod)
+            if (!correctMethod)
             {
-                var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
-                    response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
-
-                if (!response.IsFaulted)
-                {
-                    var responseType = response.GetType();
-                    var responseResultType = responseType.GetGenericArguments().FirstOrDefault();
-                    if (responseResultType == null)
-                    {
-                        return MiddlewareResult.DoNothing;
-                    }
-
-                    if (responseType.GetGenericTypeDefinition() == typeof(MethodResult<>))
-                    {
-                        var resultPropName = nameof(MethodResult<string>.Result);
-                        var resultValue = responseType.GetProperty(resultPropName)?.GetValue(response, null);
-                        if (resultValue != null)
-                        {
-                            var resultValueSerialized = responseResultType.IsSimpleType()
-                                ? resultValue.ToString()
-                                : resultValue.SerializeJson();
-
-                            context.PutResponse(new HttpResponseMessage(statusCode)
-                            {
-                                Content = new StringContent(resultValueSerialized, Encoding.UTF8)
-                            });
-                            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
-                        }
-                    }
-                }
+	            return MiddlewareResult.DoNothing;
             }
 
-            // result is not handled, continue
-            return MiddlewareResult.DoNothing;
+            var statusCode = response.IsSystemFault ? System.Net.HttpStatusCode.InternalServerError :
+	            response.IsFaulted ? System.Net.HttpStatusCode.BadRequest : System.Net.HttpStatusCode.OK;
+
+            if (response.IsFaulted) return MiddlewareResult.DoNothing;
+            
+            var responseType = response.GetType();
+            var responseResultType = responseType.GetGenericArguments().FirstOrDefault();
+            if (responseResultType == null)
+            {
+	            this.D("Response type with generic argument not found. Exit Handler.");
+                return MiddlewareResult.DoNothing;
+            }
+
+            if (responseType.GetGenericTypeDefinition() != typeof(MethodResult<>))
+            {
+	            this.D($"Native response must return MethodResult<> -> Provided Type: {responseType.GetGenericTypeDefinition()}. Exit Handler.");
+                return MiddlewareResult.DoNothing;
+            }
+
+            var resultPropName = nameof(MethodResult<string>.Result);
+            var resultValue = responseType.GetProperty(resultPropName)?.GetValue(response, null);
+            if (resultValue == null)
+            {
+	            this.D("Response value is NULL. Exit handler.");
+                return MiddlewareResult.DoNothing;
+            }
+
+            var resultValueSerialized = responseResultType.IsSimpleType()
+	            ? resultValue.ToString()
+	            : resultValue.SerializeJson();
+
+            context.PutResponse(new HttpResponseMessage(statusCode)
+            {
+	            Content = new StringContent(resultValueSerialized, Encoding.UTF8)
+            });
+
+            this.D($"Native -> Response: {resultValueSerialized} returned. Exit handler.");
+
+            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
         }
     }
 }

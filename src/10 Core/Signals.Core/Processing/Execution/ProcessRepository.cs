@@ -13,16 +13,17 @@ namespace Signals.Core.Processing.Execution
         /// <summary>
         /// All process types
         /// </summary>
-        private readonly List<Type> ProcessTypes;
+        private readonly List<Type> _processTypes;
 
         public ProcessRepository(params Assembly[] scanAssemblies)
         {
-            ProcessTypes = (from x in scanAssemblies.SelectMany(x => x.LoadAllTypesFromAssembly())
+            _processTypes = (from x in scanAssemblies.SelectMany(x => x.LoadAllTypesFromAssembly())
                             where ImplementsOpenGenericInterface(x, typeof(IBaseProcess<>))
                             select x)
                             .Where(x => !x.IsInterface && !x.IsAbstract)
                             .Distinct()
                             .ToList();
+            this.D($"Initializing process repository. Total process types discovered: {_processTypes.Count}.");
         }
 
         /// <summary>Determines whether a type, like IList&lt;int&gt;, implements an open generic interface, like
@@ -30,37 +31,12 @@ namespace Signals.Core.Processing.Execution
         /// <param name="candidateType">The type to check.</param>
         /// <param name="openGenericInterfaceType">The open generic type which it may impelement</param>
         /// <returns>Whether the candidate type implements the open interface.</returns>
-        private static bool ImplementsOpenGenericInterface(Type candidateType, Type openGenericInterfaceType)
+        private bool ImplementsOpenGenericInterface(Type candidateType, Type openGenericInterfaceType)
         {
-            return
-                candidateType == openGenericInterfaceType ||
-                (candidateType.IsGenericType && candidateType.GetGenericTypeDefinition() == openGenericInterfaceType) ||
-                candidateType.GetInterfaces().Any(i => i.IsGenericType && ImplementsOpenGenericInterface(i, openGenericInterfaceType));
-        }
-
-        /// <summary>
-        /// Get process type by name
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <param name="names"></param>
-        /// <returns></returns>
-        public Type ResolveProcess(Func<Type, bool> filter = null, params string[] names)
-        {
-            filter = filter ?? new Func<Type, bool>(x => true);
-            return ProcessTypes.Where(filter).FirstOrDefault(x => names.Contains(x.Name, StringComparer.OrdinalIgnoreCase));
-        }
-
-        /// <summary>
-        /// Get process type by name and interface
-        /// </summary>
-        /// <typeparam name="TInterface"></typeparam>
-        /// <param name="filter"></param>
-        /// <param name="names"></param>
-        /// <returns></returns>
-        public Type ResolveProcess<TInterface>(Func<Type, bool> filter = null, params string[] names)
-        {
-            filter = filter ?? new Func<Type, bool>(x => true);
-            return ProcessTypes.Where(filter).FirstOrDefault(x => x.GetInterfaces().Contains(typeof(TInterface)) && names.Contains(x.Name, StringComparer.OrdinalIgnoreCase));
+	        return
+		        candidateType == openGenericInterfaceType ||
+		        (candidateType.IsGenericType && candidateType.GetGenericTypeDefinition() == openGenericInterfaceType) ||
+		        candidateType.GetInterfaces().Any(i => i.IsGenericType && ImplementsOpenGenericInterface(i, openGenericInterfaceType));
         }
 
         /// <summary>
@@ -73,7 +49,7 @@ namespace Signals.Core.Processing.Execution
         {
             if (type.IsNull()) return null;
             filter = filter ?? new Func<Type, bool>(x => true);
-            return ProcessTypes.Where(x => x.GetInterfaces().Contains(type) && filter(x)).ToList();
+            return _processTypes.Where(x => x.GetInterfaces().Contains(type) && filter(x)).ToList();
         }
 
         /// <summary>
@@ -96,7 +72,18 @@ namespace Signals.Core.Processing.Execution
         public List<Type> All(Func<Type, bool> filter = null)
         {
             filter = filter ?? new Func<Type, bool>(x => true);
-            return ProcessTypes.Where(filter).ToList();
+            return _processTypes.Where(filter).ToList();
+        }
+
+        /// <summary>
+        /// Get process type by name and interface
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public Type First(Func<Type, bool> filter = null)
+        {
+	        filter = filter ?? new Func<Type, bool>(x => true);
+	        return _processTypes.FirstOrDefault(filter);
         }
     }
 }

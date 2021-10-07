@@ -63,10 +63,14 @@ namespace Signals.Core.Processing.Execution
 
 
             for (int i = 0; i < _foregroundPipe.Count - 1; i++)
-                _foregroundPipe[i].Next = _foregroundPipe[i + 1];
+            {
+	            _foregroundPipe[i].Next = _foregroundPipe[i + 1];
+            }
 
             for (int i = 0; i < _backgroundPipe.Count - 1; i++)
-                _backgroundPipe[i].Next = _backgroundPipe[i + 1];
+            {
+	            _backgroundPipe[i].Next = _backgroundPipe[i + 1];
+            }
         }
 
         /// <summary>
@@ -79,6 +83,7 @@ namespace Signals.Core.Processing.Execution
         {
             var processType = process.GetType();
             var result = _foregroundPipe[0].Execute(process, processType, args);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
             process.ExecutionStack.Pop();
             return result;
         }
@@ -93,6 +98,7 @@ namespace Signals.Core.Processing.Execution
         {
             var processType = process.GetType();
             var result = _backgroundPipe[0].Execute(process, processType, args);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
             return result;
         }
     }

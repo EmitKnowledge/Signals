@@ -20,6 +20,7 @@ namespace Signals.Core.Processing.Guards
         {
             if (!(Activator.CreateInstance(guardType) is ISignalsGuard guard))
             {
+	            this.D($"The guard type: {guardType?.FullName} must implement the ISignalsGuard interface.");
                 throw new ArgumentException("The guard must implement the ISignalsGuard interface.");
             }
 

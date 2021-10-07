@@ -6,6 +6,7 @@ using Signals.Core.Web.Behaviour;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Signals.Core.Common.Reflection;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers
 {
@@ -32,22 +33,22 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
 	            foreach (var responseHeader in header.Headers)
 	            {
 					context.Headers.AddToResponse(responseHeader.Key, responseHeader.Value);
+                    this.D($"Default response headers -> Add to response -> Key: {responseHeader.Key} Value: {responseHeader.Value}.");
 				}
             });
 
-            var headerAttribute = type
-                .GetCustomAttributes(true)
-                .Where(x => x.GetType() == typeof(ResponseHeaderAttribute) || x.GetType().IsSubclassOf(typeof(ResponseHeaderAttribute)))
-                .Cast<ResponseHeaderAttribute>()
-                .ToList();
-
-            headerAttribute.ForEach(header =>
+            var headerAttribute = type.GetCachedAttributes<ResponseHeaderAttribute>();
+            foreach (var header in headerAttribute)
             {
 	            foreach (var responseHeader in header.Headers)
 	            {
 		            context.Headers.AddToResponse(responseHeader.Key, responseHeader.Value);
-	            }
-            });
+		            this.D($"Response header attribute -> Add to response -> Key: {responseHeader.Key} Value: {responseHeader.Value}.");
+
+                }
+            }
+            
+            this.D("Exit Handler.");
 
             return MiddlewareResult.DoNothing;
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Input.Http.Models;
 
 namespace Signals.Core.Processing.Input.Http
@@ -14,7 +15,7 @@ namespace Signals.Core.Processing.Input.Http
         /// <summary>
         /// Http method: GET, POST, DELETE..
         /// </summary>
-        string HttpMethod { get; set; }
+        SignalsApiMethod HttpMethod { get; set; }
 
         /// <summary>
         /// Url path: /api/process...

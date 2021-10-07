@@ -25,16 +25,19 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            if (response.IsFaulted && response.ErrorMessages.OfType<AuthorizationErrorInfo>().Any())
-            {
-                context.PutResponse(new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
-                {
-                    Content = type.ToHttpContent(response)
-                });
-                return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
-            }
+	        if (!response.IsFaulted || !response.ErrorMessages.OfType<AuthorizationErrorInfo>().Any())
+	        {
+		        return MiddlewareResult.DoNothing;
+	        }
 
-            return MiddlewareResult.DoNothing;
+	        context.PutResponse(new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
+            {
+	            Content = type.ToHttpContent(response)
+            });
+
+	        this.D("Authorization Error -> User is forbidden. Exit Filter.");
+
+            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
         }
     }
 }

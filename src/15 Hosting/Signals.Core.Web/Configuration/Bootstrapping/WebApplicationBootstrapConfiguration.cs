@@ -26,7 +26,7 @@ namespace Signals.Core.Web.Configuration.Bootstrapping
         List<Assembly> ScanAssemblies { get; set; }
     }
 
-    internal static class webApplicationBootstrapConfigurationExtensions
+    internal static class WebApplicationBootstrapConfigurationExtensions
     {
         /// <summary>
         /// Bootstrapping entry

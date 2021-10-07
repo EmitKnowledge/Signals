@@ -33,6 +33,7 @@ namespace Signals.Core.Processing.Benchmarking
         public void Bench(string checkpointName, string description = null, object payload = null)
         {
             benchmarker.Bench(checkpointName, process.EpicId, process.Name, process.CallerProcessName, description, payload);
+            this.D($"Benchmarking for process type: {process?.GetType()?.FullName} -> Checkpoint: {checkpointName} -> EpicId : {process?.EpicId} -> Process name: {process?.Name} -> Process Caller Process Name: {process.CallerProcessName} -> Description: {description}.");
         }
 
         /// <summary>
@@ -41,6 +42,7 @@ namespace Signals.Core.Processing.Benchmarking
         public void FlushEpic()
         {
             benchmarker.FlushEpic(process.EpicId);
+            this.D($"Epic with id: {process?.EpicId} for process type: {process?.GetType()?.FullName} flushed.");
         }
 
         /// <summary>
@@ -60,6 +62,7 @@ namespace Signals.Core.Processing.Benchmarking
         public void StartEpic(string epicName)
         {
             benchmarker.StartEpic(process.EpicId, epicName);
+            this.D($"Epic: {epicName} with id: {process?.EpicId} for process type: {process?.GetType()?.FullName} started.");
         }
     }
 }

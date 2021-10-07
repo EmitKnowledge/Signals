@@ -45,12 +45,13 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
                 StackTrace stackTrace = new StackTrace();
                 // TODO: workaround for tests
                 var assembly = stackTrace.GetFrame(1).GetMethod().DeclaringType.Assembly;
-
                 scanAssemblies = new Assembly[] { assembly };
+                backgroundBootstrapConfiguration.D("Scanning assemblies competed.");
             }
 
             ConfigurationBootstrapper configurationBootstrapper = new ConfigurationBootstrapper();
             configurationBootstrapper.RecurringTaskLogProvider = () => backgroundBootstrapConfiguration.RecurringTaskLogProvider;
+            backgroundBootstrapConfiguration.D("Set Recurring Task Log Provider.");
 
             var result = backgroundBootstrapConfiguration.Resolve(configurationBootstrapper, scanAssemblies);
 
@@ -58,12 +59,19 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
             BackgroundApplicationConfiguration config = null;
             try
             {
-                config = BackgroundApplicationConfiguration.Instance;
+	            config = BackgroundApplicationConfiguration.Instance;
             }
-            catch { }
+            catch(Exception ex)
+            {
+	            backgroundBootstrapConfiguration.D($"Exception has occurred while getting the background application configuration instance. Exception: {ex?.Message}.");
+            }
             finally
             {
-                if (config.IsNull()) throw new Exception("Signals.Core.Background.Configuration.BackgroundApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+	            if (config.IsNull())
+	            {
+		            backgroundBootstrapConfiguration.D("Signals.Core.Background.Configuration.BackgroundApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+		            throw new Exception("Signals.Core.Background.Configuration.BackgroundApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+	            }
             }
 
             RegisterBackground();
@@ -80,32 +88,42 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
             var config = BackgroundApplicationConfiguration.Instance.StartupNotificationConfiguration;
             var smtpClient = SystemBootstrapper.GetInstance<ISmtpClient>();
 
-            if (!smtpClient.IsNull() && !config.IsNull())
+            if (config.IsNull())
             {
-                var tos = config.Emails;
-                var subject = config.Subject;
-                var body = config.Body;
-
-                if (tos.IsNullOrHasZeroElements()) return;
-                if (subject.IsNullOrEmpty()) return;
-                if (body.IsNullOrEmpty()) return;
-
-                var from = ApplicationConfiguration.Instance.ApplicationEmail;
-
-                var message = new MailMessage();
-                message.From = new MailAddress(from);
-                message.Subject = subject;
-                message.Body = body;
-                message.IsBodyHtml = true;
-
-                foreach (var to in tos)
-                {
-                    message.To.Add(to);
-                }
-
-                var sendTask = smtpClient.SendMailAsync(message);
-                Task.WaitAll(sendTask);
+                typeof(BackgroundApplicationBootstrapConfigurationExtensions).D("Startup Notification Configuration not provided. Exit Notify on startup.");
+	            return;
             }
+
+            if (smtpClient.IsNull())
+            {
+	            typeof(BackgroundApplicationBootstrapConfigurationExtensions).D("SMTP client not provided. Exit Notify on startup.");
+	            return;
+            }
+
+            var tos = config.Emails;
+            var subject = config.Subject;
+            var body = config.Body;
+
+            if (tos.IsNullOrHasZeroElements()) return;
+            if (subject.IsNullOrEmpty()) return;
+            if (body.IsNullOrEmpty()) return;
+
+            var from = ApplicationConfiguration.Instance.ApplicationEmail;
+
+            var message = new MailMessage();
+            message.From = new MailAddress(@from);
+            message.Subject = subject;
+            message.Body = body;
+            message.IsBodyHtml = true;
+
+            foreach (var to in tos)
+            {
+	            message.To.Add(to);
+            }
+
+            var sendTask = smtpClient.SendMailAsync(message);
+            typeof(BackgroundApplicationBootstrapConfigurationExtensions).D($"Startup Notification email sent to {string.Join(", ", tos)}.");
+            Task.WaitAll(sendTask);
         }
 
         /// <summary>
@@ -114,29 +132,34 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         private static void RegisterBackground()
         {
             var channel = SystemBootstrapper.GetInstance<IMessageChannel>();
-
-            if (!channel.IsNull())
+            if (channel.IsNull())
             {
-                var processRepo = SystemBootstrapper.GetInstance<ProcessRepository>();
-                processRepo.OfType<IDistributedProcess>().ForEach(type =>
-                {
-                    channel.Subscribe<string>(type.Name, message =>
-                    {
-                        var meta = message.Deserialize<DistributedProcessMetadata>();
-
-                        var executor = SystemBootstrapper.GetInstance<IProcessExecutor>();
-                        var instance = SystemBootstrapper.GetInstance(type) as IBaseProcess<VoidResult>;
-                        SystemBootstrapper.Bootstrap(instance);
-
-                        instance.EpicId = meta.EpicId;
-                        instance.CallerProcessName = meta.CallerProcessName;
-
-                        Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = new CultureInfo(meta.CultureName);
-
-                        executor.ExecuteBackground(instance, meta.Payload);
-                    });
-                });
+	            typeof(BackgroundApplicationBootstrapConfigurationExtensions).D("Message channel not provided. Exit Register background.");
+	            return;
             }
+
+            var processRepo = SystemBootstrapper.GetInstance<ProcessRepository>();
+            processRepo.OfType<IDistributedProcess>().ForEach(type =>
+            {
+	            channel.Subscribe<string>(type.Name, message =>
+	            {
+		            var meta = message.Deserialize<DistributedProcessMetadata>();
+
+		            var executor = SystemBootstrapper.GetInstance<IProcessExecutor>();
+		            var instance = SystemBootstrapper.GetInstance(type) as IBaseProcess<VoidResult>;
+		            SystemBootstrapper.Bootstrap(instance);
+
+		            instance.EpicId = meta.EpicId;
+		            instance.CallerProcessName = meta.CallerProcessName;
+
+		            Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = new CultureInfo(meta.CultureName);
+
+		            executor.ExecuteBackground(instance, meta.Payload);
+	            });
+
+	            typeof(BackgroundApplicationBootstrapConfigurationExtensions).D($"Message channel subscribed to topic: {type.Name} for process type: {type.FullName}.");
+
+            });
         }
 
         /// <summary>
@@ -145,20 +168,24 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
         private static void ScheduleRecurring()
         {
             var bgRegistry = SystemBootstrapper.GetInstance<ITaskRegistry>();
-
-            if (!bgRegistry.IsNull())
+            if (bgRegistry.IsNull())
             {
-                var processRepo = SystemBootstrapper.GetInstance<ProcessRepository>();
-                processRepo.OfType<IRecurringProcess>().ForEach(type =>
-                {
-                    var instance = SystemBootstrapper.GetInstance(type) as IRecurringProcess;
-                    var task = new RecurringTaskWrapper(type);
-
-                    bgRegistry.ScheduleTask(task, instance.Profile);
-                });
-
-                bgRegistry.Start();
+	            typeof(BackgroundApplicationBootstrapConfigurationExtensions).D("Task Registry not provided. Exit Schedule recurring.");
+	            return;
             }
+
+            var processRepo = SystemBootstrapper.GetInstance<ProcessRepository>();
+            processRepo.OfType<IRecurringProcess>().ForEach(type =>
+            {
+	            var instance = SystemBootstrapper.GetInstance(type) as IRecurringProcess;
+	            var task = new RecurringTaskWrapper(type);
+
+	            bgRegistry.ScheduleTask(task, instance.Profile);
+
+	            typeof(BackgroundApplicationBootstrapConfigurationExtensions).D($"Recurring task scheduled for process type: {type.FullName}.");
+            });
+
+            bgRegistry.Start();
         }
     }
 

@@ -1,7 +1,6 @@
 ﻿using Signals.Aspects.DI.Attributes;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processes.Base;
-using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using System;
@@ -32,10 +31,15 @@ namespace Signals.Core.Processes
         {
             // create instance
             var process = ProcessFactory.Create<TResponse>(processType);
-            if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
+            if (process.IsNull())
+            {
+	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
+                return VoidResult.FaultedResult<TResponse>();
+            }
 
             // execute process
             var response = ProcessExecutor.Execute(process);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
 
             return response;
         }
@@ -49,10 +53,15 @@ namespace Signals.Core.Processes
         {
             // create instance
             var process = ProcessFactory.Create<TResponse>(processType);
-            if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
+            if (process.IsNull())
+            {
+	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
+                return VoidResult.FaultedResult<TResponse>();
+            }
 
             // execute process
             var response = ProcessExecutor.Execute(process, obj1);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
 
             return response;
         }
@@ -66,10 +75,15 @@ namespace Signals.Core.Processes
         {
             // create instance
             var process = ProcessFactory.Create<TResponse>(processType);
-            if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
+            if (process.IsNull())
+            {
+	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
+                return VoidResult.FaultedResult<TResponse>();
+            }
 
             // execute process
             var response = ProcessExecutor.Execute(process, obj1, obj2);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
 
             return response;
         }
@@ -83,10 +97,15 @@ namespace Signals.Core.Processes
         {
             // create instance
             var process = ProcessFactory.Create<TResponse>(processType);
-            if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
+            if (process.IsNull())
+            {
+	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
+                return VoidResult.FaultedResult<TResponse>();
+            }
 
             // execute process
             var response = ProcessExecutor.Execute(process, obj1, obj2, obj3);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
 
             return response;
         }
@@ -100,11 +119,17 @@ namespace Signals.Core.Processes
             where TResponse : VoidResult, new()
         {
             // create instance
-            var process = ProcessFactory.Create<TResponse>(typeof(TProcess));
-            if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
+            var processType = typeof(TProcess);
+            var process = ProcessFactory.Create<TResponse>(processType);
+            if (process.IsNull())
+            {
+	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
+                return VoidResult.FaultedResult<TResponse>();
+            }
 
             // execute process
             var response = ProcessExecutor.Execute(process);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
 
             return response;
         }
@@ -118,11 +143,17 @@ namespace Signals.Core.Processes
             where TResponse : VoidResult, new()
         {
             // create instance
-            var process = ProcessFactory.Create<TResponse>(typeof(TProcess));
-            if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
+            var processType = typeof(TProcess);
+            var process = ProcessFactory.Create<TResponse>(processType);
+            if (process.IsNull())
+            {
+	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
+                return VoidResult.FaultedResult<TResponse>();
+            }
 
             // execute process
             var response = ProcessExecutor.Execute(process, obj1);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
 
             return response;
         }
@@ -136,11 +167,17 @@ namespace Signals.Core.Processes
             where TResponse : VoidResult, new()
         {
             // create instance
-            var process = ProcessFactory.Create<TResponse>(typeof(TProcess));
-            if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
+            var processType = typeof(TProcess);
+            var process = ProcessFactory.Create<TResponse>(processType);
+            if (process.IsNull())
+            {
+	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
+                return VoidResult.FaultedResult<TResponse>();
+            }
 
             // execute process
             var response = ProcessExecutor.Execute(process, obj1, obj2);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
 
             return response;
         }
@@ -154,11 +191,17 @@ namespace Signals.Core.Processes
             where TResponse : VoidResult, new()
         {
             // create instance
-            var process = ProcessFactory.Create<TResponse>(typeof(TProcess));
-            if (process.IsNull()) return VoidResult.FaultedResult<TResponse>();
+            var processType = typeof(TProcess);
+            var process = ProcessFactory.Create<TResponse>(processType);
+            if (process.IsNull())
+            {
+	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
+                return VoidResult.FaultedResult<TResponse>();
+            }
 
             // execute process
             var response = ProcessExecutor.Execute(process, obj1, obj2, obj3);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
 
             return response;
         }
@@ -173,6 +216,7 @@ namespace Signals.Core.Processes
         {
             // execute process
             var response = ProcessExecutor.Execute(process);
+            this.D($"Executed Process type {process?.GetType()?.FullName} -> Execute.");
 
             return response;
         }
@@ -186,6 +230,7 @@ namespace Signals.Core.Processes
         {
             // execute process
             var response = ProcessExecutor.Execute(process, obj1);
+            this.D($"Executed Process type {process?.GetType()?.FullName} -> Execute.");
 
             return response;
         }
@@ -199,6 +244,7 @@ namespace Signals.Core.Processes
         {
             // execute process
             var response = ProcessExecutor.Execute(process, obj1, obj2);
+            this.D($"Executed Process type {process?.GetType()?.FullName} -> Execute.");
 
             return response;
         }
@@ -212,6 +258,7 @@ namespace Signals.Core.Processes
         {
             // execute process
             var response = ProcessExecutor.Execute(process, obj1, obj2, obj3);
+            this.D($"Executed Process type {process?.GetType()?.FullName} -> Execute.");
 
             return response;
         }
@@ -226,6 +273,7 @@ namespace Signals.Core.Processes
         {
             var processType = typeof(TProcess);
             var instance = ProcessFactory.Create<VoidResult>(processType);
+            this.D($"Executed Process type {processType?.FullName} -> Execute.");
 
             return instance as TProcess;
         }

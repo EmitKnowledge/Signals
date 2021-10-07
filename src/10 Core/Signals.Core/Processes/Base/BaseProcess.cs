@@ -295,7 +295,6 @@ namespace Signals.Core.Processes.Base
 
             process.EpicId = EpicId;
             process.CallerProcessName = Name;
-
             process.ExecutionStack = ExecutionStack;
 
             return BaseContext.Mediator.ProcessExecutor.Execute((BaseProcess<TNewResponse>)process, args);

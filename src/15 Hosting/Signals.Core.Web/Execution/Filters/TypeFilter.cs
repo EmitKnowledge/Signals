@@ -35,6 +35,7 @@ namespace Signals.Core.Web.Execution.Filters
 			if (isApiProcessType)
 			{
 				TypeApiProcessRegistry.TryAdd(type.FullName, true);
+				this.D($"Process type: {type.FullName} match. Exit filter.");
 			}
 
 			return isApiProcessType;

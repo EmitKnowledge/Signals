@@ -24,6 +24,7 @@ namespace Signals.Core.Processes.Recurring
         public RecurringTaskWrapper(Type processType)
         {
             InnerProcessType = processType;
+            this.D($"Initializing RecurringTaskWrapper for {processType?.FullName}.");
         }
 
         /// <summary>
@@ -36,7 +37,11 @@ namespace Signals.Core.Processes.Recurring
 
             var instance = factor.Create<VoidResult>(InnerProcessType);
 
-            executor.Execute(instance);
+            var executionResult = executor.Execute(instance);
+            var message = $"Executed recurring task of type {InnerProcessType?.FullName}.";
+            this.D(executionResult.IsFaulted
+	            ? $"{message} Fault: {executionResult?.GetFaultMessage()}."
+	            : message);
         }
     }
 }

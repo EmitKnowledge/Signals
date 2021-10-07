@@ -45,6 +45,7 @@ namespace Signals.Core.Processing.Behaviour
             foreach(var callback in Callbacks)
             {
                 callback(process, processType, args, ex);
+                this.D($"Executed callback for process type: {processType?.FullName}. Exception: {ex?.Message}");
             }
         }
     }

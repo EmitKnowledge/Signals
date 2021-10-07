@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using Signals.Core.Processes.Api;
 
 namespace Signals.Core.Web.Http
 {
@@ -23,7 +24,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Http method: GET, POST, DELETE..
         /// </summary>
-        public string HttpMethod { get; set; }
+        public SignalsApiMethod HttpMethod { get; set; }
 
         /// <summary>
         /// Url path: /api/process...
@@ -242,7 +243,18 @@ namespace Signals.Core.Web.Http
             if (_context == null) return;
 
             RawUrl = _context.Request.Path.Value;
-            HttpMethod = _context.Request.Method.ToUpperInvariant();
+            var method = _context.Request.Method.ToUpperInvariant();
+            HttpMethod = method switch
+            {
+	            "GET" => SignalsApiMethod.GET,
+	            "POST" => SignalsApiMethod.POST,
+	            "PUT" => SignalsApiMethod.PUT,
+	            "PATCH" => SignalsApiMethod.PATCH,
+	            "DELETE" => SignalsApiMethod.DELETE,
+	            "OPTIONS" => SignalsApiMethod.OPTIONS,
+	            "HEAD" => SignalsApiMethod.HEAD,
+	            _ => SignalsApiMethod.ANY
+            };
             Headers = new HeaderCollection(_context);
             Cookies = new CookieCollection(_context);
             Form = new FormCollection(_context);
