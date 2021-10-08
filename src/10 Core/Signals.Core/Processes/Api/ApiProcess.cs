@@ -81,7 +81,7 @@ namespace Signals.Core.Processes.Api
             if (args[0] is string json)
             {
 	            request = json.Deserialize<TRequest>();
-	            this.D($"Deserialized string request: {json}.");
+	            this.D($"Deserialized string -> Request: {json} into -> Type: {typeof(TRequest).FullName} -> Has Value:{request != null}.");
             }
             else if (args[0] is TRequest obj)
             {
