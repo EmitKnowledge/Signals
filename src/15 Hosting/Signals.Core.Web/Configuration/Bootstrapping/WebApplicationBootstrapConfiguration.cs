@@ -40,12 +40,19 @@ namespace Signals.Core.Web.Configuration.Bootstrapping
             WebApplicationConfiguration config = null;
             try
             {
-                config = WebApplicationConfiguration.Instance;
+	            config = WebApplicationConfiguration.Instance;
             }
-            catch { }
+            catch(Exception ex)
+            {
+	            webBootstrapConfiguration.D($"Exception has occurred while getting the web application bootstrap configuration instance. Exception: {ex?.Message}.");
+            }
             finally
             {
-                if (config.IsNull()) throw new Exception("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+	            if (config.IsNull())
+	            {
+		            webBootstrapConfiguration.D("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+		            throw new Exception("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+	            }
             }
 
             webBootstrapConfiguration.RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
