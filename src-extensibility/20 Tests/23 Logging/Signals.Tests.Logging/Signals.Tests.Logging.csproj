@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.6.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
@@ -27,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\05 Aspects\03 Logging\Signals.Aspects.Logging.NLog\Signals.Aspects.Logging.NLog.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\03 Logging\Signals.Aspects.Logging.Serilog\Signals.Aspects.Logging.Serilog.csproj" />
   </ItemGroup>
 
 </Project>

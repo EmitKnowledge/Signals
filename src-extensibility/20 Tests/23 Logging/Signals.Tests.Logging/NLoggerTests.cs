@@ -113,14 +113,14 @@ namespace Signals.Tests.Logging
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlDataReader reader = new SqlCommand(@"SELECT * FROM LogEntry;", connection).ExecuteReader();
+                SqlDataReader reader = new SqlCommand($@"SELECT * FROM {config.TableName};", connection).ExecuteReader();
                 while (reader.Read())
                 {
                     Assert.Contains(message, reader["Payload"].ToString());
                 }
                 reader.Close();
 
-                var command = new SqlCommand("DELETE FROM LogEntry", connection);
+                var command = new SqlCommand($"DELETE FROM {config.TableName}", connection);
                 command.ExecuteNonQuery();
             }
         }
@@ -145,14 +145,14 @@ namespace Signals.Tests.Logging
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlDataReader reader = new SqlCommand(@"SELECT * FROM LogEntry;", connection).ExecuteReader();
+                SqlDataReader reader = new SqlCommand($@"SELECT * FROM {config.TableName};", connection).ExecuteReader();
                 while (reader.Read())
                 {
                     Assert.Contains(message, reader["Payload"].ToString());
                 }
                 reader.Close();
 
-                var command = new SqlCommand("DELETE FROM LogEntry", connection);
+                var command = new SqlCommand($"DELETE FROM {config.TableName}", connection);
                 command.ExecuteNonQuery();
             }
         }
