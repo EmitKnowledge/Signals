@@ -96,11 +96,11 @@ namespace Signals.Tests.Logging
         public void DatabaseLogger_LogsInfo_DatabaseLogs()
         {
             var message = "Some entry";
-            var Host = "localhost";
-            var Database = "SteemPoster";
-            var Username = "sa";
-            var Password = "adminadmin123";
-            var TableName = "Log";
+            var Host = "sql.emitknowledge.com";
+            var Database = "app.db";
+            var Username = "appusr";
+            var Password = "FYGncRXGySXDz6RFNg2e";
+            var TableName = "Log2";
             string connectionString = $"Data Source={Host};Initial Catalog={Database}; User Id={Username}; Password={Password}";
 
             Aspects.Logging.ILogger logger = new SerilogLogger(new SerilogLoggingConfiguration
@@ -134,11 +134,11 @@ namespace Signals.Tests.Logging
         public void DatabaseLogger_LogsError_DatabaseLogs()
         {
             var message = "Some entry";
-            var Host = "localhost";
-            var Database = "SteemPoster";
-            var Username = "sa";
-            var Password = "adminadmin123";
-            var TableName = "Log";
+            var Host = "sql.emitknowledge.com";
+            var Database = "app.db";
+            var Username = "appusr";
+            var Password = "FYGncRXGySXDz6RFNg2e";
+            var TableName = "Log2";
             string connectionString = $"Data Source={Host};Initial Catalog={Database}; User Id={Username}; Password={Password}";
 
             Aspects.Logging.ILogger logger = new SerilogLogger(new SerilogLoggingConfiguration
