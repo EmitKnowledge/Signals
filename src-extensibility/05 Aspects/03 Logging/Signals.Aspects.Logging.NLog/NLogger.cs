@@ -218,6 +218,16 @@ namespace Signals.Aspects.Logging.NLog
         }
 
         /// <summary>
+        /// Log an message consisting of args with log level trace
+        /// </summary>
+        /// <param name="message"></param>
+        public void Trace(string message)
+        {
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Trace.AsInternal())
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Trace);
+        }
+
+        /// <summary>
         /// Log an message consisting of args with log level debug
         /// </summary>
         /// <param name="logEntry"></param>
@@ -247,16 +257,16 @@ namespace Signals.Aspects.Logging.NLog
                 InternalLog(logEntry, LogLevel.Info);
         }
 
-
         /// <summary>
-        /// Log an message
+        /// Log an message consisting of args with log level info
         /// </summary>
-        /// <param name="args"></param>
-        public void Info(params object[] args)
+        /// <param name="message"></param>
+        public void Info(string message)
         {
-            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Info.AsInternal())
-                InternalLog(new LogEntry { Payload = args?.Serialize() }, LogLevel.Info);
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Info.AsInternal())
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Info);
         }
+
 
         /// <summary>
         /// Log an message consisting of args with log level warn
@@ -269,6 +279,16 @@ namespace Signals.Aspects.Logging.NLog
         }
 
         /// <summary>
+        /// Log an message consisting of args with log level warn
+        /// </summary>
+        /// <param name="message"></param>
+        public void Warn(string message)
+        {
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Warn.AsInternal())
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Warn);
+        }
+
+        /// <summary>
         /// Log an message consisting of args with log level error
         /// </summary>
         /// <param name="logEntry"></param>
@@ -278,16 +298,16 @@ namespace Signals.Aspects.Logging.NLog
                 InternalLog(logEntry, LogLevel.Error);
         }
 
-
         /// <summary>
-        /// Log an message consisting of args with log level Error
+        /// Log an message consisting of args with log level error
         /// </summary>
-        /// <param name="args"></param>
-        public void Error(params object[] args)
+        /// <param name="message"></param>
+        public void Error(string message)
         {
-            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Error.AsInternal())
-                InternalLog(new LogEntry { Payload = args?.Serialize() }, LogLevel.Error);
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Error.AsInternal())
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Error);
         }
+
 
         /// <summary>
         /// Log an exception
@@ -309,6 +329,16 @@ namespace Signals.Aspects.Logging.NLog
         {
             if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Error.AsInternal())
                 InternalLog(logEntry, LogLevel.Fatal);
+        }
+
+        /// <summary>
+        /// Log an message consisting of args with log level fatal
+        /// </summary>
+        /// <param name="message"></param>
+        public void Fatal(string message)
+        {
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Fatal.AsInternal())
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Fatal);
         }
 
         /// <summary>
@@ -379,7 +409,7 @@ namespace Signals.Aspects.Logging.NLog
         {
             if (string.IsNullOrEmpty(logEntry.ExceptionObject?.Message)) return null;
 
-            logEntry.Message = logEntry.Message ?? string.Empty;
+            logEntry.Message ??= string.Empty;
             string exceptionMessages = logEntry.ExceptionObject.ExtractMessages();
             string message = $"Base:{exceptionMessages}{Environment.NewLine}Stack:{logEntry.ExceptionObject.StackTrace}";
             message = message.CovertNewlinesToSpace();
@@ -420,18 +450,7 @@ namespace Signals.Aspects.Logging.NLog
         {
             var exceptionMessage = GetExceptionMessage(logEntry);
             var payloadMessage = GetPayloadMessage(logEntry);
-            var message = string.Format(@"{0:yyyy-MM-dd HH:mm:ss} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}",
-                                        logEntry.CreatedOn,
-                                        GetValue(logEntry.Level),
-                                        GetValue(logEntry.ErrorCode),
-                                        GetValue(logEntry.ErrorGroup),
-                                        GetValue(logEntry.Origin),
-                                        GetValue(logEntry.UserIdentifier),
-                                        GetValue(logEntry.Action),
-                                        GetValue(logEntry.ProcessName),
-                                        GetValue(logEntry.Message),
-                                        GetValue(exceptionMessage),
-                                        GetValue(payloadMessage));
+            var message = $@"{logEntry.CreatedOn:yyyy-MM-dd HH:mm:ss} {GetValue(logEntry.Level)} {GetValue(logEntry.ErrorCode)} {GetValue(logEntry.ErrorGroup)} {GetValue(logEntry.Origin)} {GetValue(logEntry.UserIdentifier)} {GetValue(logEntry.Action)} {GetValue(logEntry.ProcessName)} {GetValue(logEntry.Message)} {GetValue(exceptionMessage)} {GetValue(payloadMessage)}";
             return message;
         }
     }
