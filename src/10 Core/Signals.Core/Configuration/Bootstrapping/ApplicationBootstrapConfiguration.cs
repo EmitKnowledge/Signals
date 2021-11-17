@@ -287,21 +287,22 @@ namespace Signals.Core.Configuration.Bootstrapping
 
             if (SecurityConfiguration.IsNull())
             {
-	            this.D($"No security configuration has been provided.");
+	            this.D("No security configuration has been provided.");
                 if (config.AuthenticationManager()?.IsNull() == false)
                 {
-	                this.D($"AuthenticationManager exists.");
+	                this.D("AuthenticationManager exists.");
 	                config.PermissionManager = () =>
 		                GetImplementationTypes<IPermissionManager>()
 			                .SingleOrDefault(x =>
 				                !x.IsAssignableFrom(typeof(Processing.Authorization.PermissionManager)));
+                    this.D($"Set PermissionManager -> {config.PermissionManager()?.GetType().FullName ?? "N/A"}.");
                 }
             }
             else
             {
                 config.PermissionManager = () => typeof(Processing.Authorization.PermissionManager);
+                this.D($"Set PermissionManager -> {config.PermissionManager()?.GetType().FullName ?? "N/A"}.");
             }
-            this.D($"Set PermissionManager -> {config.PermissionManager()?.GetType().FullName ?? "N/A"}.");
 
             return config.Bootstrap(scanAssemblies);
         }
