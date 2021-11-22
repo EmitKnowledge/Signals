@@ -81,7 +81,7 @@ namespace Signals.Tests.Logging
                 SerilogConfiguration = new LoggerConfiguration().WriteTo.File(filePath, shared: true)
             });
 
-            logger.Error(new Exception(message));
+            logger.Error(message);
 
             using (var fileReader = new StreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
@@ -151,7 +151,7 @@ namespace Signals.Tests.Logging
                 })
             });
 
-            logger.Error(new Exception(message));
+            logger.Error(message);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

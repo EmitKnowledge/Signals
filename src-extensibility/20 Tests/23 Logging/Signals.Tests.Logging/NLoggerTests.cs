@@ -78,7 +78,7 @@ namespace Signals.Tests.Logging
             var config = new FileLoggingConfiguration();
             Aspects.Logging.ILogger logger = new NLogger(config);
 
-            logger.Error(new Exception(message));
+            logger.Error(message);
 
             var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
             var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
@@ -139,7 +139,7 @@ namespace Signals.Tests.Logging
 
             Aspects.Logging.ILogger logger = new NLogger(config);
 
-            logger.Error(new Exception(message));
+            logger.Error(message);
 
             string connectionString = $"Data Source={config.Host};Initial Catalog={config.Database}; User Id={config.Username}; Password={config.Password}";
             using (SqlConnection connection = new SqlConnection(connectionString))
