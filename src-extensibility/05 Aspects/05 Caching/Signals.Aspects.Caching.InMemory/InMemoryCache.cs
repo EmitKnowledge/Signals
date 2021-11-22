@@ -13,12 +13,12 @@ namespace Signals.Aspects.Caching.InMemory
         /// <summary>
         /// All entries
         /// </summary>
-        private readonly ConcurrentDictionary<string, CacheEntry> Entries;
+        private readonly ConcurrentDictionary<string, CacheEntry> _entries;
 
         /// <summary>
         /// Cache configuration
         /// </summary>
-        private readonly InMemoryCacheConfiguration Configuration;
+        private readonly InMemoryCacheConfiguration _configuration;
 
         /// <summary>
         /// CTOR
@@ -26,8 +26,8 @@ namespace Signals.Aspects.Caching.InMemory
         /// <param name="configuration"></param>
         public InMemoryCache(InMemoryCacheConfiguration configuration)
         {
-            Entries = new ConcurrentDictionary<string, CacheEntry>();
-            Configuration = configuration;
+            _entries = new ConcurrentDictionary<string, CacheEntry>();
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -51,8 +51,7 @@ namespace Signals.Aspects.Caching.InMemory
         /// <param name="expirationTime"></param>
         public void Set<T>(string key, T value, TimeSpan expirationTime)
         {
-            var entry = new CacheEntry(key, value);
-            entry.ExpirationTime = expirationTime;
+            var entry = new CacheEntry(key, value) { ExpirationTime = expirationTime };
             Set(entry);
         }
 
@@ -64,11 +63,13 @@ namespace Signals.Aspects.Caching.InMemory
         {
             entry.InvokeSet();
 
-            entry.ExpirationTime = entry.ExpirationTime ?? Configuration.ExpirationTime;
-            entry.ExpirationPolicy = entry.ExpirationPolicy ?? Configuration.ExpirationPolicy;
+            entry.ExpirationTime ??= _configuration.ExpirationTime;
+            entry.ExpirationPolicy ??= _configuration.ExpirationPolicy;
 
-            if (!Entries.TryAdd(entry.Key, entry))
-                Entries[entry.Key] = entry;
+            if (!_entries.TryAdd(entry.Key, entry))
+            {
+                _entries[entry.Key] = entry;
+            }
         }
 
         /// <summary>
@@ -89,12 +90,19 @@ namespace Signals.Aspects.Caching.InMemory
         /// <returns></returns>
         public CacheEntry Get(string key)
         {
-            var entry = Entries.TryGetValue(key, out var value) ? value : null;
+            var entry = _entries.TryGetValue(key, out var value) ? value : null;
 
-            if (entry == null) return null;
+            if (entry == null)
+            {
+                return null;
+            }
 
             entry.InvokeGet();
-            if (!entry.IsExpired()) return entry;
+            if (!entry.IsExpired())
+            {
+                return entry;
+            }
+
             Invalidate(key);
 
             return null;
@@ -106,9 +114,12 @@ namespace Signals.Aspects.Caching.InMemory
         /// <param name="key"></param>
         public void Invalidate(string key)
         {
-            var entry = Get(key);
-            if (entry == null) return;
-            Entries.TryRemove(key, out var _);
+            if (!_entries.ContainsKey(key))
+            {
+                return;
+            }
+
+            _entries.TryRemove(key, out _);
         }
     }
 }
