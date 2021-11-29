@@ -17,6 +17,7 @@ using Signals.Core.Processing.Input.Http.ModelBinding;
 using System.Threading.Tasks;
 using Signals.Core.Common.Reflection;
 using Signals.Core.Processes.Base;
+using VoidResult = Signals.Core.Processing.Results.VoidResult;
 
 namespace Signals.Core.Web.Execution
 {
@@ -184,6 +185,9 @@ namespace Signals.Core.Web.Execution
 
                 // execute request parsing and mapping to Signals HTTP context
                 httpContext.Wrap();
+
+                // set the wrapped context with data
+                (process.BaseContext as IApiProcessContext).HttpContext = httpContext;
 
                 result = ExecuteFactoryFilters(httpContext, validType, process);
                 if (result != MiddlewareResult.DoNothing) return result;
