@@ -319,11 +319,6 @@ namespace Signals.Core.Configuration.Bootstrapping
                 wrapper.WhitelistedEmailDomains = config.WhitelistedEmailDomains;
 
                 resolver.Register<ISmtpClient>(wrapper);
-<<<<<<< Updated upstream
-                resolver.Register<SmtpClient>(instance);
-                this.D("Registration service -> registered SMTP client.");
-=======
->>>>>>> Stashed changes
             }
         }
 
