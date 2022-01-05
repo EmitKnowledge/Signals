@@ -309,25 +309,21 @@ namespace Signals.Core.Configuration.Bootstrapping
         {
             if (config?.SmtpConfiguration?.IsNull() == false)
             {
-                var server = config.SmtpConfiguration.Server;
-                var port = config.SmtpConfiguration.Port;
-                var useSsl = config.SmtpConfiguration.UseSsl;
-                var username = config.SmtpConfiguration.Username;
-                var password = config.SmtpConfiguration.Password;
-
-                var instance = new SmtpClient(server, port)
-                {
-                    EnableSsl = useSsl,
-                    Credentials = new NetworkCredential(username, password)
-                };
-
-                var wrapper = new SmtpClientWrapper(instance);
+                var wrapper = new SmtpClientWrapper();
+                
+                wrapper.Server = config.SmtpConfiguration.Server;
+                wrapper.Port = config.SmtpConfiguration.Port;
+                wrapper.Username = config.SmtpConfiguration.Username;
+                wrapper.Password = config.SmtpConfiguration.Password;
                 wrapper.WhitelistedEmails = config.WhitelistedEmails;
                 wrapper.WhitelistedEmailDomains = config.WhitelistedEmailDomains;
 
                 resolver.Register<ISmtpClient>(wrapper);
+<<<<<<< Updated upstream
                 resolver.Register<SmtpClient>(instance);
                 this.D("Registration service -> registered SMTP client.");
+=======
+>>>>>>> Stashed changes
             }
         }
 
