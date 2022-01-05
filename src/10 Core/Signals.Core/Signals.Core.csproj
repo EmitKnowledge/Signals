@@ -13,6 +13,10 @@
     <EmbeddedResource Remove="Business\**" />
     <None Remove="Business\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="3.0.0" />
+  </ItemGroup>
   
   <Choose>    
     <When Condition=" '$(Configuration)'!='Debug' ">
