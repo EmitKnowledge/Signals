@@ -114,11 +114,8 @@ namespace Signals.Aspects.Configuration.MsSql
         /// </summary>
         public BaseConfiguration<T> Reload<T>(string key) where T : BaseConfiguration<T>, new()
         {
-            if (ReloadOnAccess || isDirty)
-                return Load<T>(key);
-
-            return null;
-        }
+			return Load<T>(key);
+		}
 
         /// <summary>
         /// Check if the data table exists

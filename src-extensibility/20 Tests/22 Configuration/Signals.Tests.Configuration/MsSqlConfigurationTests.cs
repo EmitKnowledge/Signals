@@ -288,7 +288,118 @@ namespace Signals.Tests.Configuration
             }
         }
 
-        [Fact]
+		[Fact]
+		public void Reload_Configuration_Should_Return_Valid_Object()
+		{
+			lock (ConnectionStirng)
+			{
+				var configuration = new MsSqlConfigurationProvider(ConnectionStirng, "Configuration2")
+				{
+					ReloadOnAccess = false
+				};
+
+				// Make sure the database exists and insert mock configuration json object
+				using (var connection = new SqlConnection(ConnectionStirng))
+				{
+					connection.Open();
+
+					using (var transaction = connection.BeginTransaction())
+					{
+						// Create the database if it does not exist
+						var query =
+							$@"
+                                IF NOT EXISTS 
+                                (	
+                                    SELECT * 
+	                                FROM sys.tables t
+	                                WHERE t.name = '{configuration.TableName}'
+                                ) 
+                                CREATE TABLE [{configuration.TableName}]
+                                (
+                                    [Id] INT IDENTITY(1,1) NOT NULL, 
+                                    [{configuration.KeyColumnName}] VARCHAR(MAX) NOT NULL, 
+                                    [{configuration.ValueColumnName}] VARCHAR(MAX)
+                                )
+                                TRUNCATE TABLE [{configuration.TableName}]
+                            ";
+
+
+						var command = new SqlCommand(query, connection, transaction);
+						command.ExecuteNonQuery();
+
+						transaction.Commit();
+						connection.Close();
+					}
+				}
+
+				configuration = new MsSqlConfigurationProvider(ConnectionStirng, "Configuration2")
+				{
+					ReloadOnAccess = false
+				};
+
+				// Sets up and loads controller configuration using the default MSSQL configuration provider
+				ControllersConfiguration.UseProvider(configuration);
+
+				var appName = ControllersConfiguration.Instance?.ApplicationConfiguration?.ApplicationName;
+				var externalApis = ControllersConfiguration.Instance?.ExternalApisConfiguration?.ExternalApis;
+				var saltLength = ControllersConfiguration.Instance?.SecurityConfiguration?.SaltLength;
+
+				Assert.Null(appName);
+				Assert.Null(externalApis);
+				Assert.Null(saltLength);
+
+				var newInstanceValue = new ControllersConfiguration();
+
+				newInstanceValue.ApplicationConfiguration = new ApplicationConfiguration();
+				newInstanceValue.ExternalApisConfiguration = new ExternalApisConfiguration();
+				newInstanceValue.SecurityConfiguration = new SecurityConfiguration();
+
+				newInstanceValue.ApplicationConfiguration.ApplicationName = "AppName";
+				newInstanceValue.ExternalApisConfiguration.ExternalApis = new System.Collections.Generic.List<ExternalApi>()
+				{
+					new ExternalApi
+					{
+						Name = "some name",
+						Url = "some url"
+					}
+				};
+				newInstanceValue.SecurityConfiguration.SaltLength = 32;
+
+				ControllersConfiguration.Update(newInstanceValue);
+				ControllersConfiguration.Reload();
+
+				appName = ControllersConfiguration.Instance.ApplicationConfiguration?.ApplicationName;
+				externalApis = ControllersConfiguration.Instance.ExternalApisConfiguration?.ExternalApis;
+				saltLength = ControllersConfiguration.Instance.SecurityConfiguration?.SaltLength;
+
+				Assert.NotNull(appName);
+				Assert.NotNull(externalApis);
+				Assert.Equal("AppName", appName);
+				Assert.Single(externalApis);
+				Assert.Equal(32, saltLength);
+
+				using (var connection = new SqlConnection(ConnectionStirng))
+				{
+					var query =
+						$@"
+                        IF EXISTS 
+                            (	
+                                SELECT * 
+	                            FROM sys.tables t
+	                            WHERE t.name = '{configuration.TableName}'
+                            )
+                        DROP TABLE [{configuration.TableName}]
+                    ";
+
+					var command = new SqlCommand(query, connection);
+					connection.Open();
+					command.ExecuteNonQuery();
+					connection.Close();
+				}
+			}
+		}
+
+		[Fact]
         public void Load_Without_Setup_Should_Throw_Exception()
         {
             try
