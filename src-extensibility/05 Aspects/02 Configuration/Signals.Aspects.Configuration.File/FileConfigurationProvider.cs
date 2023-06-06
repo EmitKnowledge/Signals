@@ -72,7 +72,7 @@ namespace Signals.Aspects.Configuration.File
         /// </summary>
         public BaseConfiguration<T> Reload<T>(string key) where T : BaseConfiguration<T>, new()
         {
-	        return ReloadOnAccess ? Load<T>(key) : null;
+	        return Load<T>(key);
         }
 
         /// <summary>
