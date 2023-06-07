@@ -1,9 +1,7 @@
-﻿using AngleSharp.Network;
-using Ganss.XSS;
+﻿using Ganss.Xss;
 using Signals.Core.Processes.Api;
 using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;
-using Signals.Core.Web.Behaviour;
 
 namespace Signals.Clients.WebApi.ApiProcesses
 {
