@@ -41,7 +41,9 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             entry.EpicId = process.EpicId;
             entry.Payload = args?.SerializeJson();
 
-            return auditProvider.Audit(entry, () => Next.Execute(process, processType, args));
+            var result = auditProvider.Audit(entry, () => Next.Execute(process, processType, args));
+            this.D($"Executed -> Auditing Handler for process type: {processType?.FullName}.");
+            return result;
         }
     }
 }

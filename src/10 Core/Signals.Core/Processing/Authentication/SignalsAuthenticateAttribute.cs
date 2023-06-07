@@ -16,10 +16,14 @@ namespace Signals.Core.Processing.Authentication
         /// <returns></returns>
         internal bool Authenticate()
         {
-            return SystemBootstrapper.GetInstance<IAuthenticationManager>()?
-                       .GetCurrentPrincipal()?
-                       .Identity?
-                       .IsAuthenticated == true;
+            var isAuthenticated = SystemBootstrapper.GetInstance<IAuthenticationManager>()?
+													.GetCurrentPrincipal()?
+													.Identity?
+													.IsAuthenticated == true;
+
+            this.D($"Is authenticated identity -> {isAuthenticated}.");
+
+            return isAuthenticated;
         }
     }
 }

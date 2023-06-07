@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Signals.Core.Configuration.ConfigurationSegments
 {
     /// <summary>
-    /// Critical process configuraiton
+    /// Critical process configuration
     /// </summary>
     public class CriticalConfiguration
     {

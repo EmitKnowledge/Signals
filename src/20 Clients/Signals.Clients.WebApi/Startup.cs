@@ -32,11 +32,11 @@ namespace Signals.Clients.WebApi
                 options.ValueCountLimit = int.MaxValue;
             });
 
-            // Configure IIS
-            services.Configure<IISServerOptions>(options =>
-            {
-                options.AllowSynchronousIO = true;
-            });
+            //// Configure IIS
+            //services.Configure<IISServerOptions>(options =>
+            //{
+            //    options.AllowSynchronousIO = true;
+            //});
 
             return services.AddSignals();
         }

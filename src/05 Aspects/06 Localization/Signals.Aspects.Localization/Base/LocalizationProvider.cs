@@ -70,7 +70,7 @@ namespace Signals.Aspects.Localization.Base
         }
 
         /// <summary>
-        /// Reloads the localization entries from the data provider
+        /// Refreshes the localization entries cache
         /// </summary>
         public void Reload()
         {

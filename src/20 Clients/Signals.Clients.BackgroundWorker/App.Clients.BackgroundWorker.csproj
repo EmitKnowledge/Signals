@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\03 Logging\Signals.Aspects.Logging.NLog\Signals.Aspects.Logging.NLog.csproj" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\05 Caching\Signals.Aspects.Caching.InMemory\Signals.Aspects.Caching.InMemory.csproj" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\06 Localization\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File.csproj" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.ServiceBus\Signals.Aspects.CommunicationChannels.ServiceBus.csproj" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\10 Background processing\Signals.Aspects.BackgroundProcessing.FluentScheduler\Signals.Aspects.BackgroundProcessing.FluentScheduler.csproj" />
+    <ProjectReference Include="..\..\15 Hosting\Signals.Core.Background\Signals.Core.Background.csproj" />
+    <ProjectReference Include="..\Signals.Clients.Processes\App.Clients.Processes.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="configuration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

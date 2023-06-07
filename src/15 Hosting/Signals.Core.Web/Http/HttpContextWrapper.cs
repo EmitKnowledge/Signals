@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using Signals.Core.Processes.Api;
 
 namespace Signals.Core.Web.Http
 {
@@ -23,7 +24,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Http method: GET, POST, DELETE..
         /// </summary>
-        public string HttpMethod { get; set; }
+        public SignalsApiMethod HttpMethod { get; set; }
 
         /// <summary>
         /// Url path: /api/process...
@@ -43,7 +44,7 @@ namespace Signals.Core.Web.Http
         /// <summary>
         /// Request body
         /// </summary>
-        public Lazy<string> Body { get; set; }
+        public string Body { get; set; }
 
         /// <summary>
         /// Headers collection manager
@@ -80,7 +81,7 @@ namespace Signals.Core.Web.Http
             }
             else
             {
-                var content = new StreamReader(inputStream).ReadToEnd();
+                var content = new StreamReader(inputStream).ReadToEndAsync().Result;
                 return content;
             }
         }
@@ -228,71 +229,9 @@ namespace Signals.Core.Web.Http
             return result;
         }
 
-#if (NET461)
-
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public HttpContextWrapper()
-        {
-            var context = System.Web.HttpContext.Current;
-            if (context == null) return;
-
-            Headers = new HeaderCollection(context);
-            Cookies = new CookieCollection(context);
-            Form = new FormCollection(context);
-            Session = new SessionProvider(context);
-            
-            // single lazy per http context
-            if (!context.Items.Contains("body"))
-                context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.InputStream)));
-
-            Query = ExtractQuery(context?.Request?.QueryString?.ToString());
-
-            Body = context.Items["body"] as Lazy<string>;
-
-            HttpMethod = context.Request.HttpMethod.ToUpperInvariant();
-            Files = context.Request.Files.AllKeys.Select(x => new InputFile
-            {
-                File = context.Request.Files[x]?.InputStream,
-                MimeType = context.Request.Files[x]?.ContentType,
-                FormInputName = x,
-                FileName = context.Request.Files[x]?.FileName
-            });
-            RawUrl = context.Request.Url.AbsolutePath;
-        }
-
-        /// <summary>
-        /// Write response
-        /// </summary>
-        /// <param name="httpResponse"></param>
-        /// <returns></returns>
-        public void PutResponse(HttpResponseMessage httpResponse)
-        {
-            var context = System.Web.HttpContext.Current;
-
-            if (httpResponse?.Headers?.Any() == true)
-                foreach (var header in httpResponse?.Headers)
-                    context.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
-
-
-            if (httpResponse?.Content?.Headers?.Any() == true)
-                foreach (var header in httpResponse?.Content?.Headers)
-                    context.Response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
-
-            context.Response.StatusCode = (int)httpResponse.StatusCode;
-
-            if (!httpResponse.Content.IsNull())
-            {
-                var body = httpResponse.Content.ReadAsStreamAsync().Result;
-                body.CopyTo(context.Response.OutputStream);
-                body.Close();
-            }
-        }
-
-#else
-
         private IHttpContextAccessor _httpContextAccessor;
+
+        private HttpContext _context;
 
         /// <summary>
         /// CTOR
@@ -300,37 +239,54 @@ namespace Signals.Core.Web.Http
         public HttpContextWrapper(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            var context = _httpContextAccessor.HttpContext;
-            if (context == null) return;
+            _context = _httpContextAccessor.HttpContext;
+            if (_context == null) return;
 
-            Headers = new HeaderCollection(context);
-            Cookies = new CookieCollection(context);
-            Form = new FormCollection(context);
-            Session = new SessionProvider(context);
-
-            // single lazy per http context
-            if (!context.Items.ContainsKey("body"))
-                context.Items.Add("body", new Lazy<string>(() => ExtractBody(context.Request.ContentType, context.Request.Body)));
-
-            Query = ExtractQuery(context?.Request?.QueryString.ToString());
-
-            Body = context.Items["body"] as Lazy<string>;
-            HttpMethod = context.Request.Method.ToUpperInvariant();
-
-            if (context.Request.HasFormContentType)
+            RawUrl = _context.Request.Path.Value;
+            var method = _context.Request.Method.ToUpperInvariant();
+            HttpMethod = method switch
             {
-                Files = context.Request?.Form?.Files?
-                                .Select(x => new InputFile
-                                {
-                                    File = x.OpenReadStream(),
-                                    FileName = x.FileName,
-                                    FormInputName = x.Name,
-                                    MimeType = x.ContentType
-                                })
-                            ?? new List<InputFile>();
-            }
+	            "GET" => SignalsApiMethod.GET,
+	            "POST" => SignalsApiMethod.POST,
+	            "PUT" => SignalsApiMethod.PUT,
+	            "PATCH" => SignalsApiMethod.PATCH,
+	            "DELETE" => SignalsApiMethod.DELETE,
+	            "OPTIONS" => SignalsApiMethod.OPTIONS,
+	            "HEAD" => SignalsApiMethod.HEAD,
+	            _ => SignalsApiMethod.ANY
+            };
+            Headers = new HeaderCollection(_context);
+            Cookies = new CookieCollection(_context);
+            Form = new FormCollection(_context);
+            Session = new SessionProvider(_context);
+            Query = ExtractQuery(_context?.Request?.QueryString.ToString());
+        }
 
-            RawUrl = context.Request.Path.Value;
+        /// <summary>
+        /// Execute the wrapping to process the request
+        /// </summary>
+        public void Wrap()
+        {
+	        if (_context == null) return;
+	        // single lazy per http context
+	        if (!_context.Items.ContainsKey("body"))
+	        {
+		        _context.Items.Add("body", ExtractBody(_context.Request.ContentType, _context.Request.Body));
+	        }
+	        Body = _context.Items["body"] as string;
+	        if (_context.Request.HasFormContentType)
+	        {
+		        Files = _context.Request?.Form?.Files?
+			                .Select(x => new InputFile
+			                {
+				                File = x.OpenReadStream(),
+				                FileName = x.FileName,
+				                FormInputName = x.Name,
+				                MimeType = x.ContentType,
+				                ContentLength = x.Length
+			                })
+		                ?? new List<InputFile>();
+	        }
         }
 
         /// <summary>
@@ -360,8 +316,6 @@ namespace Signals.Core.Web.Http
                 body.Close();
             }
         }
-
-#endif
 
     }
 }

@@ -78,7 +78,7 @@ namespace Signals.Tests.Logging
             var config = new FileLoggingConfiguration();
             Aspects.Logging.ILogger logger = new NLogger(config);
 
-            logger.Error(new Exception(message));
+            logger.Error(message);
 
             var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
             var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
@@ -113,14 +113,14 @@ namespace Signals.Tests.Logging
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlDataReader reader = new SqlCommand(@"SELECT * FROM LogEntry;", connection).ExecuteReader();
+                SqlDataReader reader = new SqlCommand($@"SELECT * FROM {config.TableName};", connection).ExecuteReader();
                 while (reader.Read())
                 {
                     Assert.Contains(message, reader["Payload"].ToString());
                 }
                 reader.Close();
 
-                var command = new SqlCommand("DELETE FROM LogEntry", connection);
+                var command = new SqlCommand($"DELETE FROM {config.TableName}", connection);
                 command.ExecuteNonQuery();
             }
         }
@@ -139,20 +139,20 @@ namespace Signals.Tests.Logging
 
             Aspects.Logging.ILogger logger = new NLogger(config);
 
-            logger.Error(new Exception(message));
+            logger.Error(message);
 
             string connectionString = $"Data Source={config.Host};Initial Catalog={config.Database}; User Id={config.Username}; Password={config.Password}";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlDataReader reader = new SqlCommand(@"SELECT * FROM LogEntry;", connection).ExecuteReader();
+                SqlDataReader reader = new SqlCommand($@"SELECT * FROM {config.TableName};", connection).ExecuteReader();
                 while (reader.Read())
                 {
                     Assert.Contains(message, reader["Payload"].ToString());
                 }
                 reader.Close();
 
-                var command = new SqlCommand("DELETE FROM LogEntry", connection);
+                var command = new SqlCommand($"DELETE FROM {config.TableName}", connection);
                 command.ExecuteNonQuery();
             }
         }

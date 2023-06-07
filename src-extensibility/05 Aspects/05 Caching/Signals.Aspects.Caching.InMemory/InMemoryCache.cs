@@ -1,5 +1,4 @@
-﻿using Signals.Aspects.Caching.Configurations;
-using Signals.Aspects.Caching.Entries;
+﻿using Signals.Aspects.Caching.Entries;
 using Signals.Aspects.Caching.InMemory.Configurations;
 using System;
 using System.Collections.Concurrent;
@@ -9,75 +8,118 @@ namespace Signals.Aspects.Caching.InMemory
     /// <summary>
     /// In memory cache implementation
     /// </summary>
-    public class InMemoryCache : Cache, ICache
+    public class InMemoryCache : ICache
     {
         /// <summary>
-        /// Entry specific expiration callbacks
+        /// All entries
         /// </summary>
-        protected ConcurrentDictionary<string, ConcurrentBag<Action<CacheEntry>>> EntryExpirationCallbacks { get; set; }
+        private readonly ConcurrentDictionary<string, CacheEntry> _entries;
 
         /// <summary>
-        /// Global expiration callbacks
+        /// Cache configuration
         /// </summary>
-        protected ConcurrentBag<Action<CacheEntry>> GlobalExpirationCallbacks { get; set; }
+        private readonly InMemoryCacheConfiguration _configuration;
 
         /// <summary>
         /// CTOR
         /// </summary>
         /// <param name="configuration"></param>
-        public InMemoryCache(ICacheConfiguration configuration = null)
+        public InMemoryCache(InMemoryCacheConfiguration configuration)
         {
-            EntryExpirationCallbacks = new ConcurrentDictionary<string, ConcurrentBag<Action<CacheEntry>>>();
-            GlobalExpirationCallbacks = new ConcurrentBag<Action<CacheEntry>>();
-            Configuration = configuration ?? new InMemoryCacheConfiguration();
+            _entries = new ConcurrentDictionary<string, CacheEntry>();
+            _configuration = configuration;
         }
 
         /// <summary>
-        /// Registers global callback when any entry expires
+        /// Cache value
         /// </summary>
-        /// <param name="action"></param>
-        public override void OnExpire(Action<CacheEntry> action)
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void Set<T>(string key, T value)
         {
-            GlobalExpirationCallbacks.Add(action);
+            var entry = new CacheEntry(key, value);
+            Set(entry);
         }
 
         /// <summary>
-        /// Registers callback when an entry with corresponding key expires
+        /// Cache value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="expirationTime"></param>
+        public void Set<T>(string key, T value, TimeSpan expirationTime)
+        {
+            var entry = new CacheEntry(key, value) { ExpirationTime = expirationTime };
+            Set(entry);
+        }
+
+        /// <summary>
+        /// Cache value
+        /// </summary>
+        /// <param name="entry"></param>
+        public void Set(CacheEntry entry)
+        {
+            entry.InvokeSet();
+
+            entry.ExpirationTime ??= _configuration.ExpirationTime;
+            entry.ExpirationPolicy ??= _configuration.ExpirationPolicy;
+
+            if (!_entries.TryAdd(entry.Key, entry))
+            {
+                _entries[entry.Key] = entry;
+            }
+        }
+
+        /// <summary>
+        /// Get cached value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public T Get<T>(string key) where T : class
+        {
+            return (T)Get(key)?.Value;
+        }
+
+        /// <summary>
+        /// Get cached value
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="action"></param>
-        public override void OnExpire(string key, Action<CacheEntry> action)
+        /// <returns></returns>
+        public CacheEntry Get(string key)
         {
-            var hasEntry = EntryExpirationCallbacks.TryGetValue(key, out ConcurrentBag<Action<CacheEntry>> callbacks);
+            var entry = _entries.TryGetValue(key, out var value) ? value : null;
 
-            if (!hasEntry)
+            if (entry == null)
             {
-                callbacks = new ConcurrentBag<Action<CacheEntry>>();
-                EntryExpirationCallbacks.TryAdd(key, callbacks);
+                return null;
             }
 
-            callbacks.Add(action);
+            entry.InvokeGet();
+            if (!entry.IsExpired())
+            {
+                return entry;
+            }
+
+            Invalidate(key);
+
+            return null;
         }
 
         /// <summary>
-        /// Invokes callbacks on expiration
+        /// Invalidate cache entry
         /// </summary>
         /// <param name="key"></param>
-        public override void InvokeExpireCallbacks(string key)
+        public void Invalidate(string key)
         {
-            var entry = Configuration.DataProvider.Get(key);
+            if (!_entries.ContainsKey(key))
+            {
+                return;
+            }
 
-			foreach (var globalCallback in GlobalExpirationCallbacks)
-			{
-				globalCallback(entry);
-			}
-
-	        if (!EntryExpirationCallbacks.ContainsKey(key)) return;
-
-	        foreach (var entryCallback in EntryExpirationCallbacks[key])
-			{
-				entryCallback(entry);
-			}
+            _entries.TryRemove(key, out _);
         }
     }
 }

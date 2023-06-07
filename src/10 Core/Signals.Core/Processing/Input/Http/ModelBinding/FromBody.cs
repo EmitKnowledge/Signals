@@ -13,8 +13,17 @@ namespace Signals.Core.Processing.Input.Http.ModelBinding
 		/// <returns></returns>
 		public override object Bind(IHttpContextWrapper httpContext)
 		{
-			var body = httpContext?.Body?.Value;
-			if (body.IsNullOrEmpty()) return null;
+			var body = httpContext?.Body;
+			if (body.IsNullOrEmpty())
+			{
+				this.D("Body is null. Exit Model Binder.");
+				return null;
+			}
+			else
+			{
+				this.D($"Body -> Value: {body}. Exit Model Binder.");
+			}
+
 			return body;
 		}
 	}

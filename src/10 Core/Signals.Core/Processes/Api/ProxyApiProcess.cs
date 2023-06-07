@@ -1,4 +1,4 @@
-﻿using Signals.Aspects.DI.Attributes;
+using Signals.Aspects.DI.Attributes;
 using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processes.Business;

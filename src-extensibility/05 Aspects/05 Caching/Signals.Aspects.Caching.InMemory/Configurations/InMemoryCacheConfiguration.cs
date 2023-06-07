@@ -10,11 +10,6 @@ namespace Signals.Aspects.Caching.InMemory.Configurations
     public class InMemoryCacheConfiguration : ICacheConfiguration
     {
         /// <summary>
-        /// Provider that sets and gets values
-        /// </summary>
-        public IDataProvider DataProvider { get; set; }
-
-        /// <summary>
         /// Expiration time
         /// </summary>
         public TimeSpan ExpirationTime { get; set; }
@@ -32,7 +27,6 @@ namespace Signals.Aspects.Caching.InMemory.Configurations
 	    {
 		    ExpirationTime = TimeSpan.FromMinutes(5);
 		    ExpirationPolicy = CacheExpirationPolicy.Sliding;
-		    DataProvider = new InMemoryDataProvider();
 	    }
 	}
 }

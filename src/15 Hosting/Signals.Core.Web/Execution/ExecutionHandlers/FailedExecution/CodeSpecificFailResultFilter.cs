@@ -24,17 +24,20 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            if (response.IsFaulted && response.ErrorMessages.OfType<CodeSpecificErrorInfo>().Any())
-            {
-                var error = response.ErrorMessages.OfType<CodeSpecificErrorInfo>().First();
-                context.PutResponse(new System.Net.Http.HttpResponseMessage(error.HttpStatusCode)
-                {
-                    Content = type.ToHttpContent(response)
-                });
-                return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
-            }
+	        if (!response.IsFaulted || !response.ErrorMessages.OfType<CodeSpecificErrorInfo>().Any())
+	        {
+		        return MiddlewareResult.DoNothing;
+	        }
 
-            return MiddlewareResult.DoNothing;
+	        var error = response.ErrorMessages.OfType<CodeSpecificErrorInfo>().First();
+            context.PutResponse(new System.Net.Http.HttpResponseMessage(error.HttpStatusCode)
+            {
+	            Content = type.ToHttpContent(response)
+            });
+
+            this.D($"Code Specific Error -> Status code: {error.HttpStatusCode} -> Error: {error.FaultMessage}. Exit Filter.");
+
+            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
         }
     }
 }

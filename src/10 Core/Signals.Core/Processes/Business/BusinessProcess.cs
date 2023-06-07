@@ -23,7 +23,7 @@ namespace Signals.Core.Processes.Business
         protected virtual IBusinessProcessContext Context
         {
             get => _context;
-            set { (value as BusinessProcessContext).SetProcess(this); _context = value; }
+            set { (value as BusinessProcessContext)?.SetProcess(this); _context = value; }
         }
         private IBusinessProcessContext _context;
 
@@ -57,12 +57,28 @@ namespace Signals.Core.Processes.Business
         internal virtual TResponse Execute()
         {
             var result = Auth();
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Auth.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Auth -> Failed.");
+                return result;
+            }
 
             result = Validate();
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Validate.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Validation -> Failed.");
+                return result;
+            }
 
             result = Handle();
+            this.D("Executed -> Handle.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Handle -> Failed.");
+            }
+
             return result;
         }
 
@@ -73,7 +89,8 @@ namespace Signals.Core.Processes.Business
         /// <returns></returns>
         internal override TResponse ExecuteProcess(params object[] args)
         {
-            return Execute();
+            var result = Execute();
+            return result;
         }
     }
 
@@ -91,7 +108,7 @@ namespace Signals.Core.Processes.Business
         protected virtual IBusinessProcessContext Context
         {
             get => _context;
-            set { (value as BusinessProcessContext).SetProcess(this); _context = value; }
+            set { (value as BusinessProcessContext)?.SetProcess(this); _context = value; }
         }
         private IBusinessProcessContext _context;
 
@@ -129,12 +146,28 @@ namespace Signals.Core.Processes.Business
         internal virtual TResponse Execute(T1 obj1)
         {
             var result = Auth(obj1);
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Auth.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Auth -> Failed.");
+                return result;
+            }
 
             result = Validate(obj1);
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Validate.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Validation -> Failed.");
+                return result;
+            }
 
             result = Handle(obj1);
+            this.D("Executed -> Handle.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Handle -> Failed.");
+            }
+
             return result;
         }
 
@@ -164,7 +197,7 @@ namespace Signals.Core.Processes.Business
         protected virtual IBusinessProcessContext Context
         {
             get => _context;
-            set { (value as BusinessProcessContext).SetProcess(this); _context = value; }
+            set { (value as BusinessProcessContext)?.SetProcess(this); _context = value; }
         }
         private IBusinessProcessContext _context;
 
@@ -206,12 +239,27 @@ namespace Signals.Core.Processes.Business
         internal virtual TResponse Execute(T1 obj1, T2 obj2)
         {
             var result = Auth(obj1, obj2);
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Auth.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Auth -> Failed.");
+                return result;
+            }
 
             result = Validate(obj1, obj2);
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Validate.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Validation -> Failed.");
+                return result;
+            }
 
             result = Handle(obj1, obj2);
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Handle -> Failed.");
+            }
+
             return result;
         }
 
@@ -242,7 +290,7 @@ namespace Signals.Core.Processes.Business
         protected virtual IBusinessProcessContext Context
         {
             get => _context;
-            set { (value as BusinessProcessContext).SetProcess(this); _context = value; }
+            set { (value as BusinessProcessContext)?.SetProcess(this); _context = value; }
         }
         private IBusinessProcessContext _context;
 
@@ -288,12 +336,28 @@ namespace Signals.Core.Processes.Business
         internal virtual TResponse Execute(T1 obj1, T2 obj2, T3 obj3)
         {
             var result = Auth(obj1, obj2, obj3);
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Auth.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Auth -> Failed.");
+                return result;
+            }
 
             result = Validate(obj1, obj2, obj3);
-            if (result.IsFaulted) return result;
+            this.D("Executed -> Validate.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Validation -> Failed.");
+                return result;
+            }
 
             result = Handle(obj1, obj2, obj3);
+            this.D("Executed -> Handle.");
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Handle -> Failed.");
+            }
+
             return result;
         }
 

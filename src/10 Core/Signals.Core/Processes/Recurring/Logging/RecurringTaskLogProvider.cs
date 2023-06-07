@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Signals.Core.Common.Serialization;
 
 namespace Signals.Core.Processes.Recurring.Logging
 {
@@ -15,12 +16,12 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <summary>
         /// Synchronization lock
         /// </summary>
-        private static readonly object syncLock = new object();
+        private static readonly object SyncLock = new object();
         
         /// <summary>
         /// Maximum number of logs
         /// </summary>
-        private const int MaxLogs = 100;
+        private const int MaxLogs = 1000;
 
         /// <summary>
         /// Logs repository provider
@@ -33,6 +34,7 @@ namespace Signals.Core.Processes.Recurring.Logging
         static RecurringTaskLogProvider()
         {
             RecurringTaskLogs = new ConcurrentDictionary<Type, List<RecurringTaskLog>>();
+            typeof(RecurringTaskLogProvider).D($"Initializing RecurringTaskLogProvider. Max logs: {MaxLogs}.");
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <param name="log"></param>
         public void CreateLog(RecurringTaskLog log)
         {
-            lock (syncLock)
+            lock (SyncLock)
             {
                 if (!RecurringTaskLogs.ContainsKey(log.ProcessType))
                 {
@@ -53,6 +55,7 @@ namespace Signals.Core.Processes.Recurring.Logging
                                                         .OrderByDescending(x => x.StartTime)
                                                         .Take(MaxLogs)
                                                         .ToList();
+                this.D($"Creating log for: {log?.ProcessType?.FullName} -> Log metadata: {log?.SerializeJson()}.");
             }
         }
 
@@ -63,14 +66,16 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <returns></returns>
         public RecurringTaskLog Current(Type processType)
         {
-            lock (syncLock)
+            lock (SyncLock)
             {
                 if (!RecurringTaskLogs.ContainsKey(processType))
                 {
                     RecurringTaskLogs.TryAdd(processType, new List<RecurringTaskLog>());
                 }
 
-                return RecurringTaskLogs[processType].FirstOrDefault(x => !x.EndTime.HasValue);
+                var lastRecurringTaskLog = RecurringTaskLogs[processType].FirstOrDefault(x => !x.EndTime.HasValue);
+                this.D($"Returning current log for: {processType?.FullName} -> Log metadata: {lastRecurringTaskLog?.SerializeJson()}.");
+                return lastRecurringTaskLog;
             }
         }
 
@@ -82,17 +87,21 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <returns></returns>
         public List<RecurringTaskLog> Last(Type processType, int take)
         {
-            lock (syncLock)
+            lock (SyncLock)
             {
                 if (!RecurringTaskLogs.ContainsKey(processType))
                 {
                     RecurringTaskLogs.TryAdd(processType, new List<RecurringTaskLog>());
                 }
 
-                return RecurringTaskLogs[processType]
+                var recurringTaskLogs = RecurringTaskLogs[processType]
                         .OrderByDescending(x => x.StartTime)
                         .Take(take)
                         .ToList();
+
+                this.D($"Returning last {take} logs for: {processType?.FullName} -> Total logs: {recurringTaskLogs.Count}.");
+
+                return recurringTaskLogs;
             }
         }
 
@@ -103,16 +112,20 @@ namespace Signals.Core.Processes.Recurring.Logging
         /// <returns></returns>
         public RecurringTaskLog Last(Type processType)
         {
-            lock (syncLock)
+            lock (SyncLock)
             {
                 if (!RecurringTaskLogs.ContainsKey(processType))
                 {
                     RecurringTaskLogs.TryAdd(processType, new List<RecurringTaskLog>());
                 }
 
-                return RecurringTaskLogs[processType]
-                    .OrderByDescending(x => x.StartTime)
-                    .FirstOrDefault();
+                var lastRecurringTaskLog = RecurringTaskLogs[processType]
+						.OrderByDescending(x => x.StartTime)
+						.FirstOrDefault();
+
+                this.D($"Returning last log for: {processType?.FullName} -> Log metadata: {lastRecurringTaskLog?.SerializeJson()}.");
+
+                return lastRecurringTaskLog;
             }
         }
 

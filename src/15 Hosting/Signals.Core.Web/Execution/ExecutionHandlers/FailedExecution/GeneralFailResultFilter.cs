@@ -4,10 +4,7 @@ using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
 using Signals.Core.Web.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
 {
@@ -27,16 +24,21 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            if (response.IsFaulted && response.ErrorMessages.OfType<GeneralErrorInfo>().Any())
-            {
-                context.PutResponse(new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
-                {
-                    Content = type.ToHttpContent(response)
-                });
-                return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
-            }
+	        if (!response.IsFaulted || !response.ErrorMessages.OfType<GeneralErrorInfo>().Any())
+	        {
+		        return MiddlewareResult.DoNothing;
+	        }
 
-            return MiddlewareResult.DoNothing;
+	        context.PutResponse(new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
+            {
+	            Content = type.ToHttpContent(response)
+            });
+
+	        var error = response.ErrorMessages.OfType<GeneralErrorInfo>().FirstOrDefault();
+            this.D($"General Error -> Status code: {System.Net.HttpStatusCode.BadRequest} -> Error: {error?.FaultMessage ?? "N/A"}. Exit Filter.");
+
+            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
+
         }
     }
 }

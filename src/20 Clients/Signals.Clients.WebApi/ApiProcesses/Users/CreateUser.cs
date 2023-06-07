@@ -21,19 +21,6 @@ namespace Signals.Clients.WebApi.ApiProcesses.Users
         }
     }
 
-    [SignalsApi]
-    public class CreateUser2 : ProxyApiProcess<BusinessProcesses.CreateUser, MethodResult<User>, MethodResult<UserDto>>
-    {
-        public override MethodResult<UserDto> MapResponse(MethodResult<User> response)
-        {
-            return new UserDto
-            {
-                Email = response.Result.Email,
-                Id = response.Result.Id
-            };
-        }
-    }
-
     [SignalsApi(HttpMethod = SignalsApiMethod.POST)]
     public class CreateUser3 : AutoApiProcess<BusinessProcesses.CreateUser, CreateUserDto, Dtos.In.CreateUserDto>
     {
@@ -46,7 +33,7 @@ namespace Signals.Clients.WebApi.ApiProcesses.Users
 
     }
 
-    [SignalsApi(HttpMethod = SignalsApiMethod.POST)]
+    [SignalsApi(HttpMethod = SignalsApiMethod.GET)]
     public class CreateUser5 : AutoApiProcess<BusinessProcesses.DoNothing>
     {
 

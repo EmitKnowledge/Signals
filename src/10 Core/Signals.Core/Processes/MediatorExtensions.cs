@@ -1,11 +1,5 @@
-﻿using Signals.Aspects.DI;
-using Signals.Core.Processes.Base;
-using Signals.Core.Processes.Business;
-using Signals.Core.Processing.Execution;
+﻿using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Results;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Signals.Core.Processes
 {
@@ -23,7 +17,8 @@ namespace Signals.Core.Processes
         public static TResponse With<TResponse>(this IBaseProcess<TResponse> process)
             where TResponse : VoidResult, new()
         {
-            return process.BaseContext.Mediator.Dispatch(process);
+	        typeof(MediatorExtensions).D($"With -> {process?.GetType()?.FullName}.");
+            return process?.BaseContext.Mediator.Dispatch(process);
         }
 
         /// <summary>
@@ -37,7 +32,8 @@ namespace Signals.Core.Processes
         public static TResponse With<T1, TResponse>(this IBaseProcess<TResponse> process, T1 input1)
             where TResponse : VoidResult, new()
         {
-            return process.BaseContext.Mediator.Dispatch(process, input1);
+	        typeof(MediatorExtensions).D($"With -> {process?.GetType()?.FullName} with argument [{input1?.GetType()?.FullName}].");
+            return process?.BaseContext.Mediator.Dispatch(process, input1);
         }
 
         /// <summary>
@@ -53,7 +49,8 @@ namespace Signals.Core.Processes
         public static TResponse With<T1, T2, TResponse>(this IBaseProcess<TResponse> process, T1 input1, T2 input2)
             where TResponse : VoidResult, new()
         {
-            return process.BaseContext.Mediator.Dispatch(process, input1, input2);
+	        typeof(MediatorExtensions).D($"With -> {process?.GetType()?.FullName} with arguments [{input1?.GetType()?.FullName}, {input2?.GetType()?.FullName}].");
+            return process?.BaseContext.Mediator.Dispatch(process, input1, input2);
         }
 
         /// <summary>
@@ -71,7 +68,8 @@ namespace Signals.Core.Processes
         public static TResponse With<T1, T2, T3, TResponse>(this IBaseProcess<TResponse> process, T1 input1, T2 input2, T3 input3)
             where TResponse : VoidResult, new()
         {
-            return process.BaseContext.Mediator.Dispatch(process, input1, input2, input3);
+	        typeof(MediatorExtensions).D($"With -> {process?.GetType()?.FullName} with arguments [{input1?.GetType()?.FullName}, {input2?.GetType()?.FullName}, {input3?.GetType()?.FullName}].");
+	        return process?.BaseContext.Mediator.Dispatch(process, input1, input2, input3);
         }
     }
 }

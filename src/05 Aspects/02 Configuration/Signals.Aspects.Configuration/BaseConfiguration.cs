@@ -61,5 +61,18 @@ namespace Signals.Aspects.Configuration
 
             _instance.Provider.Update(_instance);
         }
-    }
+
+		/// <summary>
+		/// Reload the existing configuration
+		/// </summary>
+		public static void Reload()
+		{
+			if (_instance == null) throw new ArgumentNullException(nameof(_instance));
+			if (_instance.Provider == null) throw new ArgumentNullException(nameof(_instance.Provider));
+
+			var provider = _instance.Provider;
+			_instance = _instance.Provider.Reload<T>(_instance.Key) as T;
+            _instance.Provider = provider;
+		}
+	}
 }

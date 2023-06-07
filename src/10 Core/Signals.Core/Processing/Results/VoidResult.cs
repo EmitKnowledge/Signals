@@ -125,5 +125,13 @@ namespace Signals.Core.Processing.Results
 
             return faultedResult;
         }
+
+        /// <summary>
+        /// Empty successful void result
+        /// </summary>
+        public static VoidResult Default()
+        {
+	        return new VoidResult();
+        }
     }
 }

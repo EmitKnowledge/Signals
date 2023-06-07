@@ -31,9 +31,10 @@
     <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\03 Logging\Signals.Aspects.Logging.NLog\Signals.Aspects.Logging.NLog.csproj" />
     <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\05 Caching\Signals.Aspects.Caching.InMemory\Signals.Aspects.Caching.InMemory.csproj" />
     <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\06 Localization\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File.csproj" />
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.MsSql\Signals.Aspects.CommunicationChannels.MsSql.csproj" />
+    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.ServiceBus\Signals.Aspects.CommunicationChannels.ServiceBus.csproj" />
     <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\09 Authentication and authorization\Signals.Aspects.Auth.NetCore\Signals.Aspects.Auth.NetCore.csproj" />
     <ProjectReference Include="..\..\15 Hosting\Signals.Core.Web\Signals.Core.Web.csproj" />
+    <ProjectReference Include="..\Signals.Clients.Processes\App.Clients.Processes.csproj" />
   </ItemGroup>
 
   <ItemGroup>

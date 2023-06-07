@@ -3,6 +3,8 @@ using Signals.Core.Processing.Guards;
 using Signals.Core.Processing.Results;
 using System;
 using System.Linq;
+using Signals.Core.Common.Instance;
+using Signals.Core.Common.Reflection;
 
 namespace Signals.Core.Processing.Execution.ExecutionHandlers
 {
@@ -27,17 +29,18 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
             // Get guard attribute
-            var guardAttributes = processType.GetCustomAttributes(typeof(SignalsGuardAttribute), false).Cast<SignalsGuardAttribute>().ToList();
+            var guardAttributes = processType.GetCachedAttributes<SignalsGuardAttribute>();
+
             foreach (var guardAttribute in guardAttributes)
             {
-                var guardResult = guardAttribute.Check(process.BaseContext);
-                if (guardResult != null)
-                {
-                    return VoidResult.FaultedResult<TResult>(guardResult);
-                }
+	            var guardResult = guardAttribute.Check(process.BaseContext);
+	            this.D($"Executed Guards Handler of -> Type: {guardAttribute.GetType().FullName} for process type: {processType?.FullName}.");
+                if (guardResult == null) continue;
+                return VoidResult.FaultedResult<TResult>(guardResult);
             }
 
-            return Next.Execute(process, processType, args);
+            var result = Next.Execute(process, processType, args);
+            return result;
         }
     }
 }

@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Signals.Core.Common.Reflection;
 
 namespace Signals.Core.Processing.Execution.ExecutionHandlers
 {
@@ -41,7 +42,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             }
             catch (Exception ex)
             {
-                var criticalAttributes = processType.GetCustomAttributes(typeof(CriticalAttribute), true).Cast<CriticalAttribute>().ToList();
+                var criticalAttributes = processType.GetCachedAttributes<CriticalAttribute>();
 
                 if (criticalAttributes.Any())
                 {
@@ -50,59 +51,65 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                 }
 
                 var happeningDate = DateTime.UtcNow;
-                if (ApplicationConfiguration.Instance?.CriticalConfiguration != null)
+                if (ApplicationConfiguration.Instance?.CriticalConfiguration == null)
                 {
-                    string InterpolateException(string originalString)
-                    {
-                        return originalString
-                            .Replace("[#Date#]", happeningDate.ToString(CultureInfo.InvariantCulture))
-                            .Replace("[#Process#]", processType.Name)
-                            .Replace("[#Message#]", ex.Message)
-                            .Replace("[#StackTrace#]", ex.StackTrace)
-                            .Replace("[#Data#]", args?.SerializeJson());
-                    }
+	                this.D($"No critical configuration has been found for process type: {processType?.FullName}. Exit handler.");
+	                throw;
+                }
 
-                    var client = SystemBootstrapper.GetInstance<ISmtpClient>();
+                string InterpolateException(string originalString)
+                {
+	                return originalString
+		                .Replace("[#Date#]", happeningDate.ToString(CultureInfo.InvariantCulture))
+		                .Replace("[#Process#]", processType.Name)
+		                .Replace("[#Message#]", ex.Message)
+		                .Replace("[#StackTrace#]", ex.StackTrace)
+		                .Replace("[#Data#]", args?.SerializeJson());
+                }
 
-                    if (!client.IsNull())
-                    {
-                        foreach (var attribute in criticalAttributes)
-                        {
-                            var emails = attribute.NotificaitonEmails?.Split(',')?.Select(x => x.Trim())?.ToList();
+                var client = SystemBootstrapper.GetInstance<ISmtpClient>();
+                if (client.IsNull())
+                {
+	                this.D($"No SMTP client has been found for process type: {processType?.FullName}. Exit handler.");
+                    throw;
+                }
 
-                            if (!emails.IsNullOrHasZeroElements())
-                            {
-                                var from = ApplicationConfiguration.Instance.ApplicationEmail;
-                                var to = emails;
-                                var subject = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Subject);
-                                var body = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Body);
+                foreach (var attribute in criticalAttributes)
+                {
+	                var emails = attribute.NotificaitonEmails?.Split(',')?.Select(x => x.Trim())?.ToList();
 
-                                var data = $@"Date: {happeningDate.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
+	                if (!emails.IsNullOrHasZeroElements())
+	                {
+		                var from = ApplicationConfiguration.Instance.ApplicationEmail;
+		                var subject = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Subject);
+		                var body = InterpolateException(ApplicationConfiguration.Instance.CriticalConfiguration.Body);
+
+		                var data = $@"Date: {happeningDate.ToString(CultureInfo.InvariantCulture)}{Environment.NewLine}
 Process: {processType.Name}{Environment.NewLine}
 Message: {ex.Message}{Environment.NewLine}
 StackTrace: {ex.StackTrace}{Environment.NewLine}
 Data: {args?.SerializeJson()}{Environment.NewLine}";
 
-                                Attachment attachment = Attachment.CreateAttachmentFromString(data, "critical_info.txt");
+		                Attachment attachment = Attachment.CreateAttachmentFromString(data, "critical_info.txt");
 
-                                var message = new MailMessage();
-                                message.From = new MailAddress(from);
-                                message.Subject = subject;
-                                message.Body = body;
-                                message.IsBodyHtml = true;
+		                var message = new MailMessage();
+		                message.From = new MailAddress(@from);
+		                message.Subject = subject;
+		                message.Body = body;
+		                message.IsBodyHtml = true;
 
-                                foreach (var email in emails)
-                                {
-                                    message.To.Add(email);
-                                }
+		                foreach (var email in emails)
+		                {
+			                message.To.Add(email);
+		                }
 
-                                message.Attachments.Add(attachment);
-                                client.Send(message);                                
-                            }
-                        }
+		                message.Attachments.Add(attachment);
+		                client.Send(message);
+		                this.D($"Critical email has been sent to: {string.Join(", ", emails)} for process type: {processType?.Name}. Exception: {ex.Message}");
                     }
                 }
 
+                this.D("Executed -> Critical Notifying Handler");
                 throw;
             }
         }

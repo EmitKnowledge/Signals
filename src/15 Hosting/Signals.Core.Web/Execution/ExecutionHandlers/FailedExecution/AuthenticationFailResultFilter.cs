@@ -25,16 +25,19 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers.FailedExecution
         /// <returns></returns>
         public MiddlewareResult HandleAfterExecution<TProcess>(TProcess process, Type type, VoidResult response, IHttpContextWrapper context) where TProcess : IBaseProcess<VoidResult>
         {
-            if (response.IsFaulted && response.ErrorMessages.OfType<AuthenticationErrorInfo>().Any())
-            {
-                context.PutResponse(new HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized)
-                {
-                    Content = type.ToHttpContent(response)
-                });
-                return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
-            }
+	        if (!response.IsFaulted || !response.ErrorMessages.OfType<AuthenticationErrorInfo>().Any())
+	        {
+		        return MiddlewareResult.DoNothing;
+	        }
 
-            return MiddlewareResult.DoNothing;
+	        context.PutResponse(new HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized)
+            {
+	            Content = type.ToHttpContent(response)
+            });
+
+            this.D("Authentication Error -> User is unauthorized. Exit Filter.");
+            
+            return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;
         }
     }
 }

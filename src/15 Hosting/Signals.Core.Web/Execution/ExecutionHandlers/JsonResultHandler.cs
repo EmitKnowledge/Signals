@@ -1,15 +1,9 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Signals.Core.Processes.Base;
-using Signals.Core.Common.Serialization;
 using Signals.Core.Processing.Input.Http;
 using Signals.Core.Processing.Results;
-using Signals.Core.Web.Http;
 using Signals.Core.Web.Helpers;
 
 namespace Signals.Core.Web.Execution.ExecutionHandlers
@@ -37,6 +31,8 @@ namespace Signals.Core.Web.Execution.ExecutionHandlers
             {
                 Content = type.ToHttpContent(response)
             });
+
+            this.D($"Returning JSON result -> Status code: {statusCode}. Exit Handler.");
 
             // result is always handled, this is result fallback
             return MiddlewareResult.StopExecutionAndStopMiddlewarePipe;

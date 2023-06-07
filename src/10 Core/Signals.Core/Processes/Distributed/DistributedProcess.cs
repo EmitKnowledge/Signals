@@ -15,7 +15,7 @@ namespace Signals.Core.Processes.Distributed
     internal interface IDistributedProcess { VoidResult ExecuteBackgroundProcess(params object[] args); }
 
     /// <summary>
-    /// Represents a usecase
+    /// Represents a distributed usecase process
     /// </summary>
     public abstract class DistributedProcess<TTransientData, TResponse> : BusinessProcess<TResponse>,
         IDistributedProcess
@@ -25,7 +25,7 @@ namespace Signals.Core.Processes.Distributed
         /// <summary>
         /// CTOR
         /// </summary>
-        public DistributedProcess()
+        protected DistributedProcess()
         {
             _cancelDistributedExecution = false;
         }
@@ -37,13 +37,13 @@ namespace Signals.Core.Processes.Distributed
         protected new virtual IDistributedProcessContext Context
         {
             get => _context;
-            set { (value as DistributedProcessContext).SetProcess(this); _context = value; }
+            set { (value as DistributedProcessContext)?.SetProcess(this); _context = value; }
         }
         private IDistributedProcessContext _context;
         private bool _cancelDistributedExecution;
 
         /// <summary>
-        /// Base process context upcasted from Api process context
+        /// Base process context upcasted from Distributed process context
         /// </summary>
         internal override IBaseProcessContext BaseContext => Context;
 
@@ -65,6 +65,7 @@ namespace Signals.Core.Processes.Distributed
         protected void CancelDistributedExecution()
         {
             _cancelDistributedExecution = true;
+            this.D("Message publishing cancelled.");
         }
 
         /// <summary>
@@ -74,10 +75,17 @@ namespace Signals.Core.Processes.Distributed
         internal override TResponse Execute()
         {
             var result = base.Execute();
-            if (result.IsFaulted) return result;
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Execute -> Failed.");
+                return result;
+            }
 
             if (!_cancelDistributedExecution)
-                PublishNotificaiton(Name, Map(result));
+            {
+	            PublishNotification(Name, Map(result));
+	            this.D("Executed -> Publish Notification.");
+            }
 
             return result;
         }
@@ -99,14 +107,23 @@ namespace Signals.Core.Processes.Distributed
         /// <returns></returns>
         internal VoidResult ExecuteBackgroundProcess(params object[] args)
         {
-            TTransientData transientData = default(TTransientData);
+            var transientData = default(TTransientData);
 
             if (args[0] is string str)
-                transientData = str.Deserialize<TTransientData>(SerializationFormat.Json);
+            {
+	            transientData = str.Deserialize<TTransientData>(SerializationFormat.Json);
+	            this.D($"Deserialized transient data: {str}.");
+            }
             else if (args[0] is TTransientData tran)
-                transientData = tran;
-            else if (args[0] is object obj)
-                transientData = obj.SerializeJson().Deserialize<TTransientData>(SerializationFormat.Json);
+            {
+	            transientData = tran;
+            }
+            else if (args[0] is { } obj)
+            {
+	            var json = obj.SerializeJson();
+	            transientData = json.Deserialize<TTransientData>(SerializationFormat.Json);
+	            this.D($"Deserialized transient data from object: {json}.");
+            }
 
             return Work(transientData);
         }
@@ -117,12 +134,12 @@ namespace Signals.Core.Processes.Distributed
         }
 
         /// <summary>
-        /// Handler for publishing events to communicaiton channel
+        /// Handler for publishing events to communication channel
         /// </summary>
         /// <param name="name"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        internal Task PublishNotificaiton(string name, TTransientData obj)
+        internal Task PublishNotification(string name, TTransientData obj)
         {
             var metadata = new DistributedProcessMetadata();
             metadata.EpicId = EpicId;
@@ -130,7 +147,9 @@ namespace Signals.Core.Processes.Distributed
             metadata.CultureName = Thread.CurrentThread.CurrentCulture.Name;
             metadata.Payload = obj.SerializeJson();
 
-            return Context.Channel?.Publish(name, metadata);
+            var publishResult = Context.Channel?.Publish(name, metadata);
+            this.D($"Publishing notification -> Message metadata: {metadata.SerializeJson()}.");
+            return publishResult;
         }
     }
 
@@ -157,7 +176,7 @@ namespace Signals.Core.Processes.Distributed
         protected new virtual IDistributedProcessContext Context
         {
             get => _context;
-            set { (value as DistributedProcessContext).SetProcess(this); _context = value; }
+            set { (value as DistributedProcessContext)?.SetProcess(this); _context = value; }
         }
         private IDistributedProcessContext _context;
         private bool _cancelDistributedExecution;
@@ -185,6 +204,7 @@ namespace Signals.Core.Processes.Distributed
         protected void CancelDistributedExecution()
         {
             _cancelDistributedExecution = true;
+            this.D("Message publishing cancelled.");
         }
 
         /// <summary>
@@ -194,10 +214,17 @@ namespace Signals.Core.Processes.Distributed
         internal override TResponse Execute(TRequest request)
         {
             var result = base.Execute(request);
-            if (result.IsFaulted) return result;
+            if (result.IsFaulted)
+            {
+	            this.D("Executed -> Execute -> Failed.");
+                return result;
+            }
 
             if (!_cancelDistributedExecution)
-                PublishNotificaiton(Name, Map(request, result));
+            {
+	            PublishNotification(Name, Map(request, result));
+	            this.D("Executed -> Publish Notification.");
+            }
 
             return result;
         }
@@ -209,10 +236,15 @@ namespace Signals.Core.Processes.Distributed
         /// <returns></returns>
         internal override TResponse ExecuteProcess(params object[] args)
         {
-            if (args[0] is TRequest obj)
-                return Execute(obj);
+	        if (args[0] is TRequest obj)
+	        {
+		        return Execute(obj);
+	        }
 
+	        this.D("Input data not found. Proceed with fallback input.");
             var fallbackInput = (args[0] as string).Deserialize<TRequest>();
+            this.D($"Deserialized fallback input data: {fallbackInput}.");
+
             return Execute(fallbackInput);
         }
 
@@ -223,14 +255,23 @@ namespace Signals.Core.Processes.Distributed
         /// <returns></returns>
         internal VoidResult ExecuteBackgroundProcess(params object[] args)
         {
-            TTransientData transientData = default(TTransientData);
+            var transientData = default(TTransientData);
 
             if (args[0] is string str)
-                transientData = str.Deserialize<TTransientData>(SerializationFormat.Json);
+            {
+	            transientData = str.Deserialize<TTransientData>(SerializationFormat.Json);
+	            this.D($"Deserialized transient data: {str}.");
+            }
             else if (args[0] is TTransientData tran)
-                transientData = tran;
-            else if (args[0] is object obj)
-                transientData = obj.SerializeJson().Deserialize<TTransientData>(SerializationFormat.Json);
+            {
+	            transientData = tran;
+            }
+            else if (args[0] is { } obj)
+            {
+	            var json = obj.SerializeJson();
+	            transientData = json.Deserialize<TTransientData>(SerializationFormat.Json);
+	            this.D($"Deserialized transient data from object: {json}.");
+            }
 
             return Work(transientData);
         }
@@ -241,12 +282,12 @@ namespace Signals.Core.Processes.Distributed
         }
 
         /// <summary>
-        /// Handler for publishing events to communicaiton channel
+        /// Handler for publishing events to communication channel
         /// </summary>
         /// <param name="name"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        internal Task PublishNotificaiton(string name, TTransientData obj)
+        internal Task PublishNotification(string name, TTransientData obj)
         {
             var metadata = new DistributedProcessMetadata();
             metadata.EpicId = EpicId;
@@ -254,7 +295,9 @@ namespace Signals.Core.Processes.Distributed
             metadata.CultureName = Thread.CurrentThread.CurrentCulture.Name;
             metadata.Payload = obj.SerializeJson();
 
-            return Context.Channel?.Publish(name, metadata);
+            var publishResult = Context.Channel?.Publish(name, metadata);
+            this.D($"Publishing notification -> Message metadata: {metadata.SerializeJson()}.");
+            return publishResult;
         }
     }
 }

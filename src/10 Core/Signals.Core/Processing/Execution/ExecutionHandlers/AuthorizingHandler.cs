@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Signals.Core.Common.Reflection;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Authorization;
 using Signals.Core.Processing.Exceptions;
@@ -29,8 +30,8 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
         /// <returns></returns>
         public TResult Execute<TResult>(IBaseProcess<TResult> process, Type processType, params object[] args) where TResult : VoidResult, new()
         {
-            // get authorize attrigute
-            var attributes = processType.GetCustomAttributes(typeof(SignalsAuthorizeAttribute), false).Cast<SignalsAuthorizeAttribute>().ToList();
+            // get authorize attribute
+            var attributes = processType.GetCachedAttributes<SignalsAuthorizeAttribute>();
 
             // if no attribute is present the request is valid
             if (!attributes.Any()) return Next.Execute(process, processType, args);
@@ -47,7 +48,9 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                 return VoidResult.FaultedResult<TResult>(new AuthorizationErrorInfo());
             }
 
-            return Next.Execute(process, processType, args);
+            var result = Next.Execute(process, processType, args);
+            this.D($"Executed -> Authorizing Handler for process type: {processType?.FullName}.");
+            return result;
         }
     }
 }

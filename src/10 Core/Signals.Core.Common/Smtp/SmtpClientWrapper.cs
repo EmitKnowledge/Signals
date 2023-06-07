@@ -4,16 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using MailKit.Security;
+using MimeKit;
+using SmtpMailClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace Signals.Core.Common.Smtp
 {
     /// <summary>
     /// SMTP client wrapper
     /// </summary>
-    public class SmtpClientWrapper : SmtpClient, ISmtpClient
+    public class SmtpClientWrapper : ISmtpClient
     {
-        private SmtpClient SmtpClient { get; }
-
+        public string Server { get; set; }
+        public int Port { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        
         public List<string> WhitelistedEmails { get; set; }
 
         public List<string> WhitelistedEmailDomains { get; set; }
@@ -21,9 +27,86 @@ namespace Signals.Core.Common.Smtp
         /// <summary>
         /// CTOR
         /// </summary>
-        public SmtpClientWrapper(SmtpClient smtpClient)
+        public SmtpClientWrapper()
         {
-            SmtpClient = smtpClient;
+        }
+        
+        /// <summary>
+        /// Send native email via MailKit
+        /// </summary>
+        /// <param name="mail"></param>
+        /// <param name="server"></param>
+        /// <param name="port"></param>
+        /// <param name="isSslEnabled"></param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        private static async Task SendNativeAsync(
+            MailMessage mail,
+            string server,
+            int port,
+            string username,
+            string password
+            )
+        {
+
+            using (var client = new SmtpMailClient())
+            {
+                client.ServerCertificateValidationCallback = (sender, certificate, certChainType, errors) => true;
+                client.AuthenticationMechanisms.Remove("XOAUTH2");
+                await client.ConnectAsync(server, port, SecureSocketOptions.Auto);
+                await client.AuthenticateAsync(username, password);
+
+                var mimeMessage = new MimeMessage();
+
+                mimeMessage.From.Add(new MailboxAddress(mail.From.DisplayName, mail.From.Address));
+                
+                if (!mail.To.IsNullOrHasZeroElements())
+                {
+                    mimeMessage.To.AddRange(
+                        mail.To.Select(x => new MailboxAddress(x.DisplayName, x.Address))
+                    );
+                }
+                
+                if (!mail.ReplyToList.IsNullOrHasZeroElements())
+                {
+                    mimeMessage.ReplyTo.AddRange(mail.ReplyToList.Select(x => new MailboxAddress(x.DisplayName, x.Address)));
+                }
+
+                if (!mail.CC.IsNullOrHasZeroElements())
+                {
+                    mimeMessage.Cc.AddRange(
+                        mail.CC.Select(x => new MailboxAddress(x.DisplayName, x.Address))
+                    );
+                }
+
+                if (!mail.Bcc.IsNullOrHasZeroElements())
+                {
+                    mimeMessage.Bcc.AddRange(
+                        mail.Bcc.Select(x => new MailboxAddress(x.DisplayName, x.Address))
+                    );
+                }
+
+                var builder = new BodyBuilder();
+                builder.TextBody = mail.Body;
+                builder.HtmlBody = mail.Body;
+                
+                if (!mail.Attachments.IsNullOrHasZeroElements())
+                {
+                    foreach (var attachment in mail.Attachments)
+                    {
+                        await builder.Attachments.AddAsync(attachment.Name, attachment.ContentStream);
+                    }
+                }
+
+                mimeMessage.Subject = mail.Subject;
+                mimeMessage.Body = builder.ToMessageBody();
+
+                await client.SendAsync(mimeMessage);
+
+                await client.DisconnectAsync(true);
+            }
+
         }
 
         /// <summary>
@@ -106,24 +189,11 @@ namespace Signals.Core.Common.Smtp
             recipients = string.Join(";", GetWhitelistedRecipients(recipients));
             if (!recipients.IsNullOrEmpty())
             {
-                SmtpClient.Send(from, recipients, subject, body);
-            }
-        }
-
-        /// <summary>
-        /// Send async message
-        /// </summary>
-        /// <param name="from"></param>
-        /// <param name="recipients"></param>
-        /// <param name="subject"></param>
-        /// <param name="body"></param>
-        /// <param name="userToken"></param>
-        public new async void SendAsync(string from, string recipients, string subject, string body, object userToken)
-        {
-            recipients = string.Join(";", GetWhitelistedRecipients(recipients));
-            if (!recipients.IsNullOrEmpty())
-            {
-                SmtpClient.SendAsync(from, recipients, subject, body, userToken);
+                var message = new MailMessage(from, recipients, subject, body);
+                Task.Run(async () =>
+                {
+                    await SendNativeAsync(message, Server, Port, Username, Password);
+                }).Wait();
             }
         }
 
@@ -140,7 +210,8 @@ namespace Signals.Core.Common.Smtp
             recipients = string.Join(";", GetWhitelistedRecipients(recipients));
             if (!recipients.IsNullOrEmpty())
             {
-                await SmtpClient.SendMailAsync(from, recipients, subject, body);
+               var message = new MailMessage(from, recipients, subject, body);
+               await SendNativeAsync(message, Server, Port, Username, Password);
             }
         }
 
@@ -168,44 +239,10 @@ namespace Signals.Core.Common.Smtp
 
             if (!message.To.IsNullOrHasZeroElements())
             {
-                SmtpClient.Send(message);
-            }
-
-            message.To.Clear();
-            message.CC.Clear();
-            message.Bcc.Clear();
-
-            originalTo.ForEach(message.To.Add);
-            originalCc.ForEach(message.CC.Add);
-            originalBcc.ForEach(message.Bcc.Add);
-        }
-
-        /// <summary>
-        /// Send async message
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="userToken"></param>
-        public new async void SendAsync(MailMessage message, object userToken)
-        {
-            var to = GetWhitelistedRecipients(message.To);
-            var cc = GetWhitelistedRecipients(message.CC);
-            var bcc = GetWhitelistedRecipients(message.Bcc);
-
-            var originalTo = message.To.ToList();
-            var originalCc = message.CC.ToList();
-            var originalBcc = message.Bcc.ToList();
-
-            message.To.Clear();
-            message.CC.Clear();
-            message.Bcc.Clear();
-
-            to?.ForEach(message.To.Add);
-            cc?.ForEach(message.CC.Add);
-            bcc?.ForEach(message.Bcc.Add);
-
-            if (!message.To.IsNullOrHasZeroElements())
-            {
-                SmtpClient.SendAsync(message, userToken);
+                Task.Run(async () =>
+                {
+                    await SendNativeAsync(message, Server, Port, Username, Password);
+                }).Wait();
             }
 
             message.To.Clear();
@@ -242,7 +279,7 @@ namespace Signals.Core.Common.Smtp
 
             if (!message.To.IsNullOrHasZeroElements())
             {
-                await SmtpClient.SendMailAsync(message);
+                await SendNativeAsync(message, Server, Port, Username, Password);
             }
 
             message.To.Clear();

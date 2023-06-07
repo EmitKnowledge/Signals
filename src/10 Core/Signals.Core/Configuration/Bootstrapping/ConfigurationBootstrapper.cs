@@ -27,7 +27,6 @@ using Signals.Core.Processes.Distributed;
 using Signals.Core.Processes.Recurring;
 using Signals.Core.Processes.Export;
 using Signals.Core.Processes.Import;
-using Signals.Core.Processes.Base;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -126,83 +125,183 @@ namespace Signals.Core.Configuration.Bootstrapping
             ApplicationConfiguration config = null;
             try
             {
-                config = ApplicationConfiguration.Instance;
+	            config = ApplicationConfiguration.Instance;
+	            this.D("Assigning an existing application configuration.");
             }
-            catch { }
+            catch(Exception ex)
+            {
+	            this.D($"Exception has occurred during setting up the existing application configuration. Exception: {ex.Message}");
+            }
             finally
             {
-                if (config.IsNull()) throw new Exception("Signals.Core.Configuration.ApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+	            if (config.IsNull())
+	            {
+		            var message =
+			            "Signals.Core.Configuration.ApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!";
+
+                    this.D(message);
+                    throw new Exception(message);
+	            }
             }
 
-            if (DependencyResolver.IsNull() || DependencyResolver().IsNull()) throw new Exception("Dependency resolver not configured");
+            if (DependencyResolver.IsNull() || DependencyResolver().IsNull())
+            {
+	            var message = "Dependency resolver hasn't been configured.";
+                this.D(message);
+	            throw new Exception(message);
+            }
 
             var resolver = DependencyResolver();
 
-            if (!Logging.IsNull() && !Logging().IsNull()) resolver.Register(typeof(ILogger), Logging());
-            if (!Auditing.IsNull() && !Auditing().IsNull()) resolver.Register(typeof(IAuditProvider), Auditing());
-            if (!Cache.IsNull() && !Cache().IsNull()) resolver.Register(typeof(ICache), Cache());
-            if (!Localization.IsNull() && !Localization().IsNull()) resolver.Register(typeof(ILocalizationProvider), Localization());
-            if (!Storage.IsNull() && !Storage().IsNull()) resolver.Register(typeof(IStorageProvider), Storage());
-            if (!MessageChannel.IsNull() && !MessageChannel().IsNull()) resolver.Register(typeof(IMessageChannel), MessageChannel());
-            if (!AuthenticationManager.IsNull() && !AuthenticationManager().IsNull()) resolver.Register(typeof(IAuthenticationManager), AuthenticationManager());
-            if (!AuthorizationManager.IsNull() && !AuthorizationManager().IsNull()) resolver.Register(typeof(IAuthorizationManager), AuthorizationManager());
-            if (!TaskRegistry.IsNull() && !TaskRegistry().IsNull()) resolver.Register(typeof(ITaskRegistry), TaskRegistry());
-            if (!PermissionProvider.IsNull() && !PermissionProvider().IsNull()) resolver.Register(typeof(IPermissionProvider), PermissionProvider());
-            if (!Benchmarker.IsNull() && !Benchmarker().IsNull()) resolver.Register(typeof(IBenchmarker), Benchmarker());
-            if (!PermissionManager.IsNull() && !PermissionManager().IsNull()) resolver.Register(typeof(IPermissionManager), PermissionManager());
+            if (!Logging.IsNull() && !Logging().IsNull())
+            {
+	            resolver.Register(typeof(ILogger), Logging());
+	            this.D("Registration service -> registered Logging.");
+            }
+
+            if (!Auditing.IsNull() && !Auditing().IsNull())
+            {
+	            resolver.Register(typeof(IAuditProvider), Auditing());
+	            this.D("Registration service -> registered Auditing.");
+            }
+
+            if (!Cache.IsNull() && !Cache().IsNull())
+            {
+	            resolver.Register(typeof(ICache), Cache());
+	            this.D("Registration service -> registered Cache.");
+            }
+
+            if (!Localization.IsNull() && !Localization().IsNull())
+            {
+	            resolver.Register(typeof(ILocalizationProvider), Localization());
+	            this.D("Registration service -> registered Localization.");
+            }
+
+            if (!Storage.IsNull() && !Storage().IsNull())
+            {
+	            resolver.Register(typeof(IStorageProvider), Storage());
+	            this.D("Registration service -> registered Storage.");
+            }
+
+            if (!MessageChannel.IsNull() && !MessageChannel().IsNull())
+            {
+	            resolver.Register(typeof(IMessageChannel), MessageChannel());
+	            this.D("Registration service -> registered MessageChannel.");
+            }
+
+            if (!AuthenticationManager.IsNull() && !AuthenticationManager().IsNull())
+            {
+	            resolver.Register(typeof(IAuthenticationManager), AuthenticationManager());
+	            this.D("Registration service -> registered AuthenticationManager.");
+            }
+
+            if (!AuthorizationManager.IsNull() && !AuthorizationManager().IsNull())
+            {
+	            resolver.Register(typeof(IAuthorizationManager), AuthorizationManager());
+	            this.D("Registration service -> registered AuthorizationManager.");
+            }
+
+            if (!TaskRegistry.IsNull() && !TaskRegistry().IsNull())
+            {
+	            resolver.Register(typeof(ITaskRegistry), TaskRegistry());
+	            this.D("Registration service -> registered TaskRegistry.");
+            }
+
+            if (!PermissionProvider.IsNull() && !PermissionProvider().IsNull())
+            {
+	            resolver.Register(typeof(IPermissionProvider), PermissionProvider());
+	            this.D("Registration service -> registered PermissionProvider.");
+            }
+
+            if (!Benchmarker.IsNull() && !Benchmarker().IsNull())
+            {
+	            resolver.Register(typeof(IBenchmarker), Benchmarker());
+	            this.D("Registration service -> registered Benchmarker.");
+            }
+
+            if (!PermissionManager.IsNull() && !PermissionManager().IsNull())
+            {
+	            resolver.Register(typeof(IPermissionManager), PermissionManager());
+	            this.D("Registration service -> registered PermissionManager.");
+            }
             
             resolver.Register<CriticalErrorCallbackManager>();
+            this.D("Registration service -> registered CriticalErrorCallbackManager.");
+
             resolver.Register<IProcessFactory, ProcessFactory>();
+            this.D("Registration service -> registered ProcessFactory.");
+
             resolver.Register<IProcessExecutor, ProcessExecutor>();
+            this.D("Registration service -> registered ProcessExecutor.");
 
             resolver.Register<IBusinessProcessContext, BusinessProcessContext>();
+            this.D("Registration service -> registered BusinessProcessContext.");
+
             resolver.Register<IApiProcessContext, ApiProcessContext>();
+            this.D("Registration service -> registered ApiProcessContext.");
+
             resolver.Register<IDistributedProcessContext, DistributedProcessContext>();
+            this.D("Registration service -> registered DistributedProcessContext.");
+
             resolver.Register<IFileExportProcessContext, FileExportProcessContext>();
+            this.D("Registration service -> registered FileExportProcessContext.");
+
             resolver.Register<IFileImportProcessContext, FileImportProcessContext>();
+            this.D("Registration service -> registered FileImportProcessContext.");
+
             resolver.Register<IRecurringProcessContext, RecurringProcessContext>();
+            this.D("Registration service -> registered RecurringProcessContext.");
 
             resolver.Register<Mediator>();
+            this.D("Registration service -> registered Mediator.");
 
-            RegisterProcesses(config, resolver, scanAssemblies);
-            RegisterErrorHendling(config, resolver);
-            RegisterJsonSerializerSettings(config, resolver);
+            RegisterProcesses(resolver, scanAssemblies);
+            RegisterErrorHandling(resolver);
+            RegisterJsonSerializerSettings(resolver);
             RegisterSmtp(config, resolver);
-            RegisterSyncLogProvider(config, resolver);
+            RegisterSyncLogProvider(resolver);
 
             var services = SystemBootstrapper.Init(resolver, scanAssemblies);
 
             return services;
         }
 
-        private void RegisterProcesses(ApplicationConfiguration config, IRegistrationService resolver, params Assembly[] scanAssemblies)
+        private void RegisterProcesses(IRegistrationService resolver, params Assembly[] scanAssemblies)
         {
+	        this.D($"Creating process repository for provided {scanAssemblies?.Length} assemblies.");
             var processRepo = new ProcessRepository(scanAssemblies);
             resolver.Register(processRepo);
-            processRepo.All().ForEach(type => resolver.Register(type));
+            this.D("Registration service -> registered ProcessRepository.");
+
+            var processes = processRepo.All();
+	        processes.ForEach(resolver.Register);
+	        this.D($"Registration service -> registered {processes.Count} processes.");
         }
 
-        private void RegisterErrorHendling(ApplicationConfiguration config, IRegistrationService resolver)
+        private void RegisterErrorHandling(IRegistrationService resolver)
         {
             if (!ErrorHandling.IsNull() && !ErrorHandling().IsNull())
             {
                 resolver.Register(typeof(IStrategyBuilder), ErrorHandling());
+                this.D("Registration service -> registered ErrorHandling strategy.");
 
                 var handler = ErrorHandling().Build();
 
                 if (!handler.IsNull())
                 {
                     resolver.Register(typeof(IStrategyHandler), handler);
+                    this.D("Registration service -> registered ErrorHandling strategy handler.");
                 }
             }
         }
 
-        private void RegisterJsonSerializerSettings(ApplicationConfiguration config, IRegistrationService resolver)
+        private void RegisterJsonSerializerSettings(IRegistrationService resolver)
         {
             if (!JsonSerializerSettings.IsNull() && !JsonSerializerSettings().IsNull())
             {
                 resolver.Register(typeof(JsonSerializerSettings), JsonSerializerSettings());
                 JsonConvert.DefaultSettings = JsonSerializerSettings;
+                this.D("Registration service -> registered JsonSerializerSettings.");
             }
         }
 
@@ -210,34 +309,27 @@ namespace Signals.Core.Configuration.Bootstrapping
         {
             if (config?.SmtpConfiguration?.IsNull() == false)
             {
-                var server = config.SmtpConfiguration.Server;
-                var port = config.SmtpConfiguration.Port;
-                var useSsl = config.SmtpConfiguration.UseSsl;
-                var username = config.SmtpConfiguration.Username;
-                var password = config.SmtpConfiguration.Password;
-
-                var instance = new SmtpClient(server, port)
-                {
-                    EnableSsl = useSsl,
-                    Credentials = new NetworkCredential(username, password)
-                };
-
-                var wrapper = new SmtpClientWrapper(instance);
+                var wrapper = new SmtpClientWrapper();
+                
+                wrapper.Server = config.SmtpConfiguration.Server;
+                wrapper.Port = config.SmtpConfiguration.Port;
+                wrapper.Username = config.SmtpConfiguration.Username;
+                wrapper.Password = config.SmtpConfiguration.Password;
                 wrapper.WhitelistedEmails = config.WhitelistedEmails;
                 wrapper.WhitelistedEmailDomains = config.WhitelistedEmailDomains;
 
                 resolver.Register<ISmtpClient>(wrapper);
-                resolver.Register<SmtpClient>(instance);
             }
         }
 
-        private void RegisterSyncLogProvider(ApplicationConfiguration config, IRegistrationService resolver)
+        private void RegisterSyncLogProvider(IRegistrationService resolver)
         {
             if (!TaskRegistry.IsNull() && !TaskRegistry().IsNull())
             {
                 if (RecurringTaskLogProvider.IsNull() || RecurringTaskLogProvider().IsNull())
                 {
                     RecurringTaskLogProvider = () => new RecurringTaskLogProvider();
+                    this.D("Registration service -> registered RecurringTaskLogProvider client.");
                 }
 
                 resolver.Register(RecurringTaskLogProvider);

@@ -76,19 +76,32 @@ namespace Signals.Core.Processes.Api
         /// <returns></returns>
         internal override TResponse ExecuteProcess(params object[] args)
         {
-            if (args[0] is string request)
+	        var isValidRequest = true;
+	        TRequest request = default(TRequest);
+            if (args[0] is string json)
             {
-                var obj = request.Deserialize<TRequest>();
-                obj?.Sanitize(new HtmlSanitizer());
-                return Execute(obj);
+	            request = json.Deserialize<TRequest>();
+	            this.D($"Deserialized string -> Request: {json} into -> Type: {typeof(TRequest).FullName} -> Has Value:{request != null}.");
             }
             else if (args[0] is TRequest obj)
             {
-                obj.Sanitize(new HtmlSanitizer());
-                return Execute(obj);
+	            request = obj;
+            }
+            else
+            {
+	            isValidRequest = false;
+	            this.D("Request input is empty.");
             }
 
-            throw new ArgumentException("Input is empty");
+            if (isValidRequest)
+            {
+	            request?.Sanitize(new HtmlSanitizer());
+	            this.D("Sanitized request input.");
+                
+	            return Execute(request);
+            }
+
+            throw new ArgumentException("Request input is empty.");
         }
     }
 }

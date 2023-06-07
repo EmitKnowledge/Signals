@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\05 Aspects\05 Caching\Signals.Aspects.Caching.InMemory\Signals.Aspects.Caching.InMemory.csproj" />
+    <ProjectReference Include="..\..\..\05 Aspects\05 Caching\Signals.Aspects.Caching.Redis\Signals.Aspects.Caching.Redis.csproj" />
   </ItemGroup>
 
 </Project>

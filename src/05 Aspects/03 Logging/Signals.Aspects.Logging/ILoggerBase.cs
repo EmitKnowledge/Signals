@@ -15,6 +15,12 @@ namespace Signals.Aspects.Logging
         void Trace(T logEntry);
 
         /// <summary>
+        /// Log an message consisting of args with log level trace
+        /// </summary>
+        /// <param name="message"></param>
+        void Trace(string message);
+
+        /// <summary>
         /// Log an message consisting of args with log level debug
         /// </summary>
         /// <param name="logEntry"></param>
@@ -33,10 +39,10 @@ namespace Signals.Aspects.Logging
         void Info(T logEntry);
 
         /// <summary>
-        /// Log an message consisting of args
+        /// Log an message consisting of args with log level info
         /// </summary>
-        /// <param name="args"></param>
-        void Info(params object[] args);
+        /// <param name="message"></param>
+        void Info(string message);
 
         /// <summary>
         /// Log an message consisting of args with log level warn
@@ -45,16 +51,22 @@ namespace Signals.Aspects.Logging
         void Warn(T logEntry);
 
         /// <summary>
+        /// Log an message consisting of args with log level warn
+        /// </summary>
+        /// <param name="message"></param>
+        void Warn(string message);
+
+        /// <summary>
         /// Log an message consisting of args with log level error
         /// </summary>
         /// <param name="logEntry"></param>
         void Error(T logEntry);
 
         /// <summary>
-        /// Log an message with log level error
+        /// Log an message consisting of args with log level error
         /// </summary>
-        /// <param name="args"></param>
-        void Error(params object[] args);
+        /// <param name="message"></param>
+        void Error(string message);
 
         /// <summary>
         /// Log an exception
@@ -68,6 +80,12 @@ namespace Signals.Aspects.Logging
         /// </summary>
         /// <param name="logEntry"></param>
         void Fatal(T logEntry);
+
+        /// <summary>
+        /// Log an message consisting of args with log level fatal
+        /// </summary>
+        /// <param name="message"></param>
+        void Fatal(string message);
 
         /// <summary>
         /// Create string description of the log entry
