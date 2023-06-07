@@ -3,16 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.0.6</Version>
+
+    <Version>2.0.7</Version>
     <AssemblyVersion>2.0.6.0</AssemblyVersion>
     <FileVersion>2.0.6.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlSanitizer" Version="4.0.205" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
+    <PackageReference Include="HtmlSanitizer" Version="8.0.645" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.4" />
   </ItemGroup>
 
   <Choose>

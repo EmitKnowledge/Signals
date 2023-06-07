@@ -1,4 +1,3 @@
-﻿ using Ganss.XSS;
 using Signals.Aspects.DI.Attributes;
 using Signals.Core.Common.Serialization;
 using Signals.Core.Processes.Base;
@@ -6,6 +5,7 @@ using Signals.Core.Processes.Business;
 using Signals.Core.Processing.Input;
 using Signals.Core.Processing.Results;
 using System;
+using Ganss.Xss;
 
 namespace Signals.Core.Processes.Api
 {
