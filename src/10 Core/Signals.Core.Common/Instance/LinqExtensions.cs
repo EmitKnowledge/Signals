@@ -17,7 +17,8 @@ namespace Signals.Core.Common.Instance
         /// <param name="source"></param>
         /// <param name="keySelector"></param>
         /// <returns></returns>
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        [Obsolete("DistinctByEx is deprecated, please use DistinctBy from System.LINQ (.NET6 and later) this method in the future will be removed.")]
+        public static IEnumerable<TSource> DistinctByEx<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             var seenKeys = new HashSet<TKey>();
             return source.Where(element => seenKeys.Add(keySelector(element)));
