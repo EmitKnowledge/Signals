@@ -83,7 +83,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                         .GetCustomAttributes(typeof(ResponseHeaderAttribute), false)
                         .Cast<ResponseHeaderAttribute>()
                         .Concat(headers)
-                        .DistinctBy(x => x.Headers.Keys)
+                        .DistinctByEx(x => x.Headers.Keys)
                         .ToList();
 
                     var contentType = EnumExtensions.GetDescription(SerializationFormat.Json);
