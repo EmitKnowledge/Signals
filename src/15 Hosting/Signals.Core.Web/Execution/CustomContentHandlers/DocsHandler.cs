@@ -218,7 +218,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                                 Reference = request != null
                                                     ? new OpenApiReference
                                                     {
-                                                        Id = $"definitions/{requestPath}",
+                                                        Id = $"{requestPath}",
                                                         Type = ReferenceType.Schema,
                                                         ExternalResource = ""
                                                     }
@@ -243,7 +243,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                         Reference = request != null
                                             ? new OpenApiReference
                                             {
-                                                Id = $"definitions/{requestPath}",
+                                                Id = $"{requestPath}",
                                                 Type = ReferenceType.Schema,
                                                 ExternalResource = ""
                                             }
@@ -283,7 +283,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                         {
                                             Reference = new OpenApiReference
                                             {
-                                                Id = $"definitions/{responsePath}",
+                                                Id = $"{responsePath}",
                                                 Type = ReferenceType.Schema,
                                                 ExternalResource = ""
                                             },
@@ -450,7 +450,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     schema.Example = enums.FirstOrDefault();
                     schema.Reference = new OpenApiReference
                     {
-                        Id = $"definitions/{property.PropertyType.Name}",
+                        Id = $"{property.PropertyType.Name}",
                         Type = ReferenceType.Schema,
                         ExternalResource = ""
                     };
