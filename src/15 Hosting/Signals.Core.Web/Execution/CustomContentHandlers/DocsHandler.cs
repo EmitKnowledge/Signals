@@ -215,8 +215,8 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                         {
                                             Schema = new OpenApiSchema
                                             {
-                                                Reference = request != null
-                                                    ? new OpenApiReference
+                                                Reference = request != null && !requestPath.IsNullOrEmpty()
+													? new OpenApiReference
                                                     {
                                                         Id = $"{requestPath}",
                                                         Type = ReferenceType.Schema,
@@ -240,8 +240,8 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                     {
                                         In = ParameterLocation.Query,
                                         Name = pair.Key,
-                                        Reference = request != null
-                                            ? new OpenApiReference
+                                        Reference = request != null && !requestPath.IsNullOrEmpty()
+											? new OpenApiReference
                                             {
                                                 Id = $"{requestPath}",
                                                 Type = ReferenceType.Schema,
@@ -281,13 +281,15 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                     {
                                         Schema = new OpenApiSchema
                                         {
-                                            Reference = new OpenApiReference
-                                            {
-                                                Id = $"{responsePath}",
-                                                Type = ReferenceType.Schema,
-                                                ExternalResource = ""
-                                            },
-                                            Properties = responseSchema
+										Reference = request != null && !requestPath.IsNullOrEmpty()
+											? new OpenApiReference
+											{
+												Id = $"{requestPath}",
+												Type = ReferenceType.Schema,
+												ExternalResource = ""
+											}
+											: null,
+											Properties = responseSchema
                                         }
                                     }
                                 }
