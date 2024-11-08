@@ -1,44 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <Version>2.0.1</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+		<Version>3.0.0</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="configs\app.config.json" />
-    <Content Remove="configs\web.config.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Remove="configs\app.config.json" />
+		<Content Remove="configs\web.config.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.1.0" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="8.1.1" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="configs\web.config.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="configs\app.config.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="configs\web.config.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="configs\app.config.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj" />
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\03 Logging\Signals.Aspects.Logging.NLog\Signals.Aspects.Logging.NLog.csproj" />
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\05 Caching\Signals.Aspects.Caching.InMemory\Signals.Aspects.Caching.InMemory.csproj" />
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\06 Localization\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File.csproj" />
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.ServiceBus\Signals.Aspects.CommunicationChannels.ServiceBus.csproj" />
-    <ProjectReference Include="..\..\..\src-extensibility\05 Aspects\09 Authentication and authorization\Signals.Aspects.Auth.NetCore\Signals.Aspects.Auth.NetCore.csproj" />
-    <ProjectReference Include="..\..\15 Hosting\Signals.Core.Web\Signals.Core.Web.csproj" />
-    <ProjectReference Include="..\Signals.Clients.Processes\App.Clients.Processes.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
+		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj" />
+		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\03 Logging\Signals.Aspects.Logging.NLog\Signals.Aspects.Logging.NLog.csproj" />
+		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\05 Caching\Signals.Aspects.Caching.InMemory\Signals.Aspects.Caching.InMemory.csproj" />
+		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\06 Localization\Signals.Aspects.Localization.File\Signals.Aspects.Localization.File.csproj" />
+		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.ServiceBus\Signals.Aspects.CommunicationChannels.ServiceBus.csproj" />
+		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\09 Authentication and authorization\Signals.Aspects.Auth.NetCore\Signals.Aspects.Auth.NetCore.csproj" />
+		<ProjectReference Include="..\..\15 Hosting\Signals.Core.Web\Signals.Core.Web.csproj" />
+		<ProjectReference Include="..\Signals.Clients.Processes\App.Clients.Processes.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DistributedProcesses\Dtos\Out\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="DistributedProcesses\Dtos\Out\" />
+	</ItemGroup>
 
 </Project>

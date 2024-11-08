@@ -93,9 +93,9 @@ namespace Signals.Aspects.Auth.NetCore
                 principal.AddClaim(ClaimTypes.UserData, user);
             }
 
-            if (properties != null) principal.AddClaim(PrincipalExtensions.AuthenticationPropertiesClaimName, properties);
+            if (properties != null) principal.AddClaim(Auth.Extensions.PrincipalExtensions.AuthenticationPropertiesClaimName, properties);
 
-            var claimProperties = principal.GetClaim<AuthenticationProperties>(PrincipalExtensions.AuthenticationPropertiesClaimName);
+            var claimProperties = principal.GetClaim<AuthenticationProperties>(Auth.Extensions.PrincipalExtensions.AuthenticationPropertiesClaimName);
 
             if (Context != null)
             {
@@ -132,7 +132,7 @@ namespace Signals.Aspects.Auth.NetCore
             if (principal == null) return;
 
             // Save the auth properties
-            var claimProperties = principal.GetClaim<AuthenticationProperties>(PrincipalExtensions.AuthenticationPropertiesClaimName);
+            var claimProperties = principal.GetClaim<AuthenticationProperties>(Auth.Extensions.PrincipalExtensions.AuthenticationPropertiesClaimName);
 
             // Perfomr logout
             Logout();

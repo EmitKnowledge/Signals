@@ -20,7 +20,11 @@ namespace Signals.Aspects.ErrorHandling.Polly.Strategies
         {
             CircuitBreakerPolicy circutBreakerPolicy = Policy
                 .Handle<TException>()
-                .CircuitBreakerAsync(strategy.AllowedExceptionsCount, strategy.CooldownTimeout, (exception, count) => strategy.OnRetry?.Invoke(exception), strategy.OnReset);
+                .CircuitBreaker(
+                strategy.AllowedExceptionsCount, 
+                strategy.CooldownTimeout, 
+                (exception, count) => strategy.OnRetry?.Invoke(exception), 
+                strategy.OnReset);
 
             strategy.Reset = circutBreakerPolicy.Reset;
             strategy.Isolate = circutBreakerPolicy.Isolate;
@@ -35,7 +39,7 @@ namespace Signals.Aspects.ErrorHandling.Polly.Strategies
         /// <returns></returns>
         public override async Task<TResult> Execute<TResult>(Func<TResult> action)
         {
-            return await Policy.ExecuteAsync(() => Task.FromResult(action()));
+            return await Policy.Execute(() => Task.FromResult(action()));
         }
     }
 }

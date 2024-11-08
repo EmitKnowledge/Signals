@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31129.286
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10 Core Extensions", "10 Core Extensions", "{A01FC58F-F6EE-45BA-B783-A3D2E7F2F108}"
 EndProject
@@ -127,18 +127,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "33 Benchmarking", "33 Bench
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Tests.Benchmarking", "..\20 Tests\33 Benchmarking\Signals.Tests.Benchmarking\Signals.Tests.Benchmarking.csproj", "{E67BB737-B864-47FF-8D65-0AA1FD9D8C82}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "15 Features", "15 Features", "{B904D6B0-1FC9-4360-AA65-8BDFDF5CADA9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Features.Email", "..\15 Features\01 Email\Signals.Features.Email\Signals.Features.Email.csproj", "{25344195-4848-4B8A-B015-285B2BCE6FC9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Features.Base", "..\15 Features\00 Base\Signals.Features.Base\Signals.Features.Base.csproj", "{8D4AF15C-676A-4F7D-B1E7-48B6C8BCBD82}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Base", "00 Base", "{92B11983-D7B9-4F51-8FFD-30128EF84F99}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Email", "01 Email", "{B86A638E-BC5A-4BC2-B905-CB4431A90FFE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Features.Hosting", "..\15 Features\00 Base\Signals.Features.Hosting\Signals.Features.Hosting.csproj", "{76F01B3C-D528-44F4-9118-28968EB84622}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Refs", "00 Refs", "{0BB4CE56-88AC-4218-BBCC-B7679C305261}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.DI", "..\..\src\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI\Signals.Aspects.DI.csproj", "{F71E51E9-9711-410B-B1F9-14EB00E5289A}"
@@ -183,7 +171,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Core.Background", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Caching.Redis", "..\05 Aspects\05 Caching\Signals.Aspects.Caching.Redis\Signals.Aspects.Caching.Redis.csproj", "{D52C88BE-5734-411B-AAFF-6E45A245DEBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signals.Aspects.Logging.Serilog", "..\05 Aspects\03 Logging\Signals.Aspects.Logging.Serilog\Signals.Aspects.Logging.Serilog.csproj", "{D09B891A-5D7C-4C61-B099-469643C6F771}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Logging.Serilog", "..\05 Aspects\03 Logging\Signals.Aspects.Logging.Serilog\Signals.Aspects.Logging.Serilog.csproj", "{D09B891A-5D7C-4C61-B099-469643C6F771}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -327,18 +315,6 @@ Global
 		{E67BB737-B864-47FF-8D65-0AA1FD9D8C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E67BB737-B864-47FF-8D65-0AA1FD9D8C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E67BB737-B864-47FF-8D65-0AA1FD9D8C82}.Release|Any CPU.Build.0 = Release|Any CPU
-		{25344195-4848-4B8A-B015-285B2BCE6FC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{25344195-4848-4B8A-B015-285B2BCE6FC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{25344195-4848-4B8A-B015-285B2BCE6FC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25344195-4848-4B8A-B015-285B2BCE6FC9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D4AF15C-676A-4F7D-B1E7-48B6C8BCBD82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D4AF15C-676A-4F7D-B1E7-48B6C8BCBD82}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D4AF15C-676A-4F7D-B1E7-48B6C8BCBD82}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D4AF15C-676A-4F7D-B1E7-48B6C8BCBD82}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76F01B3C-D528-44F4-9118-28968EB84622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76F01B3C-D528-44F4-9118-28968EB84622}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76F01B3C-D528-44F4-9118-28968EB84622}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76F01B3C-D528-44F4-9118-28968EB84622}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F71E51E9-9711-410B-B1F9-14EB00E5289A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F71E51E9-9711-410B-B1F9-14EB00E5289A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F71E51E9-9711-410B-B1F9-14EB00E5289A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -483,11 +459,6 @@ Global
 		{819CA0AE-97E8-4B9C-8DFE-DF1F7D2D2EFD} = {4B2F2533-AACE-4C00-8E22-D1EB0FB62960}
 		{530EDAB1-3926-4A4C-832B-DD8DDBC41FA0} = {D3151AC8-B3DD-496D-A5E9-0C6BE93F4055}
 		{E67BB737-B864-47FF-8D65-0AA1FD9D8C82} = {530EDAB1-3926-4A4C-832B-DD8DDBC41FA0}
-		{25344195-4848-4B8A-B015-285B2BCE6FC9} = {B86A638E-BC5A-4BC2-B905-CB4431A90FFE}
-		{8D4AF15C-676A-4F7D-B1E7-48B6C8BCBD82} = {92B11983-D7B9-4F51-8FFD-30128EF84F99}
-		{92B11983-D7B9-4F51-8FFD-30128EF84F99} = {B904D6B0-1FC9-4360-AA65-8BDFDF5CADA9}
-		{B86A638E-BC5A-4BC2-B905-CB4431A90FFE} = {B904D6B0-1FC9-4360-AA65-8BDFDF5CADA9}
-		{76F01B3C-D528-44F4-9118-28968EB84622} = {92B11983-D7B9-4F51-8FFD-30128EF84F99}
 		{F71E51E9-9711-410B-B1F9-14EB00E5289A} = {71FE8309-8443-4ADE-862A-6D7107F3208D}
 		{6B7CF514-6419-49C0-98DB-1D59FBA4E1AF} = {71FE8309-8443-4ADE-862A-6D7107F3208D}
 		{62370EAC-1B61-430D-926B-2B6FA823C782} = {71FE8309-8443-4ADE-862A-6D7107F3208D}

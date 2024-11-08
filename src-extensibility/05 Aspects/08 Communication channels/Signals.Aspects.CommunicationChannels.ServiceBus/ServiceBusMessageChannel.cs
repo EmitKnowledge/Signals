@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.ServiceBus;
+﻿using Azure.Messaging.ServiceBus;
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.ServiceBus.Management;
 using Newtonsoft.Json;
 using Signals.Aspects.CommunicationChannels.Exceptions;
@@ -66,7 +67,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
 
             var messageBody = JsonConvert.SerializeObject(message);
             var messageBytes = Encoding.UTF8.GetBytes(messageBody);
-            var queueMessage = new Message(messageBytes);
+            var queueMessage = new ServiceBusMessage(messageBytes);
 
             var queue = await queueTask;
             if (queue == null) throw new ChannelDoesntExistException(channelName);
@@ -113,7 +114,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
             };
 
             // Register the function that processes messages.
-            queue.RegisterMessageHandler(async (Message message, CancellationToken token) =>
+            queue.RegisterMessageHandler(async (ServiceBusMessage message, CancellationToken token) =>
             {
                 var messageBytes = message.Body;
                 var messageBody = Encoding.UTF8.GetString(messageBytes);
@@ -173,7 +174,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
                 }
             }
 
-            var client = new QueueClient(_configuration.ConnectionString, fullQueueName, ReceiveMode.PeekLock, RetryPolicy.Default);
+            var client = new QueueClient(_configuration.ConnectionString, fullQueueName, ServiceBusReceiveMode.PeekLock, RetryPolicy.Default);
             client.OperationTimeout = TimeSpan.FromMinutes(5);
 
             return Task.FromResult((IQueueClient)client);

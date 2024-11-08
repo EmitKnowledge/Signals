@@ -1,4 +1,4 @@
-﻿using Ganss.XSS;
+﻿using Ganss.Xss;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Signals.Aspects.Caching.InMemory.Configurations;
