@@ -15,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\00 Solution\Signals.Tests.CommonConfiguration\Signals.Tests.CommonConfiguration.csproj" />
 		<ProjectReference Include="..\..\..\05 Aspects\13 Benchmarking\Signals.Aspects.Benchmarking.Database\Signals.Aspects.Benchmarking.Database.csproj" />
 	</ItemGroup>
 

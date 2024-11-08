@@ -16,6 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\00 Solution\Signals.Tests.CommonConfiguration\Signals.Tests.CommonConfiguration.csproj" />
 		<ProjectReference Include="..\..\..\05 Aspects\12 Security\Signals.Aspects.Security.Database\Signals.Aspects.Security.Database.csproj" />
 	</ItemGroup>
 

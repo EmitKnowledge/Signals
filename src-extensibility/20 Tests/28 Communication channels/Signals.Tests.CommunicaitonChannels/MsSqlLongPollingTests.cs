@@ -7,15 +7,18 @@ using Signals.Tests.CommunicaitonChannels.Events;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.CommunicaitonChannels
 {
     public class MsSqlLongPollingTests
     {
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
+
         private MsSqlChannelConfiguration Configuration => new MsSqlChannelConfiguration
         {
-            ConnectionString = $@"Data Source=sql.emitknowledge.com;Initial Catalog=app.db; User Id=appusr; Password=FYGncRXGySXDz6RFNg2e",
+            ConnectionString = _configuration.DatabaseConfiguration.ConnectionString,
             MessageListeningStrategy = MessageListeningStrategy.LongPolling,
             LongPollingTimeout = 1
         };

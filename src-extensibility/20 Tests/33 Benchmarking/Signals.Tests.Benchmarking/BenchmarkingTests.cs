@@ -5,6 +5,7 @@ using System;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Benchmarking
@@ -13,12 +14,14 @@ namespace Signals.Tests.Benchmarking
     {
         private readonly DatabaseBenchmarkingConfiguration _databaseConfiguration;
         private readonly IBenchmarker _benchmarker;
+        
+        private static BaseTestConfiguration _configuration  = BaseTestConfiguration.Instance;
 
         public BenchmarkingTests()
         {
             _databaseConfiguration = new DatabaseBenchmarkingConfiguration
             {
-                ConnectionString = "Server=[SERVER];Database=[DB];User Id=[USR];Password=[PWD];",
+                ConnectionString = _configuration.DatabaseConfiguration.ConnectionString,
                 TableName = "BenchmarkEntry2"
             };
 

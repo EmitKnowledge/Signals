@@ -17,6 +17,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\15 Hosting\Signals.Core.Web\Signals.Core.Web.csproj" />
+		<ProjectReference Include="..\..\..\00 Solution\Signals.Tests.CommonConfiguration\Signals.Tests.CommonConfiguration.csproj" />
 		<ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
 		<ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.DotNetCore\Signals.Aspects.DI.DotNetCore.csproj" />
 		<ProjectReference Include="..\..\..\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.SimpleInjector\Signals.Aspects.DI.SimpleInjector.csproj" />
