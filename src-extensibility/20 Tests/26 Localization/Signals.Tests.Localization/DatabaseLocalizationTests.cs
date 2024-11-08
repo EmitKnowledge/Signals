@@ -4,13 +4,16 @@ using Signals.Aspects.Localization;
 using Signals.Aspects.Localization.Base;
 using Signals.Aspects.Localization.Database.Configurations;
 using Signals.Aspects.Localization.Database.DataProviders;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Localization
 {
     public class DatabaseLocalizationTests
     {
-        private static string ConnectionString = "Server=[SERVER];Database=[DB];User Id=[USR];Password=[PWD];";
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
+        
+        private static string ConnectionString = _configuration.DatabaseConfiguration.ConnectionString;
 
         private readonly ILocalizationProvider _provider;
 

@@ -1,6 +1,7 @@
 using Signals.Aspects.Security.Database;
 using Signals.Aspects.Security.Database.Configurations;
 using System.Data.SqlClient;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Security
@@ -9,12 +10,13 @@ namespace Signals.Tests.Security
     {
         private readonly DatabaseSecurityConfiguration _databaseConfiguration;
         private readonly PermissionProvider _permissionProvider;
+        private static BaseTestConfiguration _configuration  = BaseTestConfiguration.Instance;
 
         public PermissionTests()
         {
             _databaseConfiguration = new DatabaseSecurityConfiguration
             {
-                ConnectionString = "Server=[SERVER];Database=[DB];User Id=[USR];Password=[PWD];",
+                ConnectionString = _configuration.DatabaseConfiguration.ConnectionString,
                 TableName = "Permissions2"
             };
             _permissionProvider = new PermissionProvider(_databaseConfiguration);

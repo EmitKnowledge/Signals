@@ -7,6 +7,7 @@ using Signals.Aspects.Logging.Serilog.Configurations;
 using System;
 using System.Data.SqlClient;
 using System.IO;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Logging
@@ -14,6 +15,7 @@ namespace Signals.Tests.Logging
     public class SerilogTests
     {
         private static object @lock = new object();
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
 
         [Fact]
         public void FileLoggerMinLevelWarn_LogsInfo_FileIsEmpty()
@@ -96,12 +98,9 @@ namespace Signals.Tests.Logging
         public void DatabaseLogger_LogsInfo_DatabaseLogs()
         {
             var message = "Some entry";
-            var Host = "sql.emitknowledge.com";
-            var Database = "app.db";
-            var Username = "appusr";
-            var Password = "FYGncRXGySXDz6RFNg2e";
             var TableName = "Log2";
-            string connectionString = $"Data Source={Host};Initial Catalog={Database}; User Id={Username}; Password={Password}";
+            
+            string connectionString = _configuration.DatabaseConfiguration.ConnectionString;
 
             Aspects.Logging.ILogger logger = new SerilogLogger(new SerilogLoggingConfiguration
             {
@@ -134,12 +133,8 @@ namespace Signals.Tests.Logging
         public void DatabaseLogger_LogsError_DatabaseLogs()
         {
             var message = "Some entry";
-            var Host = "sql.emitknowledge.com";
-            var Database = "app.db";
-            var Username = "appusr";
-            var Password = "FYGncRXGySXDz6RFNg2e";
             var TableName = "Log2";
-            string connectionString = $"Data Source={Host};Initial Catalog={Database}; User Id={Username}; Password={Password}";
+            string connectionString = _configuration.DatabaseConfiguration.ConnectionString;
 
             Aspects.Logging.ILogger logger = new SerilogLogger(new SerilogLoggingConfiguration
             {

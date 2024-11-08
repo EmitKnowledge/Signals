@@ -1,0 +1,31 @@
+{
+  "DatabaseConfiguration":  {
+    "Server" : "database_access_url",
+    "Database": "app_db",
+    "Username": "app_usr",
+    "Password": "password",
+    "BrokerTable": "EventTable"
+  },
+  "SmtpConfiguration": {
+    "Server" : "smtp.gmail.com",
+    "Port" : 587,
+    "Username" : "",
+    "Password" : "",
+    "Email" : "",
+    "RootEmail": "basemail before @",
+    "RootDomain": "domain.com"
+  },
+  "StorageConfiguration": {
+    "AccountName": "",
+    "AccountKey": "",
+    "InputDirectoryPath": "Files",
+    "InputFileName": "input{#}.jpg",
+    "OutputDirectoryPath": "Files",
+    "OutputFileName": "output{#}"
+  },
+  "ServiceBusConfiguration": {
+    "Endpoint": "endpoint.url",
+    "AccessKey": "key"
+  }
+  
+}

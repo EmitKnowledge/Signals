@@ -4,17 +4,20 @@ using Signals.Tests.Storage.Helpers;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Storage
 {
     public class FileStorageTests
     {
-        private static readonly string _inputDirectoryPath = "Files";
-        private static readonly string _inputFileName = "input{#}.jpg";
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
+        
+        private static readonly string _inputDirectoryPath = _configuration.StorageConfiguration.InputDirectoryPath;
+        private static readonly string _inputFileName = _configuration.StorageConfiguration.InputFileName;
 
-        private static readonly string _outputDirectoryPath = "Files";
-        private static readonly string _outputFileName = "output{#}.jpg";
+        private static readonly string _outputDirectoryPath = _configuration.StorageConfiguration.OutputDirectoryPath;
+        private static readonly string _outputFileName = _configuration.StorageConfiguration.OutputFileName;
 
         private Task Lock(Func<Task> action)
         {

@@ -1,34 +1,40 @@
+using System;
 using Signals.Core.Common.Smtp;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading;
+using Signals.Aspects.Configuration.File;
+using Signals.Aspects.DI;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Core
 {
     public class SmtpWrapperTests
     {
-        private string rootEmail = "vojdan.gicharovski";
-        private string rootDomain = "gmail.com";
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
+        
+        private string rootEmail = _configuration.SmtpConfiguration.RootEmail;
+        private string rootDomain = _configuration.SmtpConfiguration.RootDomain;
 
         private string _subject => "Subject";
         private string _body => "Body";
         private string _from => $"{rootEmail}@{rootDomain}";
 
-
         private string _to => $"{rootEmail}@{rootDomain}";
         private string _cc => $"{rootEmail}+1@{rootDomain}";
         private string _bcc => $"{rootEmail}+2@{rootDomain}";
-
+        
         private SmtpClientWrapper _smtpWrapper = new SmtpClientWrapper()
         {
-			Server = "smtp.gmail.com",
-            Port = 587,
-            Username = string.Empty,
-            Password = string.Empty
-		};
+            Server = _configuration.SmtpConfiguration.Server,
+            Port = _configuration.SmtpConfiguration.Port,
+            Username = _configuration.SmtpConfiguration.Username,
+            Password =_configuration.SmtpConfiguration.Password
+        };
 
         [Fact]
         public void SendEmail_GetsSent()

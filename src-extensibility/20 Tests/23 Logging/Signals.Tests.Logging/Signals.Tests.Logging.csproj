@@ -27,6 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\00 Solution\Signals.Tests.CommonConfiguration\Signals.Tests.CommonConfiguration.csproj" />
 		<ProjectReference Include="..\..\..\05 Aspects\03 Logging\Signals.Aspects.Logging.NLog\Signals.Aspects.Logging.NLog.csproj" />
 		<ProjectReference Include="..\..\..\05 Aspects\03 Logging\Signals.Aspects.Logging.Serilog\Signals.Aspects.Logging.Serilog.csproj" />
 	</ItemGroup>

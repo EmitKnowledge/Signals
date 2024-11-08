@@ -6,12 +6,15 @@ using System;
 using System.Data.SqlClient;
 using System.IO;
 using System.Threading;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Auditing
 {
     public class AuditTests
     {
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
+        
         [Fact]
         public void Audit_With_FileConfiguration_Should_Create_Valid_Audit_File()
         {
@@ -67,7 +70,7 @@ namespace Signals.Tests.Auditing
             var databaseConfiguration = new DatabaseAuditingConfiguration
             {
                 TableName = "AuditLogTest2",
-                ConnectionString = "Server=[SERVER];Database=[DB];User Id=[USR];Password=[PWD];"
+                ConnectionString = _configuration.DatabaseConfiguration.ConnectionString
             };
 
             using (var connection = new SqlConnection(databaseConfiguration.ConnectionString))
@@ -161,7 +164,7 @@ namespace Signals.Tests.Auditing
             var databaseConfiguration = new DatabaseAuditingConfiguration
             {
                 TableName = "AuditLogTest2",
-                ConnectionString = "Server=[SERVER];Database=[DB];User Id=[USR];Password=[PWD];"
+                ConnectionString = _configuration.DatabaseConfiguration.ConnectionString
             };
 
             using (var connection = new SqlConnection(databaseConfiguration.ConnectionString))
