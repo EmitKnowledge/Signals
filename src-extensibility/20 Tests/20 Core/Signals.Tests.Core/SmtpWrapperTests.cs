@@ -22,11 +22,13 @@ namespace Signals.Tests.Core
         private string _cc => $"{rootEmail}+1@{rootDomain}";
         private string _bcc => $"{rootEmail}+2@{rootDomain}";
 
-        private SmtpClientWrapper _smtpWrapper = new SmtpClientWrapper(new SmtpClient("smtp.gmail.com", 587)
+        private SmtpClientWrapper _smtpWrapper = new SmtpClientWrapper()
         {
-            EnableSsl = true,
-            Credentials = new NetworkCredential(string.Empty, string.Empty) /* put credentials */
-        });
+			Server = "smtp.gmail.com",
+            Port = 587,
+            Username = string.Empty,
+            Password = string.Empty
+		};
 
         [Fact]
         public void SendEmail_GetsSent()
@@ -38,11 +40,6 @@ namespace Signals.Tests.Core
 
             _smtpWrapper.SendMailAsync(_from, _to, _subject, _body).GetAwaiter().GetResult();
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
-
-            _smtpWrapper.SendAsync(_from, _to, _subject, _body, null);
-            Thread.Sleep(5000);
-            _smtpWrapper.SendAsync(message, null);
-
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
 
@@ -58,11 +55,6 @@ namespace Signals.Tests.Core
 
             _smtpWrapper.SendMailAsync(_from, _to, _subject, _body).GetAwaiter().GetResult();
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
-
-            _smtpWrapper.SendAsync(_from, _to, _subject, _body, null);
-            Thread.Sleep(5000);
-            _smtpWrapper.SendAsync(message, null);
-
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
 
@@ -80,11 +72,6 @@ namespace Signals.Tests.Core
             _smtpWrapper.SendMailAsync(_from, _to, _subject, _body).GetAwaiter().GetResult();
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(_from, _to, _subject, _body, null);
-            Thread.Sleep(5000);
-            _smtpWrapper.SendAsync(message, null);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
 
         [Fact]
@@ -101,11 +88,6 @@ namespace Signals.Tests.Core
             _smtpWrapper.SendMailAsync(_from, _to, _subject, _body).GetAwaiter().GetResult();
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(_from, _to, _subject, _body, null);
-            Thread.Sleep(5000);
-            _smtpWrapper.SendAsync(message, null);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
 
         [Fact]
@@ -121,11 +103,6 @@ namespace Signals.Tests.Core
 
             _smtpWrapper.SendMailAsync(_from, _to, _subject, _body).GetAwaiter().GetResult();
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(_from, _to, _subject, _body, null);
-            Thread.Sleep(5000);
-            _smtpWrapper.SendAsync(message, null);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
 
@@ -145,10 +122,6 @@ namespace Signals.Tests.Core
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
             Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(message, null);
-            Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
 
         [Fact]
@@ -164,10 +137,6 @@ namespace Signals.Tests.Core
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
 
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
-            Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(message, null);
             Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
@@ -187,10 +156,6 @@ namespace Signals.Tests.Core
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
             Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(message, null);
-            Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
 
         [Fact]
@@ -206,10 +171,6 @@ namespace Signals.Tests.Core
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
 
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
-            Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(message, null);
             Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
@@ -230,10 +191,6 @@ namespace Signals.Tests.Core
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
             Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(message, null);
-            Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
 
         [Fact]
@@ -249,10 +206,6 @@ namespace Signals.Tests.Core
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
 
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
-            Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(message, null);
             Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
@@ -272,10 +225,6 @@ namespace Signals.Tests.Core
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
             Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(message, null);
-            Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
 
         [Fact]
@@ -291,10 +240,6 @@ namespace Signals.Tests.Core
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
 
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
-            Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(message, null);
             Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
         }
@@ -314,11 +259,6 @@ namespace Signals.Tests.Core
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
 
             _smtpWrapper.SendMailAsync(message).GetAwaiter().GetResult();
-            Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
-            Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
-            Assert.Contains(message.To.ToList(), x => x.Address == _to);
-
-            _smtpWrapper.SendAsync(message, null);
             Assert.Contains(message.CC.ToList(), x => x.Address == _cc);
             Assert.Contains(message.Bcc.ToList(), x => x.Address == _bcc);
             Assert.Contains(message.To.ToList(), x => x.Address == _to);
