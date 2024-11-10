@@ -231,13 +231,20 @@ namespace Signals.Core.Configuration.Bootstrapping
 	        }
 
 	        this.D("Loading all types under Signals.* namespace.");
-            _allTypes = scanAssemblies.SelectMany(
+
+			// fix for NET8: https://github.com/dotnet/SqlClient/issues/1930
+            #if NET8_0
+			scanAssemblies = scanAssemblies.Where(x => !x.Location.Contains("System.Data.SqlClient.dll")).ToArray();
+			#endif
+
+			_allTypes = scanAssemblies.SelectMany(
 	            assembly => assembly.LoadAllTypesFromAssembly()
 					.Where(type => type != null && 
 					               !string.IsNullOrEmpty(type.FullName) && 
 					               type.FullName.StartsWith("Signals")))
 	            .ToList();
-            this.D($"Total {_allTypes.Count} types under Signals has been loaded.");
+
+			this.D($"Total {_allTypes.Count} types under Signals has been loaded.");
 
             config.JsonSerializerSettings = () => JsonSerializerSettings;
             this.D("Set default JsonSerializerSettings.");
