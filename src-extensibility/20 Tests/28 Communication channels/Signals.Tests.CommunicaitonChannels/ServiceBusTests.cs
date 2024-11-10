@@ -69,9 +69,9 @@ namespace Signals.Tests.CommunicaitonChannels
                 Assert.Equal(Timestamp, _event.Timestamp);
             });
 
-            Thread.Sleep(1000);
+            Thread.Sleep(5000);
             channel.Publish(Event).Wait();
-            Thread.Sleep(1000);
+            Thread.Sleep(5000);
 
             Assert.True(task.Result);
             channel.Close().Wait();

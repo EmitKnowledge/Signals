@@ -1,5 +1,4 @@
 using Serilog;
-using Serilog.Sinks.File;
 using Serilog.Sinks.MSSqlServer;
 using Signals.Aspects.Logging.Enums;
 using Signals.Aspects.Logging.Serilog;
@@ -34,13 +33,9 @@ namespace Signals.Tests.Logging
 
             logger.Info(message);
 
-            using (var fileReader = new StreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
-            {
-                var fileText = fileReader.ReadToEnd();
-
-                Assert.Contains("", fileText);
-            }
-        }
+			var fileText = IoHelper.ReadAllText(filePath);
+			Assert.Contains("", fileText);
+		}
 
         [Fact]
         public void FileLogger_LogsInfo_FileExists()
@@ -84,25 +79,21 @@ namespace Signals.Tests.Logging
             });
 
             logger.Error(message);
+			var fileText = IoHelper.ReadAllText(filePath);
 
-            using (var fileReader = new StreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
-            {
-                var fileText = fileReader.ReadToEnd();
-
-                Assert.Contains(message, fileText);
-                Assert.Contains("Error", fileText);
-            }
-        }
+			Assert.Contains(message, fileText);
+			Assert.Contains("Error", fileText);
+		}
 
         [Fact]
         public void DatabaseLogger_LogsInfo_DatabaseLogs()
         {
             var message = "Some entry";
             var TableName = "Log2";
-            
-            string connectionString = _configuration.DatabaseConfiguration.ConnectionString;
 
-            Aspects.Logging.ILogger logger = new SerilogLogger(new SerilogLoggingConfiguration
+			string connectionString = $"{_configuration.DatabaseConfiguration.ConnectionString};Encrypt=True;TrustServerCertificate=True";
+
+			Aspects.Logging.ILogger logger = new SerilogLogger(new SerilogLoggingConfiguration
             {
                 MinimumLevel = LogLevel.Trace,
                 SerilogConfiguration = new LoggerConfiguration().WriteTo.MSSqlServer(connectionString, new MSSqlServerSinkOptions()
@@ -134,7 +125,7 @@ namespace Signals.Tests.Logging
         {
             var message = "Some entry";
             var TableName = "Log2";
-            string connectionString = _configuration.DatabaseConfiguration.ConnectionString;
+            string connectionString = $"{_configuration.DatabaseConfiguration.ConnectionString};Encrypt=True;TrustServerCertificate=True";
 
             Aspects.Logging.ILogger logger = new SerilogLogger(new SerilogLoggingConfiguration
             {

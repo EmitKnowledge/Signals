@@ -119,7 +119,7 @@ namespace Signals.Aspects.Storage.Database
                 var command = connection.CreateCommand();
                 command.CommandText = $@"
                     BEGIN TRANSACTION
-	                    DECLARE @Count int = (SELECT COUNT(*) FROM [File] WHERE Path = @Path AND Name = @Name)
+	                    DECLARE @Count int = (SELECT COUNT(*) FROM [{Configuration.TableName}] WHERE Path = @Path AND Name = @Name)
 	                    IF @Count > 0
 		                    UPDATE [{Configuration.TableName}] SET Path = @Path, Name = @Name, Data = @Data, IsEncrypted = @IsEncrypted
 	                    ELSE

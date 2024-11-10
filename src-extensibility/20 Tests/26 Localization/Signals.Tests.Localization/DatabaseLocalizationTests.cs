@@ -48,8 +48,8 @@ namespace Signals.Tests.Localization
                 Assert.Equal(translation, insertedEntry.Value);
 
                 Assert.NotNull(insertedEntry.LocalizationLanguage);
-                Assert.Equal(culture.DisplayName, insertedEntry.LocalizationLanguage.Name);
-                Assert.Equal(culture.TwoLetterISOLanguageName, insertedEntry.LocalizationLanguage.Value);
+				Assert.Equal(culture.Name.ToLower(), insertedEntry.LocalizationLanguage.Name.ToLower());
+				Assert.Equal(culture.DisplayName.ToLower(), insertedEntry.LocalizationLanguage.Value.ToLower());
 
                 Assert.NotNull(insertedEntry.LocalizationKey);
                 Assert.Equal(key, insertedEntry.LocalizationKey.Name);

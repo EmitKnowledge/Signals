@@ -9,6 +9,5 @@ public class StorageConfiguration
     public string OutputDirectoryPath { get; set; }
     public string OutputFileName { get; set; }
 
-    public string AzureConnectionString =>
-        $"DefaultEndpointsProtocol=https;AccountName=[AccountName];AccountKey=[AccountKey];EndpointSuffix=core.windows.net";
+    public string AzureConnectionString => $"DefaultEndpointsProtocol=https;AccountName={AccountName};AccountKey={AccountKey};EndpointSuffix=core.windows.net";
 }

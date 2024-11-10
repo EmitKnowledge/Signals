@@ -27,7 +27,7 @@ namespace Signals.Tests.Logging
 
             Assert.True(File.Exists(filePath));
 
-            var fileText = File.ReadAllText(filePath);
+            var fileText = IoHelper.ReadAllText(filePath);
 
             Assert.Contains(message, fileText);
             Assert.Contains("Info", fileText);
@@ -66,7 +66,7 @@ namespace Signals.Tests.Logging
 
             Assert.True(File.Exists(filePath));
 
-            var fileText = File.ReadAllText(filePath);
+            var fileText = IoHelper.ReadAllText(filePath);
 
             Assert.Contains(message, fileText);
             Assert.Contains("Info", fileText);
@@ -88,7 +88,7 @@ namespace Signals.Tests.Logging
 
             Assert.True(File.Exists(filePath));
 
-            var fileText = File.ReadAllText(filePath);
+            var fileText = IoHelper.ReadAllText(filePath);
 
             Assert.Contains(message, fileText);
             Assert.Contains("Error", fileText);
@@ -119,7 +119,7 @@ namespace Signals.Tests.Logging
                 SqlDataReader reader = new SqlCommand($@"SELECT * FROM {config.TableName};", connection).ExecuteReader();
                 while (reader.Read())
                 {
-                    Assert.Contains(message, reader["Payload"].ToString());
+                    Assert.Contains(message, reader["Message"].ToString());
                 }
                 reader.Close();
 
@@ -151,7 +151,7 @@ namespace Signals.Tests.Logging
                 SqlDataReader reader = new SqlCommand($@"SELECT * FROM {config.TableName};", connection).ExecuteReader();
                 while (reader.Read())
                 {
-                    Assert.Contains(message, reader["Payload"].ToString());
+                    Assert.Contains(message, reader["Message"].ToString());
                 }
                 reader.Close();
 

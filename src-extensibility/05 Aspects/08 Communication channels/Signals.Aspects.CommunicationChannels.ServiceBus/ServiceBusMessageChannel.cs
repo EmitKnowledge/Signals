@@ -35,7 +35,8 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         /// </summary>
         public Task Close()
         {
-            Task.WaitAll(Subscriptions.Values.Select(x => x.CloseAsync()).ToArray());
+			Task.WaitAll(Subscriptions.Values.Select(x => x.StopProcessingAsync()).ToArray());
+			Task.WaitAll(Subscriptions.Values.Select(x => x.CloseAsync()).ToArray());
 
             Subscriptions.Clear();
 
@@ -105,6 +106,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         public async Task Subscribe<T>(string channelName, Action<T> action) where T : class
         {
             var queue = await GetQueue(channelName);
+            
             Subscriptions.Add(channelName, queue);
 
 			queue.ProcessErrorAsync += async (ProcessErrorEventArgs args) =>
@@ -136,7 +138,9 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
 					await arg.CompleteMessageAsync(arg.Message);
 				}
 			};
-        }
+
+            await queue.StartProcessingAsync();
+		}
 
         /// <summary>
         /// Ensure that the pub/sub channel exists before receving or sending messages to it
