@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Signals.Aspects.Benchmarking
 {
 	/// <summary>
-	/// Represents an Correlation report related to banchmarks
+	/// Represents an Correlation report related to benchmarks
 	/// </summary>
 	public class BenchmarkReport
 	{
@@ -23,7 +23,7 @@ namespace Signals.Aspects.Benchmarking
 	}
 
 	/// <summary>
-	/// Represents an Correlation report related to banchmarks
+	/// Represents an Correlation report related to benchmarks
 	/// </summary>
 	public class CorrelationReport
 	{

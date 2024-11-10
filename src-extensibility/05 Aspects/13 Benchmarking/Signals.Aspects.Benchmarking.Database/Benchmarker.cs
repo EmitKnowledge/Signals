@@ -77,7 +77,7 @@ namespace Signals.Aspects.Benchmarking.Database
 
             bool success = true;
 
-            success = InMemoryNameCache.TryRemove(correlationId, out string banchmarkName);
+            success = InMemoryNameCache.TryRemove(correlationId, out string benchmarkName);
             if (!success) throw new KeyNotFoundException();
 
             success = InMemoryEntiryCache.TryRemove(correlationId, out ConcurrentBag<BenchmarkEntry> values);
@@ -92,7 +92,7 @@ namespace Signals.Aspects.Benchmarking.Database
             table.Columns.Add("CorrelationId");
             table.Columns.Add("ProcessName");
             table.Columns.Add("CallerProcessName");
-            table.Columns.Add("BanchmarkName");
+            table.Columns.Add("BenchmarkName");
             table.Columns.Add("Checkpoint");
             table.Columns.Add("Description");
             table.Columns.Add("Payload");
@@ -102,7 +102,7 @@ namespace Signals.Aspects.Benchmarking.Database
                 var row = table.NewRow();
                 row["Id"] = 0;
                 row["CreatedOn"] = entry.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
-                row["BanchmarkName"] = banchmarkName;
+                row["BenchmarkName"] = benchmarkName;
                 row["CorrelationId"] = entry.CorrelationId;
                 row["ProcessName"] = entry.ProcessName;
                 row["Checkpoint"] = entry.Checkpoint;
@@ -139,21 +139,21 @@ namespace Signals.Aspects.Benchmarking.Database
         /// Mark epic as started
         /// </summary>
         /// <param name="correlationId"></param>
-        /// <param name="banchmarkName"></param>
-        public void Start(Guid correlationId, string banchmarkName)
+        /// <param name="benchmarkName"></param>
+        public void Start(Guid correlationId, string benchmarkName)
         {
             if (!Configuration.IsEnabled) return;
 
-            InMemoryNameCache.AddOrUpdate(correlationId, banchmarkName, (key, value) => value);
+            InMemoryNameCache.AddOrUpdate(correlationId, benchmarkName, (key, value) => value);
         }
 
         /// <summary>
         /// Get epic report data
         /// </summary>
-        /// <param name="banchmarkName"></param>
+        /// <param name="benchmarkName"></param>
         /// <param name="afterDate"></param>
         /// <returns></returns>
-        public BenchmarkReport GetReport(string banchmarkName, DateTime afterDate)
+        public BenchmarkReport GetReport(string benchmarkName, DateTime afterDate)
         {
             if (!Configuration.IsEnabled) return new BenchmarkReport();
 
@@ -168,12 +168,12 @@ namespace Signals.Aspects.Benchmarking.Database
                                     [Description],
                                     [Payload] 
                                 FROM [{Configuration.TableName}] 
-                                WHERE [BanchmarkName] = @BanchmarkName AND [CreatedOn] >= @AfterDate";
+                                WHERE [BenchmarkName] = @BenchmarkName AND [CreatedOn] >= @AfterDate";
 
                 connection.Open();
 
                 var command = new SqlCommand(sql, connection);
-                command.Parameters.AddWithValue("BanchmarkName", banchmarkName);
+                command.Parameters.AddWithValue("BenchmarkName", benchmarkName);
                 command.Parameters.AddWithValue("AfterDate", afterDate.ToString("yyyy-MM-dd HH:mm:ss.fffffff"));
 
                 var result = new List<BenchmarkEntry>();
@@ -241,7 +241,7 @@ namespace Signals.Aspects.Benchmarking.Database
                             [CorrelationId] NVARCHAR(MAX) NOT NULL,
                             [ProcessName] NVARCHAR(MAX) NOT NULL,
                             [CallerProcessName] NVARCHAR(MAX) NULL,
-                            [BanchmarkName] NVARCHAR(MAX) NULL,
+                            [BenchmarkName] NVARCHAR(MAX) NULL,
                             [Checkpoint] NVARCHAR(MAX) NOT NULL,
                             [Description] NVARCHAR(MAX) NULL,
                             [Payload] NVARCHAR(MAX) NULL

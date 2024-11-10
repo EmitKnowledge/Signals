@@ -27,16 +27,16 @@ namespace Signals.Aspects.Benchmarking
 		/// <summary>
 		/// Get correlation report data
 		/// </summary>
-		/// <param name="banchmarkName"></param>
+		/// <param name="benchmarkName"></param>
 		/// <param name="afterDate"></param>
 		/// <returns></returns>
-		BenchmarkReport GetReport(string banchmarkName, DateTime afterDate);
+		BenchmarkReport GetReport(string benchmarkName, DateTime afterDate);
 
 		/// <summary>
 		/// Mark correlation as started
 		/// </summary>
 		/// <param name="correlationId"></param>
-		/// <param name="banchmarkName"></param>
-		void Start(Guid correlationId, string banchmarkName);
+		/// <param name="benchmarkName"></param>
+		void Start(Guid correlationId, string benchmarkName);
     }
 }

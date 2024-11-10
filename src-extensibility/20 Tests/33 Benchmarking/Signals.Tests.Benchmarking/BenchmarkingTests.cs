@@ -35,17 +35,17 @@ namespace Signals.Tests.Benchmarking
         public void Benchmarking_PersistsInDatabase_GeneratesReport()
         {
             Guid correlationId = Guid.NewGuid();
-            string banchmarkName = "My epic";
+            string benchmarkName = "My epic";
             string processName = "MyProc";
 
-            _benchmarker.Start(correlationId, banchmarkName);
+            _benchmarker.Start(correlationId, benchmarkName);
             _benchmarker.Bench("Start", correlationId, processName);
             Thread.Sleep(100);
             _benchmarker.Bench("Processing", correlationId, processName);
             Thread.Sleep(100);
             _benchmarker.Bench("End", correlationId, processName);
             _benchmarker.Flush(correlationId);
-            var report = _benchmarker.GetReport(banchmarkName, DateTime.UtcNow.AddMinutes(-1));
+            var report = _benchmarker.GetReport(benchmarkName, DateTime.UtcNow.AddMinutes(-1));
 
             Assert.Single(report.CorrelationReports);
             Assert.Contains(report.CorrelationReports, x => x.CorrelationId == correlationId);
