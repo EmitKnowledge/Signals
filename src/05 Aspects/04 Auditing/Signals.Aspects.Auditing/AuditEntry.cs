@@ -49,9 +49,9 @@ namespace Signals.Aspects.Auditing
         public string Originator { get; set; }
 
         /// <summary>
-        /// Represents the epic run id
+        /// Represents the correlation run id
         /// </summary>
-        public Guid EpicId { get; set; }
+        public Guid CorrelationId { get; set; }
 
         /// <summary>
         /// Represents the process payload

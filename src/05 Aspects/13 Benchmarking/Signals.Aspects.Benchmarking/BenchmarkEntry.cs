@@ -20,9 +20,9 @@ namespace Signals.Aspects.Benchmarking
         public DateTime CreatedOn { get; set; }
 
         /// <summary>
-        /// Epic identifier for chaining
+        /// Correlation identifier for chaining
         /// </summary>
-        public Guid EpicId { get; set; }
+        public Guid CorrelationId { get; set; }
 
         /// <summary>
         /// Benchmarked process

@@ -105,7 +105,7 @@ namespace Signals.Aspects.Auditing.AuditNET
                             [EndDate] datetime2(7) NULL,
                             [Data] NVARCHAR(MAX) NULL,
                             [Payload] NVARCHAR(MAX) NULL,
-                            [EpicId] NVARCHAR(38) NOT NULL
+                            [CorrelationId] NVARCHAR(38) NOT NULL
                             CONSTRAINT [PK_{databaseConfiguration.TableName}] PRIMARY KEY CLUSTERED 
                             (
 	                            [Id] ASC

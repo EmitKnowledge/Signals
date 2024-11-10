@@ -1,5 +1,4 @@
-﻿using Signals.Core.Processing.Input;
-using System;
+﻿using System;
 
 namespace Signals.Core.Processes.Distributed
 {
@@ -8,10 +7,10 @@ namespace Signals.Core.Processes.Distributed
     /// </summary>
     public class DistributedProcessMetadata
     {
-        /// <summary>
-        /// Id of epic execution chain
-        /// </summary>
-        public Guid EpicId { get; set; }
+		/// <summary>
+		/// Id of correlation execution chain
+		/// </summary>
+		public Guid CorrelationId { get; set; }
 
         /// <summary>
         /// Commiunication payload
