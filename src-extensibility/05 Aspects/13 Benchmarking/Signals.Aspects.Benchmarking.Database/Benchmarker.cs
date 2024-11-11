@@ -41,46 +41,46 @@ namespace Signals.Aspects.Benchmarking.Database
         private static ConcurrentDictionary<Guid, ConcurrentBag<BenchmarkEntry>> InMemoryEntiryCache { get; set; }
         private static ConcurrentDictionary<Guid, string> InMemoryNameCache { get; set; }
 
-        /// <summary>
-        /// Hit benchmarking checkpoint
-        /// </summary>
-        /// <param name="checkpointName"></param>
-        /// <param name="epicId"></param>
-        /// <param name="processName"></param>
-        /// <param name="callerProcessName"></param>
-        /// <param name="description"></param>
-        /// <param name="payload"></param>
-        public void Bench(string checkpointName, Guid epicId, string processName, string callerProcessName = null, string description = null, object payload = null)
+		/// <summary>
+		/// Hit benchmarking checkpoint
+		/// </summary>
+		/// <param name="checkpointName"></param>
+		/// <param name="correlationId"></param>
+		/// <param name="processName"></param>
+		/// <param name="callerProcessName"></param>
+		/// <param name="description"></param>
+		/// <param name="payload"></param>
+		public void Bench(string checkpointName, Guid correlationId, string processName, string callerProcessName = null, string description = null, object payload = null)
         {
             if (!Configuration.IsEnabled) return;
 
             var entry = new BenchmarkEntry();
             entry.Checkpoint = checkpointName;
-            entry.EpicId = epicId;
+            entry.CorrelationId = correlationId;
             entry.ProcessName = processName;
             entry.CallerProcessName = callerProcessName;
             entry.Description = description;
             entry.Payload = payload;
             entry.CreatedOn = DateTime.UtcNow;
 
-            var bag = InMemoryEntiryCache.GetOrAdd(epicId, new ConcurrentBag<BenchmarkEntry>());
+            var bag = InMemoryEntiryCache.GetOrAdd(correlationId, new ConcurrentBag<BenchmarkEntry>());
             bag.Add(entry);
         }
 
-        /// <summary>
-        /// Persist epic data
-        /// </summary>
-        /// <param name="epicId"></param>
-        public void FlushEpic(Guid epicId)
+		/// <summary>
+		/// Persist epic data
+		/// </summary>
+		/// <param name="correlationId"></param>
+		public void Flush(Guid correlationId)
         {
             if (!Configuration.IsEnabled) return;
 
             bool success = true;
 
-            success = InMemoryNameCache.TryRemove(epicId, out string epicName);
+            success = InMemoryNameCache.TryRemove(correlationId, out string benchmarkName);
             if (!success) throw new KeyNotFoundException();
 
-            success = InMemoryEntiryCache.TryRemove(epicId, out ConcurrentBag<BenchmarkEntry> values);
+            success = InMemoryEntiryCache.TryRemove(correlationId, out ConcurrentBag<BenchmarkEntry> values);
             if (!success) throw new KeyNotFoundException();
 
             var entries = values.OrderBy(x => x.CreatedOn);
@@ -89,10 +89,10 @@ namespace Signals.Aspects.Benchmarking.Database
 
             table.Columns.Add("Id");
             table.Columns.Add("CreatedOn");
-            table.Columns.Add("EpicId");
+            table.Columns.Add("CorrelationId");
             table.Columns.Add("ProcessName");
             table.Columns.Add("CallerProcessName");
-            table.Columns.Add("EpicName");
+            table.Columns.Add("BenchmarkName");
             table.Columns.Add("Checkpoint");
             table.Columns.Add("Description");
             table.Columns.Add("Payload");
@@ -102,8 +102,8 @@ namespace Signals.Aspects.Benchmarking.Database
                 var row = table.NewRow();
                 row["Id"] = 0;
                 row["CreatedOn"] = entry.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
-                row["EpicName"] = epicName;
-                row["EpicId"] = entry.EpicId;
+                row["BenchmarkName"] = benchmarkName;
+                row["CorrelationId"] = entry.CorrelationId;
                 row["ProcessName"] = entry.ProcessName;
                 row["Checkpoint"] = entry.Checkpoint;
                 row["CallerProcessName"] = string.IsNullOrEmpty(entry.CallerProcessName) ? DBNull.Value : (object)entry.CallerProcessName;
@@ -138,42 +138,42 @@ namespace Signals.Aspects.Benchmarking.Database
         /// <summary>
         /// Mark epic as started
         /// </summary>
-        /// <param name="epicId"></param>
-        /// <param name="epicName"></param>
-        public void StartEpic(Guid epicId, string epicName)
+        /// <param name="correlationId"></param>
+        /// <param name="benchmarkName"></param>
+        public void Start(Guid correlationId, string benchmarkName)
         {
             if (!Configuration.IsEnabled) return;
 
-            InMemoryNameCache.AddOrUpdate(epicId, epicName, (key, value) => value);
+            InMemoryNameCache.AddOrUpdate(correlationId, benchmarkName, (key, value) => value);
         }
 
         /// <summary>
         /// Get epic report data
         /// </summary>
-        /// <param name="epicName"></param>
+        /// <param name="benchmarkName"></param>
         /// <param name="afterDate"></param>
         /// <returns></returns>
-        public EpicsReport GetEpicReport(string epicName, DateTime afterDate)
+        public BenchmarkReport GetReport(string benchmarkName, DateTime afterDate)
         {
-            if (!Configuration.IsEnabled) return new EpicsReport();
+            if (!Configuration.IsEnabled) return new BenchmarkReport();
 
             using (var connection = new SqlConnection(Configuration.ConnectionString))
             {
                 var sql = $@"SELECT [Id],
                                     [CreatedOn],
-                                    [EpicId],
+                                    [CorrelationId],
                                     [ProcessName],
                                     [CallerProcessName],
                                     [Checkpoint],
                                     [Description],
                                     [Payload] 
                                 FROM [{Configuration.TableName}] 
-                                WHERE [EpicName] = @EpicName AND [CreatedOn] >= @AfterDate";
+                                WHERE [BenchmarkName] = @BenchmarkName AND [CreatedOn] >= @AfterDate";
 
                 connection.Open();
 
                 var command = new SqlCommand(sql, connection);
-                command.Parameters.AddWithValue("EpicName", epicName);
+                command.Parameters.AddWithValue("BenchmarkName", benchmarkName);
                 command.Parameters.AddWithValue("AfterDate", afterDate.ToString("yyyy-MM-dd HH:mm:ss.fffffff"));
 
                 var result = new List<BenchmarkEntry>();
@@ -190,7 +190,7 @@ namespace Signals.Aspects.Benchmarking.Database
                         {
                             Id = reader.GetInt32(0),
                             CreatedOn = reader.GetDateTime(1),
-                            EpicId = Guid.Parse(reader.GetString(2)),
+                            CorrelationId = Guid.Parse(reader.GetString(2)),
                             ProcessName = reader.GetString(3),
                             CallerProcessName = callerProcessName.IsNull ? null : callerProcessName.Value,
                             Checkpoint = reader.GetString(5),
@@ -202,19 +202,17 @@ namespace Signals.Aspects.Benchmarking.Database
                     }
                 }
 
-                var reports = result.GroupBy(x => x.EpicId).Select(x =>
+                var reports = result.GroupBy(x => x.CorrelationId).Select(x =>
                 {
-                    var report = new EpicReport(x.Key);
-
+                    var report = new CorrelationReport(x.Key);
                     report.BenchmarkEntries.AddRange(x.ToList());
-
                     return report;
                 }).ToList();
 
-                var epicReport = new EpicsReport();
-                epicReport.EpicReports.AddRange(reports);
+                var benchmarkReport = new BenchmarkReport();
+				benchmarkReport.CorrelationReports.AddRange(reports);
 
-                return epicReport;
+                return benchmarkReport;
             }
         }
 
@@ -240,10 +238,10 @@ namespace Signals.Aspects.Benchmarking.Database
                         (
                             [Id] INT IDENTITY(1,1) NOT NULL, 
                             [CreatedOn] datetime2(7) NOT NULL DEFAULT getutcdate(),
-                            [EpicId] NVARCHAR(MAX) NOT NULL,
+                            [CorrelationId] NVARCHAR(MAX) NOT NULL,
                             [ProcessName] NVARCHAR(MAX) NOT NULL,
                             [CallerProcessName] NVARCHAR(MAX) NULL,
-                            [EpicName] NVARCHAR(MAX) NULL,
+                            [BenchmarkName] NVARCHAR(MAX) NULL,
                             [Checkpoint] NVARCHAR(MAX) NOT NULL,
                             [Description] NVARCHAR(MAX) NULL,
                             [Payload] NVARCHAR(MAX) NULL

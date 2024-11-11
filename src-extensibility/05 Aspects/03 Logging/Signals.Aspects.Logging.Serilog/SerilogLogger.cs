@@ -37,7 +37,8 @@ namespace Signals.Aspects.Logging.Serilog
         /// <param name="message"></param>
         public void Trace(string message)
         {
-            throw new NotImplementedException();
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Trace)
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Trace);
         }
 
         /// <summary>
@@ -76,19 +77,10 @@ namespace Signals.Aspects.Logging.Serilog
         /// <param name="message"></param>
         public void Info(string message)
         {
-            throw new NotImplementedException();
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Info)
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Info);
         }
 
-
-        /// <summary>
-        /// Log an message
-        /// </summary>
-        /// <param name="args"></param>
-        public void Info(params object[] args)
-        {
-            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Info)
-                InternalLog(new LogEntry { Payload = args?.Serialize() }, LogLevel.Info);
-        }
 
         /// <summary>
         /// Log an message consisting of args with log level warn
@@ -106,7 +98,8 @@ namespace Signals.Aspects.Logging.Serilog
         /// <param name="message"></param>
         public void Warn(string message)
         {
-            throw new NotImplementedException();
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Warn)
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Warn);
         }
 
         /// <summary>
@@ -125,19 +118,10 @@ namespace Signals.Aspects.Logging.Serilog
         /// <param name="message"></param>
         public void Error(string message)
         {
-            throw new NotImplementedException();
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Error)
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Error);
         }
 
-
-        /// <summary>
-        /// Log an message consisting of args with log level Error
-        /// </summary>
-        /// <param name="args"></param>
-        public void Error(params object[] args)
-        {
-            if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Error)
-                InternalLog(new LogEntry { Payload = args?.Serialize() }, LogLevel.Error);
-        }
 
         /// <summary>
         /// Log an exception
@@ -167,7 +151,8 @@ namespace Signals.Aspects.Logging.Serilog
         /// <param name="message"></param>
         public void Fatal(string message)
         {
-            throw new NotImplementedException();
+	        if (LoggingConfiguration == null || LoggingConfiguration.MinimumLevel <= LogLevel.Fatal)
+		        InternalLog(new LogEntry { Message = message }, LogLevel.Fatal);
         }
 
         /// <summary>

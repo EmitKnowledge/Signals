@@ -224,9 +224,18 @@ namespace Signals.Aspects.Localization.Base
                         UpdatedOn = DateTime.UtcNow
                     };
                     Provider.InsertLocalizationEntry(entry);
-                    LocalizationEntries = Provider.LoadLocalizationEntries();
                 }
-            }
+                else
+                {
+                    entry.Value = value;
+					entry.LocalizationCollectionId = localizationCollection.Id;
+					entry.LocalizationKeyId = localizationKey.Id;
+					entry.LocalizationLanguageId = localizationLanguage.Id;
+					Provider.UpdateLocalizationEntry(entry);
+                }
+
+				LocalizationEntries = Provider.LoadLocalizationEntries();
+			}
         }
 
         /// <summary>

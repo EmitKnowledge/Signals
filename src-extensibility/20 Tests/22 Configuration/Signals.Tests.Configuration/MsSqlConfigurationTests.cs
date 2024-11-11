@@ -9,7 +9,8 @@ namespace Signals.Tests.Configuration
 {
     public class MsSqlConfigurationTests
     {
-        public static string ConnectionStirng = "Server=[SERVER];Database=[DB];User Id=[USR];Password=[PWD];";
+	    private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
+        public static string ConnectionStirng = _configuration.DatabaseConfiguration.ConnectionString;
 
         [Fact]
         public void Load_Configuration_From_NonExisting_Db_Should_Return_Valid_Object()

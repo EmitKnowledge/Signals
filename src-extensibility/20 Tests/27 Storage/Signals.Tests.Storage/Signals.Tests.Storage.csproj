@@ -1,55 +1,55 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
+	<ItemGroup>
+		<None Remove="Files\input1.jpg" />
+		<None Remove="Files\input2.jpg" />
+		<None Remove="Files\input3.jpg" />
+		<None Remove="Files\input4.jpg" />
+		<None Remove="Files\input5.jpg" />
+		<None Remove="Files\txt.txt" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Files\input1.jpg" />
-    <None Remove="Files\input2.jpg" />
-    <None Remove="Files\input3.jpg" />
-    <None Remove="Files\input4.jpg" />
-    <None Remove="Files\input5.jpg" />
-    <None Remove="Files\txt.txt" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Files\input.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Files\input1.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Files\input2.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Files\input3.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Files\input4.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Files\input5.jpg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Files\input.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\input1.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\input2.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\input3.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\input4.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\input5.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+		<PackageReference Include="System.Security.Cryptography.Cng" Version="5.0.0" />
+		<PackageReference Include="xunit" Version="2.9.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-    <PackageReference Include="System.Security.Cryptography.Cng" Version="4.5.0" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\05 Aspects\07 Storage\Signals.Aspects.Storage.Azure\Signals.Aspects.Storage.Azure.csproj" />
-    <ProjectReference Include="..\..\..\05 Aspects\07 Storage\Signals.Aspects.Storage.Database\Signals.Aspects.Storage.Database.csproj" />
-    <ProjectReference Include="..\..\..\05 Aspects\07 Storage\Signals.Aspects.Storage.File\Signals.Aspects.Storage.File.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\00 Solution\Signals.Tests.CommonConfiguration\Signals.Tests.CommonConfiguration.csproj" />
+		<ProjectReference Include="..\..\..\05 Aspects\07 Storage\Signals.Aspects.Storage.Azure\Signals.Aspects.Storage.Azure.csproj" />
+		<ProjectReference Include="..\..\..\05 Aspects\07 Storage\Signals.Aspects.Storage.Database\Signals.Aspects.Storage.Database.csproj" />
+		<ProjectReference Include="..\..\..\05 Aspects\07 Storage\Signals.Aspects.Storage.File\Signals.Aspects.Storage.File.csproj" />
+	</ItemGroup>
 
 </Project>

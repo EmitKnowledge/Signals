@@ -97,7 +97,7 @@ namespace Signals.Clients.WebApi
                 };
                 config.ChannelConfiguration = new ServiceBusChannelConfiguration
                 {
-                    ConnectionString = "Endpoint=sb://reipurth-dental.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=qjXNy0Ed7D6E0PY+mfEGxXF4+gJSOXBaVzYD454IDps=",
+                    ConnectionString = "",
                     ChannelPrefix = "temp_",
                     MaxConcurrentCalls = 10
                 };

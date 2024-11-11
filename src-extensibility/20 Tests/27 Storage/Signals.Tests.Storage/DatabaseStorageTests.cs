@@ -5,21 +5,24 @@ using Signals.Tests.Storage.Helpers;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Storage
 {
     public class DatabaseStorageTests
     {
-        private static readonly string _inputDirectoryPath = "Files";
-        private static readonly string _inputFileName = "input{#}.jpg";
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
+        
+        private static readonly string _inputDirectoryPath = _configuration.StorageConfiguration.InputDirectoryPath;
+        private static readonly string _inputFileName = _configuration.StorageConfiguration.InputFileName;
 
-        private static readonly string _outputDirectoryPath = "Files";
-        private static readonly string _outputFileName = "output{#}";
+        private static readonly string _outputDirectoryPath = _configuration.StorageConfiguration.OutputDirectoryPath;
+        private static readonly string _outputFileName = _configuration.StorageConfiguration.OutputFileName;
 
         private DatabaseStorageConfiguration Configuration => new DatabaseStorageConfiguration
         {
-            ConnectionString = "Data Source=sql.emitknowledge.com;Initial Catalog=app.db;User Id=appusr;Password=FYGncRXGySXDz6RFNg2e",
+            ConnectionString = _configuration.DatabaseConfiguration.ConnectionString,
             TableName = "File2"
         };
 

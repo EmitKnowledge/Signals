@@ -1,30 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.0.2</Version>
-    <AssemblyVersion>2.0.2.0</AssemblyVersion>
-    <FileVersion>2.0.2.0</FileVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>3.0.0</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Management.ServiceBus.Fluent" Version="1.19.0" />
-    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.1.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Azure.Messaging.ServiceBus" Version="7.18.2" />
+		<PackageReference Include="Azure.ResourceManager.ServiceBus" Version="1.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
 
-  <Choose>
-    <When Condition=" '$(Configuration)'!='Debug' ">
-      <ItemGroup>
-        <PackageReference Include="Signals.Aspects.CommunicationChannels" Version="2.0.*" />
-      </ItemGroup>
-    </When>
+	<Choose>
+		<When Condition=" '$(Configuration)'!='Debug' ">
+			<ItemGroup>
+				<PackageReference Include="Signals.Aspects.CommunicationChannels" Version="3.0.*" />
+			</ItemGroup>
+		</When>
 
-    <When Condition=" '$(Configuration)'=='Debug' ">
-      <ItemGroup>
-        <ProjectReference Include="..\..\..\..\src\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels\Signals.Aspects.CommunicationChannels.csproj" />
-      </ItemGroup>
-    </When>
-  </Choose>
+		<When Condition=" '$(Configuration)'=='Debug' ">
+			<ItemGroup>
+				<ProjectReference Include="..\..\..\..\src\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels\Signals.Aspects.CommunicationChannels.csproj" />
+			</ItemGroup>
+		</When>
+	</Choose>
 
 </Project>

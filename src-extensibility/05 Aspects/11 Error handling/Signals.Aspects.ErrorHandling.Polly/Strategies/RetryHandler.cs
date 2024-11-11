@@ -21,13 +21,13 @@ namespace Signals.Aspects.ErrorHandling.Polly.Strategies
             {
                 Policy = Policy
                     .Handle<TException>()
-                    .WaitAndRetryAsync(strategy.RetryCount, count => strategy.RetryCooldown, (exception, count) => strategy.OnRetry?.Invoke(exception));
+                    .WaitAndRetry(strategy.RetryCount, count => strategy.RetryCooldown, (exception, count) => strategy.OnRetry?.Invoke(exception));
             }
             else
             {
                 Policy = Policy
                     .Handle<TException>()
-                    .WaitAndRetryForeverAsync(count => strategy.RetryCooldown, (exception, time) => strategy.OnRetry?.Invoke(exception));
+                    .WaitAndRetryForever(count => strategy.RetryCooldown, (exception, time) => strategy.OnRetry?.Invoke(exception));
             }
         }
 
@@ -39,7 +39,7 @@ namespace Signals.Aspects.ErrorHandling.Polly.Strategies
         /// <returns></returns>
         public override async Task<TResult> Execute<TResult>(Func<TResult> action)
         {
-            return await Policy.ExecuteAsync(() => Task.FromResult(action()));
+            return await Policy.Execute(() => Task.FromResult(action()));
         }
     }
 }

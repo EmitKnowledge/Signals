@@ -1,4 +1,4 @@
-﻿using Ganss.XSS;
+﻿using Ganss.Xss;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Signals.Aspects.Caching.InMemory.Configurations;
@@ -153,7 +153,7 @@ namespace Signals.Tests.Core
             var request = new HttpContextWrapper(mockHttpContextAccessor.Object);
             
             // dispatch mock web request
-            WebMediator.Dispatch(request);
+            WebMediator.Dispatch(request).Wait();
 
             // read response
             context.Response.Body.Position = 0;

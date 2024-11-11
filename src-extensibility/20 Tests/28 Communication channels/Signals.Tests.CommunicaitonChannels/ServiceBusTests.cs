@@ -5,15 +5,17 @@ using Signals.Tests.CommunicaitonChannels.Events;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.CommunicaitonChannels
 {
     public class ServiceBusTests
     {
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
         private ServiceBusChannelConfiguration Configuration => new ServiceBusChannelConfiguration
         {
-            ConnectionString = $@"Endpoint=sb://esb-envoice-test.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=HzPc16dfugFbBAdW+0vfKtHDJ+sjg8I/GD/cJEPXupk="
+            ConnectionString = _configuration.ServiceBusConfiguration.ConnectionString
         };
 
         private string Message => "Msg";
@@ -67,9 +69,9 @@ namespace Signals.Tests.CommunicaitonChannels
                 Assert.Equal(Timestamp, _event.Timestamp);
             });
 
-            Thread.Sleep(1000);
+            Thread.Sleep(5000);
             channel.Publish(Event).Wait();
-            Thread.Sleep(1000);
+            Thread.Sleep(5000);
 
             Assert.True(task.Result);
             channel.Close().Wait();

@@ -39,7 +39,7 @@ namespace Signals.Aspects.Auditing.AuditNET.DataProviders
                 var sql =
                     $@"
                         INSERT INTO [{_databaseConfiguration.TableName}]
-                        (Process, ProcessInstanceId, EventType, StartDate, EndDate, Originator, [Data], [Payload], [EpicId])
+                        (Process, ProcessInstanceId, EventType, StartDate, EndDate, Originator, [Data], [Payload], [CorrelationId])
                         VALUES
                         (
                             @Process, 
@@ -50,7 +50,7 @@ namespace Signals.Aspects.Auditing.AuditNET.DataProviders
                             @Originator,
                             @Data,
                             @Payload,
-                            @EpicId
+                            @CorrelationId
                         )
                     ";
 
@@ -146,8 +146,8 @@ namespace Signals.Aspects.Auditing.AuditNET.DataProviders
                 }
 
                 // set the process instance epic id
-                command.Parameters.Add("EpicId", SqlDbType.NVarChar);
-                command.Parameters["EpicId"].Value = customAuditEvent.EpicId.ToString();
+                command.Parameters.Add("CorrelationId", SqlDbType.NVarChar);
+                command.Parameters["CorrelationId"].Value = customAuditEvent.CorrelationId.ToString();
 
                 command.ExecuteNonQuery();
 

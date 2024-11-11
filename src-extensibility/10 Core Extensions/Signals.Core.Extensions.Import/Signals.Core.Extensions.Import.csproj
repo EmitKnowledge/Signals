@@ -1,27 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.0.1</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>3.0.0</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="EPPlus" Version="4.5.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="EPPlus" Version="7.4.2" />
+	</ItemGroup>
 
-  <Choose>
-    <When Condition=" '$(Configuration)'!='Debug' ">
-      <ItemGroup>
-        <PackageReference Include="Signals.Core" Version="2.0.*" />
-      </ItemGroup>
-    </When>
+	<Choose>
+		<When Condition=" '$(Configuration)'!='Debug' ">
+			<ItemGroup>
+				<PackageReference Include="Signals.Core" Version="3.0.*" />
+			</ItemGroup>
+		</When>
 
-    <When Condition=" '$(Configuration)'=='Debug' ">
-      <ItemGroup>
-        <ProjectReference Include="..\..\..\src\10 Core\Signals.Core\Signals.Core.csproj" />
-      </ItemGroup>
-    </When>
-  </Choose>
-  
+		<When Condition=" '$(Configuration)'=='Debug' ">
+			<ItemGroup>
+				<ProjectReference Include="..\..\..\src\10 Core\Signals.Core\Signals.Core.csproj" />
+			</ItemGroup>
+		</When>
+	</Choose>
+
 </Project>

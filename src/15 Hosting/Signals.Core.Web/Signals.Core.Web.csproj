@@ -1,30 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.0.9</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>3.0.0</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="HtmlSanitizer" Version="8.0.645" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Microsoft.OpenApi" Version="1.6.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>	
+	
+	<ItemGroup>
+		<PackageReference Include="HtmlSanitizer" Version="8.1.870" />
+		<PackageReference Include="Microsoft.OpenApi" Version="1.6.22" />
+	</ItemGroup>
 
-  <Choose>
-    <When Condition=" '$(Configuration)'!='Debug' ">
-      <ItemGroup>
-        <PackageReference Include="Signals.Core" Version="2.0.*" />
-      </ItemGroup>
-    </When>
+	<Choose>
+		<When Condition=" '$(Configuration)'!='Debug' ">
+			<ItemGroup>
+				<PackageReference Include="Signals.Core" Version="3.0.*" />
+			</ItemGroup>
+		</When>
 
-    <When Condition=" '$(Configuration)'=='Debug' ">
-      <ItemGroup>
-        <ProjectReference Include="..\..\10 Core\Signals.Core\Signals.Core.csproj" />
-      </ItemGroup>
-    </When>
-  </Choose>
-  
+		<When Condition=" '$(Configuration)'=='Debug' ">
+			<ItemGroup>
+				<ProjectReference Include="..\..\10 Core\Signals.Core\Signals.Core.csproj" />
+			</ItemGroup>
+		</When>
+	</Choose>
+
 </Project>

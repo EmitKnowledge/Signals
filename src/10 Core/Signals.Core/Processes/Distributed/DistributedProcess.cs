@@ -142,7 +142,7 @@ namespace Signals.Core.Processes.Distributed
         internal Task PublishNotification(string name, TTransientData obj)
         {
             var metadata = new DistributedProcessMetadata();
-            metadata.EpicId = EpicId;
+            metadata.CorrelationId = CorrelationId;
             metadata.CallerProcessName = CallerProcessName;
             metadata.CultureName = Thread.CurrentThread.CurrentCulture.Name;
             metadata.Payload = obj.SerializeJson();
@@ -290,7 +290,7 @@ namespace Signals.Core.Processes.Distributed
         internal Task PublishNotification(string name, TTransientData obj)
         {
             var metadata = new DistributedProcessMetadata();
-            metadata.EpicId = EpicId;
+            metadata.CorrelationId = CorrelationId;
             metadata.CallerProcessName = CallerProcessName;
             metadata.CultureName = Thread.CurrentThread.CurrentCulture.Name;
             metadata.Payload = obj.SerializeJson();

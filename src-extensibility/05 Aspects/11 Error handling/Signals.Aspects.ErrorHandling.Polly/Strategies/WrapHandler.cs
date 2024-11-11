@@ -23,7 +23,7 @@ namespace Signals.Aspects.ErrorHandling.Polly.Strategies
                 policies.Add(handler.Policy);
             }
 
-            Policy = Policy.WrapAsync(policies.ToArray());
+            Policy = Policy.Wrap(policies.ToArray());
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Signals.Aspects.ErrorHandling.Polly.Strategies
         /// <returns></returns>
         public override async Task<TResult> Execute<TResult>(Func<TResult> action)
         {
-            return await Policy.ExecuteAsync(() => Task.FromResult(action()));
+            return await Policy.Execute(() => Task.FromResult(action()));
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             entry.Originator = ApplicationConfiguration.Instance?.ApplicationName ?? Environment.MachineName;
             entry.Process = process.Name;
             entry.EventType = process.Description;
-            entry.EpicId = process.EpicId;
+            entry.CorrelationId = process.CorrelationId;
             entry.Payload = args?.SerializeJson();
 
             var result = auditProvider.Audit(entry, () => Next.Execute(process, processType, args));

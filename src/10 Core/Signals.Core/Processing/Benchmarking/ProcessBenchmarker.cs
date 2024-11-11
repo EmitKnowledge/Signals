@@ -32,37 +32,37 @@ namespace Signals.Core.Processing.Benchmarking
         /// <param name="payload"></param>
         public void Bench(string checkpointName, string description = null, object payload = null)
         {
-            benchmarker.Bench(checkpointName, process.EpicId, process.Name, process.CallerProcessName, description, payload);
-            this.D($"Benchmarking for process type: {process?.GetType()?.FullName} -> Checkpoint: {checkpointName} -> EpicId : {process?.EpicId} -> Process name: {process?.Name} -> Process Caller Process Name: {process.CallerProcessName} -> Description: {description}.");
+            benchmarker.Bench(checkpointName, process.CorrelationId, process.Name, process.CallerProcessName, description, payload);
+            this.D($"Benchmarking for process type: {process?.GetType()?.FullName} -> Checkpoint: {checkpointName} -> CorrelationId : {process?.CorrelationId} -> Process name: {process?.Name} -> Process Caller Process Name: {process.CallerProcessName} -> Description: {description}.");
         }
 
-        /// <summary>
-        /// Persist epic data
-        /// </summary>
-        public void FlushEpic()
+		/// <summary>
+		/// Persist correlation data
+		/// </summary>
+		public void FlushCorrelation()
         {
-            benchmarker.FlushEpic(process.EpicId);
-            this.D($"Epic with id: {process?.EpicId} for process type: {process?.GetType()?.FullName} flushed.");
+            benchmarker.Flush(process.CorrelationId);
+            this.D($"Correlation with id: {process?.CorrelationId} for process type: {process?.GetType()?.FullName} flushed.");
         }
 
-        /// <summary>
-        /// Get epic report data
-        /// </summary>
-        /// <param name="epicName"></param>
-        /// <param name="afterDate"></param>
-        public EpicsReport GetEpicReport(string epicName, DateTime afterDate)
+		/// <summary>
+		/// Get correlation report data
+		/// </summary>
+		/// <param name="correlationName"></param>
+		/// <param name="afterDate"></param>
+		public BenchmarkReport GetCorrelationsReport(string correlationName, DateTime afterDate)
         {
-            return benchmarker.GetEpicReport(epicName, afterDate);
+            return benchmarker.GetReport(correlationName, afterDate);
         }
 
-        /// <summary>
-        /// Mark epic as started
-        /// </summary>
-        /// <param name="epicName"></param>
-        public void StartEpic(string epicName)
+		/// <summary>
+		/// Mark epic as started
+		/// </summary>
+		/// <param name="correlationName"></param>
+		public void StartCorrelation(string correlationName)
         {
-            benchmarker.StartEpic(process.EpicId, epicName);
-            this.D($"Epic: {epicName} with id: {process?.EpicId} for process type: {process?.GetType()?.FullName} started.");
+            benchmarker.Start(process.CorrelationId, correlationName);
+            this.D($"Correlation: {correlationName} with id: {process?.CorrelationId} for process type: {process?.GetType()?.FullName} started.");
         }
     }
 }

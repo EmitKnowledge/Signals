@@ -1,5 +1,5 @@
-﻿using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.Management;
+﻿using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
 using Newtonsoft.Json;
 using Signals.Aspects.CommunicationChannels.Exceptions;
 using Signals.Aspects.CommunicationChannels.ServiceBus.Configurations;
@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Signals.Aspects.CommunicationChannels.ServiceBus
@@ -18,7 +17,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
     public class ServiceBusMessageChannel : IMessageChannel
     {
         private readonly ServiceBusChannelConfiguration _configuration;
-        private Dictionary<string, IQueueClient> Subscriptions { get; set; }
+        private Dictionary<string, ServiceBusProcessor> Subscriptions { get; set; }
         private static readonly HashSet<string> CreatedChannels = new HashSet<string>();
 
         /// <summary>
@@ -28,8 +27,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         public ServiceBusMessageChannel(ServiceBusChannelConfiguration configuration)
         {
             _configuration = configuration;
-            Subscriptions = new Dictionary<string, IQueueClient>();
-
+            Subscriptions = new Dictionary<string, ServiceBusProcessor>();
         }
 
         /// <summary>
@@ -37,7 +35,8 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         /// </summary>
         public Task Close()
         {
-            Task.WaitAll(Subscriptions.Values.Select(x => x.CloseAsync()).ToArray());
+			Task.WaitAll(Subscriptions.Values.Select(x => x.StopProcessingAsync()).ToArray());
+			Task.WaitAll(Subscriptions.Values.Select(x => x.CloseAsync()).ToArray());
 
             Subscriptions.Clear();
 
@@ -62,24 +61,27 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         /// <param name="message"></param>
         public async Task Publish<T>(string channelName, T message) where T : class
         {
-            var queueTask = GetQueue(channelName);
+			await EnsureQueue(channelName);
+
+			// create client
+			ServiceBusClient client = new(_configuration.ConnectionString);
+			ServiceBusSender sender = client.CreateSender(channelName);
 
             var messageBody = JsonConvert.SerializeObject(message);
             var messageBytes = Encoding.UTF8.GetBytes(messageBody);
-            var queueMessage = new Message(messageBytes);
+            var queueMessage = new ServiceBusMessage(messageBytes);
 
-            var queue = await queueTask;
-            if (queue == null) throw new ChannelDoesntExistException(channelName);
+            if (sender == null) throw new ChannelDoesntExistException(channelName);
 
             try
             {
-                await queue.SendAsync(queueMessage);
+                await sender.SendMessageAsync(queueMessage);
             }
-            catch (MessagingEntityNotFoundException)
-            {
+			catch (ServiceBusException ex) when (ex.Reason == ServiceBusFailureReason.MessagingEntityNotFound)
+			{
                 throw new ChannelDoesntExistException(channelName);
             }
-        }
+		}
 
         /// <summary>
         /// Subscribe to a message type
@@ -104,79 +106,90 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
         public async Task Subscribe<T>(string channelName, Action<T> action) where T : class
         {
             var queue = await GetQueue(channelName);
+            
             Subscriptions.Add(channelName, queue);
 
-            var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+			queue.ProcessErrorAsync += async (ProcessErrorEventArgs args) =>
             {
-                AutoComplete = false,
-                MaxConcurrentCalls = _configuration.MaxConcurrentCalls,
-            };
+				Console.WriteLine($"Message handler encountered an exception {args.Exception}.");
+				Console.WriteLine("Exception context for troubleshooting:");
+				Console.WriteLine($"- FQNS: {args.FullyQualifiedNamespace}");
+				Console.WriteLine($"- Entity Path: {args.EntityPath}");
+				await Task.CompletedTask;
+			};
 
-            // Register the function that processes messages.
-            queue.RegisterMessageHandler(async (Message message, CancellationToken token) =>
-            {
-                var messageBytes = message.Body;
-                var messageBody = Encoding.UTF8.GetString(messageBytes);
+			// Register the function that processes messages.
+			queue.ProcessMessageAsync += async (arg) => {
+				var messageBytes = arg.Message.Body.ToArray();
+				var messageBody = Encoding.UTF8.GetString(messageBytes);
 
-                if (messageBody is T)
-                {
-                    action(messageBody as T);
-                }
-                else
-                {
-                    var obj = JsonConvert.DeserializeObject<T>(messageBody);
-                    action(obj);
-                }
+				if (messageBody is T)
+				{
+					action(messageBody as T);
+				}
+				else
+				{
+					var obj = JsonConvert.DeserializeObject<T>(messageBody);
+					action(obj);
+				}
 
-                if (queue.ReceiveMode == ReceiveMode.PeekLock)
-                {
-                    await queue.CompleteAsync(message.SystemProperties.LockToken);
-                }
-            }, messageHandlerOptions);
-        }
+				if (queue.ReceiveMode == ServiceBusReceiveMode.PeekLock)
+				{
+					await arg.CompleteMessageAsync(arg.Message);
+				}
+			};
 
-        private Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+            await queue.StartProcessingAsync();
+		}
+
+        /// <summary>
+        /// Ensure that the pub/sub channel exists before receving or sending messages to it
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <returns></returns>
+        private Task EnsureQueue(string queueName)
         {
-            Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
-            var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
-            Console.WriteLine("Exception context for troubleshooting:");
-            Console.WriteLine($"- Endpoint: {context.Endpoint}");
-            Console.WriteLine($"- Entity Path: {context.EntityPath}");
-            Console.WriteLine($"- Executing Action: {context.Action}");
+			var fullQueueName = $"{_configuration.ChannelPrefix}{queueName}";
+
+			if (!CreatedChannels.Contains(fullQueueName))
+			{
+				lock (CreatedChannels)
+				{
+					if (!CreatedChannels.Contains(fullQueueName))
+					{
+						ServiceBusAdministrationClient managementClient = new(_configuration.ConnectionString);
+						var exists = managementClient.QueueExistsAsync(fullQueueName).Result;
+
+						if (!exists)
+						{
+							managementClient.CreateQueueAsync(fullQueueName).Wait();
+						}
+						CreatedChannels.Add(fullQueueName);
+					}
+				}
+			}
             return Task.CompletedTask;
-        }
+		}
 
         /// <summary>
         /// Get service bus queue
         /// </summary>
         /// <param name="queueName"></param>
         /// <returns></returns>
-        private Task<IQueueClient> GetQueue(string queueName)
+        private Task<ServiceBusProcessor> GetQueue(string queueName)
         {
-            var fullQueueName = $"{_configuration.ChannelPrefix}{queueName}";
+            EnsureQueue(queueName);
 
-            if (!CreatedChannels.Contains(fullQueueName))
+			// create client
+			ServiceBusClient client = new(_configuration.ConnectionString);
+			ServiceBusProcessor processor = client.CreateProcessor(queueName, new ServiceBusProcessorOptions()
             {
-                lock (CreatedChannels)
-                {
-                    if (!CreatedChannels.Contains(fullQueueName))
-                    {
-                        var managementClient = new ManagementClient(_configuration.ConnectionString);
-                        var exists = managementClient.QueueExistsAsync(fullQueueName).Result;
+				AutoCompleteMessages = false,
+				MaxConcurrentCalls = _configuration.MaxConcurrentCalls,
+				MaxAutoLockRenewalDuration = TimeSpan.FromMinutes(4)
+			});
 
-                        if (!exists)
-                        {
-                            managementClient.CreateQueueAsync(fullQueueName).Wait();
-                        }
-                        CreatedChannels.Add(fullQueueName);
-                    }
-                }
-            }
-
-            var client = new QueueClient(_configuration.ConnectionString, fullQueueName, ReceiveMode.PeekLock, RetryPolicy.Default);
-            client.OperationTimeout = TimeSpan.FromMinutes(5);
-
-            return Task.FromResult((IQueueClient)client);
+			return Task.FromResult(processor);
         }
     }
 }

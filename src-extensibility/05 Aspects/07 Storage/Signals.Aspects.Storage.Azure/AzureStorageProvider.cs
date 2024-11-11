@@ -1,5 +1,5 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
 using Signals.Aspects.Storage.Azure.Configurations;
 using Signals.Aspects.Storage.Helpers;
 using System;
@@ -41,12 +41,12 @@ namespace Signals.Aspects.Storage.Azure
             if (name == null) throw new ArgumentNullException(nameof(name));
 
             var blobClient = GetClient();
-            var container = blobClient.GetContainerReference(path.ToLowerInvariant());
-            var blockBlob = container.GetBlockBlobReference(name.ToLowerInvariant());
+            var container = blobClient.GetBlobContainerClient(path.ToLowerInvariant());
+            var blockBlob = container.GetBlockBlobClient(name.ToLowerInvariant());
 
             MemoryStream output = new MemoryStream();
 
-            blockBlob.DownloadToStreamAsync(output).Wait();
+            blockBlob.DownloadToAsync(output).Wait();
 
             return Configuration.Decrypt(output);
         }
@@ -63,8 +63,8 @@ namespace Signals.Aspects.Storage.Azure
             if (name == null) throw new ArgumentNullException(nameof(name));
 
             var blobClient = GetClient();
-            var container = blobClient.GetContainerReference(path.ToLowerInvariant());
-            var blockBlob = container.GetBlockBlobReference(name.ToLowerInvariant());
+            var container = blobClient.GetBlobContainerClient(path.ToLowerInvariant());
+            var blockBlob = container.GetBlockBlobClient(name.ToLowerInvariant());
 
             await blockBlob.DeleteIfExistsAsync();
         }
@@ -84,11 +84,11 @@ namespace Signals.Aspects.Storage.Azure
             if (inStream == null) throw new ArgumentNullException(nameof(inStream));
 
             var blobClient = GetClient();
-            var container = blobClient.GetContainerReference(path.ToLowerInvariant());
-            var blockBlob = container.GetBlockBlobReference(name.ToLowerInvariant());
+            var container = blobClient.GetBlobContainerClient(path.ToLowerInvariant());
+            var blockBlob = container.GetBlockBlobClient(name.ToLowerInvariant());
 
             container.CreateIfNotExists();
-            await blockBlob.UploadFromStreamAsync(Configuration.Encrypt(inStream));
+            await blockBlob.UploadAsync(Configuration.Encrypt(inStream));
         }
 
         /// <summary>
@@ -133,12 +133,10 @@ namespace Signals.Aspects.Storage.Azure
         /// Initialize azure client
         /// </summary>
         /// <returns></returns>
-        private CloudBlobClient GetClient()
+        private BlobServiceClient GetClient()
         {
-            var storageAccount = CloudStorageAccount.Parse(Configuration.ConnectionString);
-            var cloudBlobClient = storageAccount.CreateCloudBlobClient();
-
-            return cloudBlobClient;
+            var storageAccount = new BlobServiceClient(Configuration.ConnectionString);
+            return storageAccount;
         }
     }
 }

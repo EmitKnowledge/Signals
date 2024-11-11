@@ -1,7 +1,4 @@
 using Signals.Aspects.Caching.Enums;
-using Signals.Aspects.Caching.InMemory;
-using Signals.Aspects.Caching.InMemory.Configurations;
-using Signals.Aspects.Caching.InMemory.Entries;
 using Signals.Aspects.Caching.Redis;
 using Signals.Aspects.Caching.Redis.Configurations;
 using Signals.Tests.Caching.Models;

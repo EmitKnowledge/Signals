@@ -5,22 +5,25 @@ using Signals.Tests.Storage.Helpers;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Storage
 {
     public class AzureStorageTests
     {
-        private static readonly string _inputDirectoryPath = "Files";
-        private static readonly string _inputFileName = "input{#}.jpg";
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
+        
+        private static readonly string _inputDirectoryPath = _configuration.StorageConfiguration.InputDirectoryPath;
+        private static readonly string _inputFileName = _configuration.StorageConfiguration.InputFileName;
 
-        private static readonly string _outputDirectoryPath = "Files";
-        private static readonly string _outputFileName = "output{#}";
+        private static readonly string _outputDirectoryPath = _configuration.StorageConfiguration.OutputDirectoryPath;
+        private static readonly string _outputFileName = _configuration.StorageConfiguration.OutputFileName;
 
         private AzureStorageConfiguration Configuration => new AzureStorageConfiguration
         {
             Encrypt = false,
-            ConnectionString = "DefaultEndpointsProtocol=https;AccountName=[AccountName];AccountKey=[AccountKey];EndpointSuffix=core.windows.net"
+            ConnectionString = _configuration.StorageConfiguration.AzureConnectionString
 		};
 
         private Task Lock(Func<Task> action)

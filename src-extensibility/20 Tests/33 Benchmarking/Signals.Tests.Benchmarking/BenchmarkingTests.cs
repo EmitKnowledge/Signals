@@ -5,6 +5,7 @@ using System;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Benchmarking
@@ -13,12 +14,14 @@ namespace Signals.Tests.Benchmarking
     {
         private readonly DatabaseBenchmarkingConfiguration _databaseConfiguration;
         private readonly IBenchmarker _benchmarker;
+        
+        private static BaseTestConfiguration _configuration  = BaseTestConfiguration.Instance;
 
         public BenchmarkingTests()
         {
             _databaseConfiguration = new DatabaseBenchmarkingConfiguration
             {
-                ConnectionString = "Server=[SERVER];Database=[DB];User Id=[USR];Password=[PWD];",
+                ConnectionString = _configuration.DatabaseConfiguration.ConnectionString,
                 TableName = "BenchmarkEntry2"
             };
 
@@ -31,26 +34,26 @@ namespace Signals.Tests.Benchmarking
         [Fact]
         public void Benchmarking_PersistsInDatabase_GeneratesReport()
         {
-            Guid epicPass1 = Guid.NewGuid();
-            string epicName = "My epic";
+            Guid correlationId = Guid.NewGuid();
+            string benchmarkName = "My epic";
             string processName = "MyProc";
 
-            _benchmarker.StartEpic(epicPass1, epicName);
-            _benchmarker.Bench("Start", epicPass1, processName);
+            _benchmarker.Start(correlationId, benchmarkName);
+            _benchmarker.Bench("Start", correlationId, processName);
             Thread.Sleep(100);
-            _benchmarker.Bench("Processing", epicPass1, processName);
+            _benchmarker.Bench("Processing", correlationId, processName);
             Thread.Sleep(100);
-            _benchmarker.Bench("End", epicPass1, processName);
-            _benchmarker.FlushEpic(epicPass1);
-            var report = _benchmarker.GetEpicReport(epicName, DateTime.UtcNow.AddMinutes(-1));
+            _benchmarker.Bench("End", correlationId, processName);
+            _benchmarker.Flush(correlationId);
+            var report = _benchmarker.GetReport(benchmarkName, DateTime.UtcNow.AddMinutes(-1));
 
-            Assert.Single(report.EpicReports);
-            Assert.Contains(report.EpicReports, x => x.EpicId == epicPass1);
-            Assert.Equal(3, report.EpicReports.SingleOrDefault(x => x.EpicId == epicPass1)?.BenchmarkEntries.Count);
+            Assert.Single(report.CorrelationReports);
+            Assert.Contains(report.CorrelationReports, x => x.CorrelationId == correlationId);
+            Assert.Equal(3, report.CorrelationReports.SingleOrDefault(x => x.CorrelationId == correlationId)?.BenchmarkEntries.Count);
 
-            Assert.Equal("Start", report.EpicReports.SingleOrDefault(x => x.EpicId == epicPass1).BenchmarkEntries[0].Checkpoint);
-            Assert.Equal("Processing", report.EpicReports.SingleOrDefault(x => x.EpicId == epicPass1).BenchmarkEntries[1].Checkpoint);
-            Assert.Equal("End", report.EpicReports.SingleOrDefault(x => x.EpicId == epicPass1).BenchmarkEntries[2].Checkpoint);
+            Assert.Equal("Start", report.CorrelationReports.SingleOrDefault(x => x.CorrelationId == correlationId).BenchmarkEntries[0].Checkpoint);
+            Assert.Equal("Processing", report.CorrelationReports.SingleOrDefault(x => x.CorrelationId == correlationId).BenchmarkEntries[1].Checkpoint);
+            Assert.Equal("End", report.CorrelationReports.SingleOrDefault(x => x.CorrelationId == correlationId).BenchmarkEntries[2].Checkpoint);
 
         }
 

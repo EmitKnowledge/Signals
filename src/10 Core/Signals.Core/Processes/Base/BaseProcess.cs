@@ -1,19 +1,17 @@
-﻿using Signals.Core.Common.Serialization;
-using Signals.Core.Processing.Exceptions;
+﻿using Signals.Core.Processing.Exceptions;
 using Signals.Core.Processing.Execution;
 using Signals.Core.Processing.Results;
 using Signals.Core.Processing.Specifications;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace Signals.Core.Processes.Base
 {
-    /// <summary>
-    /// Represents a base process
-    /// </summary>
-    public interface IBaseProcess
+	/// <summary>
+	/// Represents a base process
+	/// </summary>
+	public interface IBaseProcess
     {
         /// <summary>
         /// Process name
@@ -25,10 +23,10 @@ namespace Signals.Core.Processes.Base
         /// </summary>
         string Description { get; set; }
 
-        /// <summary>
-        /// Processes epic id
-        /// </summary>
-        Guid EpicId { get; set; }
+		/// <summary>
+		/// Processes correlation id
+		/// </summary>
+		Guid CorrelationId { get; set; }
 
         /// <summary>
         /// Caller process name
@@ -86,10 +84,10 @@ namespace Signals.Core.Processes.Base
         /// </summary>
         public virtual string Description { get; set; }
 
-        /// <summary>
-        /// Processes epic id
-        /// </summary>
-        public virtual Guid EpicId { get; set; }
+		/// <summary>
+		/// Processes correlation id
+		/// </summary>
+		public virtual Guid CorrelationId { get; set; }
 
         /// <summary>
         /// Caller process name
@@ -117,7 +115,7 @@ namespace Signals.Core.Processes.Base
         protected BaseProcess()
         {
             Name = GetType().Name;
-            EpicId = Guid.NewGuid();
+			CorrelationId = Guid.NewGuid();
             ExecutionStack = new Stack();
         }
 
@@ -276,7 +274,7 @@ namespace Signals.Core.Processes.Base
             var processType = typeof(TProcess);
             var process = BaseContext.Mediator.ProcessFactory.Create<VoidResult>(processType);
 
-            process.EpicId = EpicId;
+            process.CorrelationId = CorrelationId;
             process.CallerProcessName = Name;
             process.ExecutionStack = ExecutionStack;
 
@@ -293,7 +291,7 @@ namespace Signals.Core.Processes.Base
         {
             var process = BaseContext.Mediator.ProcessFactory.Create<TNewResponse>(type);
 
-            process.EpicId = EpicId;
+            process.CorrelationId = CorrelationId;
             process.CallerProcessName = Name;
             process.ExecutionStack = ExecutionStack;
 

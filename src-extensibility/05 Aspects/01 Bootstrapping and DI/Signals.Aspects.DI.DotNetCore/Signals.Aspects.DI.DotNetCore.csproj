@@ -1,27 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.0.1</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>3.0.0</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+	</ItemGroup>
 
-  <Choose>
-    <When Condition=" '$(Configuration)'!='Debug' ">
-      <ItemGroup>
-        <PackageReference Include="Signals.Aspects.DI" Version="2.0.*" />
-      </ItemGroup>
-    </When>
+	<Choose>
+		<When Condition=" '$(Configuration)'!='Debug' ">
+			<ItemGroup>
+				<PackageReference Include="Signals.Aspects.DI" Version="3.0.*" />
+			</ItemGroup>
+		</When>
 
-    <When Condition=" '$(Configuration)'=='Debug' ">
-      <ItemGroup>
-        <ProjectReference Include="..\..\..\..\src\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI\Signals.Aspects.DI.csproj" />
-      </ItemGroup>
-    </When>
-  </Choose>
+		<When Condition=" '$(Configuration)'=='Debug' ">
+			<ItemGroup>
+				<ProjectReference Include="..\..\..\..\src\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI\Signals.Aspects.DI.csproj" />
+			</ItemGroup>
+		</When>
+	</Choose>
 
 </Project>

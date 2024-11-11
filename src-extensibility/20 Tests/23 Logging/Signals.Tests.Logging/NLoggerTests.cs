@@ -5,12 +5,15 @@ using Signals.Aspects.Logging.NLog.Configurations;
 using System;
 using System.Data.SqlClient;
 using System.IO;
+using Signals.Tests.Configuration;
 using Xunit;
 
 namespace Signals.Tests.Logging
 {
     public class NLoggerTests
     {
+        private static BaseTestConfiguration _configuration = BaseTestConfiguration.Instance;
+        
         [Fact]
         public void FileLoggerFromConfig_LogsInfo_FileExists()
         {
@@ -24,7 +27,7 @@ namespace Signals.Tests.Logging
 
             Assert.True(File.Exists(filePath));
 
-            var fileText = File.ReadAllText(filePath);
+            var fileText = IoHelper.ReadAllText(filePath);
 
             Assert.Contains(message, fileText);
             Assert.Contains("Info", fileText);
@@ -63,7 +66,7 @@ namespace Signals.Tests.Logging
 
             Assert.True(File.Exists(filePath));
 
-            var fileText = File.ReadAllText(filePath);
+            var fileText = IoHelper.ReadAllText(filePath);
 
             Assert.Contains(message, fileText);
             Assert.Contains("Info", fileText);
@@ -85,7 +88,7 @@ namespace Signals.Tests.Logging
 
             Assert.True(File.Exists(filePath));
 
-            var fileText = File.ReadAllText(filePath);
+            var fileText = IoHelper.ReadAllText(filePath);
 
             Assert.Contains(message, fileText);
             Assert.Contains("Error", fileText);
@@ -98,10 +101,10 @@ namespace Signals.Tests.Logging
         {
             var message = "Some entry";
             var config = new DatabaseLoggingConfiguration();
-            config.Host = "sql.emitknowledge.com";
-            config.Database = "app.db";
-            config.Username = "appusr";
-            config.Password = "FYGncRXGySXDz6RFNg2e";
+            config.Host = _configuration.DatabaseConfiguration.Server;
+            config.Database = _configuration.DatabaseConfiguration.Database;
+            config.Username = _configuration.DatabaseConfiguration.UserName;
+            config.Password = _configuration.DatabaseConfiguration.Password;
             config.DataProvider = DataProvider.SqlClient;
             config.TableName = "Log2";
 
@@ -109,14 +112,14 @@ namespace Signals.Tests.Logging
 
             logger.Info(message);
 
-            string connectionString = $"Data Source={config.Host};Initial Catalog={config.Database}; User Id={config.Username}; Password={config.Password}";
+            string connectionString = _configuration.DatabaseConfiguration.ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlDataReader reader = new SqlCommand($@"SELECT * FROM {config.TableName};", connection).ExecuteReader();
                 while (reader.Read())
                 {
-                    Assert.Contains(message, reader["Payload"].ToString());
+                    Assert.Contains(message, reader["Message"].ToString());
                 }
                 reader.Close();
 
@@ -130,25 +133,25 @@ namespace Signals.Tests.Logging
         {
             var message = "Some entry";
             var config = new DatabaseLoggingConfiguration();
-            config.Host = "sql.emitknowledge.com";
-            config.Database = "app.db";
-            config.Username = "appusr";
-            config.Password = "FYGncRXGySXDz6RFNg2e";
+            config.Host = _configuration.DatabaseConfiguration.Server;
+            config.Database = _configuration.DatabaseConfiguration.Database;
+            config.Username = _configuration.DatabaseConfiguration.UserName;
+            config.Password = _configuration.DatabaseConfiguration.Password;
             config.DataProvider = DataProvider.SqlClient;
             config.TableName = "Log2";
 
             Aspects.Logging.ILogger logger = new NLogger(config);
 
-            logger.Error(message);
+            logger.Info(message);
 
-            string connectionString = $"Data Source={config.Host};Initial Catalog={config.Database}; User Id={config.Username}; Password={config.Password}";
+            string connectionString = _configuration.DatabaseConfiguration.ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlDataReader reader = new SqlCommand($@"SELECT * FROM {config.TableName};", connection).ExecuteReader();
                 while (reader.Read())
                 {
-                    Assert.Contains(message, reader["Payload"].ToString());
+                    Assert.Contains(message, reader["Message"].ToString());
                 }
                 reader.Close();
 

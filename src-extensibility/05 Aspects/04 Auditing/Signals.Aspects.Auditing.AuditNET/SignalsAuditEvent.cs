@@ -31,9 +31,9 @@ namespace Signals.Aspects.Auditing.AuditNET
         public string Payload { get; set; }
 
         /// <summary>
-        /// Represents the process epic id
+        /// Represents the process correlation id
         /// </summary>
-        public Guid EpicId { get; set; }
+        public Guid CorrelationId { get; set; }
 
         /// <summary>
         /// Implicitly convert AuditTrail to SignalsAuditEvent
@@ -53,8 +53,8 @@ namespace Signals.Aspects.Auditing.AuditNET
                 EndDate = auditEntry.EndDate,
                 Data = auditEntry.Data,
                 Payload = auditEntry.Payload,
-                EpicId = auditEntry.EpicId
-            };
+                CorrelationId = auditEntry.CorrelationId
+			};
         }
 
     }

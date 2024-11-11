@@ -149,7 +149,7 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
 		            var instance = SystemBootstrapper.GetInstance(type) as IBaseProcess<VoidResult>;
 		            SystemBootstrapper.Bootstrap(instance);
 
-		            instance.EpicId = meta.EpicId;
+		            instance.CorrelationId = meta.CorrelationId;
 		            instance.CallerProcessName = meta.CallerProcessName;
 
 		            Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = new CultureInfo(meta.CultureName);
