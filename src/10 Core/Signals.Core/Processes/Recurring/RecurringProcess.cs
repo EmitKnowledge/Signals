@@ -1,5 +1,6 @@
 ﻿using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
 using Signals.Aspects.DI.Attributes;
+using Signals.Core.Common.Exceptions;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processes.Base;
 using Signals.Core.Processing.Results;
@@ -85,7 +86,12 @@ namespace Signals.Core.Processes.Recurring
             }
             catch (Exception ex)
             {
-	            this.D($"Exception has occurred while executing sync. Exception: {ex.Message}");
+				var dump = ExceptionsExtensions.Extract(
+					ex,
+					ExceptionsExtensions.ExceptionDetails.Type,
+					ExceptionsExtensions.ExceptionDetails.Message,
+					ExceptionsExtensions.ExceptionDetails.Stacktrace);
+				this.D($"Exception has occurred while executing sync. Exception: {dump}.");
                 result = VoidResult.Fail<TResponse>(ex);
                 throw;
             }
@@ -191,7 +197,12 @@ namespace Signals.Core.Processes.Recurring
             }
             catch (Exception ex)
             {
-	            this.D($"Exception has occurred while executing sync. Exception: {ex.Message}");
+				var dump = ExceptionsExtensions.Extract(
+					ex,
+					ExceptionsExtensions.ExceptionDetails.Type,
+					ExceptionsExtensions.ExceptionDetails.Message,
+					ExceptionsExtensions.ExceptionDetails.Stacktrace);
+				this.D($"Exception has occurred while executing sync. Exception: {dump}.");
 	            result = VoidResult.Fail<TResponse>(ex);
                 throw;
             }

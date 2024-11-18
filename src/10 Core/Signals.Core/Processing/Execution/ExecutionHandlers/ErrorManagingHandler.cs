@@ -6,6 +6,7 @@ using Signals.Aspects.ErrorHandling;
 using Signals.Core.Processes.Base;
 using Signals.Core.Common.Instance;
 using Signals.Core.Processing.Results;
+using Signals.Core.Common.Exceptions;
 
 namespace Signals.Core.Processing.Execution.ExecutionHandlers
 {
@@ -38,7 +39,12 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                 }
                 catch (Exception ex)
                 {
-                    this.D($"Executed Error Managing Handler for process type: {processType?.FullName} -> Exception: {ex?.Message}.");
+					var dump = ExceptionsExtensions.Extract(
+						ex,
+						ExceptionsExtensions.ExceptionDetails.Type,
+						ExceptionsExtensions.ExceptionDetails.Message,
+						ExceptionsExtensions.ExceptionDetails.Stacktrace);
+					this.D($"Executed Error Managing Handler for process type: {processType?.FullName} -> Exception: {dump}.");
                     return VoidResult.Fail<TResult>(ex);
                 }
             }

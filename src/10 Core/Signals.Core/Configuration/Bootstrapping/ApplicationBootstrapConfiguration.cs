@@ -26,6 +26,7 @@ using Newtonsoft.Json;
 using Signals.Aspects.Benchmarking;
 using Signals.Aspects.Benchmarking.Configurations;
 using Signals.Core.Common.Serialization;
+using Signals.Core.Common.Exceptions;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -361,7 +362,12 @@ namespace Signals.Core.Configuration.Bootstrapping
                 }
                 catch (Exception ex)
                 {
-                    this.D($"Exception has occurred while getting an instance for: {type.FullName}. Exception: {ex?.Message}.");
+                    var dump = ExceptionsExtensions.Extract(
+                        ex, 
+                        ExceptionsExtensions.ExceptionDetails.Type, 
+                        ExceptionsExtensions.ExceptionDetails.Message, 
+                        ExceptionsExtensions.ExceptionDetails.Stacktrace);
+					this.D($"Exception has occurred while getting an instance for: {type.FullName}. Exception: {dump}.");
                 }
             }
 

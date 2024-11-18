@@ -27,6 +27,7 @@ using Signals.Core.Processes.Distributed;
 using Signals.Core.Processes.Recurring;
 using Signals.Core.Processes.Export;
 using Signals.Core.Processes.Import;
+using Signals.Core.Common.Exceptions;
 
 namespace Signals.Core.Configuration.Bootstrapping
 {
@@ -130,7 +131,12 @@ namespace Signals.Core.Configuration.Bootstrapping
             }
             catch(Exception ex)
             {
-	            this.D($"Exception has occurred during setting up the existing application configuration. Exception: {ex.Message}");
+				var dump = ExceptionsExtensions.Extract(
+					ex,
+					ExceptionsExtensions.ExceptionDetails.Type,
+					ExceptionsExtensions.ExceptionDetails.Message,
+					ExceptionsExtensions.ExceptionDetails.Stacktrace);
+				this.D($"Exception has occurred during setting up the existing application configuration. Exception: {dump}.");
             }
             finally
             {

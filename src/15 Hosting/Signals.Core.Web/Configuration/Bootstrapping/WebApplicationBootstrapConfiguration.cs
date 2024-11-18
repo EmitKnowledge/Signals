@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Signals.Aspects.DI;
+using Signals.Core.Common.Exceptions;
 using Signals.Core.Common.Instance;
 using Signals.Core.Configuration;
 using Signals.Core.Configuration.Bootstrapping;
@@ -13,89 +14,94 @@ using System.Reflection;
 
 namespace Signals.Core.Web.Configuration.Bootstrapping
 {
-    internal interface IWebApplicationBootstrapConfiguration : IApplicationBootstrapConfiguration
-    {
-        /// <summary>
-        /// Default response headers
-        /// </summary>
-        List<ResponseHeaderAttribute> ResponseHeaders { get; set; }
+	internal interface IWebApplicationBootstrapConfiguration : IApplicationBootstrapConfiguration
+	{
+		/// <summary>
+		/// Default response headers
+		/// </summary>
+		List<ResponseHeaderAttribute> ResponseHeaders { get; set; }
 
-        /// <summary>
-        /// Application assemblies to be scanned for processes and type exports
-        /// </summary>
-        List<Assembly> ScanAssemblies { get; set; }
-    }
+		/// <summary>
+		/// Application assemblies to be scanned for processes and type exports
+		/// </summary>
+		List<Assembly> ScanAssemblies { get; set; }
+	}
 
-    internal static class WebApplicationBootstrapConfigurationExtensions
-    {
-        /// <summary>
-        /// Bootstrapping entry
-        /// </summary>
-        /// <param name="webBootstrapConfiguration"></param>
-        /// <param name="scanAssemblies"></param>
-        /// <returns></returns>
-        public static IServiceContainer BootstrapHelper(this IWebApplicationBootstrapConfiguration webBootstrapConfiguration, params Assembly[] scanAssemblies)
-        {
-            // Proc config validation
-            WebApplicationConfiguration config = null;
-            try
-            {
-	            config = WebApplicationConfiguration.Instance;
-            }
-            catch(Exception ex)
-            {
-	            webBootstrapConfiguration.D($"Exception has occurred while getting the web application bootstrap configuration instance. Exception: {ex?.Message}.");
-            }
-            finally
-            {
-	            if (config.IsNull())
-	            {
-		            webBootstrapConfiguration.D("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
-		            throw new Exception("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
-	            }
-            }
+	internal static class WebApplicationBootstrapConfigurationExtensions
+	{
+		/// <summary>
+		/// Bootstrapping entry
+		/// </summary>
+		/// <param name="webBootstrapConfiguration"></param>
+		/// <param name="scanAssemblies"></param>
+		/// <returns></returns>
+		public static IServiceContainer BootstrapHelper(this IWebApplicationBootstrapConfiguration webBootstrapConfiguration, params Assembly[] scanAssemblies)
+		{
+			// Proc config validation
+			WebApplicationConfiguration config = null;
+			try
+			{
+				config = WebApplicationConfiguration.Instance;
+			}
+			catch (Exception ex)
+			{
+				var dump = ExceptionsExtensions.Extract(
+					ex,
+					ExceptionsExtensions.ExceptionDetails.Type,
+					ExceptionsExtensions.ExceptionDetails.Message,
+					ExceptionsExtensions.ExceptionDetails.Stacktrace);
+				webBootstrapConfiguration.D($"Exception has occurred while getting the web application bootstrap configuration instance. Exception: {dump}.");
+			}
+			finally
+			{
+				if (config.IsNull())
+				{
+					webBootstrapConfiguration.D("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+					throw new Exception("Signals.Core.Web.Configuration.WebApplicationConfiguration is not provided. Please use a configuration provider to provide configuration values!");
+				}
+			}
 
-            webBootstrapConfiguration.RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
-            webBootstrapConfiguration.RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
-            webBootstrapConfiguration.RegistrationService.Register<WebMediator>();
-            webBootstrapConfiguration.RegistrationService.Register(webBootstrapConfiguration.ResponseHeaders);
+			webBootstrapConfiguration.RegistrationService.Register<IHttpContextAccessor, HttpContextAccessor>();
+			webBootstrapConfiguration.RegistrationService.Register<IHttpContextWrapper, HttpContextWrapper>();
+			webBootstrapConfiguration.RegistrationService.Register<WebMediator>();
+			webBootstrapConfiguration.RegistrationService.Register(webBootstrapConfiguration.ResponseHeaders);
 
-            return webBootstrapConfiguration.Resolve(scanAssemblies: scanAssemblies);
-        }
-    }
+			return webBootstrapConfiguration.Resolve(scanAssemblies: scanAssemblies);
+		}
+	}
 
-    /// <summary>
-    /// Aspects configuration
-    /// </summary>
-    public class WebApplicationBootstrapConfiguration : FluentApplicationBootstrapConfiguration, IWebApplicationBootstrapConfiguration
-    {
-        /// <summary>
-        /// Default response headers
-        /// </summary>
-        public List<ResponseHeaderAttribute> ResponseHeaders { get; set; }
+	/// <summary>
+	/// Aspects configuration
+	/// </summary>
+	public class WebApplicationBootstrapConfiguration : FluentApplicationBootstrapConfiguration, IWebApplicationBootstrapConfiguration
+	{
+		/// <summary>
+		/// Default response headers
+		/// </summary>
+		public List<ResponseHeaderAttribute> ResponseHeaders { get; set; }
 
-        /// <summary>
-        /// Application assemblies to be scanned for processes and type exports
-        /// </summary>
-        public List<Assembly> ScanAssemblies { get; set; }
+		/// <summary>
+		/// Application assemblies to be scanned for processes and type exports
+		/// </summary>
+		public List<Assembly> ScanAssemblies { get; set; }
 
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public WebApplicationBootstrapConfiguration()
-        {
-            ResponseHeaders = new List<ResponseHeaderAttribute>();
-            ScanAssemblies = new List<Assembly>();
-        }
+		/// <summary>
+		/// CTOR
+		/// </summary>
+		public WebApplicationBootstrapConfiguration()
+		{
+			ResponseHeaders = new List<ResponseHeaderAttribute>();
+			ScanAssemblies = new List<Assembly>();
+		}
 
-        /// <summary>
-        /// Config entry point
-        /// </summary>
-        /// <param name="scanAssemblies"></param>
-        /// <returns></returns>
-        public override IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
-        {
-            return this.BootstrapHelper(scanAssemblies);
-        }
-    }
+		/// <summary>
+		/// Config entry point
+		/// </summary>
+		/// <param name="scanAssemblies"></param>
+		/// <returns></returns>
+		public override IServiceContainer Bootstrap(params Assembly[] scanAssemblies)
+		{
+			return this.BootstrapHelper(scanAssemblies);
+		}
+	}
 }

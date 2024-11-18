@@ -1,6 +1,7 @@
 ﻿using Signals.Aspects.BackgroundProcessing;
 using Signals.Aspects.CommunicationChannels;
 using Signals.Aspects.DI;
+using Signals.Core.Common.Exceptions;
 using Signals.Core.Common.Instance;
 using Signals.Core.Common.Serialization;
 using Signals.Core.Common.Smtp;
@@ -63,7 +64,12 @@ namespace Signals.Core.Background.Configuration.Bootstrapping
             }
             catch(Exception ex)
             {
-	            backgroundBootstrapConfiguration.D($"Exception has occurred while getting the background application configuration instance. Exception: {ex?.Message}.");
+				var dump = ExceptionsExtensions.Extract(
+					ex,
+					ExceptionsExtensions.ExceptionDetails.Type,
+					ExceptionsExtensions.ExceptionDetails.Message,
+					ExceptionsExtensions.ExceptionDetails.Stacktrace);
+				backgroundBootstrapConfiguration.D($"Exception has occurred while getting the background application configuration instance. Exception: {dump}.");
             }
             finally
             {
