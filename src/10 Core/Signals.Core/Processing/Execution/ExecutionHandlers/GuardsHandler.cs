@@ -36,7 +36,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
 	            var guardResult = guardAttribute.Check(process.BaseContext);
 	            this.D($"Executed Guards Handler of -> Type: {guardAttribute.GetType().FullName} for process type: {processType?.FullName}.");
                 if (guardResult == null) continue;
-                return VoidResult.FaultedResult<TResult>(guardResult);
+                return VoidResult.Fail<TResult>(guardResult);
             }
 
             var result = Next.Execute(process, processType, args);

@@ -43,7 +43,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
 
             if (!correctMethod)
             {
-                return VoidResult.FaultedResult<TResult>(new AuthenticationErrorInfo());
+                return VoidResult.Fail<TResult>(new AuthenticationErrorInfo());
             }
 
             var result = Next.Execute(process, processType, args);

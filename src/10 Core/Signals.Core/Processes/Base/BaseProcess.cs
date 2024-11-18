@@ -67,7 +67,7 @@ namespace Signals.Core.Processes.Base
         /// <summary>
         /// Locks container
         /// </summary>
-        private static readonly ConcurrentDictionary<string, object> _locksDictionary = new ConcurrentDictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, object> _locksDictionary = new();
 
         /// <summary>
         /// Statically locks all instances of current process
@@ -167,7 +167,7 @@ namespace Signals.Core.Processes.Base
         /// <returns></returns>
         protected TResponse Fail(Exception failCause)
         {
-            return VoidResult.FaultedResult<TResponse>(failCause);
+            return VoidResult.Fail<TResponse>(failCause);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Signals.Core.Processes.Base
         /// <returns></returns>
         protected TResponse Fail(params IErrorInfo[] failCauses)
         {
-            return VoidResult.FaultedResult<TResponse>(failCauses);
+            return VoidResult.Fail<TResponse>(failCauses);
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace Signals.Core.Processes.Base
         /// <returns></returns>
         protected TResponse Fail()
         {
-            return VoidResult.FaultedResult<TResponse>();
+            return VoidResult.Fail<TResponse>();
         }
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace Signals.Core.Processes.Base
         /// <returns></returns>
         protected TResponse Fail(VoidResult voidResult)
         {
-            return VoidResult.FaultedResult<TResponse>(voidResult?.ErrorMessages?.ToArray());
+            return VoidResult.Fail<TResponse>(voidResult?.ErrorMessages?.ToArray());
         }
 
         /// <summary>

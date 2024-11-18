@@ -34,7 +34,7 @@ namespace Signals.Core.Processes
             if (process.IsNull())
             {
 	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
-                return VoidResult.FaultedResult<TResponse>();
+                return VoidResult.Fail<TResponse>();
             }
 
             // execute process
@@ -56,7 +56,7 @@ namespace Signals.Core.Processes
             if (process.IsNull())
             {
 	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
-                return VoidResult.FaultedResult<TResponse>();
+                return VoidResult.Fail<TResponse>();
             }
 
             // execute process
@@ -78,7 +78,7 @@ namespace Signals.Core.Processes
             if (process.IsNull())
             {
 	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
-                return VoidResult.FaultedResult<TResponse>();
+                return VoidResult.Fail<TResponse>();
             }
 
             // execute process
@@ -100,7 +100,7 @@ namespace Signals.Core.Processes
             if (process.IsNull())
             {
 	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
-                return VoidResult.FaultedResult<TResponse>();
+                return VoidResult.Fail<TResponse>();
             }
 
             // execute process
@@ -124,7 +124,7 @@ namespace Signals.Core.Processes
             if (process.IsNull())
             {
 	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
-                return VoidResult.FaultedResult<TResponse>();
+                return VoidResult.Fail<TResponse>();
             }
 
             // execute process
@@ -148,7 +148,7 @@ namespace Signals.Core.Processes
             if (process.IsNull())
             {
 	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
-                return VoidResult.FaultedResult<TResponse>();
+                return VoidResult.Fail<TResponse>();
             }
 
             // execute process
@@ -172,7 +172,7 @@ namespace Signals.Core.Processes
             if (process.IsNull())
             {
 	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
-                return VoidResult.FaultedResult<TResponse>();
+                return VoidResult.Fail<TResponse>();
             }
 
             // execute process
@@ -196,7 +196,7 @@ namespace Signals.Core.Processes
             if (process.IsNull())
             {
 	            this.D($"Process type {processType?.FullName} not found. Dispatcher exists.");
-                return VoidResult.FaultedResult<TResponse>();
+                return VoidResult.Fail<TResponse>();
             }
 
             // execute process

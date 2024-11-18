@@ -172,7 +172,7 @@ namespace Signals.Core.Configuration.Bootstrapping
         /// <summary>
         /// Synchronization logging provider
         /// </summary>
-        //protected IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
+        /// protected IRecurringTaskLogProvider RecurringTaskLogProvider { get; set; }
 
         /// <summary>
         /// All loaded Signals types

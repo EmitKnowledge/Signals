@@ -39,7 +39,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
                 catch (Exception ex)
                 {
                     this.D($"Executed Error Managing Handler for process type: {processType?.FullName} -> Exception: {ex?.Message}.");
-                    return VoidResult.FaultedResult<TResult>(ex);
+                    return VoidResult.Fail<TResult>(ex);
                 }
             }
 
@@ -49,7 +49,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
             if (strategyResult.Exception != null)
             {
 	            this.D($"Executed Error Managing Handler failed -> Strategy: {strategyHandler?.GetType().FullName} -> AutoHandleErrorProcesses: {strategyHandler.AutoHandleErrorProcesses} for process type: {processType?.FullName}. Exception: {strategyResult?.Exception?.Message}.");
-	            return VoidResult.FaultedResult<TResult>(strategyResult.Exception);
+	            return VoidResult.Fail<TResult>(strategyResult.Exception);
             }
 
             return strategyResult.Result;

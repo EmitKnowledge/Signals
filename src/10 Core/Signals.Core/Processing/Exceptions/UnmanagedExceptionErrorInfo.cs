@@ -1,5 +1,7 @@
 ﻿using Signals.Aspects.DI;
 using Signals.Aspects.Localization;
+using Signals.Core.Common.Exceptions;
+using Signals.Core.Configuration;
 using System;
 using System.Runtime.Serialization;
 
@@ -15,7 +17,7 @@ namespace Signals.Core.Processing.Exceptions
         /// <summary>
         /// System fault message
         /// </summary>
-        [IgnoreDataMember]
+        [DataMember]
         public string FaultMessage { get; set; }
 
         /// <summary>
@@ -24,10 +26,11 @@ namespace Signals.Core.Processing.Exceptions
         [DataMember]
         public string UserVisibleMessage { get; private set; }
 
-        /// <summary>
-        /// Exception reason for error
-        /// </summary>
-        public Exception Exception { get; private set; }
+		/// <summary>
+		/// Exception reason for error
+		/// </summary>
+		[IgnoreDataMember]
+		public Exception Exception { get; private set; }
 
         /// <summary>
         /// CTOR
@@ -36,10 +39,18 @@ namespace Signals.Core.Processing.Exceptions
         public UnmanagedExceptionErrorInfo(Exception exception)
         {
             Exception = exception;
-            FaultMessage = exception.Message;
 
+            if (ApplicationConfiguration.Instance.EnableVerbose)
+            {
+				FaultMessage = ExceptionsExtensions.Extract(exception,
+                    ExceptionsExtensions.ExceptionDetails.Type,
+                    ExceptionsExtensions.ExceptionDetails.Message,
+                    ExceptionsExtensions.ExceptionDetails.Stacktrace);
+
+			}
+            
             var localizer = SystemBootstrapper.GetInstance<ILocalizationProvider>();
-            UserVisibleMessage = localizer?.Get("SystemError")?.Value ?? "Something happened!";
+            UserVisibleMessage = localizer?.Get("Signals_SystemError")?.Value ?? "Server error!";
         }
     }
 }

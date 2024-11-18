@@ -38,7 +38,7 @@ namespace Signals.Core.Processing.Results
 		[DebuggerStepThrough]
 		public VoidResult()
 		{
-			ErrorMessages = new List<IErrorInfo>();
+			ErrorMessages = [];
 		}
 
 		/// <summary>

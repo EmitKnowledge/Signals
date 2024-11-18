@@ -86,7 +86,7 @@ namespace Signals.Core.Processes.Recurring
             catch (Exception ex)
             {
 	            this.D($"Exception has occurred while executing sync. Exception: {ex.Message}");
-                result = VoidResult.FaultedResult<TResponse>(ex);
+                result = VoidResult.Fail<TResponse>(ex);
                 throw;
             }
             finally
@@ -192,7 +192,7 @@ namespace Signals.Core.Processes.Recurring
             catch (Exception ex)
             {
 	            this.D($"Exception has occurred while executing sync. Exception: {ex.Message}");
-	            result = VoidResult.FaultedResult<TResponse>(ex);
+	            result = VoidResult.Fail<TResponse>(ex);
                 throw;
             }
             finally

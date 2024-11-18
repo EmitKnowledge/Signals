@@ -45,7 +45,7 @@ namespace Signals.Core.Processing.Execution.ExecutionHandlers
 
             if (!correctMethod)
             {
-                return VoidResult.FaultedResult<TResult>(new AuthorizationErrorInfo());
+                return VoidResult.Fail<TResult>(new AuthorizationErrorInfo());
             }
 
             var result = Next.Execute(process, processType, args);
