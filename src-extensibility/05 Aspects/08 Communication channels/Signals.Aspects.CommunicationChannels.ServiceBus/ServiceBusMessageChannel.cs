@@ -65,8 +65,7 @@ namespace Signals.Aspects.CommunicationChannels.ServiceBus
 
 			// create client
 			ServiceBusClient client = new(_configuration.ConnectionString);
-			ServiceBusSender sender = client.CreateSender(channelName);
-
+			ServiceBusSender sender = client.CreateSender($"{_configuration.ChannelPrefix}{channelName}");
 			var messageBody = JsonConvert.SerializeObject(message);
 			var messageBytes = Encoding.UTF8.GetBytes(messageBody);
 			var queueMessage = new ServiceBusMessage(messageBytes);
