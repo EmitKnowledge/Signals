@@ -1,7 +1,4 @@
 ﻿using Microsoft.OpenApi;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Extensions;
-using Microsoft.OpenApi.Models;
 using Signals.Aspects.Caching;
 using Signals.Aspects.Caching.Entries;
 using Signals.Aspects.Caching.Enums;
@@ -22,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Text.Json.Nodes;
 using EnumExtensions = Signals.Core.Common.Instance.EnumExtensions;
 
 namespace Signals.Core.Web.Execution.CustomContentHandlers
@@ -102,7 +100,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     var path = type.FullName.Replace(assemblyNamespace, "").Replace('.', '/');
                     var processGenerics = type.BaseType.GetGenericArguments();
 
-                    var headersDictionary = new Dictionary<string, OpenApiHeader>();
+                    var headersDictionary = new Dictionary<string, IOpenApiHeader>();
 
                     foreach (var header in headerAttributes)
                     {
@@ -112,19 +110,21 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                             {
                                 Schema = new OpenApiSchema
                                 {
-                                    Type = "string"
+                                    Type = JsonSchemaType.String
                                 },
-                                Example = new OpenApiString(headerValue.Value)
+                                Example = JsonValue.Create(headerValue.Value)
                             });
                         }
                     }
 
-                    operationItem.Tags = new List<OpenApiTag>
+                    var tagName = type.Namespace.Split('.').Last();
+                    document.Tags.Add(new OpenApiTag
                     {
-                        new OpenApiTag
-                        {
-                            Name = type.Namespace.Split('.').Last()
-                        }
+                        Name = tagName
+                    });
+                    operationItem.Tags = new HashSet<OpenApiTagReference>
+                    {
+                        new OpenApiTagReference(tagName, document, null)
                     };
                     operationItem.Summary = instance.Description.IsNullOrEmpty() ? instance.Name : instance.Description;
                     operationItem.Description = instance.Name;
@@ -207,24 +207,15 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                         {
                             operationItem.RequestBody = new OpenApiRequestBody
                             {
-                                Content = new Dictionary<string, OpenApiMediaType>
+                                Content = new Dictionary<string, IOpenApiMediaType>
                                 {
                                     {
                                         contentType,
                                         new OpenApiMediaType
                                         {
-                                            Schema = new OpenApiSchema
-                                            {
-                                                Reference = request != null && !requestPath.IsNullOrEmpty()
-													? new OpenApiReference
-                                                    {
-                                                        Id = $"{requestPath}",
-                                                        Type = ReferenceType.Schema,
-                                                        ExternalResource = ""
-                                                    }
-                                                    : null,
-                                                Properties = requestSchema
-                                            }
+                                            Schema = request != null && !requestPath.IsNullOrEmpty()
+                                                ? new OpenApiSchemaReference(requestPath, document, null)
+                                                : new OpenApiSchema { Properties = requestSchema }
                                         }
                                     }
                                 }
@@ -240,15 +231,9 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                                     {
                                         In = ParameterLocation.Query,
                                         Name = pair.Key,
-                                        Reference = request != null && !requestPath.IsNullOrEmpty()
-											? new OpenApiReference
-                                            {
-                                                Id = $"{requestPath}",
-                                                Type = ReferenceType.Schema,
-                                                ExternalResource = ""
-                                            }
-                                            : null,
-                                        Schema = pair.Value
+                                        Schema = request != null && !requestPath.IsNullOrEmpty()
+                                            ? new OpenApiSchemaReference(requestPath, document, null)
+                                            : pair.Value
                                     });
 
                                     if (!document.Components.Schemas.ContainsKey(requestPath))
@@ -273,24 +258,15 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     {
                         ["default"] = new OpenApiResponse
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>
+                            Content = new Dictionary<string, IOpenApiMediaType>
                             {
                                 {
                                     contentType,
                                     new OpenApiMediaType
                                     {
-                                        Schema = new OpenApiSchema
-                                        {
-										Reference = request != null && !requestPath.IsNullOrEmpty()
-											? new OpenApiReference
-											{
-												Id = $"{requestPath}",
-												Type = ReferenceType.Schema,
-												ExternalResource = ""
-											}
-											: null,
-											Properties = responseSchema
-                                        }
+                                        Schema = response != null && !responsePath.IsNullOrEmpty()
+                                            ? new OpenApiSchemaReference(responsePath, document, null)
+                                            : new OpenApiSchema { Properties = responseSchema }
                                     }
                                 }
                             },
@@ -318,12 +294,15 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     {
                         if (!document.Components.Schemas.ContainsKey(enumType.Name))
                         {
-                            var enums = Enum.GetNames(enumType).Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
-                            document.Components.Schemas.Add(enumType.Name, new OpenApiSchema { Enum = enums, Type = "string" });
+                            document.Components.Schemas.Add(enumType.Name, new OpenApiSchema
+                            {
+                                Enum = GetEnumValues(enumType),
+                                Type = JsonSchemaType.String
+                            });
                         }
                     }
 
-                    pathItem.Operations = new Dictionary<OperationType, OpenApiOperation>();
+                    pathItem.Operations = new Dictionary<HttpMethod, OpenApiOperation>();
 
                     foreach (var method in Map(httpMethod))
                     {
@@ -336,11 +315,11 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
             return document;
 
-            Dictionary<string, OpenApiSchema> Deserialize(Type type, ref List<Type> enumTypes)
+            Dictionary<string, IOpenApiSchema> Deserialize(Type type, ref List<Type> enumTypes)
             {
                 if (type == null) return null;
 
-                var result = new Dictionary<string, OpenApiSchema>();
+                var result = new Dictionary<string, IOpenApiSchema>();
                 // Set schema props of the parent property
                 var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
                 Stack<OpenApiSchemaNode> toProcess = new Stack<OpenApiSchemaNode>(properties.Select(x => new OpenApiSchemaNode { Property = x }));
@@ -358,7 +337,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
                     if (parentSchema != null)
                     {
-                        if (parentSchema.Type == "array")
+                        if (parentSchema.Type == JsonSchemaType.Array)
                         {
                             parentSchema.Items = parentSchema.Items ?? new OpenApiSchema();
                             parentSchema.Items.Properties.Add(schema.Title, schema);
@@ -440,22 +419,15 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType) &&
                     typeof(string) != property.PropertyType)
                 {
-                    schema.Type = "array";
+                    schema.Type = JsonSchemaType.Array;
                     return schema;
                 }
                 else if (property.PropertyType.IsEnum)
                 {
-                    var enums = Enum.GetNames(property.PropertyType).Select(x => new OpenApiString(x)).Cast<IOpenApiAny>().ToList();
+                    var enums = GetEnumValues(property.PropertyType);
                     schema.Enum = enums;
-                    schema.Type = property.PropertyType.Name;
-                    schema.Format = "int32";
-                    schema.Example = enums.FirstOrDefault();
-                    schema.Reference = new OpenApiReference
-                    {
-                        Id = $"{property.PropertyType.Name}",
-                        Type = ReferenceType.Schema,
-                        ExternalResource = ""
-                    };
+                    schema.Type = JsonSchemaType.String;
+                    schema.Example = JsonValue.Create(Enum.GetNames(property.PropertyType).FirstOrDefault());
 
                     enumTypes.Add(property.PropertyType);
                     return schema;
@@ -465,88 +437,88 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                 {
                     case TypeCode.Boolean:
                         {
-                            schema.Type = "boolean";
+                            schema.Type = JsonSchemaType.Boolean;
                             break;
                         }
                     case TypeCode.Byte:
                         {
-                            schema.Type = "string";
+                            schema.Type = JsonSchemaType.String;
                             schema.Format = "byte";
                             break;
                         }
                     case TypeCode.Char:
                         {
-                            schema.Type = "string";
+                            schema.Type = JsonSchemaType.String;
                             break;
                         }
                     case TypeCode.DateTime:
                         {
-                            schema.Type = "string";
+                            schema.Type = JsonSchemaType.String;
                             schema.Format = "date-time";
                             break;
                         }
                     case TypeCode.Decimal:
                         {
-                            schema.Type = "number";
+                            schema.Type = JsonSchemaType.Number;
                             schema.Format = "double";
                             break;
                         }
                     case TypeCode.Double:
                         {
-                            schema.Type = "number";
+                            schema.Type = JsonSchemaType.Number;
                             schema.Format = "double";
                             break;
                         }
                     case TypeCode.Int16:
                         {
-                            schema.Type = "integer";
+                            schema.Type = JsonSchemaType.Integer;
                             schema.Format = "int32";
                             break;
                         }
                     case TypeCode.Int32:
                         {
-                            schema.Type = "integer";
+                            schema.Type = JsonSchemaType.Integer;
                             schema.Format = "int32";
                             break;
                         }
                     case TypeCode.Int64:
                         {
-                            schema.Type = "integer";
+                            schema.Type = JsonSchemaType.Integer;
                             schema.Format = "int64";
                             break;
                         }
                     case TypeCode.SByte:
                         {
-                            schema.Type = "string";
+                            schema.Type = JsonSchemaType.String;
                             schema.Format = "byte";
                             break;
                         }
                     case TypeCode.Single:
                         {
-                            schema.Type = "number";
+                            schema.Type = JsonSchemaType.Number;
                             schema.Format = "float";
                             break;
                         }
                     case TypeCode.String:
                         {
-                            schema.Type = "string";
+                            schema.Type = JsonSchemaType.String;
                             break;
                         }
                     case TypeCode.UInt16:
                         {
-                            schema.Type = "integer";
+                            schema.Type = JsonSchemaType.Integer;
                             schema.Format = "int32";
                             break;
                         }
                     case TypeCode.UInt32:
                         {
-                            schema.Type = "integer";
+                            schema.Type = JsonSchemaType.Integer;
                             schema.Format = "int32";
                             break;
                         }
                     case TypeCode.UInt64:
                         {
-                            schema.Type = "integer";
+                            schema.Type = JsonSchemaType.Integer;
                             schema.Format = "int64";
                             break;
                         }
@@ -556,28 +528,35 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
             }
 
             // map http method to open api method
-            List<OperationType> Map(SignalsApiMethod method)
+            List<HttpMethod> Map(SignalsApiMethod method)
             {
                 if (method == SignalsApiMethod.ANY)
-                    return new List<OperationType>
+                    return new List<HttpMethod>
                     {
-                        OperationType.Get,
-                        OperationType.Post
+                        HttpMethod.Get,
+                        HttpMethod.Post
                     };
                 else if (method == SignalsApiMethod.DELETE)
-                    return new List<OperationType> { OperationType.Delete, };
+                    return new List<HttpMethod> { HttpMethod.Delete, };
                 else if (method == SignalsApiMethod.GET)
-                    return new List<OperationType> { OperationType.Get, };
+                    return new List<HttpMethod> { HttpMethod.Get, };
                 else if (method == SignalsApiMethod.OPTIONS)
-                    return new List<OperationType> { OperationType.Options, };
+                    return new List<HttpMethod> { HttpMethod.Options, };
                 else if (method == SignalsApiMethod.PATCH)
-                    return new List<OperationType> { OperationType.Patch, };
+                    return new List<HttpMethod> { HttpMethod.Patch, };
                 else if (method == SignalsApiMethod.POST)
-                    return new List<OperationType> { OperationType.Post, };
+                    return new List<HttpMethod> { HttpMethod.Post, };
                 else if (method == SignalsApiMethod.PUT)
-                    return new List<OperationType> { OperationType.Put, };
+                    return new List<HttpMethod> { HttpMethod.Put, };
 
-                return new List<OperationType>();
+                return new List<HttpMethod>();
+            }
+
+            List<JsonNode> GetEnumValues(Type enumType)
+            {
+                return Enum.GetNames(enumType)
+                    .Select(name => (JsonNode)JsonValue.Create(name))
+                    .ToList();
             }
         }
 
@@ -619,12 +598,12 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
             if (context.RawUrl.ToLowerInvariant().EndsWith(".yaml"))
             {
-                docsString = docs.Serialize(OpenApiSpecVersion.OpenApi2_0, OpenApiFormat.Yaml);
+                docsString = docs.SerializeAsYamlAsync(OpenApiSpecVersion.OpenApi2_0, default).GetAwaiter().GetResult();
                 contentType = "text/x-yaml";
             }
             else
             {
-                docsString = docs.Serialize(OpenApiSpecVersion.OpenApi2_0, OpenApiFormat.Json);
+                docsString = docs.SerializeAsJsonAsync(OpenApiSpecVersion.OpenApi2_0, default).GetAwaiter().GetResult();
                 contentType = "application/json";
             }
 
