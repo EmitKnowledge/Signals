@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Version>3.0.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="8.1.1" />
+		<PackageReference Include="Autofac" Version="9.1.0" />
 	</ItemGroup>
 
 	<Choose>
