@@ -1,283 +1,182 @@
 ﻿using FluentScheduler;
 using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
 using System;
+using System.Collections.Generic;
 
 namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 {
     internal static class ConfigurationExtensions
     {
-        internal static void Configure(this Registry registry, ISyncTask task, RecurrencePatternConfiguration configuration)
+        internal static void Configure(this ICollection<Schedule> schedules, ISyncTask task, RecurrencePatternConfiguration configuration)
         {
+            if (configuration.RunNow)
+            {
+                schedules.Add(CreateSchedule(task, schedule => schedule.Now()));
+            }
+
             switch (configuration.GetInstance())
             {
                 case DailyRecurrencePatternConfiguration dailyConfiguration:
-                    var dailySchedule = registry.Schedule(() => task.Execute());
-                    Schedule(dailySchedule, dailyConfiguration);
+                    schedules.Add(CreateSchedule(task, schedule => ConfigureDaily(schedule, dailyConfiguration)));
                     break;
                 case MonthlyNamedRecurrencePatternConfiguration monthlyNamedConfiguration:
-                    var monthlyNamedSchedule = registry.Schedule(() => task.Execute());
-                    Schedule(monthlyNamedSchedule, monthlyNamedConfiguration);
+                    schedules.Add(CreateMonthlyNamedSchedule(task, monthlyNamedConfiguration));
                     break;
                 case MonthlyRecurrencePatternConfiguration monthlyConfiguration:
-                    var monthlySchedule = registry.Schedule(() => task.Execute());
-                    Schedule(monthlySchedule, monthlyConfiguration);
+                    schedules.Add(CreateSchedule(task, schedule => ConfigureMonthly(schedule, monthlyConfiguration)));
                     break;
                 case TimePartRecurrencePatternConfiguration timePartConfiguration:
-                    var timePartSchedule = registry.Schedule(() => task.Execute());
-                    Schedule(timePartSchedule, timePartConfiguration);
+                    schedules.Add(CreateSchedule(task, schedule => ConfigureTimePart(schedule, timePartConfiguration)));
                     break;
                 case WeekendRecurrencePatternConfiguration weekendConfiguration:
-                    var saturdayWeekendDaySchedule = registry.Schedule(() => task.Execute());
-                    var sundayWeekendDaySchedule = registry.Schedule(() => task.Execute());
-                    Schedule(saturdayWeekendDaySchedule, sundayWeekendDaySchedule, weekendConfiguration);
+                    foreach (var day in weekendConfiguration.Days)
+                    {
+                        schedules.Add(CreateWeeklySchedule(task, day, weekendConfiguration.Value, weekendConfiguration.TimePart));
+                    }
                     break;
                 case WeeklyRecurrencePatternConfiguration weeklyConfiguration:
-                    var weeklySchedule = registry.Schedule(() => task.Execute());
-                    Schedule(weeklySchedule, weeklyConfiguration);
+                    schedules.Add(CreateWeeklySchedule(task, weeklyConfiguration.Day, weeklyConfiguration.Value, weeklyConfiguration.TimePart));
                     break;
                 case WorkdayRecurrencePatternConfiguration workdayConfiguration:
-                    var workdaySchedule = registry.Schedule(() => task.Execute());
-                    Schedule(workdaySchedule, workdayConfiguration);
+                    schedules.Add(CreateSchedule(task, schedule => ConfigureWorkday(schedule, workdayConfiguration)));
                     break;
             }
         }
 
-        /// <summary>
-        /// Configure a daily schedule
-        /// </summary>
-        /// <param name="schedule"></param>
-        /// <param name="configuration"></param>
-        private static void Schedule(
-            Schedule schedule,
-            DailyRecurrencePatternConfiguration configuration)
+        private static Schedule CreateSchedule(ISyncTask task, Action<RunSpecifier> configure)
         {
-            if (configuration.RunNow)
-            {
-                schedule
-                    .ToRunNow()
-                    .AndEvery(configuration.Value)
-                    .Days()
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
-            else
-            {
-                schedule
-                    .ToRunEvery(configuration.Value)
-                    .Days()
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
+            return new Schedule(() => task.Execute(), configure);
         }
 
-        /// <summary>
-        /// Configure a monthly named schedule
-        /// </summary>
-        /// <param name="schedule"></param>
-        /// <param name="configuration"></param>
-        private static void Schedule(
-            Schedule schedule,
-            MonthlyNamedRecurrencePatternConfiguration configuration)
+        private static Schedule CreateGuardedSchedule(ISyncTask task, Func<DateTime, bool> shouldRun, Action<RunSpecifier> configure)
         {
-            MonthUnit monthSchedule;
-
-            if (configuration.RunNow)
-            {
-                monthSchedule = schedule
-                    .ToRunNow()
-                    .AndEvery(configuration.Value)
-                    .Months();
-            }
-            else
-            {
-                monthSchedule = schedule
-                    .ToRunEvery(configuration.Value)
-                    .Months();
-            }
-
-            MonthOnDayOfWeekUnit orderedSchedule = null;
-
-            switch (configuration.Order)
-            {
-                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.First:
-                    orderedSchedule = monthSchedule.OnTheFirst(configuration.Day);
-                    break;
-                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.Second:
-                    orderedSchedule = monthSchedule.OnTheSecond(configuration.Day);
-                    break;
-                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.Third:
-                    orderedSchedule = monthSchedule.OnTheThird(configuration.Day);
-                    break;
-                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.Fourth:
-                    orderedSchedule = monthSchedule.OnTheFourth(configuration.Day);
-                    break;
-                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.Last:
-                    orderedSchedule = monthSchedule.OnTheLast(configuration.Day);
-                    break;
-            }
-
-            orderedSchedule?.At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+            return new Schedule(
+                () =>
+                {
+                    if (shouldRun(DateTime.Now))
+                    {
+                        task.Execute();
+                    }
+                },
+                configure);
         }
 
-        /// <summary>
-        /// Configure a monthly schedule
-        /// </summary>
-        /// <param name="schedule"></param>
-        /// <param name="configuration"></param>
-        private static void Schedule(
-            Schedule schedule,
-            MonthlyRecurrencePatternConfiguration configuration)
+        private static void ConfigureDaily(RunSpecifier schedule, DailyRecurrencePatternConfiguration configuration)
         {
-            if (configuration.RunNow)
-            {
-                schedule
-                    .ToRunNow()
-                    .AndEvery(configuration.Value)
-                    .Months()
-                    .On(configuration.Day)
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
-            else
-            {
-                schedule
-                    .ToRunEvery(configuration.Value)
-                    .Months()
-                    .On(configuration.Day)
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
+            schedule
+                .Every(configuration.Value)
+                .Days()
+                .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
         }
 
-        /// <summary>
-        /// Configure a time part schedule
-        /// </summary>
-        /// <param name="schedule"></param>
-        /// <param name="configuration"></param>
-        private static void Schedule(
-            Schedule schedule,
-            TimePartRecurrencePatternConfiguration configuration)
+        private static Schedule CreateMonthlyNamedSchedule(ISyncTask task, MonthlyNamedRecurrencePatternConfiguration configuration)
         {
-            if (configuration.RunNow)
-            {
-                schedule
-                    .ToRunNow()
-                    .AndEvery(configuration.Value)
-                    .Seconds();
-            }
-            else if (configuration.RunOnceAt.HasValue)
+            var anchorDate = DateTime.Now.Date;
+
+            return CreateGuardedSchedule(
+                task,
+                currentDate => IsMonthlyNamedRun(currentDate.Date, anchorDate, configuration),
+                schedule => schedule
+                    .Every(configuration.Day)
+                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes));
+        }
+
+        private static void ConfigureMonthly(RunSpecifier schedule, MonthlyRecurrencePatternConfiguration configuration)
+        {
+            schedule
+                .Every(configuration.Value)
+                .Months()
+                .On(configuration.Day)
+                .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+        }
+
+        private static void ConfigureTimePart(RunSpecifier schedule, TimePartRecurrencePatternConfiguration configuration)
+        {
+            if (configuration.RunOnceAt.HasValue && !configuration.RunNow)
             {
                 var hour = configuration.RunOnceAt.Value.Item1;
                 var minute = configuration.RunOnceAt.Value.Item2;
 
                 schedule
-                    .ToRunOnceAt(hour, minute)
+                    .OnceAt(hour, minute)
                     .AndEvery(configuration.Value)
                     .Seconds();
             }
             else
             {
                 schedule
-                    .ToRunEvery(configuration.Value)
+                    .Every(configuration.Value)
                     .Seconds();
             }
         }
 
-        /// <summary>
-        /// Schedule a weekend task
-        /// </summary>
-        /// <param name="schedule"></param>
-        /// <param name="secondSchedule"></param>
-        /// <param name="configuration"></param>
-        private static void Schedule(
-            Schedule schedule,
-            Schedule secondSchedule,
-            WeekendRecurrencePatternConfiguration configuration)
+        private static Schedule CreateWeeklySchedule(ISyncTask task, DayOfWeek day, int interval, TimeSpan timePart)
         {
-            if (configuration.RunNow)
-            {
-                schedule
-                    .ToRunNow()
-                    .AndEvery(configuration.Value)
-                    .Weeks()
-                    .On(DayOfWeek.Saturday)
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
-            else
-            {
-                schedule
-                    .ToRunEvery(configuration.Value)
-                    .Weeks()
-                    .On(DayOfWeek.Saturday)
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
+            var anchorDate = DateTime.Now.Date;
 
-            if (configuration.RunNow)
-            {
-                secondSchedule
-                    .ToRunNow()
-                    .AndEvery(configuration.Value)
-                    .Weeks()
-                    .On(DayOfWeek.Sunday)
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
-            else
-            {
-                secondSchedule
-                    .ToRunEvery(configuration.Value)
-                    .Weeks()
-                    .On(DayOfWeek.Sunday)
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
+            return CreateGuardedSchedule(
+                task,
+                currentDate => currentDate.DayOfWeek == day && IsWeekIntervalRun(currentDate.Date, anchorDate, interval),
+                schedule => schedule
+                    .Everyday()
+                    .At(timePart.Hours, timePart.Minutes));
         }
 
-        /// <summary>
-        /// Configure a weekly schedule
-        /// </summary>
-        /// <param name="schedule"></param>
-        /// <param name="configuration"></param>
-        private static void Schedule(
-            Schedule schedule,
-            WeeklyRecurrencePatternConfiguration configuration)
+        private static void ConfigureWorkday(RunSpecifier schedule, WorkdayRecurrencePatternConfiguration configuration)
         {
-            if (configuration.RunNow)
-            {
-                schedule
-                    .ToRunNow()
-                    .AndEvery(configuration.Value)
-                    .Weeks()
-                    .On(configuration.Day)
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
-            else
-            {
-                schedule
-                    .ToRunEvery(configuration.Value)
-                    .Weeks()
-                    .On(configuration.Day)
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
-            }
+            schedule
+                .EveryWeekday()
+                .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
         }
 
-        /// <summary>
-        /// Configure a workdays schedule
-        /// </summary>
-        /// <param name="schedule"></param>
-        /// <param name="configuration"></param>
-        private static void Schedule(
-            Schedule schedule,
-            WorkdayRecurrencePatternConfiguration configuration)
+        private static bool IsWeekIntervalRun(DateTime currentDate, DateTime anchorDate, int interval)
         {
-            if (configuration.RunNow)
+            if (interval <= 1)
             {
-                schedule
-                    .ToRunNow()
-                    .AndEvery(configuration.Value)
-                    .Weekdays()
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+                return true;
             }
-            else
+
+            var weeks = (int)Math.Floor((currentDate - anchorDate).TotalDays / 7);
+            return weeks >= 0 && weeks % interval == 0;
+        }
+
+        private static bool IsMonthlyNamedRun(
+            DateTime currentDate,
+            DateTime anchorDate,
+            MonthlyNamedRecurrencePatternConfiguration configuration)
+        {
+            return currentDate.DayOfWeek == configuration.Day
+                   && IsMonthIntervalRun(currentDate, anchorDate, configuration.Value)
+                   && IsDayOrderInMonth(currentDate, configuration.Order);
+        }
+
+        private static bool IsMonthIntervalRun(DateTime currentDate, DateTime anchorDate, int interval)
+        {
+            if (interval <= 1)
             {
-                schedule
-                    .ToRunEvery(configuration.Value)
-                    .Weekdays()
-                    .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
+                return true;
+            }
+
+            var months = ((currentDate.Year - anchorDate.Year) * 12) + currentDate.Month - anchorDate.Month;
+            return months >= 0 && months % interval == 0;
+        }
+
+        private static bool IsDayOrderInMonth(DateTime date, MonthlyNamedRecurrencePatternConfiguration.DayInMonth order)
+        {
+            switch (order)
+            {
+                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.First:
+                    return date.Day <= 7;
+                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.Second:
+                    return date.Day >= 8 && date.Day <= 14;
+                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.Third:
+                    return date.Day >= 15 && date.Day <= 21;
+                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.Fourth:
+                    return date.Day >= 22 && date.Day <= 28;
+                case MonthlyNamedRecurrencePatternConfiguration.DayInMonth.Last:
+                    return date.AddDays(7).Month != date.Month;
+                default:
+                    return false;
             }
         }
     }
