@@ -2,6 +2,7 @@
 using Signals.Aspects.BackgroundProcessing.TaskConfiguration;
 using Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration;
 using System;
+using System.Collections.Generic;
 
 namespace Signals.Aspects.BackgroundProcessing.FluentScheduler
 {
@@ -11,16 +12,16 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler
     public class FluentRegistry : ITaskRegistry
     {
         /// <summary>
-        /// FluentScheduler registry
+        /// FluentScheduler schedules
         /// </summary>
-        private readonly Registry _registry;
+        private readonly List<Schedule> _schedules;
 
         /// <summary>
         /// CTOR
         /// </summary>
         public FluentRegistry()
         {
-            _registry = new Registry();
+            _schedules = new List<Schedule>();
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler
         /// <param name="config"></param>
         public void ScheduleTask(ISyncTask task, RecurrencePatternConfiguration config)
         {
-            _registry.Configure(task, config);
+            _schedules.Configure(task, config);
         }
 
 	    /// <summary>
@@ -48,7 +49,7 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler
         /// </summary>
         public void Start()
         {
-            JobManager.Initialize(_registry);
+            ScheduleGroup.Start(_schedules);
         }
 
         /// <summary>
@@ -56,8 +57,7 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler
         /// </summary>
         public void Stop()
         {
-            JobManager.StopAndBlock();
-            JobManager.RemoveAllJobs();
+            ScheduleGroup.StopAndBlock(_schedules);
         }
     }
 }

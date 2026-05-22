@@ -23,7 +23,7 @@ namespace Signals.Tests.Logging
             logger.Info(message);
 
             var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
-            var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
+            var filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
             Assert.True(File.Exists(filePath));
 
@@ -47,7 +47,7 @@ namespace Signals.Tests.Logging
             logger.Info(message);
 
             var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
-            var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
+            var filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
             Assert.False(File.Exists(filePath));
         }
@@ -62,7 +62,7 @@ namespace Signals.Tests.Logging
             logger.Info(message);
 
             var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
-            var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
+            var filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
             Assert.True(File.Exists(filePath));
 
@@ -84,7 +84,7 @@ namespace Signals.Tests.Logging
             logger.Error(message);
 
             var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
-            var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
+            var filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
             Assert.True(File.Exists(filePath));
 

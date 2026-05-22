@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Version>3.0.0</Version>
+		<TargetFramework>net10.0</TargetFramework>
+		<Version>4.0.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.70" />
-		<PackageReference Include="HtmlSanitizer" Version="8.1.870" />
-		<PackageReference Include="MailKit" Version="4.8.0" />
-		<PackageReference Include="MimeKit" Version="4.8.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+		<PackageReference Include="HtmlSanitizer" Version="9.0.892" />
+		<PackageReference Include="MailKit" Version="4.16.0" />
+		<PackageReference Include="MimeKit" Version="4.16.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 	</ItemGroup>
 </Project>

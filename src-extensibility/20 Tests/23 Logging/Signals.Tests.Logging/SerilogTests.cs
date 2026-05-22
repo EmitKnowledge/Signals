@@ -20,7 +20,7 @@ namespace Signals.Tests.Logging
         public void FileLoggerMinLevelWarn_LogsInfo_FileIsEmpty()
         {
             var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
-            var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
+            var filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
             File.Delete(filePath);
 
@@ -41,7 +41,7 @@ namespace Signals.Tests.Logging
         public void FileLogger_LogsInfo_FileExists()
         {
             var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
-            var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
+            var filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
             File.Delete(filePath);
 
@@ -67,7 +67,7 @@ namespace Signals.Tests.Logging
         public void FileLogger_LogsError_FileExists()
         {
             var fileName = $@"{DateTime.Today.ToString("yyyy-MM-dd")}.log";
-            var filePath = $@"{Environment.CurrentDirectory}\{fileName}";
+            var filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
             File.Delete(filePath);
 

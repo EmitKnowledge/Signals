@@ -32,7 +32,10 @@ public class BaseTestConfiguration
     
     private void LoadConfigurationFromFile()
     {
-        string configPath = Path.Combine(AppContext.BaseDirectory, "config\\testConfig.json");
+        string configPath = Path.Combine(
+            AppContext.BaseDirectory,
+            "config",
+            "testConfig.json");
         
         if (File.Exists(configPath))
         {

@@ -31,7 +31,7 @@ namespace Signals.Aspects.Logging.NLog
             InitTarget(new FileTarget("file")
             {
                 CreateDirs = true,
-                ArchiveNumbering = ArchiveNumberingMode.Date,
+                ArchiveSuffixFormat = "_{1:yyyyMMdd}_{0:00}",
                 ArchiveEvery = FileArchivePeriod.Day,
 
                 MaxArchiveFiles = configuration.MaxArchiveFiles,
@@ -174,7 +174,7 @@ namespace Signals.Aspects.Logging.NLog
         /// <param name="filePath"></param>
         public NLogger(string filePath)
         {
-            LogManager.Configuration = new XmlLoggingConfiguration(filePath, false);
+            LogManager.Configuration = new XmlLoggingConfiguration(filePath);
         }
 
         /// <summary>
