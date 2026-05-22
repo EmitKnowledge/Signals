@@ -27,7 +27,7 @@ steps:
     configuration: 'Release'
     nobuild: true
     versioningScheme: 'byEnvVar'
-    versionEnvVar: '2.0.1'
+    versionEnvVar: 'packageVersion'
 - task: NuGetCommand@2
   inputs:
     command: 'push'
