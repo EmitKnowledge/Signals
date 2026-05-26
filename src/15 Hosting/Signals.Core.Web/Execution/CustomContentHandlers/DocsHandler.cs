@@ -51,7 +51,7 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
         /// <returns></returns>
         private OpenApiDocument GenerateDocs()
         {
-            var headers = SystemBootstrapper.GetInstance<List<ResponseHeaderAttribute>>();
+            var headers = SystemBootstrapper.GetInstance<List<ResponseHeaderAttribute>>() ?? new List<ResponseHeaderAttribute>();
             var processRepo = SystemBootstrapper.GetInstance<ProcessRepository>();
             var allApiProcesses = processRepo.OfType<IApiProcess>();
 
@@ -67,7 +67,11 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     new OpenApiServer { Url = $"{WebApplicationConfiguration.Instance.WebUrl.TrimEnd('/')}/api/" }
                 },
                 Paths = new OpenApiPaths(),
-                Components = new OpenApiComponents()
+                Components = new OpenApiComponents
+                {
+                    Schemas = new Dictionary<string, IOpenApiSchema>()
+                },
+                Tags = new HashSet<OpenApiTag>()
             };
 
             if (allApiProcesses.Any())
@@ -95,7 +99,10 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     }
 
                     var pathItem = new OpenApiPathItem();
-                    var operationItem = new OpenApiOperation();
+                    var operationItem = new OpenApiOperation
+                    {
+                        Parameters = new List<IOpenApiParameter>()
+                    };
 
                     var path = type.FullName.Replace(assemblyNamespace, "").Replace('.', '/');
                     var processGenerics = type.BaseType.GetGenericArguments();
@@ -126,8 +133,10 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     {
                         new OpenApiTagReference(tagName, document, null)
                     };
-                    operationItem.Summary = instance.Description.IsNullOrEmpty() ? instance.Name : instance.Description;
-                    operationItem.Description = instance.Name;
+                    var processName = instance?.Name ?? type.Name;
+                    var processDescription = instance?.Description;
+                    operationItem.Summary = processDescription.IsNullOrEmpty() ? processName : processDescription;
+                    operationItem.Description = processName;
                     operationItem.OperationId = type.Name;
 
                     // Determine the request based on the process type
@@ -186,8 +195,8 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
                     var enumTypes = new List<Type>();
 
-                    var requestSchema = Deserialize(request, ref enumTypes);
-                    var responseSchema = Deserialize(response, ref enumTypes);
+                    var requestSchema = Deserialize(request, ref enumTypes) ?? new Dictionary<string, IOpenApiSchema>();
+                    var responseSchema = Deserialize(response, ref enumTypes) ?? new Dictionary<string, IOpenApiSchema>();
 
                     var requestPath = string.Empty;
                     if (request != null)
@@ -339,11 +348,19 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
                     {
                         if (parentSchema.Type == JsonSchemaType.Array)
                         {
-                            parentSchema.Items = parentSchema.Items ?? new OpenApiSchema();
+                            if (parentSchema.Items?.Properties == null)
+                            {
+                                parentSchema.Items = new OpenApiSchema
+                                {
+                                    Properties = new Dictionary<string, IOpenApiSchema>()
+                                };
+                            }
+
                             parentSchema.Items.Properties.Add(schema.Title, schema);
                         }
                         else
                         {
+                            parentSchema.Properties = parentSchema.Properties ?? new Dictionary<string, IOpenApiSchema>();
                             parentSchema.Properties.Add(schema.Title, schema);
                         }
                     }
@@ -402,6 +419,8 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
 
             object GetDefaultValue(Type t)
             {
+                if (t == null) return null;
+
                 if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
                     return Activator.CreateInstance(t);
                 else
@@ -412,7 +431,8 @@ namespace Signals.Core.Web.Execution.CustomContentHandlers
             {
                 var schema = new OpenApiSchema
                 {
-                    Title = property.Name
+                    Title = property.Name,
+                    Properties = new Dictionary<string, IOpenApiSchema>()
                 };
 
                 // set the property name
