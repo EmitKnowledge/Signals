@@ -75,7 +75,7 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
             schedule
                 .Every(configuration.Value)
                 .Days()
-                .At(configuration.TimePart);
+                .At(configuration.TimePart.Hours, configuration.TimePart.Minutes);
         }
 
         private static Schedule CreateMonthlyNamedSchedule(ISyncTask task, MonthlyNamedRecurrencePatternConfiguration configuration)
