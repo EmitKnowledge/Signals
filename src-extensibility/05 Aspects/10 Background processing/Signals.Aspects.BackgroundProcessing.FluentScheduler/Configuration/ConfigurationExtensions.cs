@@ -63,6 +63,15 @@ namespace Signals.Aspects.BackgroundProcessing.FluentScheduler.Configuration
 
         private static void ConfigureDaily(RunSpecifier schedule, DailyRecurrencePatternConfiguration configuration)
         {
+            if (configuration.Value == 1)
+            {
+                schedule
+                    .Everyday()
+                    .At(configuration.TimePart);
+
+                return;
+            }
+
             schedule
                 .Every(configuration.Value)
                 .Days()
