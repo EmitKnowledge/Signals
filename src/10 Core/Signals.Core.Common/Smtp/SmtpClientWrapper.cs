@@ -104,24 +104,25 @@ namespace Signals.Core.Common.Smtp
                 // Preserve application-supplied custom headers
                 foreach (var headerName in mail.Headers.AllKeys)
                 {
-                    if (string.IsNullOrWhiteSpace(headerName) || mimeMessage.Headers.Contains(headerName))
+                    if (string.IsNullOrWhiteSpace(headerName))
                     {
                         continue;
                     }
 
                     var headerValues = mail.Headers.GetValues(headerName);
 
-                    if (headerValues == null)
+                    if (headerValues == null || headerValues.Length == 0)
                     {
                         continue;
                     }
 
-                    foreach (var headerValue in headerValues)
+                    // Override any matching headers
+                    mimeMessage.Headers.Replace(headerName, headerValues[0]);
+
+                    // Preserve any additional values for the same header
+                    for (var i = 1; i < headerValues.Length; i++)
                     {
-                        if (headerValue != null)
-                        {
-                            mimeMessage.Headers.Add(headerName, headerValue);
-                        }
+                        mimeMessage.Headers.Add(headerName, headerValues[i]);
                     }
                 }
 
