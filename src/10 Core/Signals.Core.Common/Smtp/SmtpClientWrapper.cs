@@ -1,11 +1,10 @@
-﻿using Signals.Core.Common.Instance;
-using System;
+﻿using MailKit.Security;
+using MimeKit;
+using Signals.Core.Common.Instance;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using MailKit.Security;
-using MimeKit;
 using SmtpMailClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace Signals.Core.Common.Smtp
@@ -19,7 +18,7 @@ namespace Signals.Core.Common.Smtp
         public int Port { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        
+
         public List<string> WhitelistedEmails { get; set; }
 
         public List<string> WhitelistedEmailDomains { get; set; }
@@ -30,7 +29,7 @@ namespace Signals.Core.Common.Smtp
         public SmtpClientWrapper()
         {
         }
-        
+
         /// <summary>
         /// Send native email via MailKit
         /// </summary>
@@ -60,14 +59,14 @@ namespace Signals.Core.Common.Smtp
                 var mimeMessage = new MimeMessage();
 
                 mimeMessage.From.Add(new MailboxAddress(mail.From.DisplayName, mail.From.Address));
-                
+
                 if (!mail.To.IsNullOrHasZeroElements())
                 {
                     mimeMessage.To.AddRange(
                         mail.To.Select(x => new MailboxAddress(x.DisplayName, x.Address))
                     );
                 }
-                
+
                 if (!mail.ReplyToList.IsNullOrHasZeroElements())
                 {
                     mimeMessage.ReplyTo.AddRange(mail.ReplyToList.Select(x => new MailboxAddress(x.DisplayName, x.Address)));
@@ -90,7 +89,7 @@ namespace Signals.Core.Common.Smtp
                 var builder = new BodyBuilder();
                 builder.TextBody = mail.Body;
                 builder.HtmlBody = mail.Body;
-                
+
                 if (!mail.Attachments.IsNullOrHasZeroElements())
                 {
                     foreach (var attachment in mail.Attachments)
@@ -102,11 +101,34 @@ namespace Signals.Core.Common.Smtp
                 mimeMessage.Subject = mail.Subject;
                 mimeMessage.Body = builder.ToMessageBody();
 
+                // Preserve application-supplied custom headers
+                foreach (var headerName in mail.Headers.AllKeys)
+                {
+                    if (string.IsNullOrWhiteSpace(headerName) || mimeMessage.Headers.Contains(headerName))
+                    {
+                        continue;
+                    }
+
+                    var headerValues = mail.Headers.GetValues(headerName);
+
+                    if (headerValues == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var headerValue in headerValues)
+                    {
+                        if (headerValue != null)
+                        {
+                            mimeMessage.Headers.Add(headerName, headerValue);
+                        }
+                    }
+                }
+
                 await client.SendAsync(mimeMessage);
 
                 await client.DisconnectAsync(true);
             }
-
         }
 
         /// <summary>
@@ -210,8 +232,8 @@ namespace Signals.Core.Common.Smtp
             recipients = string.Join(";", GetWhitelistedRecipients(recipients));
             if (!recipients.IsNullOrEmpty())
             {
-               var message = new MailMessage(from, recipients, subject, body);
-               await SendNativeAsync(message, Server, Port, Username, Password);
+                var message = new MailMessage(from, recipients, subject, body);
+                await SendNativeAsync(message, Server, Port, Username, Password);
             }
         }
 
