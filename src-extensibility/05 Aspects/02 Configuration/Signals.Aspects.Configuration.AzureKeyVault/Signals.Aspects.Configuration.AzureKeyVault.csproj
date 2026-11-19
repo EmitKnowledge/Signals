@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>4.0.0</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Identity" Version="1.21.0" />
+		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.12.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+	</ItemGroup>
+
+	<Choose>
+		<When Condition=" '$(Configuration)'!='Debug' ">
+			<ItemGroup>
+				<PackageReference Include="Signals.Aspects.Configuration" Version="3.0.*" />
+			</ItemGroup>
+		</When>
+
+		<When Condition=" '$(Configuration)'=='Debug' ">
+			<ItemGroup>
+				<ProjectReference Include="..\..\..\..\src\05 Aspects\02 Configuration\Signals.Aspects.Configuration\Signals.Aspects.Configuration.csproj" />
+			</ItemGroup>
+		</When>
+	</Choose>
+
+</Project>
