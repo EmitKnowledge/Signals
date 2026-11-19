@@ -113,7 +113,15 @@ namespace Signals.Aspects.Configuration.AzureKeyVault
             {
                 var secretName = GetSecretName(key);
                 var content = GetSecretValue(secretName);
-                instance = content == null ? new T() : JsonConvert.DeserializeObject<T>(content);
+                try
+                {
+                    instance = content == null ? new T() : JsonConvert.DeserializeObject<T>(content);
+                }
+                catch (JsonException)
+                {
+                    // Do not retain the original exception, which can contain secret values.
+                    throw new InvalidOperationException($"Secret '{secretName}' could not be deserialized as '{typeof(T).FullName}'.");
+                }
 
                 if (instance == null)
                 {
