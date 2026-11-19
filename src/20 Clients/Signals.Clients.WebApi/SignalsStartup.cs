@@ -9,9 +9,11 @@ using Signals.Aspects.Auth.NetCore.Extensions;
 using Signals.Aspects.Caching.Enums;
 using Signals.Aspects.Caching.InMemory.Configurations;
 using Signals.Aspects.CommunicationChannels.ServiceBus.Configurations;
+using Signals.Aspects.Configuration.AzureKeyVault;
 using Signals.Aspects.Configuration.File;
 using Signals.Aspects.DI.Autofac;
 using Signals.Aspects.Localization.File.Configurations;
+using Signals.Clients.WebApi.Configuration;
 using Signals.Core.Configuration;
 using Signals.Core.Web.Configuration;
 using Signals.Core.Web.Extensions;
@@ -36,7 +38,12 @@ namespace Signals.Clients.WebApi
             // Integrate Autofac into Mvc Core
             var registrationService = new RegistrationService();
 
-            var assemblies = Directory.GetFiles(AppContext.BaseDirectory, "*.dll").Select(Assembly.LoadFrom).ToList();
+            // Load the assemblies
+            var assemblies = Directory
+                .GetFiles(AppContext.BaseDirectory, "*.dll")
+                .Where(x => !x.Contains("System.Data.SqlClient"))
+                .Select(Assembly.LoadFrom)
+                .ToList();
 
             // Add the app configurations
             AddConfiguration();
@@ -126,7 +133,7 @@ namespace Signals.Clients.WebApi
         /// <returns></returns>
         private static void AddConfiguration()
         {
-            FileConfigurationProvider ConfigurationProviderForFile(string name) =>
+            static FileConfigurationProvider ConfigurationProviderForFile(string name) =>
                 new()
                 {
                     File = name,
@@ -137,6 +144,14 @@ namespace Signals.Clients.WebApi
             // Required by Signals
             ApplicationConfiguration.UseProvider(ConfigurationProviderForFile("app.config.json"));
             WebApplicationConfiguration.UseProvider(ConfigurationProviderForFile("web.config.json"));
+
+            SecretsConfiguration.UseProvider(
+                new AzureKeyVaultConfigurationProvider("https://key.vault.azure.net/")
+                {
+                    ReloadOnAccess = false,
+                    UsePerPropertySecrets = false,
+                    //SecretPrefix = "dev-"
+                });
         }
     }
 }
