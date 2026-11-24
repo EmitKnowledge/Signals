@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\01 Bootstrapping and DI\Signals.Aspects.DI.Autofac\Signals.Aspects.DI.Autofac.csproj" />
+		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\02 Configuration\Signals.Aspects.Configuration.AzureKeyVault\Signals.Aspects.Configuration.AzureKeyVault.csproj" />
 		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj" />
 		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\03 Logging\Signals.Aspects.Logging.NLog\Signals.Aspects.Logging.NLog.csproj" />
 		<ProjectReference Include="..\..\..\src-extensibility\05 Aspects\05 Caching\Signals.Aspects.Caching.InMemory\Signals.Aspects.Caching.InMemory.csproj" />

@@ -87,6 +87,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.DI.Autofac"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Configuration.File", "..\..\src-extensibility\05 Aspects\02 Configuration\Signals.Aspects.Configuration.File\Signals.Aspects.Configuration.File.csproj", "{80797595-8405-407C-8B83-CB24B251D938}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.Configuration.AzureKeyVault", "..\..\src-extensibility\05 Aspects\02 Configuration\Signals.Aspects.Configuration.AzureKeyVault\Signals.Aspects.Configuration.AzureKeyVault.csproj", "{BD6C53F9-77E8-4315-883C-9461DB63BDB5}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.CommunicationChannels.MsSql", "..\..\src-extensibility\05 Aspects\08 Communication channels\Signals.Aspects.CommunicationChannels.MsSql\Signals.Aspects.CommunicationChannels.MsSql.csproj", "{E23CBE45-6F06-4E64-BCD6-34CE52572F3D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Signals.Aspects.BackgroundProcessing.FluentScheduler", "..\..\src-extensibility\05 Aspects\10 Background processing\Signals.Aspects.BackgroundProcessing.FluentScheduler\Signals.Aspects.BackgroundProcessing.FluentScheduler.csproj", "{27B6068F-64A3-436A-8251-7633D1D8D736}"
@@ -199,6 +201,10 @@ Global
 		{80797595-8405-407C-8B83-CB24B251D938}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80797595-8405-407C-8B83-CB24B251D938}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80797595-8405-407C-8B83-CB24B251D938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD6C53F9-77E8-4315-883C-9461DB63BDB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD6C53F9-77E8-4315-883C-9461DB63BDB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD6C53F9-77E8-4315-883C-9461DB63BDB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD6C53F9-77E8-4315-883C-9461DB63BDB5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E23CBE45-6F06-4E64-BCD6-34CE52572F3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E23CBE45-6F06-4E64-BCD6-34CE52572F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E23CBE45-6F06-4E64-BCD6-34CE52572F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -262,6 +268,7 @@ Global
 		{45B5BD25-7233-4F32-913D-AA5B32BF1D53} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
 		{683ECDE5-FB59-45F8-942A-B623CA321B50} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
 		{80797595-8405-407C-8B83-CB24B251D938} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
+		{BD6C53F9-77E8-4315-883C-9461DB63BDB5} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
 		{E23CBE45-6F06-4E64-BCD6-34CE52572F3D} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
 		{27B6068F-64A3-436A-8251-7633D1D8D736} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}
 		{62BCC110-02E6-4F34-85B1-0310F7EBD159} = {0E6C18CA-60F4-4A97-A0AE-D4001A24A0E7}

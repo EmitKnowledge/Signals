@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\00 Solution\Signals.Tests.CommonConfiguration\Signals.Tests.CommonConfiguration.csproj" />
+		<ProjectReference Include="..\..\..\05 Aspects\02 Configuration\Signals.Aspects.Configuration.AzureKeyVault\Signals.Aspects.Configuration.AzureKeyVault.csproj" />
 		<ProjectReference Include="..\..\..\05 Aspects\02 Configuration\Signals.Aspects.Configuration.MsSql\Signals.Aspects.Configuration.MsSql.csproj" />
 	</ItemGroup>
 
